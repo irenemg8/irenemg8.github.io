@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Definir la fuente Pecita usando el archivo local */
+@font-face {
+  font-family: 'Pecita';
+  src: url('/fonts/Pecita.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -68,4 +77,9 @@
     scrollbar-width: none; /* Firefox */
     scroll-behavior: smooth;
   }
+}
+
+/* Clase para la fuente Pecita */
+.font-pecita {
+  font-family: 'Pecita', cursive;
 }

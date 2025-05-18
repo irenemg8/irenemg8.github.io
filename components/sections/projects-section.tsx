@@ -111,9 +111,9 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h2 className="text-3xl font-bold mb-4">{title}</h2>
+        <h2 className="text-3xl font-bold mb-4 font-pecita">{title}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          A collection of my recent work spanning web applications, 3D experiences, and design systems.
+          A collection of my recent work spanning web applications, 3D experiences, and design.
         </p>
       </motion.div>
 

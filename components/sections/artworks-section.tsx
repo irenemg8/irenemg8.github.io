@@ -117,9 +117,9 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h2 className="text-3xl font-bold mb-4">{title}</h2>
+        <h2 className="text-3xl font-bold mb-4 font-pecita">{title}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          A collection of my creative work including 3D models, UI designs, and digital art.
+          A curated collection of creative works ranging from 3D models to UI kits and digital art.
         </p>
       </motion.div>
 

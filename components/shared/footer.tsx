@@ -21,7 +21,7 @@ export function Footer() {
 
           <div className="flex items-center space-x-4 mb-6 md:mb-0">
             <motion.a
-              href="https://github.com"
+              href="https://github.com/irenemg8"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1 }}
@@ -32,7 +32,7 @@ export function Footer() {
               <span className="sr-only">GitHub</span>
             </motion.a>
             <motion.a
-              href="https://linkedin.com"
+              href="www.linkedin.com/in/irene-medina-garcia"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1 }}
@@ -43,7 +43,7 @@ export function Footer() {
               <span className="sr-only">LinkedIn</span>
             </motion.a>
             <motion.a
-              href="mailto:contact@example.com"
+              href="mailto:irenebati4@gmail.com"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               className="p-2 rounded-full bg-background hover:bg-muted transition-colors"

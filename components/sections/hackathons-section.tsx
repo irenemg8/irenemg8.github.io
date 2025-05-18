@@ -88,9 +88,9 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h2 className="text-3xl font-bold mb-4">{title}</h2>
+        <h2 className="text-3xl font-bold mb-4 font-pecita">{title}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          A showcase of my hackathon projects, highlighting creativity, teamwork, and rapid development.
+          A showcase of my hackathon projects, highlighting creativity, teamwork, and dev.
         </p>
       </motion.div>
 

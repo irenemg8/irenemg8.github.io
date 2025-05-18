@@ -1,9 +1,15 @@
 import type React from "react"
 import "@/app/globals.css"
 import { Inter } from "next/font/google"
+import { Poppins } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
+const poppins = Poppins({ 
+  weight: ['400', '700'], 
+  subsets: ['latin'], 
+  variable: '--font-poppins'
+})
 
 export const metadata = {
   title: "Creative Portfolio | Frontend Developer & Designer",
@@ -19,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${poppins.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
