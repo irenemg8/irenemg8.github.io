@@ -12,16 +12,16 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
   const pressItems = [
     {
       id: 1,
-      platform: "Tech Insider",
-      logo: "/placeholder.svg?height=200&width=200",
-      title: "Rising Stars in Frontend Development",
-      date: "April 2023",
-      excerpt: "An interview with one of the most innovative frontend developers in the industry today.",
+      platform: "Gandía Innova - UPV",
+      logo: "/press/placeholder.svg?height=200&width=200",
+      title: "EcoCity: Smart Urban Planning Prototype by GTI Students",
+      date: "Feb 2024",
+      excerpt: "EcoCity is a sustainable city model developed by students of the GTI degree at UPV, using IoT and AI technologies to optimize urban mobility and environmental impact.",
       fullArticle:
-        "In this exclusive interview, we dive deep into the creative process and technical expertise that has made this developer stand out in the competitive world of frontend development. From pioneering new approaches to UI/UX design to contributing to open-source projects, their work has influenced how modern web applications are built and experienced by users worldwide.",
-      source: "https://example.com/article1",
+        "EcoCity is a smart urban planning project created by students of the Bachelor's Degree in Interactive Technologies (GTI) at the Universitat Politècnica de València. The prototype integrates IoT sensors, data visualization, and decision-making algorithms to simulate a sustainable city environment. It allows users to analyze environmental indicators, traffic flow, and air quality in real time, making it a practical educational model for future smart cities. The project was featured in the GTI-IoT 2024 showcase and received praise for its innovation and applicability.",
+      source: "https://gandiainnova.webs.upv.es/blog/2024/02/26/prototipos-gti-iot-2024/",
       contextualSummary:
-        "This interview focused on recent projects and contributions to the frontend community, highlighting innovative approaches to responsive design and animation techniques.",
+        "This article highlights EcoCity, a prototype that merges IoT technology and data analytics to model a more efficient and eco-friendly city. Developed by GTI students, the project aims to educate and inspire future urban solutions.",
     },
     {
       id: 2,
