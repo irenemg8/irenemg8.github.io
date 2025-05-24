@@ -13,7 +13,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     {
       id: 1,
       eventName: "eMobility",
-      logo: "/hackathon/onklub.jpeg?height=200&width=200",
+      logo: "/hackathon/IMG_7130.jpeg?height=200&width=200",
       projectTitle: "EcoSpot",
       role: "Software developer",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
@@ -21,13 +21,13 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       //awards: ["Best Game Design", "People's Choice"],
       fullStory:
         "During the 2-day hackathon, I worked on a team that developed an app to locate, reserve, and review EV charging points in real time. I focused on front-end design and UX, creating a simple, intuitive interface. We applied agile methods to deliver a working MVP and presented it to industry leaders.",
-      technologies: ["Unity", "C#", "Blender", "FMOD"],
+      technologies: ["Axure", "Figma", "Android"],
       team: ["Irene Medina García", "Vicente Rivas Monferrer", "Teresa López Garrido", "Raúl Real González"],
       challenges:
         "One of the main challenges was developing a functional MVP in less than 36 hours, which required rapid decision-making and tight coordination. Additionally, the lack of real-time charging station data forced us to simulate responses, complicating backend integration. Designing a user experience that worked for different types of EV users demanded continuous iteration and validation. Finally, working within a multidisciplinary team meant aligning technical, design, and business perspectives under constant time pressure.",
       //githubUrl: "https://github.com",
       //liveUrl: "https://example.com",
-      mediaUrl: "https://youtube.com",
+      mediaUrl: "/hackathon/emobility.pdf",
     },
      {
     id: 2,
