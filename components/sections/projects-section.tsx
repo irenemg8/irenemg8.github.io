@@ -139,7 +139,7 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
   id: 8,
   title: "AidGuide",
   description: "An autonomous navigation system for visually impaired users, combining AI, robotics and real-time urban perception",
-  image: "/aidguide-robot.svg?height=600&width=800",
+  image: "/aidguide/logo.png?height=600&width=800",
   date: "Feb 2025 - Jun 2025",
   tags: ["ROS2", "Python", "Computer Vision", "AI", "TurtleBot3", "Assistive Tech"],
   githubUrl: "https://github.com/irenemedina/aidguide",

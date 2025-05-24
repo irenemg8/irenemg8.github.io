@@ -47,7 +47,7 @@ export function FloatingCTA() {
               <span className="sr-only">Dismiss</span>
             </Button>
             <Button className="rounded-xl" asChild>
-              <a href="/resume.pdf" download>
+              <a href="/irene-medina-garcia-cv.pdf" download>
                 <Download className="mr-2 h-4 w-4" />
                 Download CV
               </a>
