@@ -32,9 +32,9 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
      {
     id: 2,
     eventName: "Safor Salut Hackathon – 3rd Edition",
-    logo: "https://www.google.com/imgres?q=safor%20salud%20logo&imgurl=https%3A%2F%2Fsaforsalut.es%2Fwp-content%2Fuploads%2F2020%2F10%2Flogo_horizontal.png&imgrefurl=https%3A%2F%2Fsaforsalut.es%2F&docid=CJ8qRPYSX_CKOM&tbnid=CZ4VolgGGHpdQM&vet=12ahUKEwiwpsON_K6NAxWXVaQEHeaFLwwQM3oECBcQAA..i&w=850&h=408&hcb=2&ved=2ahUKEwiwpsON_K6NAxWXVaQEHeaFLwwQM3oECBcQAA?height=200&width=200",
+    logo: "/hackathon/IMG_7131.png?height=200&width=200",
     projectTitle: "URBANVIVE",
-    role: "UX Specialist",
+    role: "UX/UI/UC Specialist",
     description: "A smart microbiota-integrated flooring system to promote wellness while walking",
     date: "May 2025",
     awards: ["1st Place – Overall Winner"],
@@ -42,18 +42,18 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       "UrbanVive is an innovative health-tech solution designed during the 3rd edition of the Safor Salut Hackathon in Gandía. The project focuses on creating a responsive floor system embedded with beneficial microbiota that interact with the human body through physical contact, promoting well-being as users walk across it. Beyond physical health, the system also incorporates sensory feedback and ambient interaction to encourage mindful walking and stress relief. As the UX/UI Specialist, I was responsible for the entire user journey design, ensuring accessibility, clarity, and emotional engagement across the experience. Our project stood out for combining biotechnology, urban design, and digital interactivity in a cohesive, impactful prototype.",
     technologies: ["Figma", "Arduino", "Biosensors"],
     team: [
-      "Irene Medina García (UX/UI Specialist)",
+      "Irene Medina García (UX/UI/UC Specialist)",
       "Pablo Rebollo De Miguel (Hardware Developer)",
-      "Lucía Martínez (Biotech Researcher)",
-      "Jorge Navarro (Project Manager)"
+      "Nuria Casañ (Biomedical Intern)",
+      "Juan Chucuri (Biological Researcher)"
     ],
     challenges:
       "The main challenge was translating complex microbiota research into a tangible, user-centered product within a 48-hour timeframe. We tackled this by rapidly prototyping the concept using cross-disciplinary sprints and testing micro-interactions with users in real time.",
-    githubUrl: "https://github.com/urbanvive/hackathon-safor-salut",
-    liveUrl: "https://urbanvive.vercel.app",
-    mediaUrl: "https://www.youtube.com/watch?v=urbanvive2025"
+    //githubUrl: "https://github.com/urbanvive/hackathon-safor-salut",
+    //liveUrl: "https://urbanvive.vercel.app",
+    mediaUrl: "https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/amp/"
   },
-    {
+    /*{
       id: 3,
       eventName: "Fintech Hackathon",
       logo: "/placeholder.svg?height=200&width=200",
@@ -71,7 +71,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       githubUrl: "https://github.com",
       liveUrl: "https://example.com",
       mediaUrl: "https://youtube.com",
-    },
+    },*/
   ]
 
   const container = {
@@ -95,7 +95,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       >
         <h2 className="text-3xl font-bold mb-4 font-pecita">{title}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          A showcase of my hackathon projects, highlighting creativity, teamwork, and dev.
+          A showcase of my hackathon projects, highlighting creativity, teamwork & dev.
         </p>
       </motion.div>
 
