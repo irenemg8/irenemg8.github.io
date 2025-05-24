@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { Github, ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { useState } from "react"
+import { ExpandableBadges } from "./expandable-badges"
 
 interface Project {
   id: number
@@ -13,6 +15,7 @@ interface Project {
   image: string
   date: string
   tags: string[]
+  techStack: string[]
   githubUrl?: string
   liveUrl?: string
 }
@@ -23,6 +26,9 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, onClick }: ProjectCardProps) {
+  const [tagsExpanded, setTagsExpanded] = useState(false);
+  const [techStackExpanded, setTechStackExpanded] = useState(false);
+
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -31,7 +37,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
   return (
     <motion.div variants={item} whileHover={{ y: -5, transition: { duration: 0.2 } }} className="h-full">
       <Card
-        className="overflow-hidden h-full cursor-pointer hover:shadow-md transition-all duration-300 rounded-2xl border border-border/50"
+        className="overflow-hidden h-full cursor-pointer hover:shadow-md transition-all duration-300 rounded-2xl border border-border/50 flex flex-col"
         onClick={onClick}
       >
         <div className="relative h-48 overflow-hidden">
@@ -42,26 +48,22 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
             className="object-cover transition-transform duration-500 hover:scale-105"
           />
         </div>
-        <CardContent className="p-6">
+        <CardContent className="p-6 flex-grow">
           <div className="mb-2">
             <h3 className="text-xl font-bold">{project.title}</h3>
             <p className="text-sm text-muted-foreground text-right">{project.date}</p>
           </div>
           <p className="text-muted-foreground mb-4 line-clamp-2">{project.description}</p>
-          <div className="flex flex-wrap gap-2">
-            {project.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="font-normal">
-                {tag}
-              </Badge>
-            ))}
-            {project.tags.length > 3 && (
-              <Badge variant="outline" className="font-normal">
-                +{project.tags.length - 3}
-              </Badge>
-            )}
-          </div>
+          
+          <ExpandableBadges 
+            items={project.tags} 
+            expanded={tagsExpanded} 
+            setExpanded={setTagsExpanded} 
+            title="Tags"
+          />
+
         </CardContent>
-        <CardFooter className="px-6 py-4 border-t flex justify-between">
+        <CardFooter className="px-6 py-4 border-t flex justify-between mt-auto">
           {project.githubUrl && (
             <a
               href={project.githubUrl}

@@ -4,7 +4,8 @@ import { motion } from "framer-motion"
 import Image from "next/image"
 import { X, Github, ExternalLink, Play } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react"
+import { ExpandableBadges } from "./expandable-badges"
 
 interface ProjectModalProps {
   content: any
@@ -13,6 +14,8 @@ interface ProjectModalProps {
 
 export function ProjectModal({ content, onClose }: ProjectModalProps) {
   if (!content) return null
+
+  const [techStackExpanded, setTechStackExpanded] = useState(false)
 
   return (
     <motion.div
@@ -55,13 +58,14 @@ export function ProjectModal({ content, onClose }: ProjectModalProps) {
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">{content.title}</h2>
                 <p className="text-muted-foreground">{content.date}</p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {content.techStack?.slice(0, 5).map((tech: string) => (
-                  <Badge key={tech} variant="outline">
-                    {tech}
-                  </Badge>
-                ))}
-                {content.techStack?.length > 5 && <Badge variant="outline">+{content.techStack.length - 5}</Badge>}
+              <div className="md:w-auto md:max-w-xs lg:max-w-sm flex-shrink-0">
+                <ExpandableBadges 
+                  items={content.techStack || []} 
+                  expanded={techStackExpanded} 
+                  setExpanded={setTechStackExpanded}
+                  itemVariant="outline"
+                  expandButtonVariant="default"
+                />
               </div>
             </div>
 

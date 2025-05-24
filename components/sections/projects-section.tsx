@@ -100,26 +100,9 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
      // demoUrl: "https://example.com/figma",
     },
 
+    
      {
       id: 6,
-      title: "VIMYP",
-  description: "A web-app platform for real-time multimodal route optimization and urban mobility analysis",
-      image: "/placeholder.svg?height=600&width=800",
-      date: "Sept 2024 - Feb 2025",
-  tags: ["HTML", "CSS", "JS", "Docker", "UX/UI", "Smart Cities", "Data Visualization"],
-      githubUrl: "https://github.com",
-      liveUrl: "https://example.com",
-      fullDescription:
-    "VIMYP is a smart city platform designed to enhance urban mobility by providing users with real-time, multimodal route planning and comprehensive traffic analytics. The platform integrates data from various transportation sources to offer optimized routing solutions, aiming to reduce congestion and promote sustainable travel options. As the UX/UI lead, I focused on creating an intuitive interface that presents complex data in an accessible manner, facilitating informed decision-making for both commuters and city planners.",
-  techStack: ["CHart.js", "Leaflet", "Figma", "Adobe Dreamweaver"],
-      challenges:
-    "One of the main challenges was ensuring seamless integration of diverse data sources while maintaining a responsive and user-friendly interface. We addressed this by implementing efficient data handling techniques and conducting iterative user testing to refine the user experience.",
-  role: "Lead UX/UI Designer & Frontend Developer | Scrum Master",
-     // demoUrl: "https://example.com/figma",
-    },
-
-     {
-      id: 7,
   title: "Geospatial Repository",
   description: "A digital platform for exploring and analyzing thematic cartographic studies",
       image: "/placeholder.svg?height=600&width=800",
@@ -136,13 +119,13 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
      // demoUrl: "https://example.com/figma",
     },
     {
-  id: 8,
+  id: 7,
   title: "AidGuide",
   description: "An autonomous navigation system for visually impaired users, combining AI, robotics and real-time urban perception",
-  image: "/aidguide/logo.png?height=600&width=800",
+  image: "/aidguide/logo.svg?height=600&width=800",
   date: "Feb 2025 - Jun 2025",
-  tags: ["ROS2", "Python", "Computer Vision", "AI", "TurtleBot3", "Assistive Tech"],
-  githubUrl: "https://github.com/irenemedina/aidguide",
+  tags: ["ROS2", "Python", "AI", "Computer Vision", "TurtleBot3", "Assistive Tech"],
+  githubUrl: "https://github.com/vjrivmon/aidguide_04",
   liveUrl: "https://aidguide.vercel.app",
   fullDescription:
     "AidGuide is a robotic guide dog developed to support visually impaired users in navigating urban environments safely and independently. Built on a TurtleBot3 platform using ROS2 and programmed in Python, the robot detects obstacles, pedestrians, traffic lights, and road conditions in real time. It intelligently calculates optimal routes, avoiding traffic jams and unsafe zones. The system is enhanced with a secure web-based control interface and biometric authentication (facial and fingerprint recognition) to personalize the experience and protect user privacy. I contributed to both the UX of the interface and the integration of hardware and vision systems.",
