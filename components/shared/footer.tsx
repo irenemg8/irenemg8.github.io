@@ -32,7 +32,7 @@ export function Footer() {
               <span className="sr-only">GitHub</span>
             </motion.a>
             <motion.a
-              href="www.linkedin.com/in/irene-medina-garcia"
+              href="https://www.linkedin.com/in/irene-medina-garc%C3%ADa-8ba621271/"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.1 }}

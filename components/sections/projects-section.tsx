@@ -14,7 +14,7 @@ interface ProjectsSectionProps {
 export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSectionProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
-  const projects = [
+  const projectsData = [
     {
       id: 1,
       title: "GTI Hidropónico - sensor kit",
@@ -159,6 +159,37 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
     
   ]
 
+  const monthMap: { [key: string]: number } = {
+    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+    Jul: 6, Aug: 7, Sept: 8, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+  };
+
+  function parseEndDate(dateString: string): Date {
+    const parts = dateString.split(" - ");
+    const endDateStr = parts.length > 1 ? parts[1] : parts[0];
+    const dateParts = endDateStr.split(" ");
+    if (dateParts.length < 2) {
+      // Fallback for unexpected date formats, return a very old date to sort last
+      return new Date(0); 
+    }
+    const [monthStr, yearStr] = dateParts;
+    const year = parseInt(yearStr, 10);
+    const month = monthMap[monthStr];
+    
+    if (isNaN(year) || month === undefined) {
+        // Fallback for unparseable month or year
+        return new Date(0);
+    }
+    // Create date for the end of the month to ensure correct comparison
+    return new Date(year, month + 1, 0); 
+  }
+
+  const projects = projectsData.sort((a, b) => {
+    const dateA = parseEndDate(a.date);
+    const dateB = parseEndDate(b.date);
+    return dateB.getTime() - dateA.getTime();
+  });
+  
   const allTags = Array.from(new Set(projects.flatMap((project) => project.tags))).sort()
 
   const filteredProjects =

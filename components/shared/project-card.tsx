@@ -13,8 +13,8 @@ interface Project {
   image: string
   date: string
   tags: string[]
-  githubUrl: string
-  liveUrl: string
+  githubUrl?: string
+  liveUrl?: string
 }
 
 interface ProjectCardProps {
@@ -62,26 +62,30 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           </div>
         </CardContent>
         <CardFooter className="px-6 py-4 border-t flex justify-between">
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Github className="h-5 w-5" />
-            <span className="sr-only">GitHub</span>
-          </a>
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ExternalLink className="h-5 w-5" />
-            <span className="sr-only">Live Demo</span>
-          </a>
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github className="h-5 w-5" />
+              <span className="sr-only">GitHub</span>
+            </a>
+          )}
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ExternalLink className="h-5 w-5" />
+              <span className="sr-only">Live Demo</span>
+            </a>
+          )}
         </CardFooter>
       </Card>
     </motion.div>
