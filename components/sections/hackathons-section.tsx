@@ -13,7 +13,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     {
       id: 1,
       eventName: "eMobility",
-      logo: "/placeholder.svg?height=200&width=200",
+      logo: "/hackathon/onklub.jpeg?height=200&width=200",
       projectTitle: "EcoSpot",
       role: "Software developer",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
