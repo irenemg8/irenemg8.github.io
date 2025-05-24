@@ -11,8 +11,6 @@ interface ArtworksSectionProps {
 }
 
 export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSectionProps) {
-  const [selectedType, setSelectedType] = useState<string | null>(null)
-
   const artworks = [
     {
       id: 1,
@@ -96,7 +94,40 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
 
   const artworkTypes = Array.from(new Set(artworks.map((artwork) => artwork.type))).sort()
 
-  const filteredArtworks = selectedType ? artworks.filter((artwork) => artwork.type === selectedType) : artworks
+  const tagColorSchemes = [
+    {
+      light: 'hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 hover:shadow-lg hover:shadow-pink-500/30',
+      dark: 'dark:hover:bg-pink-900/70 dark:hover:text-pink-300 dark:hover:border-pink-700 dark:hover:shadow-lg dark:hover:shadow-pink-600/40'
+    },
+    {
+      light: 'hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/30',
+      dark: 'dark:hover:bg-blue-900/70 dark:hover:text-blue-300 dark:hover:border-blue-700 dark:hover:shadow-lg dark:hover:shadow-blue-600/40'
+    },
+    {
+      light: 'hover:bg-green-50 hover:text-green-600 hover:border-green-300 hover:shadow-lg hover:shadow-green-500/30',
+      dark: 'dark:hover:bg-green-900/70 dark:hover:text-green-300 dark:hover:border-green-700 dark:hover:shadow-lg dark:hover:shadow-green-600/40'
+    },
+    {
+      light: 'hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-500/30',
+      dark: 'dark:hover:bg-purple-900/70 dark:hover:text-purple-300 dark:hover:border-purple-700 dark:hover:shadow-lg dark:hover:shadow-purple-600/40'
+    },
+    {
+      light: 'hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 hover:shadow-lg hover:shadow-teal-500/30',
+      dark: 'dark:hover:bg-teal-900/70 dark:hover:text-teal-300 dark:hover:border-teal-700 dark:hover:shadow-lg dark:hover:shadow-teal-600/40'
+    },
+    {
+      light: 'hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-300 hover:shadow-lg hover:shadow-yellow-500/30',
+      dark: 'dark:hover:bg-yellow-900/70 dark:hover:text-yellow-300 dark:hover:border-yellow-700 dark:hover:shadow-lg dark:hover:shadow-yellow-600/40'
+    },
+    {
+      light: 'hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/30',
+      dark: 'dark:hover:bg-indigo-900/70 dark:hover:text-indigo-300 dark:hover:border-indigo-700 dark:hover:shadow-lg dark:hover:shadow-indigo-600/40'
+    },
+    {
+      light: 'hover:bg-slate-100 hover:text-slate-600 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-500/20',
+      dark: 'dark:hover:bg-slate-800/70 dark:hover:text-slate-300 dark:hover:border-slate-600 dark:hover:shadow-lg dark:hover:shadow-slate-600/30'
+    }
+  ];
 
   const container = {
     hidden: { opacity: 0 },
@@ -124,21 +155,19 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
       </motion.div>
 
       <div className="flex flex-wrap gap-2 justify-center mb-8">
-        {selectedType && (
-          <Badge variant="outline" className="cursor-pointer" onClick={() => setSelectedType(null)}>
-            Clear filter
-          </Badge>
-        )}
-        {artworkTypes.map((type) => (
-          <Badge
-            key={type}
-            variant={selectedType === type ? "default" : "outline"}
-            className="cursor-pointer"
-            onClick={() => setSelectedType(type === selectedType ? null : type)}
-          >
-            {type}
-          </Badge>
-        ))}
+        {artworkTypes.map((type, index) => {
+          const scheme = tagColorSchemes[index % tagColorSchemes.length];
+          const hoverClasses = `${scheme.light} ${scheme.dark}`;
+          return (
+            <Badge
+              key={type}
+              variant={"outline"} 
+              className={`cursor-default transition-all duration-200 ease-in-out ${hoverClasses}`}
+            >
+              {type}
+            </Badge>
+          );
+        })}
       </div>
 
       <motion.div
@@ -148,7 +177,7 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
         viewport={{ once: true }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {filteredArtworks.map((artwork) => (
+        {artworks.map((artwork) => (
           <ArtworkCard key={artwork.id} artwork={artwork} onClick={() => openModal("artwork", artwork)} />
         ))}
       </motion.div>
