@@ -43,9 +43,9 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           />
         </div>
         <CardContent className="p-6">
-          <div className="flex justify-between items-start mb-2">
+          <div className="mb-2">
             <h3 className="text-xl font-bold">{project.title}</h3>
-            <span className="text-sm text-muted-foreground">{project.date}</span>
+            <p className="text-sm text-muted-foreground text-right">{project.date}</p>
           </div>
           <p className="text-muted-foreground mb-4 line-clamp-2">{project.description}</p>
           <div className="flex flex-wrap gap-2">

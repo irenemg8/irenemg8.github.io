@@ -12,8 +12,6 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSectionProps) {
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-
   const projectsData = [
     {
       id: 1,
@@ -122,7 +120,7 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
 
      {
       id: 7,
-  title: "Interactive Geospatial Repository",
+  title: "Geospatial Repository",
   description: "A digital platform for exploring and analyzing thematic cartographic studies",
       image: "/placeholder.svg?height=600&width=800",
       date: "Jan 2025 - Feb 2025",
@@ -139,7 +137,7 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
     },
     {
   id: 8,
-  title: "AidGuide – AI-Powered Robotic Guide Dog",
+  title: "AidGuide",
   description: "An autonomous navigation system for visually impaired users, combining AI, robotics and real-time urban perception",
   image: "/aidguide-robot.svg?height=600&width=800",
   date: "Feb 2025 - Jun 2025",
@@ -192,10 +190,40 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
   
   const allTags = Array.from(new Set(projects.flatMap((project) => project.tags))).sort()
 
-  const filteredProjects =
-    selectedTags.length > 0
-      ? projects.filter((project) => selectedTags.some((tag) => project.tags.includes(tag)))
-      : projects
+  const tagColorSchemes = [
+    {
+      light: 'hover:bg-pink-50 hover:text-pink-600 hover:border-pink-300 hover:shadow-lg hover:shadow-pink-500/30',
+      dark: 'dark:hover:bg-pink-900/70 dark:hover:text-pink-300 dark:hover:border-pink-700 dark:hover:shadow-lg dark:hover:shadow-pink-600/40'
+    },
+    {
+      light: 'hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/30',
+      dark: 'dark:hover:bg-blue-900/70 dark:hover:text-blue-300 dark:hover:border-blue-700 dark:hover:shadow-lg dark:hover:shadow-blue-600/40'
+    },
+    {
+      light: 'hover:bg-green-50 hover:text-green-600 hover:border-green-300 hover:shadow-lg hover:shadow-green-500/30',
+      dark: 'dark:hover:bg-green-900/70 dark:hover:text-green-300 dark:hover:border-green-700 dark:hover:shadow-lg dark:hover:shadow-green-600/40'
+    },
+    {
+      light: 'hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-500/30',
+      dark: 'dark:hover:bg-purple-900/70 dark:hover:text-purple-300 dark:hover:border-purple-700 dark:hover:shadow-lg dark:hover:shadow-purple-600/40'
+    },
+    {
+      light: 'hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300 hover:shadow-lg hover:shadow-teal-500/30',
+      dark: 'dark:hover:bg-teal-900/70 dark:hover:text-teal-300 dark:hover:border-teal-700 dark:hover:shadow-lg dark:hover:shadow-teal-600/40'
+    },
+    {
+      light: 'hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-300 hover:shadow-lg hover:shadow-yellow-500/30',
+      dark: 'dark:hover:bg-yellow-900/70 dark:hover:text-yellow-300 dark:hover:border-yellow-700 dark:hover:shadow-lg dark:hover:shadow-yellow-600/40'
+    },
+    {
+      light: 'hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/30',
+      dark: 'dark:hover:bg-indigo-900/70 dark:hover:text-indigo-300 dark:hover:border-indigo-700 dark:hover:shadow-lg dark:hover:shadow-indigo-600/40'
+    },
+    {
+      light: 'hover:bg-slate-100 hover:text-slate-600 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-500/20',
+      dark: 'dark:hover:bg-slate-800/70 dark:hover:text-slate-300 dark:hover:border-slate-600 dark:hover:shadow-lg dark:hover:shadow-slate-600/30'
+    }
+  ];
 
   const container = {
     hidden: { opacity: 0 },
@@ -223,29 +251,19 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
       </motion.div>
 
       <div className="flex flex-wrap gap-2 justify-center mb-8">
-        {selectedTags.length > 0 && (
-          <Badge
-            variant="secondary"
-            className="cursor-pointer flex items-center gap-1"
-            onClick={() => setSelectedTags([])}
-          >
-            <X className="h-3 w-3" />
-            <span>Clear filters ({selectedTags.length})</span>
-          </Badge>
-        )}
-
-        {allTags.map((tag) => (
-          <Badge
-            key={tag}
-            variant={selectedTags.includes(tag) ? "default" : "outline"}
-            className="cursor-pointer"
-            onClick={() => {
-              setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
-            }}
-          >
-            {tag}
-          </Badge>
-        ))}
+        {allTags.map((tag, index) => {
+          const scheme = tagColorSchemes[index % tagColorSchemes.length];
+          const hoverClasses = `${scheme.light} ${scheme.dark}`;
+          return (
+            <Badge
+              key={tag}
+              variant={"outline"} 
+              className={`cursor-default transition-all duration-200 ease-in-out ${hoverClasses}`}
+            >
+              {tag}
+            </Badge>
+          );
+        })}
       </div>
 
       <motion.div
@@ -255,7 +273,7 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
         viewport={{ once: true }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {filteredProjects.map((project) => (
+        {projects.map((project) => (
           <ProjectCard key={project.id} project={project} onClick={() => openModal("project", project)} />
         ))}
       </motion.div>
