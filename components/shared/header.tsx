@@ -7,7 +7,6 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/shared/mode-toggle"
 import { cn } from "@/lib/utils"
-import Image from "next/image"
 
 interface HeaderProps {
   activeSection: string
@@ -48,8 +47,7 @@ export function Header({ activeSection }: HeaderProps) {
             transition={{ duration: 0.5 }}
             className="flex items-center gap-2 font-bold text-xl"
           >
-            <Image src="/logo.png" alt="Irene MG Logo" width={32} height={32} className="rounded-full" />
-            <span>Irene MG</span>
+            <span className="font-pecita">Irene MG</span>
           </motion.div>
         </Link>
 
