@@ -59,7 +59,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       logo: "/hackathon/vrain_logo.jpeg?height=200&width=200",
       projectTitle: "Aura",
       role: "UX/UI & Frontend Developer",
-      description: "AI-powered assistant app for visually impaired people",
+      description: "AI-powered assistant for visually impaired people",
       date: "Jun 2025",
       awards: ["Pending"],
       fullStory:
@@ -75,11 +75,11 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
 
 {
       id: 4,
-      eventName: "World’s Largest Hackathon presented by Bolt",
+      eventName: "World’s Largest Hackathon by Bolt",
       logo: "/hackathon/bolt.jpg?height=200&width=200",
       projectTitle: "Aura",
       role: "UX/UI & Frontend Developer",
-      description: "AI-powered assistant app for visually impaired people",
+      description: "AI-powered assistant for visually impaired people",
       date: "Jun 2025",
       awards: ["Pending"],
       fullStory:
