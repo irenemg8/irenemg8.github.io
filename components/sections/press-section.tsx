@@ -54,11 +54,11 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
       platform: "Gandía Council News",
       logo: "/press/Logo_ayto_gandia.jpg?height=200&width=200",
       title: "Gandía Hosts the Third Edition of Campus Salud Gandía",
-      date: "May 202",
+      date: "May 2025",
       excerpt: "The city of Gandía welcomes the third edition of Campus Salud GandÍa, an intensive university event focusing on urban health innovation.",
       fullArticle:
         "On May 2nd and 3rd, 2025, Gandía hosted the third edition of Campus Salud Gandía, an intensive university event dedicated to promoting innovation in urban health. The event brought together students, researchers, and professionals to collaborate on projects aimed at improving the quality of life in urban environments. This year's edition featured a series of workshops, presentations, and collaborative sessions, fostering interdisciplinary approaches to health challenges in cities. The initiative underscores Gandía's commitment to integrating academic research and practical solutions to enhance public health and urban living.",
-      source: "https://gandiainnova.webs.upv.es/blog/2024/03/08/prototipos-iot-gti-2024/",
+      source: "https://www.gandia.es/atg/news/new.php?id=5250",
       contextualSummary:
         "The article details Gandía's hosting of the third Campus Salud Gandía, emphasizing the city's dedication to fostering innovation in urban health through academic and professional collaboration.",
     },
