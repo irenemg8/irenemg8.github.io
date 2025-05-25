@@ -76,7 +76,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
 {
       id: 4,
       eventName: "World’s Largest Hackathon presented by Bolt",
-      logo: "/hackathon/bolt.jpg.jpeg?height=200&width=200",
+      logo: "/hackathon/bolt.jpg?height=200&width=200",
       projectTitle: "Aura",
       role: "UX/UI & Frontend Developer",
       description: "AI-powered assistant app for visually impaired people",
