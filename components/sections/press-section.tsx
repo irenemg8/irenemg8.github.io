@@ -64,6 +64,42 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     },
   ]
 
+  const monthMap: { [key: string]: number } = {
+    Jan: 0, January: 0,
+    Feb: 1, February: 1,
+    Mar: 2, March: 2,
+    Apr: 3, April: 3,
+    May: 4, 
+    Jun: 5, June: 5,
+    Jul: 6, July: 6,
+    Aug: 7, August: 7,
+    Sep: 8, Sept: 8, September: 8,
+    Oct: 9, October: 9,
+    Nov: 10, November: 10,
+    Dec: 11, December: 11
+  };
+
+  function parsePressDate(dateString: string): Date {
+    const dateParts = dateString.split(" ");
+    if (dateParts.length < 2) {
+      return new Date(0); 
+    }
+    const [monthStr, yearStr] = dateParts;
+    const year = parseInt(yearStr, 10);
+    const month = monthMap[monthStr];
+    
+    if (isNaN(year) || month === undefined) {
+        return new Date(0);
+    }
+    return new Date(year, month + 1, 0); 
+  }
+
+  const sortedPressItems = pressItems.sort((a, b) => {
+    const dateA = parsePressDate(a.date);
+    const dateB = parsePressDate(b.date);
+    return dateB.getTime() - dateA.getTime(); // De más reciente a más antiguo
+  });
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -96,7 +132,7 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
         viewport={{ once: true }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        {pressItems.map((item) => (
+        {sortedPressItems.map((item) => (
           <PressCard key={item.id} item={item} onClick={() => openModal("press", item)} />
         ))}
       </motion.div>
