@@ -54,14 +54,14 @@ export function HackathonCard({ hackathon, onClick }: HackathonCardProps) {
           <p className="text-sm text-muted-foreground mb-2">Role: {hackathon.role}</p>
           <p className="text-muted-foreground mb-4 line-clamp-2">{hackathon.description}</p>
 
-          {hackathon.awards.length > 0 && (
+          {(hackathon.awards && hackathon.awards.length > 0) && (
             <div className="space-y-2">
               <div className="flex items-center gap-1 text-sm font-medium">
                 <Award className="h-4 w-4 text-primary" />
                 <span>Awards</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {hackathon.awards.map((award, index) => (
+                {(hackathon.awards || []).map((award, index) => (
                   <Badge key={index} variant="outline">
                     {award}
                   </Badge>

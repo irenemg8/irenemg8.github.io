@@ -18,7 +18,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       role: "Software developer",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
       date: "Sept 2023",
-      //awards: ["Best Game Design", "People's Choice"],
+      awards: [],
       fullStory:
         "During the 2-day hackathon, I worked on a team that developed an app to locate, reserve, and review EV charging points in real time. I focused on front-end design and UX, creating a simple, intuitive interface. We applied agile methods to deliver a working MVP and presented it to industry leaders.",
       technologies: ["Axure", "Figma", "Android"],
