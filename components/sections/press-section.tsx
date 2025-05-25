@@ -38,16 +38,16 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     },
     {
       id: 3,
-      platform: "Web Dev Journal",
-      logo: "/placeholder.svg?height=200&width=200",
-      title: "Optimizing Performance in Modern Web Apps",
-      date: "December 2022",
-      excerpt: "A technical deep-dive into performance optimization techniques for complex web applications.",
+      platform: "Gandia Innova News",
+      logo: "/press/catedrainnovacion.jpeg?height=200&width=200",
+      title: "Ecocity: Smart Streetlights Prototype Revolutionizes Urban Life",
+      date: "Mar 2024",
+      excerpt: "Ecocity introduces smart streetlight technology that goes beyond lighting, offering real-time environmental monitoring and intelligent control for modern urban environments.",
       fullArticle:
-        "Performance is increasingly becoming a key differentiator in web development. This technical article explores advanced techniques for optimizing load times, rendering performance, and interaction responsiveness in complex web applications. From code splitting and lazy loading to efficient state management and rendering strategies, the piece covers practical approaches that developers can implement immediately to improve user experience and engagement metrics.",
-      source: "https://example.com/article3",
+        "The Ecocity Smart Streetlights project represents a leap forward in the integration of IoT technology into urban infrastructure. Far from being just a lighting solution, Ecocity’s smart streetlights actively monitor key environmental parameters in real time, including temperature, humidity, smoke levels, and noise pollution. The system empowers city administrators and residents by allowing the adjustment of streetlight brightness through a dedicated Android application. Furthermore, users receive instant alerts whenever environmental thresholds are exceeded, enabling proactive responses to changing urban conditions. This innovative prototype aims to enhance quality of life, promote safety, and pave the way for smarter, greener cities. The project was developed by a multidisciplinary team from the Universitat Politècnica de València: Rubén García Quiralte, Pablo Meana Gonzalez, Irene Medina García, Pablo Rebollo de Miguel, and Vicente Jose Rivas Monferrer.",
+      source: "https://gandiainnova.webs.upv.es/blog/2024/03/08/prototipos-iot-gti-2024/",
       contextualSummary:
-        "This technical article shared insights and best practices for web performance optimization, based on real-world experience with high-traffic applications and complex interactive interfaces.",
+        "This news article presents the Ecocity Smart Streetlights project, highlighting its innovative approach to urban lighting by integrating advanced IoT monitoring and smart control. Developed by a team of students at UPV, Ecocity exemplifies the future of sustainable, connected cities.",
     },
     {
       id: 4,
