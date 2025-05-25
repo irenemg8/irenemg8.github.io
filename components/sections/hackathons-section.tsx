@@ -18,7 +18,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       role: "Software developer",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
       date: "Sept 2023",
-      awards: [],
+      awards: ["Semifinalists"],
       fullStory:
         "During the 2-day hackathon, I worked on a team that developed an app to locate, reserve, and review EV charging points in real time. I focused on front-end design and UX, creating a simple, intuitive interface. We applied agile methods to deliver a working MVP and presented it to industry leaders.",
       technologies: ["Axure", "Figma", "Android"],
@@ -50,28 +50,28 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     challenges:
       "The main challenge was translating complex microbiota research into a tangible, user-centered product within a 48-hour timeframe. We tackled this by rapidly prototyping the concept using cross-disciplinary sprints and testing micro-interactions with users in real time.",
     //githubUrl: "https://github.com/urbanvive/hackathon-safor-salut",
-    //liveUrl: "https://urbanvive.vercel.app",
+    liveUrl: "https://www.canva.com/design/DAGmUaMmc1Q/qEBb7fra-d-sfrh8tSUNvQ/view?utm_content=DAGmUaMmc1Q&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h917ff62e5e",
     mediaUrl: "https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/amp/"
   },
-    /*{
+    {
       id: 3,
-      eventName: "Fintech Hackathon",
-      logo: "/placeholder.svg?height=200&width=200",
-      projectTitle: "BudgetBuddy",
-      role: "Full Stack Developer",
-      description: "Personal finance app with gamification elements",
-      date: "June 2023",
-      awards: ["1st Place Overall", "Best UX Design"],
+      eventName: "Smart City Challenges 2025",
+      logo: "/hackathon/vrain_logo.jpeg?height=200&width=200",
+      projectTitle: "Aura",
+      role: "UX/UI & Frontend Developer",
+      description: "AI-powered assistant app for visually impaired people",
+      date: "Jun 2025",
+      awards: ["Pending"],
       fullStory:
-        "BudgetBuddy is a personal finance application that uses gamification to encourage better financial habits. Users earn points and badges for saving money, staying under budget, and achieving financial goals. The app features visualizations of spending patterns, automated categorization of expenses, and personalized financial advice.",
-      technologies: ["Next.js", "TypeScript", "Plaid API", "MongoDB", "Chart.js"],
-      team: ["Michael Brown (Product Manager)", "Emily Wilson (UI Designer)", "James Lee (Data Scientist)"],
+        "Aura is an innovative mobile application designed to empower visually impaired individuals by transforming their smartphones into intelligent personal assistants. Utilizing the device’s camera, advanced image recognition, and real-time voice feedback, Aura helps users independently navigate indoor and outdoor spaces, identify products in supermarkets (brand, properties, price, and more), and access detailed visual information about their surroundings. The app goes beyond navigation: it aims to bridge accessibility gaps by integrating artificial intelligence, open data, and voice interaction, offering a scalable platform for multiple smart city applications.",
+      technologies: ["Figma", "React Native", "TypeScript", "Speech-To-Text", "AWS", "Open Data APIs"],
+      team: ["Irene Medina García (UX/UI & Frontend)", "Vicente Rivas Monferrer (Backend)", "Ada González (Frontend)", "Raúl Fortea (Backend)"],
       challenges:
-        "Integrating with multiple banking APIs while ensuring data security and privacy was our main challenge. We implemented end-to-end encryption and followed best practices for handling sensitive financial information.",
-      githubUrl: "https://github.com",
-      liveUrl: "https://example.com",
-      mediaUrl: "https://youtube.com",
-    },*/
+            "Our main challenge was to achieve high-accuracy real-time image recognition in diverse environments, while ensuring seamless and accessible voice interaction for users with different levels of vision loss. We also prioritized user privacy and data security, implementing strict permission controls and processing sensitive data locally whenever possible.",
+      //githubUrl: "https://github.com",
+      //liveUrl: "https://example.com",
+      //mediaUrl: "https://youtube.com",
+    },
   ]
 
   const container = {
