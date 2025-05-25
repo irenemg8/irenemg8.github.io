@@ -13,7 +13,7 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     {
       id: 1,
       platform: "Gandía Innova - UPV",
-      logo: "/press/placeholder.svg?height=200&width=200",
+      logo: "/press/catedrainnovacion.jpeg?height=200&width=200",
       title: "EcoCity: Smart Urban Planning Prototype by GTI Students",
       date: "Feb 2024",
       excerpt: "EcoCity is a sustainable city model developed by students of the GTI degree at UPV, using IoT and AI technologies to optimize urban mobility and environmental impact.",
@@ -25,16 +25,14 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     },
     {
       id: 2,
-      platform: "Design Weekly",
-      logo: "/placeholder.svg?height=200&width=200",
-      title: "The Intersection of Code and Design",
-      date: "February 2023",
-      excerpt: "How this developer-designer is bridging the gap between beautiful design and functional code.",
+      platform: "Tercera edición del Campus Salud Gandia",
+      logo: "/press/upvgandia.jpg?height=200&width=200",
+      title: "UrbanVive Wins First Prize at the 3rd Campus Salud Gandia Hackathon",URBANVIVE, an interdisciplinary team from UPV, wins the top award with an innovative urban project enhancing public health through biotechnology and smart design.",
       fullArticle:
-        "The traditional divide between designers and developers is being challenged by a new generation of creative technologists who excel in both domains. This feature explores how combining strong design sensibilities with technical expertise leads to more cohesive, innovative digital products. Through case studies of recent projects, we see how this approach results in websites and applications that are not only visually stunning but also technically robust and user-friendly.",
-      source: "https://example.com/article2",
+        "At the third edition of Campus Salud Gandia 2025, the URBANVIVE team was awarded the first prize for their groundbreaking urban innovation project. URBANVIVE proposes the development and installation of paving stones enriched with a beneficial microbiota, capable of releasing natural compounds as people walk over them. These compounds, absorbed through the skin or inhaled, have proven positive effects: strengthening the immune system, reducing stress and anxiety, and helping to prevent respiratory issues and common colds. The project exemplifies a new intersection between biotechnology, urban design, and public health, and was presented by students from the Interactive Technologies Degree at the Gandia Campus (UPV), the Biomedical Engineering Degree (UPV), and a researcher from the IBMCP at UPV. URBANVIVE reflects a vision for healthier, more sustainable cities, leveraging science to enhance citizens’ daily wellbeing.",
+      source: "https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/",
       contextualSummary:
-        "This feature article examined the growing trend of designer-developers and how this hybrid role is reshaping the industry, with specific examples from recent portfolio work.",
+        "The article covers the victory of the URBANVIVE team at Campus Salud Gandia 2025, highlighting their award-winning project that uses microbiota-enhanced paving stones to improve urban public health through natural biotechnology, interdisciplinary collaboration, and innovation.",
     },
     {
       id: 3,
