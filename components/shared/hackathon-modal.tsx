@@ -50,11 +50,11 @@ export function HackathonModal({ content, onClose }: HackathonModalProps) {
             <h3 className="text-xl font-bold mb-2">{content.projectTitle}</h3>
             <p className="text-muted-foreground mb-4">Role: {content.role}</p>
 
-            {content.awards.length > 0 && (
+            {(content.awards && content.awards.length > 0) && (
               <div className="flex items-center gap-2 mb-4">
                 <Award className="h-5 w-5 text-primary" />
                 <div className="flex flex-wrap gap-2">
-                  {content.awards.map((award: string, index: number) => (
+                  {(content.awards || []).map((award: string, index: number) => (
                     <Badge key={index} variant="secondary">
                       {award}
                     </Badge>
