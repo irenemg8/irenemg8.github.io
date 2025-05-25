@@ -171,7 +171,7 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
     return dateB.getTime() - dateA.getTime();
   });
   
-  const allTags = Array.from(new Set(projects.flatMap((project) => project.tags))).sort()
+  const allTags = Array.from(new Set(projects.flatMap((project) => (project.tags || [])))).sort()
 
   const tagColorSchemes = [
     {

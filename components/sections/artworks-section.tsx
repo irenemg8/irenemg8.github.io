@@ -92,7 +92,7 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
     },
   ]
 
-  const artworkTypes = Array.from(new Set(artworks.map((artwork) => artwork.type))).sort()
+  const artworkTypes = Array.from(new Set(artworks.map((artwork) => artwork.type || ""))).sort()
 
   const tagColorSchemes = [
     {

@@ -55,7 +55,7 @@ export function ArtworkCard({ artwork, onClick }: ArtworkCardProps) {
           <p className="text-muted-foreground line-clamp-2 mb-4">{artwork.description}</p>
 
           <ExpandableBadges 
-            items={artwork.tools} 
+            items={artwork.tools || []} 
             expanded={toolsExpanded} 
             setExpanded={setToolsExpanded}
             title="Tools Used"

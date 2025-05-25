@@ -56,7 +56,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           <p className="text-muted-foreground mb-4 line-clamp-2">{project.description}</p>
           
           <ExpandableBadges 
-            items={project.tags} 
+            items={project.tags || []} 
             expanded={tagsExpanded} 
             setExpanded={setTagsExpanded} 
             title="Tags"
