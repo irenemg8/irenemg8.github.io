@@ -25,20 +25,20 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     },
     {
       id: 2,
-      platform: "Tercera edición del Campus Salud Gandia",
+      platform: "Tercera edición del Campus Salud Gandía",
       logo: "/press/upvgandia.jpg?height=200&width=200",
-      title: "UrbanVive Wins First Prize at the 3rd Campus Salud Gandia Hackathon",
+      title: "UrbanVive Wins First Prize at the 3rd Campus Salud Gandía Hackathon",
       excerpt: "URBANVIVE, an interdisciplinary team from UPV, wins the top award with an innovative urban project enhancing public health through biotechnology and smart design.",
       date: "May 2025",
       fullArticle:
-        "At the third edition of Campus Salud Gandia 2025, the URBANVIVE team was awarded the first prize for their groundbreaking urban innovation project. URBANVIVE proposes the development and installation of paving stones enriched with a beneficial microbiota, capable of releasing natural compounds as people walk over them. These compounds, absorbed through the skin or inhaled, have proven positive effects: strengthening the immune system, reducing stress and anxiety, and helping to prevent respiratory issues and common colds. The project exemplifies a new intersection between biotechnology, urban design, and public health, and was presented by students from the Interactive Technologies Degree at the Gandia Campus (UPV), the Biomedical Engineering Degree (UPV), and a researcher from the IBMCP at UPV. URBANVIVE reflects a vision for healthier, more sustainable cities, leveraging science to enhance citizens' daily wellbeing.",
+        "At the third edition of Campus Salud Gandía 2025, the URBANVIVE team was awarded the first prize for their groundbreaking urban innovation project. URBANVIVE proposes the development and installation of paving stones enriched with a beneficial microbiota, capable of releasing natural compounds as people walk over them. These compounds, absorbed through the skin or inhaled, have proven positive effects: strengthening the immune system, reducing stress and anxiety, and helping to prevent respiratory issues and common colds. The project exemplifies a new intersection between biotechnology, urban design, and public health, and was presented by students from the Interactive Technologies Degree at the Gandia Campus (UPV), the Biomedical Engineering Degree (UPV), and a researcher from the IBMCP at UPV. URBANVIVE reflects a vision for healthier, more sustainable cities, leveraging science to enhance citizens' daily wellbeing.",
       source: "https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/",
       contextualSummary:
-        "The article covers the victory of the URBANVIVE team at Campus Salud Gandia 2025, highlighting their award-winning project that uses microbiota-enhanced paving stones to improve urban public health through natural biotechnology, interdisciplinary collaboration, and innovation.",
+        "The article covers the victory of the URBANVIVE team at Campus Salud Gandía 2025, highlighting their award-winning project that uses microbiota-enhanced paving stones to improve urban public health through natural biotechnology, interdisciplinary collaboration, and innovation.",
     },
     {
       id: 3,
-      platform: "Gandia Innova News",
+      platform: "Gandía Innova - UPV",
       logo: "/press/catedrainnovacion.jpeg?height=200&width=200",
       title: "Ecocity: Smart Streetlights Prototype Revolutionizes Urban Life",
       date: "Mar 2024",
@@ -51,16 +51,16 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     },
     {
       id: 4,
-      platform: "Creative Coding",
-      logo: "/placeholder.svg?height=200&width=200",
-      title: "Exploring Creative Possibilities with WebGL",
-      date: "October 2022",
-      excerpt: "How this developer is pushing the boundaries of web graphics with WebGL and Three.js.",
+      platform: "Gandía Council News",
+      logo: "/press/Logo_ayto_gandia.jpg?height=200&width=200",
+      title: "Gandía Hosts the Third Edition of Campus Salud Gandía",
+      date: "May 202",
+      excerpt: "The city of Gandía welcomes the third edition of Campus Salud GandÍa, an intensive university event focusing on urban health innovation.",
       fullArticle:
-        "The web browser has evolved into a powerful platform for graphics and interactive experiences. This feature explores innovative projects that leverage WebGL and Three.js to create immersive 3D experiences directly in the browser. From data visualizations to interactive art installations, these projects demonstrate how web technologies can be used for creative expression while maintaining performance and accessibility across devices.",
-      source: "https://example.com/article4",
+        "On May 2nd and 3rd, 2025, Gandía hosted the third edition of Campus Salud Gandía, an intensive university event dedicated to promoting innovation in urban health. The event brought together students, researchers, and professionals to collaborate on projects aimed at improving the quality of life in urban environments. This year's edition featured a series of workshops, presentations, and collaborative sessions, fostering interdisciplinary approaches to health challenges in cities. The initiative underscores Gandía's commitment to integrating academic research and practical solutions to enhance public health and urban living.",
+      source: "https://gandiainnova.webs.upv.es/blog/2024/03/08/prototipos-iot-gti-2024/",
       contextualSummary:
-        "This article showcased experimental 3D web projects and discussed the technical challenges and creative process behind creating immersive browser-based experiences.",
+        "The article details Gandía's hosting of the third Campus Salud Gandía, emphasizing the city's dedication to fostering innovation in urban health through academic and professional collaboration.",
     },
   ]
 
