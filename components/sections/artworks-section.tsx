@@ -30,7 +30,7 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
       title: "Icon Library",
       type: "UI Kit",
       image: "/art/icon.svg?height=600&width=800",
-      year: "2023",
+      year: "2025",
       description: "A comprehensive UI kit with over 50 components",
       fullDescription:
         "A comprehensive UI component library designed for modern web applications. Includes over 50 components with various states, dark/light mode variants, and responsive layouts.",
@@ -38,58 +38,111 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
       designNotes:
         "Designed with accessibility and flexibility in mind. Each component follows a consistent 8px grid system and uses a modular color system that can be easily customized.",
     },
+        
+
     {
       id: 3,
-      title: "Abstract Shapes",
-      type: "Digital Art",
-      image: "/placeholder.svg?height=600&width=800",
-      year: "2022",
-      description: "Series of abstract compositions with geometric shapes",
+      title: "Nemo - Yummy Fish",
+      type: "Low Poly",
+      image: "/art/nemo.png?height=600&width=800",
+      year: "2024",
+      description: "Low poly 3D model of Nemo, designed for the Yummy Fish game.",
       fullDescription:
-        "A series of abstract digital compositions exploring the relationship between geometric shapes, color, and texture. Each piece was created through a process of digital collage and manipulation.",
-      tools: ["Photoshop", "Illustrator", "Procreate"],
+        "A stylized, low poly 3D model of Nemo, created as a playable character for the video game Yummy Fish. The model emphasizes vibrant colors and minimal geometry to ensure optimal performance in real-time environments, while retaining character expressiveness and appeal. Developed through a process of concept sketching, digital sculpting, and texturing, the model fits seamlessly into the playful and dynamic aesthetic of the game.",
+      tools: ["Blender", "3ds Max", "Photoshop"],
       designNotes:
-        "This series explores the tension between order and chaos. The geometric shapes provide structure while organic textures and color gradients add unpredictability.",
+        "The design goal was to capture the iconic look of Nemo using as few polygons as possible, balancing visual fidelity with in-game efficiency. The color palette was selected to maximize readability and player engagement, while the proportions and details were stylized to match the fun, accessible world of Yummy Fish.",
     },
+
     {
       id: 4,
-      title: "Character Design",
-      type: "3D Character",
-      image: "/placeholder.svg?height=600&width=800",
-      year: "2022",
-      description: "Stylized 3D character design for animation",
+      title: "Mario Bros's World",
+      type: "3D",
+      image: "/art/mario.png?height=600&width=800",
+      year: "2024",
+      description: "A realistic 3D character model, reimagined for a next-generation game environment.",
       fullDescription:
-        "A stylized 3D character designed for animation and game development. Features a complete rig with facial expressions and customizable outfits.",
-      tools: ["Blender", "ZBrush", "Substance Painter"],
+        "A high-fidelity, realistic 3D model of Mario Bros, designed as an exploration of classic character redesign for modern gaming platforms. This version maintains Mario's iconic features. The modeling pipeline included advanced sculpting, materials, and rigging for full animation compatibility. The result is a visually immersive take on an iconic character, suitable for use in cinematic trailers or game environments.",
+      tools: ["Blender", "Photoshop"],
       designNotes:
-        "The character design focuses on readability and expressiveness. The silhouette was carefully crafted to be recognizable from different angles and distances.",
+        "The main creative challenge was preserving Mario's world instantly recognizable silhouette and personality while translating it into a realistic art style. Special attention was paid to material lighting to ensure a believable yet appealing result. The color palette references the original games, but is enhanced with nuanced shading for added realism.",
     },
+
     {
       id: 5,
-      title: "Mobile App Redesign",
-      type: "UI Kit",
-      image: "/placeholder.svg?height=600&width=800",
-      year: "2021",
-      description: "Complete redesign of a fitness tracking mobile app",
+      title: "Realistic Moon",
+      type: "3D",
+      image: "/art/luna.png?height=600&width=800",
+      year: "2024",
+      description: "A photorealistic 3D model of the Moon, animated to rotate on its axis for immersive visualizations.",
       fullDescription:
-        "A comprehensive redesign of a fitness tracking mobile application. The project included user research, wireframing, visual design, and interactive prototyping.",
-      tools: ["Figma", "Protopie", "Illustrator"],
+        "A highly detailed, realistic 3D model of the Moon, designed to showcase advanced texturing, surface detail, and astronomical accuracy. The model features true-to-life lunar surface textures, craters, and shading, with a physically accurate rotation animation. Developed for use in scientific visualization, planetarium software, and high-end animation projects, this asset demonstrates expertise in both realism and real-time rendering techniques.",
+      tools: ["Blender", "Photoshop"],
       designNotes:
-        "The redesign focused on improving usability and engagement. Key improvements included a simplified navigation system, more visual data representations, and a more motivating reward system.",
+        "The main creative challenge was achieving a balance between scientific accuracy and visual appeal. High-resolution displacement and normal maps were employed to recreate the Moon's topography, while physically based lighting ensures the lunar surface responds realistically under various illumination conditions. The rotation animation is set to reflect the Moon’s natural axial movement, enhancing realism and educational value.",
     },
+
     {
       id: 6,
-      title: "Isometric Room",
-      type: "3D Low Poly",
-      image: "/placeholder.svg?height=600&width=800",
-      year: "2021",
-      description: "Isometric 3D room with detailed furnishings",
+      title: "Yarn Mushroom",
+      type: "3D",
+      image: "/art/champinon.png?height=600&width=800",
+      year: "2024",
+      description: "A stylized 3D mushroom character created with a realistic yarn effect.",
       fullDescription:
-        "An isometric 3D room scene with detailed furnishings and lighting. Created as an exploration of composition and storytelling through environmental design.",
-      tools: ["Blender", "Substance Painter", "Photoshop"],
+        "A playful and charming 3D model of a mushroom character, designed to emulate the look and feel of soft yarn or crochet art. Created using advanced hair and fur simulation techniques in Blender, the model features a vibrant red cap and a fuzzy beige stem, complete with expressive eyes and a friendly smile. This piece explores the intersection of digital sculpting and tactile aesthetics, bringing a handcrafted warmth into the digital realm. The model is suitable for use in stylized animations, games, or collectibles visualization.",
+      tools: ["Blender", "Photoshop"],
       designNotes:
-        "The scene was designed to tell a story about its inhabitant through carefully placed objects and details. The color palette was chosen to create a warm, lived-in atmosphere.",
+        "The main creative challenge was achieving a convincing yarn texture that evokes both realism and whimsy. Special attention was given to the grooming of individual fibers and to the lighting setup, enhancing the cozy, approachable feel. The color palette and proportions were carefully selected to maximize character appeal and visual softness.",
     },
+    
+    {
+      id: 7,
+      title: "Clay Octopus",
+      type: "3D",
+      image: "/art/pulpo.png?height=600&width=800",
+      year: "2024",
+      description: "A cute, stylized 3D octopus character designed with a soft, approachable aesthetic.",
+      fullDescription:
+        "A charming 3D model of a kawaii-inspired octopus character, crafted to evoke playfulness and friendliness. Featuring rounded forms, vibrant green hues, and expressive facial details, this model embodies the 'soft toy' aesthetic popular in stylized animation and games. Designed with simplicity in mind, the geometry is optimized for both real-time rendering and high-quality stills. The project explores the use of color, shape, and minimalism to maximize emotional appeal and versatility in various digital applications.",
+      tools: ["Blender", "Photoshop"],
+      designNotes:
+        "The main design challenge was achieving a delicate balance between simplicity and character. Strategic use of shading, soft gradients, and exaggerated proportions help bring out the octopus's personality. The model is ideal for use in mobile games, animations, or digital collectibles aimed at a broad audience.",
+    },
+
+    
+    {
+      id: 8,
+      title: "Kawaii Forest Doll",
+      type: "3D",
+      image: "/art/doll.png?height=600&width=800",
+      year: "2025",
+      description: "A whimsical 3D stylized doll character, set in a magical forest scene.",
+      fullDescription:
+        "A charming 3D model of a kawaii-inspired doll, presented within a dreamy forest environment. The scene features the main character surrounded by playful forest creatures and whimsical flora, all rendered in a soft monochromatic palette to enhance the storybook atmosphere. Attention to rounded forms, gentle lighting, and expressive facial details creates a warm and inviting aesthetic. This piece explores the intersection of toy design and narrative illustration, making it ideal for animation, games, or collectible design.",
+      tools: ["Blender", "Photoshop"],
+      designNotes:
+        "The core design challenge was to capture innocence and wonder through minimalism and color harmony. Each element—from the doll's gentle features to the playful forest animals—was sculpted to evoke friendliness and emotional resonance. Soft shading and balanced composition ensure the scene feels both cohesive and magical.",
+    },
+    
+    {
+      id: 9,
+      title: "Enchanted Forest",
+      type: "3D",
+      image: "/art/forest.gif?height=600&width=800",
+      year: "2024",
+      description: "A looping 3D animation of a mystical forest with a stylized character centerpiece.",
+      fullDescription:
+        "A visually captivating 3D animated scene set in an enchanted forest, featuring a stylized character atop an ancient pedestal. The environment is rich with organic details—twisted trees, glowing plants, and atmospheric lighting—that create a sense of magic and wonder. Animated lighting transitions and subtle environmental movements enhance the immersion, while the gentle loop invites continuous viewing. This piece was designed as both an exercise in environmental storytelling and a showcase of real-time animation techniques.",
+      tools: ["Blender", "AI"],
+      designNotes:
+        "The main creative challenge was balancing intricate environmental details with a soft, inviting color palette. Dynamic lighting and animated elements were used to convey a sense of wonder without overwhelming the viewer. The stylized character serves as a focal point, anchoring the scene in a narrative that suggests mystery and discovery.",
+    }
+    
+
+    
+    
+    
   ]
 
   const artworkTypes = Array.from(new Set(artworks.map((artwork) => artwork.type || ""))).sort()
