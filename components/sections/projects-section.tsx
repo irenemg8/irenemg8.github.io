@@ -136,6 +136,95 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
   demoUrl: "/under-construction"
 },
 
+{
+  id: 8,
+  title: "NeuroSpot",
+  description: "An interactive assessment platform using cognitive games and AWS cloud services to screen for early ADHD indicators in children.",
+  image: "/aidguide/neurospot.svg?height=600&width=800",
+  date: "May 2025",
+  tags: ["AWS", "React", "Node.js", "Cognitive Games", "UX/UI", "Serverless", "AI", "Education Tech"],
+  githubUrl: "https://github.com/vjrivmon/NeuroSpot",
+  liveUrl: "/under-construction",
+  fullDescription:
+  "NeuroSpot is an innovative platform designed to support early detection of potential ADHD indicators in children through interactive cognitive games. The system integrates a suite of short, engaging tasks that assess attention, memory, and impulse control. Leveraging AWS services such as S3, CloudFront, Lambda, Rekognition, Transcribe, and Comprehend, NeuroSpot provides real-time analytics, automated feedback, and secure storage of sensitive data. As part of the development team, I contributed to the architecture, UI/UX design, and the implementation of cloud-based functionalities to ensure a seamless and secure user experience for both children and educators.",
+  techStack: ["React", "Node.js", "AWS", "Figma", "Jest" ],  
+  challenges:
+  "The main challenge was integrating multiple AWS services to provide real-time analysis and maintaining strict compliance with data privacy standards for children. We addressed this through modular serverless architectures and rigorous user testing to ensure accessibility and reliability.",
+  role: "Full Stack Developer & UX Designer",
+  demoUrl: "/under-construction"
+},
+
+{
+  id: 9,
+  title: "Othello",
+  description: "A competitive AI agent for Othello, leveraging Minimax with alpha-beta pruning and custom heuristics.",
+  image: "/aidguide/othello.png?height=600&width=800",
+  date: "May 2025",
+  tags: ["Unity", "C#", "AI", "Minimax", "Alpha-Beta Pruning", "Heuristic Design"],
+  githubUrl: "https://github.com/irenemg8/othello_game",
+  liveUrl: "https://irenemg8.github.io/othello_game/",
+  fullDescription:
+  "Othello Battle AI is a competitive artificial intelligence agent developed for the game Othello, designed to participate in academic tournaments. Implemented in C# within the Unity engine, the agent utilizes the Minimax algorithm with alpha-beta pruning to optimize its decision-making. A custom evaluation heuristic was engineered to balance positional strength, mobility, and game phase dynamics, aiming for both defensive and offensive strategies. This project showcases advanced AI logic, algorithmic efficiency, and a robust user interface for real-time gameplay.",
+  techStack: ["Unity", "C#", "Minimax", "Alpha-Beta Pruning", "Custom Heuristics"],
+  challenges:
+    "The primary challenge was balancing AI performance and computational efficiency under strict tournament constraints. Fine-tuning the evaluation function to achieve strong gameplay across all phases of Othello required iterative testing, data-driven refinements, and a deep understanding of both algorithmic theory and game mechanics.",
+  role: "AI Developer & Game Designer",
+  demoUrl: "https://irenemg8.github.io/othello_game/"
+},
+
+{
+  id: 10,
+  title: "Cops and Robbers",
+  description: "A strategic multiplayer board game simulation featuring AI-driven agents and real-time pursuit logic.",
+  image: "/aidguide/cops.webp?height=600&width=800",
+  date: "May 2024",
+  tags: ["Unity", "C#", "AI"],
+  githubUrl: "https://github.com/vjrivmon/cops-and-robbers",
+  liveUrl: "/under-construction",
+  fullDescription:
+  "Cops and Robbers is a simulation-based multiplayer board game developed as an academic team project. The game models the classic pursuit-evasion dynamic, where players take on the roles of cops or robbers. Advanced AI agents utilize graph-based pathfinding algorithms to optimize their movements and strategies. The simulation incorporates real-time decision-making, obstacle avoidance, and player-versus-player logic, delivering a competitive and educational experience. My contributions focused on AI behavior design, game mechanics development, and optimizing the simulation for seamless multiplayer interaction.",
+  techStack: ["C#", "Graph Algorithms"],  
+  challenges:
+    "The main challenge involved designing efficient AI for both pursuit and evasion in complex, variable game environments. Achieving balanced gameplay and real-time responsiveness required iterative tuning of pathfinding algorithms and robust game logic architecture.",
+  role: "AI & Gameplay Developer",
+  demoUrl: "/under-construction"
+},
+
+{
+  id: 11,
+  title: "Blackjack",
+  description: "A digital adaptation of the classic Blackjack card game featuring intuitive UI, robust game logic, and AI opponents.",
+  image: "/aidguide/blackjack.webp?height=600&width=800",
+  date: "May 2024",
+  tags: ["Unity", "C#", "AI"],
+  githubUrl: "https://github.com/vjrivmon/blackjack",
+  liveUrl: "/under-construction",
+  fullDescription:
+  "Blackjack is a digital recreation of the iconic casino card game, developed as a collaborative academic project. The game offers a polished, user-friendly interface and faithfully implements the official rules and betting mechanics of Blackjack. The application features AI-driven opponents with varying levels of difficulty, enhancing replay value and strategic challenge. My contributions included designing the UI for a smooth player experience, programming core game logic, and developing the AI behavior to simulate real-life dealer and player actions.",
+  techStack: ["C#", "Graph Algorithms"],  
+  challenges:
+  "The key challenge was ensuring accurate rule enforcement and dynamic game flow while maintaining a responsive, intuitive user interface. Developing AI strategies for opponents required balancing realism and fun across different skill levels.",
+role: "UI/UX Designer & Game Developer",
+demoUrl: "/under-construction"
+},
+
+{
+  id: 12,
+  title: "Torres de Hanoi",
+  description: "An interactive visualization and solver for the classic Towers of Hanoi puzzle with step-by-step guidance.",
+  image: "/aidguide/torres.jpeg?height=600&width=800",
+  date: "Mar 2024",
+  tags: ["Unity", "C#", "AI"],
+  githubUrl: "https://github.com/vjrivmon/torres-de-hanoi",
+  liveUrl: "/under-construction",
+  fullDescription:
+  "Towers of Hanoi is an educational application that visualizes and solves the legendary recursive puzzle. The tool offers an intuitive UI allowing users to manually solve the puzzle or watch an automated step-by-step solution, effectively demonstrating recursion principles in computer science. The project emphasizes didactic clarity and visual engagement, making complex algorithms accessible for students and enthusiasts. My role involved UI/UX design, algorithm implementation, and enhancing user interactivity for a smooth learning experience.",
+  techStack: ["C#", "Graph Algorithms"],  
+  challenges:
+    "The main challenge was translating recursive algorithm logic into clear, real-time visual feedback for users. Ensuring both educational value and usability required close attention to interface design and performance optimization.",
+  role: "UI/UX Designer & Algorithm Developer",
+  demoUrl: "/under-construction"
+},
     
     
   ]

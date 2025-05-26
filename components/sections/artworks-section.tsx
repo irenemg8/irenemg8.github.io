@@ -14,16 +14,16 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
   const artworks = [
     {
       id: 1,
-      title: "Neon City",
-      type: "3D Low Poly",
-      image: "/placeholder.svg?height=600&width=800",
-      year: "2023",
-      description: "A low poly 3D cityscape with neon lighting effects",
+      title: "UrbanCity",
+      type: "Interactive App",
+      image: "/art/urbancity.png?height=600&width=800",
+      year: "2025",
+      description: "An interactive app promoting urban walking routes in Valencia.",
       fullDescription:
-        "A detailed low poly 3D cityscape featuring neon lighting effects and atmospheric fog. Created as an exploration of mood and lighting in stylized environments.",
-      tools: ["Blender", "Substance Painter", "Photoshop"],
+        "An interactive project designed to encourage walking as a sustainable and healthy means of transportation in Valencia. The visualization highlights key urban routes, green areas, and landmarks, offering an immersive experience to motivate citizens to discover their city on foot. Developed with a focus on user engagement and accessibility.",
+      tools: ["V0", "Figma", "React", "Typescript", "TailwindCSS"],
       designNotes:
-        "The goal was to create a visually striking environment with minimal geometry. The color palette was inspired by cyberpunk aesthetics with a focus on contrasting cool and warm tones.",
+        "The main objective was to create an appealing and informative visual tool that would lower the barrier for citizens to choose walking over other modes of transport. The design leverages a stylized low poly aesthetic inspired by Mediterranean urban landscapes, with a vibrant color palette evoking energy and movement. Interactive elements guide users through the city and showcase benefits of walking for health and the environment.",
     },
     {
       id: 2,
