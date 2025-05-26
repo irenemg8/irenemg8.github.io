@@ -133,7 +133,7 @@ export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSecti
   challenges:
     "The most complex challenge was achieving reliable real-time object detection in dynamic environments while ensuring smooth autonomous navigation. We solved this by fine-tuning lightweight AI models and designing fallback behaviors for uncertain scenarios.",
   role: "Software designer & dev",
-  demoUrl: "https://youtu.be/aidguide-demo"
+  demoUrl: "/under-construction"
 },
 
     
