@@ -79,7 +79,7 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
         "A highly detailed, realistic 3D model of the Moon, designed to showcase advanced texturing, surface detail, and astronomical accuracy. The model features true-to-life lunar surface textures, craters, and shading, with a physically accurate rotation animation. Developed for use in scientific visualization, planetarium software, and high-end animation projects, this asset demonstrates expertise in both realism and real-time rendering techniques.",
       tools: ["Blender", "Photoshop"],
       designNotes:
-        "The main creative challenge was achieving a balance between scientific accuracy and visual appeal. High-resolution displacement and normal maps were employed to recreate the Moon's topography, while physically based lighting ensures the lunar surface responds realistically under various illumination conditions. The rotation animation is set to reflect the Moon’s natural axial movement, enhancing realism and educational value.",
+        "The main creative challenge was achieving a balance between scientific accuracy and visual appeal. High-resolution displacement and normal maps were employed to recreate the Moon's topography, while physically based lighting ensures the lunar surface responds realistically under various illumination conditions. The rotation animation is set to reflect the Moon's natural axial movement, enhancing realism and educational value.",
     },
 
     {
@@ -130,7 +130,7 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
       title: "Enchanted Forest",
       type: "3D",
       image: "/art/forest.gif?height=600&width=800",
-      year: "2024",
+      year: "2025",
       description: "A looping 3D animation of a mystical forest with a stylized character centerpiece.",
       fullDescription:
         "A visually captivating 3D animated scene set in an enchanted forest, featuring a stylized character atop an ancient pedestal. The environment is rich with organic details—twisted trees, glowing plants, and atmospheric lighting—that create a sense of magic and wonder. Animated lighting transitions and subtle environmental movements enhance the immersion, while the gentle loop invites continuous viewing. This piece was designed as both an exercise in environmental storytelling and a showcase of real-time animation techniques.",
@@ -192,6 +192,8 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
     },
   }
 
+  const sortedArtworks = [...artworks].sort((a, b) => parseInt(b.year) - parseInt(a.year));
+
   return (
     <div>
       <motion.div
@@ -230,7 +232,7 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
         viewport={{ once: true }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        {artworks.map((artwork) => (
+        {sortedArtworks.map((artwork) => (
           <ArtworkCard key={artwork.id} artwork={artwork} onClick={() => openModal("artwork", artwork)} />
         ))}
       </motion.div>
