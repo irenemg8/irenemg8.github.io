@@ -244,8 +244,24 @@ demoUrl: "/under-construction"
   demoUrl: "/under-construction"
 },
 
-    
-    
+{
+  id: 14,
+  title: "3D Portfolio Demo",
+  description: "Personal portfolio that blends advanced 3D graphics with UX/UI best practices, redefining how creative professionals showcase work online.",
+  image: "/aidguide/portfolio.png?height=600&width=800",
+  date: "Mar 2025",
+  tags: ["3D", "UX/UI", "Portfolio", "Web Design", "Animation"],
+  githubUrl: "https://github.com/irenemg8/Portfolio",
+  liveUrl: "https://irene.divdev.es/",
+  fullDescription:
+  "The 3D Portfolio Demo is a prototype personal website designed to set a new benchmark in digital self-presentation for creative professionals. Combining real-time 3D elements, interactive navigation, and smooth animations, the site offers an immersive user experience while adhering to best practices in accessibility and responsive design. Custom assets—including floating clouds, stylized flowers, and Greek columns—were modeled in Blender and integrated using Three.js and React. The project prioritizes both aesthetics and usability, delivering a visually striking and highly functional portfolio platform. My contributions spanned 3D modeling, front-end development, animation, and overall UX strategy, ensuring the project aligns with contemporary digital storytelling trends.",
+  techStack: ["Blender", "Three.js", "React", "Figma", "Tailwind CSS"],
+  challenges:
+    "The primary challenge was achieving optimal performance and compatibility across devices while delivering rich 3D interactions. Careful optimization of assets, efficient use of JavaScript libraries, and a mobile-first approach were crucial for a seamless user experience.",
+    role: "Designer & Developer",
+    demoUrl: "https://irene.divdev.es/"
+},
+
     
   ]
 
