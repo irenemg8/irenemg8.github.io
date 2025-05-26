@@ -27,9 +27,9 @@ export function ArtworksSection({ openModal, title = "Artworks" }: ArtworksSecti
     },
     {
       id: 2,
-      title: "UI Component Library",
+      title: "Icon Library",
       type: "UI Kit",
-      image: "/placeholder.svg?height=600&width=800",
+      image: "/art/icon.svg?height=600&width=800",
       year: "2023",
       description: "A comprehensive UI kit with over 50 components",
       fullDescription:

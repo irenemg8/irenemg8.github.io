@@ -62,6 +62,22 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
       contextualSummary:
         "The article details Gandía's hosting of the third Campus Salud Gandía, emphasizing the city's dedication to fostering innovation in urban health through academic and professional collaboration.",
     },
+
+    {
+      id: 5,
+      platform: "UPV Pódcast",
+      logo: "/press/upv.png?height=200&width=200",
+      title: "Talpa Tunneling UPV: Student Innovation Breaks Ground in TBM Tech",
+      date: "May 2025",
+      excerpt:
+        "Talpa Tunneling UPV, a student team from Universitat Politècnica de València, takes on the global Not-a-Boring Competition by The Boring Company, pioneering new approaches in underground infrastructure.",
+      fullArticle:
+        "In a recent episode of 'Un Día Perfecte', the official podcast of Universitat Politècnica de València, the Talpa Tunneling UPV team shared their vision and technical journey in designing and building a custom tunnel boring machine (TBM) for The Boring Company's prestigious Not-a-Boring Competition. The interview highlighted the team's multidisciplinary collaboration across engineering, robotics, and software, as well as their innovative approach to automation, real-time monitoring, and sustainable tunnel construction.\n\nThe podcast delved into the real-world challenges faced by the students, such as integrating hardware and software subsystems, optimizing for safety and efficiency, and iterating design prototypes under time constraints. Team members discussed how agile methodologies and the UPV's ecosystem of support allowed them to translate academic theory into impactful, practical engineering solutions. The experience not only propels the university onto the international stage but also inspires a new generation of engineers to reimagine infrastructure for the future.",
+      source: "https://podcast.upv.es/programa/un-dia-perfecte/?episodio=talpa-tunneling-upv-las-locuritas-de-ursula",
+      contextualSummary:
+        "This article covers the Talpa Tunneling UPV team's feature on the UPV podcast, emphasizing their participation in the Not-a-Boring Competition, technical innovation, and the importance of interdisciplinary teamwork in large-scale engineering projects."
+    }
+    
   ]
 
   const monthMap: { [key: string]: number } = {

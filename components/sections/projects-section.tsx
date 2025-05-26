@@ -225,6 +225,26 @@ demoUrl: "/under-construction"
   role: "UI/UX Designer & Algorithm Developer",
   demoUrl: "/under-construction"
 },
+
+{
+  id: 13,
+  title: "Talpa Tunneling UPV",
+  description: "A multidisciplinary engineering project developing a custom tunnel boring machine (TBM) for the Not-A-Boring Competition.",
+  image: "/aidguide/talpa.svg?height=600&width=800",
+  date: "Apr 2025 - Apr 2026",
+  tags: ["Mechanical Engineering", "Robotics", "Automation", "CAD", "IoT"],
+  githubUrl: "https://github.com/Talpa-Tunneling-UPV",
+  liveUrl: "/under-construction",
+  fullDescription:
+    "Talpa Tunneling UPV is a student-led initiative at Universitat Politècnica de València aimed at designing and building a fully functional tunnel boring machine (TBM) to compete in The Boring Company's Not-A-Boring Competition. The project integrates mechanical design, robotics, real-time monitoring, and automation systems, following an agile methodology to drive rapid prototyping and interdisciplinary collaboration. My contributions centered on software architecture for sensor data acquisition, real-time dashboard visualization, and supporting the control system for autonomous tunneling operations. The project exemplifies innovation, teamwork, and the application of cutting-edge technology to real-world infrastructure challenges.",
+  techStack: ["Figma", "Python", "ROS2", "Node.js", "React"],
+  challenges:
+    "The key challenges included achieving reliable mechanical performance in harsh conditions, integrating hardware and software components, and ensuring robust real-time communication between subsystems. Iterative testing and cross-functional collaboration were crucial to optimizing both tunneling speed and system stability.",
+  role: "Software Systems Engineer & Dashboard Developer",
+  demoUrl: "/under-construction"
+},
+
+    
     
     
   ]
