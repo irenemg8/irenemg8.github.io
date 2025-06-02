@@ -76,7 +76,22 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
       source: "https://podcast.upv.es/programa/un-dia-perfecte/?episodio=talpa-tunneling-upv-las-locuritas-de-ursula",
       contextualSummary:
         "This article covers the Talpa Tunneling UPV team's feature on the UPV podcast, emphasizing their participation in the Not-a-Boring Competition, technical innovation, and the importance of interdisciplinary teamwork in large-scale engineering projects."
-    }
+    },
+
+    {
+      id: 6,
+      platform: "IES J. Martínez Ruiz "Azorín"",
+      logo: "/press/etwinning.jpg?height=200&width=200",
+      title: "Breaking New Ground: First eTwinning Program Certified at Our School",
+      date: "Apr 2020",
+      excerpt:
+        "In the 2019–2020 academic year, students from 3º ESO CD Bilingual at IES J. Martínez Ruiz "Azorín" made history as the school’s very first cohort to achieve official eTwinning certification, setting a new standard for international collaboration and digital education.",
+      fullArticle:
+      "The 2019–2020 school year marked a turning point at IES J. Martínez Ruiz \"Azorín\" as the bilingual students of 3º ESO CD pioneered the school’s inaugural eTwinning program. As the first group to ever receive the eTwinning Certificate, these students set a precedent for innovative and international digital education within our institution. The project enabled the students to connect and collaborate with their European peers through the eTwinning platform, developing joint presentations, fostering language skills, and experiencing real-world teamwork in a digital environment. This collaborative journey not only enhanced their digital literacy and intercultural understanding but also positioned our school as a leader in educational innovation.\n\nAs a highlight of their efforts, the students created a multimedia presentation that reflects the milestones, challenges, and growth they experienced during the project. The recognition with the official eTwinning Certificate stands as a testament to their commitment and vision for a globally connected future. To discover more about this groundbreaking project, you can view the students’ presentation through the following link.",
+      source: "https://www.murciaeduca.es/iesjmartinezruizazorin/sitio/index.cgi?wid_seccion=36&wid_item=189",
+      contextualSummary:
+      "This article covers the achievement of the first-ever eTwinning certification at IES J. Martínez Ruiz "Azorín", highlighting the bilingual students’ leadership in launching an international collaborative project and its impact on digital and intercultural education at the school."
+  },
     
   ]
 
