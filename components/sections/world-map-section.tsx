@@ -4,6 +4,15 @@ import dynamic from 'next/dynamic'
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
+// Variables globales para mantener el estado
+const globeStateManager = {
+  currentRotation: 0,
+  lastTimestamp: Date.now(),
+  pointOfView: { lat: 0, lng: 0, altitude: 2.5 },
+  isInitialized: false,
+  rotationSpeed: 0.0001
+};
+
 // Importación dinámica para evitar problemas con SSR
 const GlobeGL = dynamic(() => import('react-globe.gl'), { 
   ssr: false,
@@ -27,8 +36,9 @@ interface WorldMapSectionProps {
 }
 
 export function WorldMapSection({ title }: WorldMapSectionProps) {
-  const globeRef = useRef<any>()
+  const globeRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const frameIdRef = useRef<number | null>(null)
   const [dimensions, setDimensions] = useState({ width: 900, height: 600 })
   const [globeMounted, setGlobeMounted] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
@@ -174,7 +184,7 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
     function handleResize() {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth;
-        const height = Math.min(600, Math.max(350, width * 0.7)); // Aumentado la proporción altura/anchura
+        const height = Math.min(600, Math.max(350, width * 0.7)); 
         setDimensions({ width, height });
       }
     }
@@ -186,62 +196,142 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
     };
   }, []);
 
-  // Configurar el globo después de que se monte
+  // Función de animación para la rotación del globo
+  const animate = () => {
+    if (!globeRef.current || !globeRef.current.scene) {
+      frameIdRef.current = requestAnimationFrame(animate);
+      return;
+    }
+    
+    if (!isPaused) {
+      const now = Date.now();
+      const deltaMs = now - globeStateManager.lastTimestamp;
+      globeStateManager.lastTimestamp = now;
+      
+      // Actualizar rotación
+      globeStateManager.currentRotation += globeStateManager.rotationSpeed * deltaMs;
+      
+      // Aplicar rotación de forma segura
+      if (globeRef.current && 
+          globeRef.current.scene && 
+          globeRef.current.scene.rotation) {
+        globeRef.current.scene.rotation.y = globeStateManager.currentRotation;
+      }
+      
+      // Guardar punto de vista actual
+      try {
+        if (globeRef.current && typeof globeRef.current.pointOfView === 'function') {
+          const pov = globeRef.current.pointOfView();
+          if (pov && typeof pov === 'object') {
+            globeStateManager.pointOfView = pov;
+          }
+        }
+      } catch (err) {
+        console.error("Error al obtener el punto de vista:", err);
+      }
+    }
+    
+    frameIdRef.current = requestAnimationFrame(animate);
+  };
+  
+  // Inicialización del globo
   useEffect(() => {
+    // Esperar a que el componente esté montado y el globo disponible
     if (!globeRef.current) return;
     
-    const globe = globeRef.current;
+    // Iniciar animación si no está iniciada ya
+    if (frameIdRef.current === null) {
+      globeStateManager.lastTimestamp = Date.now();
+      frameIdRef.current = requestAnimationFrame(animate);
+    }
     
-    // Ajustar la distancia de la cámara para que se vea más grande
-    globe.pointOfView({ altitude: 2.5 });
-    
-    setGlobeMounted(true);
-    
-    // Configurar rotación automática
-    let rotationSpeed = 0.001; // Velocidad de rotación aumentada
-    
-    // Usar un intervalo en lugar de requestAnimationFrame para garantizar la rotación continua
-    const intervalId = setInterval(() => {
-      if (globe && globe.scene && globe.scene.rotation && !isPaused) {
-        globe.scene.rotation.y += rotationSpeed * 16; // Aproximadamente 16ms por frame a 60fps
+    // Configurar el globo
+    try {
+      const globe = globeRef.current;
+      
+      // Aplicar estado guardado si existe
+      if (globeStateManager.isInitialized) {
+        // Restaurar rotación
+        if (globe.scene && globe.scene.rotation) {
+          globe.scene.rotation.y = globeStateManager.currentRotation;
+        }
+        
+        // Restaurar punto de vista
+        if (typeof globe.pointOfView === 'function') {
+          globe.pointOfView(globeStateManager.pointOfView);
+        }
+      } else {
+        // Primera inicialización
+        if (typeof globe.pointOfView === 'function') {
+          globe.pointOfView({ lat: 0, lng: 0, altitude: 2.5 });
+        }
+        globeStateManager.isInitialized = true;
       }
-    }, 16);
+      
+      setGlobeMounted(true);
+      
+    } catch (err) {
+      console.error("Error al configurar el globo:", err);
+    }
     
-    // Limpiar el intervalo al desmontar
+    // Limpieza al desmontar
     return () => {
-      clearInterval(intervalId);
+      if (frameIdRef.current !== null) {
+        cancelAnimationFrame(frameIdRef.current);
+        frameIdRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Gestor de interacción del usuario
+  useEffect(() => {
+    // Si se reanuda la rotación, actualizar la marca de tiempo
+    // para evitar saltos en la animación
+    if (!isPaused) {
+      globeStateManager.lastTimestamp = Date.now();
+    }
+  }, [isPaused]);
+  
+  // Auto-reanudar después de un periodo de inactividad
+  useEffect(() => {
+    let resumeTimer: NodeJS.Timeout | null = null;
+    
+    if (isPaused) {
+      resumeTimer = setTimeout(() => {
+        setIsPaused(false);
+      }, 5000);
+    }
+    
+    return () => {
+      if (resumeTimer) {
+        clearTimeout(resumeTimer);
+      }
     };
   }, [isPaused]);
 
-  // Manejadores para pausar/reanudar la rotación al interactuar
-  const handleGlobePointerDown = () => {
+  // Manejadores de eventos
+  const handlePointerDown = () => {
     setIsPaused(true);
   };
 
-  const handleGlobePointerUp = () => {
-    // Reanudar la rotación inmediatamente
-    setIsPaused(false);
-  };
-
-  // Usar un efecto para manejar la pausa/reanudación de la rotación
-  useEffect(() => {
-    let resumeTimeout: NodeJS.Timeout | null = null;
-    
-    if (isPaused) {
-      // Programar la reanudación de la rotación después de un tiempo
-      resumeTimeout = setTimeout(() => {
-        setIsPaused(false);
-      }, 3000);
-    }
-    
-    // Limpiar el timeout al desmontar o cuando cambie isPaused
-    return () => {
-      if (resumeTimeout) {
-        clearTimeout(resumeTimeout);
+  const handlePointerUp = () => {
+    // Guardar la vista actual antes de reanudar
+    if (globeRef.current && typeof globeRef.current.pointOfView === 'function') {
+      try {
+        const pov = globeRef.current.pointOfView();
+        if (pov) {
+          globeStateManager.pointOfView = pov;
+        }
+      } catch (err) {
+        console.error("Error al guardar el punto de vista:", err);
       }
-    };
-  }, [isPaused]);
-
+    }
+  };
+  
+  // No llamar a setIsPaused directamente aquí para permitir un retraso
+  // entre soltar el puntero y reanudar la rotación
+  const handlePointerLeave = handlePointerUp;
+  
   return (
     <div className="w-full">
       <h2 className="text-3xl font-bold font-pecita mb-8 flex justify-center items-center gap-2">
@@ -258,12 +348,109 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
         <div 
           ref={containerRef} 
           className="relative w-full h-auto"
-          onPointerDown={handleGlobePointerDown}
-          onPointerUp={handleGlobePointerUp}
-          onPointerLeave={handleGlobePointerUp}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerLeave}
         >
           {/* Contenedor para el globo */}
           <Suspense fallback={<div style={{ height: `${dimensions.height}px` }} className="w-full flex items-center justify-center">Loading map...</div>}>
+            <style jsx global>{`
+              .location-label {
+                position: absolute;
+                background-color: rgba(0, 0, 0, 0.75);
+                color: white;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                font-weight: bold;
+                transform: translate(-50%, -100%);
+                opacity: 0;
+                transition: opacity 0.2s;
+                z-index: 1000;
+                text-align: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                pointer-events: none;
+                margin-top: -10px;
+              }
+              
+              .globe-marker {
+                cursor: pointer;
+                position: relative;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              
+              .globe-marker-dot {
+                width: 12px;
+                height: 12px;
+                background: radial-gradient(circle at 40% 40%, #ff5252, #d32f2f);
+                border-radius: 50%;
+                box-shadow: 0 0 0 4px rgba(255,255,255,0.6), 0 0 8px 3px rgba(255,41,41,0.6), inset 0 3px 2px rgba(255,255,255,0.4);
+              }
+              
+              .globe-marker:hover .location-label {
+                opacity: 1;
+              }
+              
+              .globe-marker.active .location-label {
+                opacity: 0;
+              }
+              
+              .globe-tooltip {
+                position: absolute;
+                bottom: 120%;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: white;
+                color: black;
+                padding: 12px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                width: 250px;
+                text-align: center;
+                z-index: 2000;
+                opacity: 0;
+                display: none;
+                pointer-events: auto;
+              }
+              
+              .globe-marker.active .globe-tooltip {
+                opacity: 1;
+                display: block;
+              }
+              
+              .globe-tooltip::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -8px;
+                border-width: 8px;
+                border-style: solid;
+                border-color: white transparent transparent transparent;
+              }
+              
+              .tooltip-close {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #f0f0f0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-weight: bold;
+                font-size: 14px;
+                line-height: 1;
+                border: none;
+              }
+            `}</style>
             <GlobeGL
               ref={globeRef}
               globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
@@ -273,122 +460,144 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
               htmlElementsData={travelLocations}
               htmlLat="lat"
               htmlLng="lng"
-              htmlAltitude={0.015} // Aumentado para que las chinchetas se vean más alejadas de la superficie
+              htmlAltitude={0.015}
               htmlElement={(d: any) => {
+                // Creamos un elemento simple con estilos directos
                 const el = document.createElement('div');
                 
-                // Crear el contenedor principal
-                const container = document.createElement('div');
-                container.className = 'relative';
-                container.style.width = '30px';
-                container.style.height = '30px';
+                // Crear el marcador base con un tamaño adecuado para ser clickeable
+                el.style.position = 'relative';
+                el.style.width = '20px';
+                el.style.height = '20px';
+                el.style.cursor = 'pointer';
+                el.setAttribute('data-name', d.name);
                 
-                // Crear la chincheta
-                const marker = document.createElement('div');
-                marker.className = 'cursor-pointer';
-                marker.style.width = '14px';
-                marker.style.height = '14px';
-                marker.style.background = 'radial-gradient(circle at 40% 40%, #ff5252, #d32f2f)';
-                marker.style.borderRadius = '50%';
-                marker.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.6), 0 0 8px 3px rgba(255,41,41,0.6), inset 0 3px 2px rgba(255,255,255,0.4)';
-                marker.style.position = 'absolute';
-                marker.style.top = '8px';
-                marker.style.left = '8px';
-                marker.style.zIndex = '2';
+                // Crear el punto rojo (chincheta)
+                const dot = document.createElement('div');
+                dot.style.width = '10px';
+                dot.style.height = '10px';
+                dot.style.borderRadius = '50%';
+                dot.style.background = 'radial-gradient(circle at 40% 40%, #ff5252, #d32f2f)';
+                dot.style.boxShadow = '0 0 0 2px rgba(255,255,255,0.6), 0 0 8px 2px rgba(255,41,41,0.6)';
+                dot.style.position = 'absolute';
+                dot.style.top = '5px';
+                dot.style.left = '5px';
                 
-                // Crear la parte inferior de la chincheta
-                const pin = document.createElement('div');
-                pin.style.position = 'absolute';
-                pin.style.top = '22px';
-                pin.style.left = '13px';
-                pin.style.width = '6px';
-                pin.style.height = '14px';
-                pin.style.background = 'linear-gradient(135deg, #ff5252, #b71c1c)';
-                pin.style.transform = 'perspective(15px) rotateX(-35deg)';
-                pin.style.transformOrigin = 'top center';
-                pin.style.clipPath = 'polygon(0% 0%, 100% 0%, 50% 100%)';
-                pin.style.boxShadow = '0 4px 6px rgba(0,0,0,0.6)';
-                pin.style.zIndex = '1';
+                // Estado para el tooltip
+                let tooltipVisible = false;
                 
-                // Añadir eventos a la chincheta
-                marker.addEventListener('click', () => {
-                  const tooltip = container.querySelector('.tooltip') as HTMLElement;
+                // Función para mostrar el tooltip simple
+                function showSimpleTooltip() {
+                  if (tooltipVisible) return;
                   
-                  // Si ya hay un tooltip activo para otra chincheta, ocultarlo
-                  const activeTooltips = document.querySelectorAll('.tooltip.active');
-                  activeTooltips.forEach(t => {
-                    if (t !== tooltip) {
-                      t.classList.remove('active');
-                      (t as HTMLElement).style.display = 'none';
-                    }
+                  // Remover tooltips existentes
+                  const existingTooltip = document.getElementById('simple-tooltip-' + d.id);
+                  if (existingTooltip) {
+                    existingTooltip.remove();
+                  }
+                  
+                  // Crear tooltip básico
+                  const tooltip = document.createElement('div');
+                  tooltip.id = 'simple-tooltip-' + d.id;
+                  tooltip.innerText = d.name;
+                  tooltip.style.position = 'absolute';
+                  tooltip.style.bottom = '25px';
+                  tooltip.style.left = '50%';
+                  tooltip.style.transform = 'translateX(-50%)';
+                  tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
+                  tooltip.style.color = 'white';
+                  tooltip.style.padding = '3px 8px';
+                  tooltip.style.borderRadius = '4px';
+                  tooltip.style.fontSize = '12px';
+                  tooltip.style.fontWeight = 'bold';
+                  tooltip.style.whiteSpace = 'nowrap';
+                  tooltip.style.zIndex = '9999';
+                  
+                  el.appendChild(tooltip);
+                }
+                
+                // Función para ocultar el tooltip simple
+                function hideSimpleTooltip() {
+                  const tooltip = document.getElementById('simple-tooltip-' + d.id);
+                  if (tooltip && !tooltipVisible) {
+                    tooltip.remove();
+                  }
+                }
+                
+                // Función para mostrar el tooltip detallado
+                function showDetailTooltip() {
+                  // Primero ocultar cualquier otro tooltip detallado
+                  document.querySelectorAll('[id^="detail-tooltip-"]').forEach(tip => {
+                    tip.remove();
                   });
                   
-                  if (tooltip) {
-                    // Alternar visibilidad del tooltip
-                    if (tooltip.classList.contains('active')) {
-                      tooltip.classList.remove('active');
-                      tooltip.style.display = 'none';
-                    } else {
-                      tooltip.classList.add('active');
-                      tooltip.style.display = 'block';
+                  // Ocultar tooltip simple
+                  hideSimpleTooltip();
+                  
+                  // Crear tooltip detallado
+                  const detailTooltip = document.createElement('div');
+                  detailTooltip.id = 'detail-tooltip-' + d.id;
+                  detailTooltip.style.position = 'absolute';
+                  detailTooltip.style.bottom = '30px';
+                  detailTooltip.style.left = '50%';
+                  detailTooltip.style.transform = 'translateX(-50%)';
+                  detailTooltip.style.backgroundColor = 'white';
+                  detailTooltip.style.color = 'black';
+                  detailTooltip.style.padding = '10px';
+                  detailTooltip.style.borderRadius = '6px';
+                  detailTooltip.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+                  detailTooltip.style.width = '220px';
+                  detailTooltip.style.zIndex = '10000';
+                  
+                  // Contenido
+                  detailTooltip.innerHTML = `
+                    <div style="position:relative; padding-right:20px;">
+                      <button id="close-btn-${d.id}" style="position:absolute; top:0; right:0; background:#eee; border:none; border-radius:50%; width:18px; height:18px; font-size:12px; line-height:1; cursor:pointer;">×</button>
+                      <h3 style="margin:0 0 5px; font-size:14px; font-weight:bold;">${d.name}</h3>
+                      <div style="color:#4299e1; font-size:11px; margin-bottom:5px;">${d.cityInfo || ''}</div>
+                      <hr style="margin:5px 0; border:none; height:1px; background:#eee;">
+                      <div style="font-size:11px; margin:3px 0; font-weight:500;">${d.event || ''}</div>
+                      <div style="font-size:11px; color:#666;">${d.date || ''}</div>
+                      <p style="font-size:11px; font-style:italic; margin:5px 0;">${d.description || ''}</p>
+                      ${d.additionalInfo ? 
+                        `<div style="margin-top:5px; padding-top:5px; border-top:1px solid #eee; font-size:10px; color:#555;">${d.additionalInfo}</div>` 
+                        : ''}
+                    </div>
+                  `;
+                  
+                  el.appendChild(detailTooltip);
+                  tooltipVisible = true;
+                  
+                  // Agregar evento al botón cerrar
+                  setTimeout(() => {
+                    const closeBtn = document.getElementById('close-btn-' + d.id);
+                    if (closeBtn) {
+                      closeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        detailTooltip.remove();
+                        tooltipVisible = false;
+                      });
                     }
+                  }, 0);
+                }
+                
+                // Eventos simples
+                el.addEventListener('mouseover', showSimpleTooltip);
+                el.addEventListener('mouseout', hideSimpleTooltip);
+                el.addEventListener('click', () => {
+                  if (tooltipVisible) {
+                    const detailTooltip = document.getElementById('detail-tooltip-' + d.id);
+                    if (detailTooltip) {
+                      detailTooltip.remove();
+                      tooltipVisible = false;
+                    }
+                  } else {
+                    showDetailTooltip();
                   }
                 });
                 
-                // Añadir la chincheta al contenedor
-                container.appendChild(marker);
-                container.appendChild(pin);
-                
-                // Crear el tooltip
-                const tooltip = document.createElement('div');
-                tooltip.className = 'tooltip';
-                tooltip.style.position = 'absolute';
-                tooltip.style.bottom = '30px';
-                tooltip.style.left = '50%';
-                tooltip.style.transform = 'translateX(-50%)';
-                tooltip.style.backgroundColor = 'white';
-                tooltip.style.color = 'black';
-                tooltip.style.padding = '12px';
-                tooltip.style.borderRadius = '8px';
-                tooltip.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
-                tooltip.style.width = '250px';
-                tooltip.style.textAlign = 'center';
-                tooltip.style.zIndex = '100';
-                tooltip.style.display = 'none';
-                tooltip.style.pointerEvents = 'auto';
-                
-                // Crear el contenido del tooltip
-                tooltip.innerHTML = `
-                  <div class="relative">
-                    <button class="close-btn" style="position:absolute; top:0; right:0; background:#f0f0f0; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold;">×</button>
-                    <h3 style="font-weight:bold; margin-bottom:5px; padding-right:20px;">${d.name}</h3>
-                    <div style="color:#4299e1; font-size:12px; margin-bottom:5px;">${d.cityInfo || ''}</div>
-                    <hr style="border:none; height:1px; background-color:#e2e8f0; margin:8px 0;" />
-                    <div style="font-size:12px; font-weight:500;">${d.event || ''}</div>
-                    <div style="font-size:12px; color:#718096; margin-bottom:5px;">${d.date || ''}</div>
-                    <p style="font-size:12px; font-style:italic; margin-top:8px;">"${d.description || ''}"</p>
-                    ${d.additionalInfo ? `
-                      <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e2e8f0;">
-                        <p style="font-size:12px; color:#4a5568;">${d.additionalInfo}</p>
-                      </div>
-                    ` : ''}
-                  </div>
-                `;
-                
-                // Añadir el tooltip al contenedor
-                container.appendChild(tooltip);
-                
-                // Añadir evento al botón de cerrar inmediatamente sin setTimeout
-                const closeBtn = tooltip.querySelector('.close-btn');
-                if (closeBtn) {
-                  closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    tooltip.style.display = 'none';
-                    tooltip.classList.remove('active');
-                  });
-                }
-                
-                el.appendChild(container);
+                // Añadir el punto al contenedor
+                el.appendChild(dot);
                 return el;
               }}
               width={dimensions.width}
