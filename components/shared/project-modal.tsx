@@ -39,6 +39,7 @@ export function ProjectModal({ content, onClose }: ProjectModalProps) {
               src={content.image || "/placeholder.svg"}
               alt={content.title}
               fill
+              priority={content.priority}
               className="object-cover rounded-t-2xl"
             />
             <Button

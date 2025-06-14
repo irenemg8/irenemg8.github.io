@@ -4,6 +4,7 @@ import { ProjectsSection } from "@/components/sections/projects-section"
 import { ArtworksSection } from "@/components/sections/artworks-section"
 import { HackathonsSection } from "@/components/sections/hackathons-section"
 import { PressSection } from "@/components/sections/press-section"
+import { WorldMapSection } from "@/components/sections/world-map-section"
 import { Footer } from "@/components/shared/footer"
 import { Header } from "@/components/shared/header"
 import { CustomCursor } from "@/components/shared/custom-cursor"
@@ -16,7 +17,7 @@ import { useActiveSection } from "@/hooks/use-active-section"
 import { useModal } from "@/hooks/use-modal"
 
 export default function Home() {
-  const { activeSection, sectionRefs } = useActiveSection(["projects", "artworks", "hackathons", "press"])
+  const { activeSection, sectionRefs } = useActiveSection(["projects", "artworks", "hackathons", "press", "travels"])
 
   const { modalContent, modalType, isOpen, openModal, closeModal } = useModal()
 
@@ -40,6 +41,10 @@ export default function Home() {
 
         <section id="press" ref={(el) => (sectionRefs.current.press = el)} className="py-16 md:py-24">
           <PressSection openModal={openModal} title="📰 Press 📰" />
+        </section>
+
+        <section id="travels" ref={(el) => (sectionRefs.current.travels = el)} className="pt-16 pb-4 md:pt-24 md:pb-8">
+          <WorldMapSection title="🌎 World map 🌎" />
         </section>
       </main>
 

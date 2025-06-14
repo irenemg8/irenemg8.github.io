@@ -13,6 +13,7 @@ interface Project {
   title: string
   description: string
   image: string
+  priority?: boolean
   date: string
   tags: string[]
   techStack: string[]
@@ -45,6 +46,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
             src={project.image || "/placeholder.svg"}
             alt={project.title}
             fill
+            priority={project.priority}
             className="object-cover transition-transform duration-500 hover:scale-105"
           />
         </div>
