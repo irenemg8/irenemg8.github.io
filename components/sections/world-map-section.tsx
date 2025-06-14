@@ -90,10 +90,10 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
       additionalInfo: "Guangzhou, anteriormente conocida como Cantón, es la tercera ciudad más grande de China y un importante centro comercial con más de 2200 años de historia."
     },
     {
-      id: "varsovia",
+      id: "warsaw",
       lat: 52.2297,
       lng: 21.0122,
-      name: "Varsovia",
+      name: "Warsaw",
       description: "Visita cultural a la capital polaca",
       event: "Conferencia europea",
       date: "2024",
@@ -112,10 +112,10 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
       additionalInfo: "Broadstairs fue el lugar de veraneo favorito de Charles Dickens, quien escribió partes de 'David Copperfield' mientras se alojaba en Bleak House."
     },
     {
-      id: "roma",
+      id: "rome",
       lat: 41.9028,
       lng: 12.4964,
-      name: "Roma",
+      name: "Rome",
       description: "Visita a monumentos históricos y museos",
       event: "Viaje cultural",
       date: "2022",
@@ -126,7 +126,7 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
       id: "paris",
       lat: 48.8566,
       lng: 2.3522,
-      name: "París",
+      name: "Paris",
       description: "Recorrido por los principales monumentos y museos",
       event: "Viaje de estudios",
       date: "2023",
@@ -465,11 +465,14 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                 // Creamos un elemento simple con estilos directos
                 const el = document.createElement('div');
                 
-                // Crear el marcador base con un tamaño adecuado para ser clickeable
+                // Crear el contenedor con estilos para mostrar nombre siempre
                 el.style.position = 'relative';
-                el.style.width = '20px';
-                el.style.height = '20px';
+                el.style.width = 'auto'; // Auto-ajuste al contenido
+                el.style.height = 'auto'; // Auto-ajuste al contenido
                 el.style.cursor = 'pointer';
+                el.style.display = 'flex';
+                el.style.flexDirection = 'column';
+                el.style.alignItems = 'center';
                 el.setAttribute('data-name', d.name);
                 
                 // Crear el punto rojo (chincheta)
@@ -479,50 +482,26 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                 dot.style.borderRadius = '50%';
                 dot.style.background = 'radial-gradient(circle at 40% 40%, #ff5252, #d32f2f)';
                 dot.style.boxShadow = '0 0 0 2px rgba(255,255,255,0.6), 0 0 8px 2px rgba(255,41,41,0.6)';
-                dot.style.position = 'absolute';
-                dot.style.top = '5px';
-                dot.style.left = '5px';
+                dot.style.marginTop = '2px'; // Pequeño espacio entre la etiqueta y el punto
                 
-                // Estado para el tooltip
+                // Crear la etiqueta permanente con el nombre
+                const nameLabel = document.createElement('div');
+                nameLabel.textContent = d.name;
+                nameLabel.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                nameLabel.style.color = 'white';
+                nameLabel.style.padding = '2px 5px';
+                nameLabel.style.borderRadius = '3px';
+                nameLabel.style.fontSize = '10px';
+                nameLabel.style.fontWeight = 'bold';
+                nameLabel.style.whiteSpace = 'nowrap'; // Mantener el texto en una sola línea
+                nameLabel.style.textAlign = 'center';
+                nameLabel.style.boxShadow = '0 1px 3px rgba(0,0,0,0.3)';
+                nameLabel.style.pointerEvents = 'none'; // Para que no interfiera con los eventos
+                nameLabel.style.display = 'block'; // Para que se ajuste al contenido
+                nameLabel.style.maxWidth = '100px'; // Ancho máximo por si hay nombres muy largos
+                
+                // Estado para el tooltip detallado
                 let tooltipVisible = false;
-                
-                // Función para mostrar el tooltip simple
-                function showSimpleTooltip() {
-                  if (tooltipVisible) return;
-                  
-                  // Remover tooltips existentes
-                  const existingTooltip = document.getElementById('simple-tooltip-' + d.id);
-                  if (existingTooltip) {
-                    existingTooltip.remove();
-                  }
-                  
-                  // Crear tooltip básico
-                  const tooltip = document.createElement('div');
-                  tooltip.id = 'simple-tooltip-' + d.id;
-                  tooltip.innerText = d.name;
-                  tooltip.style.position = 'absolute';
-                  tooltip.style.bottom = '25px';
-                  tooltip.style.left = '50%';
-                  tooltip.style.transform = 'translateX(-50%)';
-                  tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
-                  tooltip.style.color = 'white';
-                  tooltip.style.padding = '3px 8px';
-                  tooltip.style.borderRadius = '4px';
-                  tooltip.style.fontSize = '12px';
-                  tooltip.style.fontWeight = 'bold';
-                  tooltip.style.whiteSpace = 'nowrap';
-                  tooltip.style.zIndex = '9999';
-                  
-                  el.appendChild(tooltip);
-                }
-                
-                // Función para ocultar el tooltip simple
-                function hideSimpleTooltip() {
-                  const tooltip = document.getElementById('simple-tooltip-' + d.id);
-                  if (tooltip && !tooltipVisible) {
-                    tooltip.remove();
-                  }
-                }
                 
                 // Función para mostrar el tooltip detallado
                 function showDetailTooltip() {
@@ -530,9 +509,6 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                   document.querySelectorAll('[id^="detail-tooltip-"]').forEach(tip => {
                     tip.remove();
                   });
-                  
-                  // Ocultar tooltip simple
-                  hideSimpleTooltip();
                   
                   // Crear tooltip detallado
                   const detailTooltip = document.createElement('div');
@@ -581,9 +557,7 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                   }, 0);
                 }
                 
-                // Eventos simples
-                el.addEventListener('mouseover', showSimpleTooltip);
-                el.addEventListener('mouseout', hideSimpleTooltip);
+                // Eventos para el marcador
                 el.addEventListener('click', () => {
                   if (tooltipVisible) {
                     const detailTooltip = document.getElementById('detail-tooltip-' + d.id);
@@ -596,7 +570,8 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                   }
                 });
                 
-                // Añadir el punto al contenedor
+                // Añadir primero la etiqueta con el nombre, luego el punto
+                el.appendChild(nameLabel);
                 el.appendChild(dot);
                 return el;
               }}
