@@ -105,7 +105,22 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
   "source": "https://www.urbalabgandia.com/es/innpulso-emprende-2025/",
   "contextualSummary":
     "This press entry highlights UrbanVive’s selection and presentation at Innpulso Emprende Gandía 2025, following its initial recognition as the winning project at the Campus Salud Hackathon. The project’s inclusion in a national innovation contest demonstrates its technical maturity, innovative approach, and alignment with urban sustainability goals."
+},
+    {
+  "id": 19,
+  "platform": "ENHANCE Alliance",
+  "logo": "/press/enhance.jpg?height=200&width=200",
+  "title": "Selected for the ENHANCE Summer School in Climate Change 2025",
+  "date": "Jun 2025",
+  "excerpt":
+    "I have been officially selected to participate in the prestigious ENHANCE Summer School in Climate Change 2025, hosted by the ENHANCE Alliance and Warsaw University of Technology.",
+  "fullArticle":
+    "I'm honored to share that I have been selected to attend the ENHANCE Summer School in Climate Change 2025, organized by the ENHANCE Alliance in collaboration with Warsaw University of Technology. This highly competitive and internationally recognized program brings together students from top European technical universities to collaborate on sustainable solutions to climate challenges.\n\nMy application was chosen for its alignment with the values and interdisciplinary focus of the Summer School, which emphasizes innovation, environmental responsibility, and collaborative research. The program offers a unique opportunity to work alongside experts and peers on pressing global issues such as decarbonization, climate adaptation, and environmental justice.\n\nThis experience represents a significant step in my commitment to applying technology and design for positive societal impact. I look forward to contributing meaningfully to the discussions and projects that emerge from this initiative.\n\nMore information about the program is available at: https://summerschool.enhance.pw.edu.pl/",
+  "source": "https://summerschool.enhance.pw.edu.pl/",
+  "contextualSummary":
+    "This entry announces Irene Medina’s selection to the ENHANCE Summer School in Climate Change 2025, recognizing her alignment with the school’s interdisciplinary and sustainability-focused mission. The program gathers forward-thinking students from leading European institutions to address urgent climate issues."
 }
+
 
   ]
 
