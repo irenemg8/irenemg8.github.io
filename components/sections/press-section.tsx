@@ -92,7 +92,21 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
       contextualSummary:
       "This article covers the achievement of the first-ever eTwinning certification at IES J. Martínez Ruiz - Azorín, highlighting the bilingual students’ leadership in launching an international collaborative project and its impact on digital and intercultural education at the school."
   },
-    
+    {
+  "id": 7,
+  "platform": "Bon Dia Safor",
+  "logo": "/press/urbalab.png?height=200&width=200",
+  "title": "UrbanVive Showcased at Innpulso Emprende Gandía 2025",
+  "date": "Jun 2025",
+  "excerpt":
+    "Our award-winning project UrbanVive, which earned first prize at the Campus Salud Gandía Hackathon, was featured at the VIII Innpulso Emprende Gandía 2025, a national innovation contest supported by the Ministry of Science, Innovation and Universities.",
+  "fullArticle":
+    "As part of the VIII Innpulso Emprende Gandía 2025, our team had the opportunity to present UrbanVive, the smart city health-tech project that previously won first prize at the Campus Salud Gandía Hackathon. Organized under the umbrella of the 'Red Innpulso – Network of Science and Innovation Cities', and supported by Spain’s Ministry of Science, Innovation and Universities, the event brought together high-impact proposals from across the country.\n\nUrbanVive was one of nine standout projects evaluated by the jury, which assessed submissions based on their technical feasibility, level of innovation, potential territorial impact, and alignment with the strategic objectives of Gandía’s Urban Agenda. We’re proud to have participated in a forum where innovation and real-world impact converge.\n\nThe event highlighted UrbanVive’s continued growth and validation, reinforcing its mission to enhance urban well-being through technology. For a full list of finalists and more details about the initiative, visit the official site: https://www.urbalabgandia.com/es/innpulso-emprende-2025/",
+  "source": "https://www.urbalabgandia.com/es/innpulso-emprende-2025/",
+  "contextualSummary":
+    "This press entry highlights UrbanVive’s selection and presentation at Innpulso Emprende Gandía 2025, following its initial recognition as the winning project at the Campus Salud Hackathon. The project’s inclusion in a national innovation contest demonstrates its technical maturity, innovative approach, and alignment with urban sustainability goals."
+}
+
   ]
 
   const monthMap: { [key: string]: number } = {
