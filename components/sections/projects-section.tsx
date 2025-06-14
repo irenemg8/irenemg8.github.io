@@ -264,19 +264,19 @@ demoUrl: "/under-construction"
     {
   id: 15,
   title: "Aura",
-  description: "Personal portfolio that blends advanced 3D graphics with UX/UI best practices, redefining how creative professionals showcase work online.",
+  description: "An all-in-one assistant app for visually impaired users, integrating multiple accessibility tools into a single, seamless experience.",
   image: "/aidguide/aura.png?height=600&width=800",
   date: "May 2025 - Jun 2025",
-  tags: ["3D", "UX/UI", "Portfolio", "Web Design", "Animation"],
-  githubUrl: "https://github.com/irenemg8/Portfolio",
-  liveUrl: "https://irene.divdev.es/",
+  tags: ["Accessibility", "Voice Control", "Computer Vision", "Assistive Tech", "Mobile App"],
+  githubUrl: "https://github.com/agonfer/auraFlutter",
+  liveUrl: "/under-construction",
   fullDescription:
-  "The 3D Portfolio Demo is a prototype personal website designed to set a new benchmark in digital self-presentation for creative professionals. Combining real-time 3D elements, interactive navigation, and smooth animations, the site offers an immersive user experience while adhering to best practices in accessibility and responsive design. Custom assets—including floating clouds, stylized flowers, and Greek columns—were modeled in Blender and integrated using Three.js and React. The project prioritizes both aesthetics and usability, delivering a visually striking and highly functional portfolio platform. My contributions spanned 3D modeling, front-end development, animation, and overall UX strategy, ensuring the project aligns with contemporary digital storytelling trends.",
-  techStack: ["Blender", "Three.js", "React", "Figma", "Tailwind CSS"],
+    "Aura is an intelligent assistant app designed specifically for blind and visually impaired users. Unlike fragmented accessibility solutions that require switching between multiple applications, Aura unifies all essential assistive functionalities into one intuitive platform. The app uses the smartphone camera to interpret the surrounding environment in real time, enabling obstacle detection, product price recognition in supermarkets, and money denomination identification. Users can interact with Aura via voice commands without needing to touch any buttons, allowing for hands-free operation. Navigation guidance, object detection, and voice-based querying are just a few of the core features. Aura redefines independence by transforming complex everyday tasks into accessible interactions, powered by cutting-edge technologies such as AI, computer vision, and voice recognition.",
+  techStack: ["TensorFlow Lite", "React Native", "Google Cloud Vision", "Speech-to-Text API", "Figma"],
   challenges:
-    "The primary challenge was achieving optimal performance and compatibility across devices while delivering rich 3D interactions. Careful optimization of assets, efficient use of JavaScript libraries, and a mobile-first approach were crucial for a seamless user experience.",
-    role: "Designer & Developer",
-    demoUrl: "https://irene.divdev.es/"
+    "The main challenge was consolidating diverse assistive technologies into a single, coherent user experience optimized for accessibility. Balancing real-time camera processing, voice interaction, and system responsiveness required precise engineering and user-centric design thinking.",
+    role: "Lead Designer & Frontend Developer",
+    demoUrl: "/under-construction"
 },
 
 
