@@ -278,6 +278,41 @@ demoUrl: "/under-construction"
     role: "Lead Designer & Frontend Developer",
     demoUrl: "/under-construction"
 },
+{
+  "id": 16,
+  "title": "PyCatan",
+  "description": "A fully playable digital adaptation of 'The Settlers of Catan' board game, built in Python with a modular architecture and turn-based mechanics.",
+  "image": "/projects/catan.jpg?height=600&width=800",
+  "date": "May 2025 - Jun 2025",
+  "tags": ["Python", "Game Development", "Turn-Based", "OOP", "CLI"],
+  "githubUrl": "https://github.com/vjrivmon/PyCatan",
+  "liveUrl": "/under-construction",
+  "fullDescription":
+    "PyCatan is a terminal-based implementation of the iconic strategy board game 'The Settlers of Catan', built from scratch using Python. The project captures the core mechanics of the original game—resource collection, settlement building, trading, and strategic expansion—through a text-based interface. Developed as part of a collaborative software engineering exercise, the game employs a clean object-oriented architecture, with separate modules handling game state, player interactions, dice rolls, and map generation. While minimalist in visuals, the gameplay remains rich and faithful to the board game experience. The project served as a foundation to explore concepts such as state machines, input validation, and event-driven logic in a constrained environment.",
+  "techStack": ["Python", "OOP", "Terminal UI"],
+  "challenges":
+    "The greatest challenge was designing a scalable and maintainable game logic system that could handle the complexity of Catan's ruleset without a graphical interface. Managing player state, turn sequences, and resource transactions via console inputs required careful planning and rigorous testing.",
+  "role": "Developer & Game Logic Architect",
+  "demoUrl": "/under-construction"
+},
+
+{
+  "id": 17,
+  "title": "PromptGen",
+  "description": "A lightweight prompt management tool that streamlines the creation, organization, and reuse of AI prompts for productivity and creative workflows.",
+  "image": "/projects/promptgen.png?height=600&width=800",
+  "date": "Jun 2025",
+  "tags": ["AI", "Prompt Engineering", "Productivity", "Next.js"],
+  "githubUrl": "https://github.com/irenemg8/promptgen",
+  "liveUrl": "https://irenemg8.github.io/promptgen/",
+  "fullDescription":
+    "PromptGen is a web-based utility designed for developers, designers, and AI power users who work frequently with generative tools such as ChatGPT, Midjourney, and DALL·E. The app allows users to create, tag, organize, and retrieve custom AI prompts in a fast and structured way. Built with scalability and UX in mind, PromptGen includes features like dynamic prompt templates, tag-based filtering, and clipboard export for seamless integration into creative workflows. It also supports user authentication and persistent cloud storage, making it a go-to solution for managing personal or team-based prompt libraries.",
+  "techStack": ["Next.js", "Tailwind CSS", "TypeScript", "Firebase"],
+  "challenges":
+    "The biggest challenge was designing a user-friendly system for dynamically managing and categorizing prompts while ensuring real-time performance and responsiveness. Balancing simplicity with power-user features required careful UX strategy and performance optimization.",
+  "role": "Full-Stack Developer & UI/UX Designer",
+  "demoUrl": "https://irenemg8.github.io/promptgen/"
+},
 
 
     
