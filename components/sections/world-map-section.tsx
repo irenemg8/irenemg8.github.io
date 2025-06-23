@@ -6,11 +6,11 @@ import { motion } from "framer-motion"
 
 // Variables globales para mantener el estado
 const globeStateManager = {
-  currentRotation: 0,
+  currentRotation: 1,
   lastTimestamp: Date.now(),
   pointOfView: { lat: 0, lng: 0, altitude: 2.5 },
-  isInitialized: false,
-  rotationSpeed: 0.0001
+  isInitialized: true,
+  rotationSpeed: 1  // Valor ajustado para una rotación más rápida y visible
 };
 
 // Importación dinámica para evitar problemas con SSR
@@ -186,6 +186,11 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
         const width = containerRef.current.clientWidth;
         const height = Math.min(600, Math.max(350, width * 0.7)); 
         setDimensions({ width, height });
+        
+        // Re-ajustar el globo si cambia el tamaño
+        if (globeRef.current) {
+          globeRef.current.controls().update();
+        }
       }
     }
 
@@ -196,116 +201,71 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
     };
   }, []);
 
-  // Función de animación para la rotación del globo
-  const animate = () => {
-    if (!globeRef.current || !globeRef.current.scene) {
-      frameIdRef.current = requestAnimationFrame(animate);
-      return;
-    }
-    
-    if (!isPaused) {
-      const now = Date.now();
-      const deltaMs = now - globeStateManager.lastTimestamp;
-      globeStateManager.lastTimestamp = now;
-      
-      // Actualizar rotación
-      globeStateManager.currentRotation += globeStateManager.rotationSpeed * deltaMs;
-      
-      // Aplicar rotación de forma segura
-      if (globeRef.current && 
-          globeRef.current.scene && 
-          globeRef.current.scene.rotation) {
-        globeRef.current.scene.rotation.y = globeStateManager.currentRotation;
-      }
-      
-      // Guardar punto de vista actual
-      try {
-        if (globeRef.current && typeof globeRef.current.pointOfView === 'function') {
-          const pov = globeRef.current.pointOfView();
-          if (pov && typeof pov === 'object') {
-            globeStateManager.pointOfView = pov;
-          }
-        }
-      } catch (err) {
-        console.error("Error al obtener el punto de vista:", err);
-      }
-    }
-    
-    frameIdRef.current = requestAnimationFrame(animate);
-  };
-  
-  // Inicialización del globo
+  // Configurar el globo después de que se monte
   useEffect(() => {
     // Esperar a que el componente esté montado y el globo disponible
     if (!globeRef.current) return;
     
-    // Iniciar animación si no está iniciada ya
-    if (frameIdRef.current === null) {
-      globeStateManager.lastTimestamp = Date.now();
-      frameIdRef.current = requestAnimationFrame(animate);
-    }
+    console.log("Inicializando globo terráqueo");
     
-    // Configurar el globo
-    try {
-      const globe = globeRef.current;
-      
-      // Aplicar estado guardado si existe
-      if (globeStateManager.isInitialized) {
-        // Restaurar rotación
-        if (globe.scene && globe.scene.rotation) {
-          globe.scene.rotation.y = globeStateManager.currentRotation;
-        }
-        
-        // Restaurar punto de vista
-        if (typeof globe.pointOfView === 'function') {
-          globe.pointOfView(globeStateManager.pointOfView);
-        }
-      } else {
-        // Primera inicialización
-        if (typeof globe.pointOfView === 'function') {
-          globe.pointOfView({ lat: 0, lng: 0, altitude: 2.5 });
-        }
-        globeStateManager.isInitialized = true;
+    const globe = globeRef.current;
+    
+    // Aplicar punto de vista inicial y configurar el globo
+    globe.pointOfView({ lat: 0, lng: 0, altitude: 2.5 });
+    
+    // Configurar rotación automática
+    globe.controls().autoRotate = true;
+    globe.controls().autoRotateSpeed = 5; // Valor fijo más alto para asegurar rotación visible
+    globe.controls().enableZoom = false; // Desactivar zoom para evitar interferencias
+    
+    // Forzar actualización de controles
+    globe.controls().update();
+    
+    setGlobeMounted(true);
+    console.log("Globo montado, rotación configurada");
+    
+    // Implementar animación manual de respaldo
+    const animate = () => {
+      if (globe && globe.controls() && !isPaused) {
+        // Rotar manualmente si es necesario
+        globe.controls().autoRotate = true;
+        globe.controls().update();
       }
-      
-      setGlobeMounted(true);
-      
-    } catch (err) {
-      console.error("Error al configurar el globo:", err);
-    }
+      frameIdRef.current = requestAnimationFrame(animate);
+    };
     
-    // Limpieza al desmontar
+    // Iniciar animación
+    frameIdRef.current = requestAnimationFrame(animate);
+    
     return () => {
+      // Limpiar animación al desmontar
       if (frameIdRef.current !== null) {
         cancelAnimationFrame(frameIdRef.current);
-        frameIdRef.current = null;
       }
     };
-  }, []);
-  
-  // Gestor de interacción del usuario
-  useEffect(() => {
-    // Si se reanuda la rotación, actualizar la marca de tiempo
-    // para evitar saltos en la animación
-    if (!isPaused) {
-      globeStateManager.lastTimestamp = Date.now();
-    }
   }, [isPaused]);
-  
-  // Auto-reanudar después de un periodo de inactividad
+
+  // Manejar la pausa/reanudación de la rotación
   useEffect(() => {
+    if (!globeRef.current || !globeRef.current.controls) return;
+    
+    // Activar/desactivar rotación basado en isPaused
+    globeRef.current.controls().autoRotate = !isPaused;
+    
+    console.log(isPaused ? "Rotación pausada" : "Rotación activa");
+    
+    // Programar reanudación automática
     let resumeTimer: NodeJS.Timeout | null = null;
     
     if (isPaused) {
       resumeTimer = setTimeout(() => {
         setIsPaused(false);
-      }, 5000);
+        console.log("Rotación reanudada automáticamente");
+      }, 3000);
     }
     
     return () => {
-      if (resumeTimer) {
-        clearTimeout(resumeTimer);
-      }
+      if (resumeTimer) clearTimeout(resumeTimer);
     };
   }, [isPaused]);
 
@@ -315,23 +275,27 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
   };
 
   const handlePointerUp = () => {
-    // Guardar la vista actual antes de reanudar
-    if (globeRef.current && typeof globeRef.current.pointOfView === 'function') {
-      try {
-        const pov = globeRef.current.pointOfView();
-        if (pov) {
-          globeStateManager.pointOfView = pov;
-        }
-      } catch (err) {
-        console.error("Error al guardar el punto de vista:", err);
-      }
-    }
+    // No reanudamos inmediatamente, dejamos que el timer lo haga
+    // para permitir interacción sin interrupciones
   };
   
   // No llamar a setIsPaused directamente aquí para permitir un retraso
   // entre soltar el puntero y reanudar la rotación
   const handlePointerLeave = handlePointerUp;
   
+  // Función para asegurar la rotación constante
+  useEffect(() => {
+    // Asegurarse de que el control se actualice regularmente
+    const intervalId = setInterval(() => {
+      if (globeRef.current && globeRef.current.controls) {
+        globeRef.current.controls().autoRotate = true; // Forzar autoRotate a true
+        globeRef.current.controls().update();
+      }
+    }, 50); // Actualizar más frecuentemente (cada 50ms)
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="w-full">
       <h2 className="text-3xl font-bold font-pecita mb-8 flex justify-center items-center gap-2">
