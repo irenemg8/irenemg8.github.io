@@ -230,7 +230,7 @@ demoUrl: "/under-construction"
   id: 13,
   title: "Talpa Tunneling UPV",
   description: "A multidisciplinary engineering project developing a custom tunnel boring machine (TBM) for the Not-A-Boring Competition.",
-  image: "/placeholder.svg",
+  image: "/aidguide/talpa.svg",
   priority: true,
   date: "Apr 2025 - Apr 2026",
   tags: ["Mechanical Engineering", "Robotics", "Automation", "CAD", "IoT"],
