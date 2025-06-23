@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-type ModalType = "project" | "artwork" | "hackathon" | "press" | null
+type ModalType = "project" | "artwork" | "hackathon" | "press" | "ge" | null
 
 export function useModal() {
   const [isOpen, setIsOpen] = useState(false)

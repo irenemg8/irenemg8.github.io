@@ -30,6 +30,7 @@ export function Header({ activeSection }: HeaderProps) {
     { name: "Artworks", href: "#artworks" },
     { name: "Hackathons", href: "#hackathons" },
     { name: "Press", href: "#press" },
+    { name: "GE", href: "#ge" },
     { name: "World", href: "#travels" },
   ]
 
