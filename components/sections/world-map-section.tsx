@@ -4,15 +4,6 @@ import dynamic from 'next/dynamic'
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
-// Variables globales para mantener el estado
-const globeStateManager = {
-  currentRotation: 1,
-  lastTimestamp: Date.now(),
-  pointOfView: { lat: 0, lng: 0, altitude: 2.5 },
-  isInitialized: true,
-  rotationSpeed: 1  // Valor ajustado para una rotación más rápida y visible
-};
-
 // Importación dinámica para evitar problemas con SSR
 const GlobeGL = dynamic(() => import('react-globe.gl'), { 
   ssr: false,
@@ -38,10 +29,9 @@ interface WorldMapSectionProps {
 export function WorldMapSection({ title }: WorldMapSectionProps) {
   const globeRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const frameIdRef = useRef<number | null>(null)
+  const rotationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [dimensions, setDimensions] = useState({ width: 900, height: 600 })
-  const [globeMounted, setGlobeMounted] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
+  const [isUserInteracting, setIsUserInteracting] = useState(false)
   
   // Ubicaciones específicas
   const travelLocations: TravelLocation[] = [
@@ -186,11 +176,6 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
         const width = containerRef.current.clientWidth;
         const height = Math.min(600, Math.max(350, width * 0.7)); 
         setDimensions({ width, height });
-        
-        // Re-ajustar el globo si cambia el tamaño
-        if (globeRef.current) {
-          globeRef.current.controls().update();
-        }
       }
     }
 
@@ -201,100 +186,89 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
     };
   }, []);
 
-  // Configurar el globo después de que se monte
+  // Configurar rotación automática del globo
   useEffect(() => {
-    // Esperar a que el componente esté montado y el globo disponible
     if (!globeRef.current) return;
     
-    console.log("Inicializando globo terráqueo");
-    
     const globe = globeRef.current;
+    const controls = globe.controls();
     
-    // Aplicar punto de vista inicial y configurar el globo
+    // Configuración inicial del globo
     globe.pointOfView({ lat: 0, lng: 0, altitude: 2.5 });
     
     // Configurar rotación automática
-    globe.controls().autoRotate = true;
-    globe.controls().autoRotateSpeed = 5; // Valor fijo más alto para asegurar rotación visible
-    globe.controls().enableZoom = false; // Desactivar zoom para evitar interferencias
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.8; // Velocidad constante y suave
+    controls.enableZoom = true;
+    controls.enablePan = true;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
     
-    // Forzar actualización de controles
-    globe.controls().update();
-    
-    setGlobeMounted(true);
-    console.log("Globo montado, rotación configurada");
-    
-    // Implementar animación manual de respaldo
-    const animate = () => {
-      if (globe && globe.controls() && !isPaused) {
-        // Rotar manualmente si es necesario
-        globe.controls().autoRotate = true;
-        globe.controls().update();
+    // Función para manejar el inicio de la interacción
+    const handleInteractionStart = () => {
+      if (!isUserInteracting) {
+        setIsUserInteracting(true);
+        controls.autoRotate = false;
+        
+        // Limpiar timeout previo si existe
+        if (rotationTimeoutRef.current) {
+          clearTimeout(rotationTimeoutRef.current);
+        }
       }
-      frameIdRef.current = requestAnimationFrame(animate);
     };
     
-    // Iniciar animación
-    frameIdRef.current = requestAnimationFrame(animate);
+    // Función para manejar el fin de la interacción
+    const handleInteractionEnd = () => {
+      if (rotationTimeoutRef.current) {
+        clearTimeout(rotationTimeoutRef.current);
+      }
+      
+      // Reanudar rotación después de 2 segundos de inactividad
+      rotationTimeoutRef.current = setTimeout(() => {
+        setIsUserInteracting(false);
+        if (globeRef.current) {
+          const currentControls = globeRef.current.controls();
+          currentControls.autoRotate = true;
+          currentControls.autoRotateSpeed = 0.8;
+        }
+      }, 2000);
+    };
+    
+    // Eventos del globo para detectar interacción
+    const canvas = globe.renderer().domElement;
+    
+    // Eventos de mouse
+    canvas.addEventListener('mousedown', handleInteractionStart);
+    canvas.addEventListener('mouseup', handleInteractionEnd);
+    canvas.addEventListener('mouseleave', handleInteractionEnd);
+    
+    // Eventos táctiles
+    canvas.addEventListener('touchstart', handleInteractionStart);
+    canvas.addEventListener('touchend', handleInteractionEnd);
+    canvas.addEventListener('touchcancel', handleInteractionEnd);
+    
+    // Eventos de rueda del mouse (zoom)
+    canvas.addEventListener('wheel', () => {
+      handleInteractionStart();
+      handleInteractionEnd();
+    });
     
     return () => {
-      // Limpiar animación al desmontar
-      if (frameIdRef.current !== null) {
-        cancelAnimationFrame(frameIdRef.current);
+      // Limpiar eventos
+      canvas.removeEventListener('mousedown', handleInteractionStart);
+      canvas.removeEventListener('mouseup', handleInteractionEnd);
+      canvas.removeEventListener('mouseleave', handleInteractionEnd);
+      canvas.removeEventListener('touchstart', handleInteractionStart);
+      canvas.removeEventListener('touchend', handleInteractionEnd);
+      canvas.removeEventListener('touchcancel', handleInteractionEnd);
+      canvas.removeEventListener('wheel', handleInteractionStart);
+      
+      // Limpiar timeout
+      if (rotationTimeoutRef.current) {
+        clearTimeout(rotationTimeoutRef.current);
       }
     };
-  }, [isPaused]);
-
-  // Manejar la pausa/reanudación de la rotación
-  useEffect(() => {
-    if (!globeRef.current || !globeRef.current.controls) return;
-    
-    // Activar/desactivar rotación basado en isPaused
-    globeRef.current.controls().autoRotate = !isPaused;
-    
-    console.log(isPaused ? "Rotación pausada" : "Rotación activa");
-    
-    // Programar reanudación automática
-    let resumeTimer: NodeJS.Timeout | null = null;
-    
-    if (isPaused) {
-      resumeTimer = setTimeout(() => {
-        setIsPaused(false);
-        console.log("Rotación reanudada automáticamente");
-      }, 3000);
-    }
-    
-    return () => {
-      if (resumeTimer) clearTimeout(resumeTimer);
-    };
-  }, [isPaused]);
-
-  // Manejadores de eventos
-  const handlePointerDown = () => {
-    setIsPaused(true);
-  };
-
-  const handlePointerUp = () => {
-    // No reanudamos inmediatamente, dejamos que el timer lo haga
-    // para permitir interacción sin interrupciones
-  };
-  
-  // No llamar a setIsPaused directamente aquí para permitir un retraso
-  // entre soltar el puntero y reanudar la rotación
-  const handlePointerLeave = handlePointerUp;
-  
-  // Función para asegurar la rotación constante
-  useEffect(() => {
-    // Asegurarse de que el control se actualice regularmente
-    const intervalId = setInterval(() => {
-      if (globeRef.current && globeRef.current.controls) {
-        globeRef.current.controls().autoRotate = true; // Forzar autoRotate a true
-        globeRef.current.controls().update();
-      }
-    }, 50); // Actualizar más frecuentemente (cada 50ms)
-    
-    return () => clearInterval(intervalId);
-  }, []);
+  }, [isUserInteracting]);
 
   return (
     <div className="w-full">
@@ -312,9 +286,6 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
         <div 
           ref={containerRef} 
           className="relative w-full h-auto"
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerLeave}
         >
           {/* Contenedor para el globo */}
           <Suspense fallback={<div style={{ height: `${dimensions.height}px` }} className="w-full flex items-center justify-center">Loading map...</div>}>
