@@ -55,26 +55,36 @@ export function MacOSWindow({ children }: MacOSWindowProps) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-white/5 to-transparent"></div>
       </div>
 
-      {/* macOS Menu Bar */}
-      <div className="relative z-10 h-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between px-4 text-sm">
+      {/* Improved macOS Menu Bar */}
+      <div className="relative z-10 h-7 bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-xl border-b border-gray-300/30 dark:border-gray-600/30 flex items-center justify-between px-4 text-sm macos-menubar">
         {/* Left side - Apple logo and app name */}
         <div className="flex items-center space-x-4">
-          <div className="text-lg">🍎</div>
-          <span className="text-gray-800 dark:text-gray-200 font-medium">{t('desktop.name')}</span>
+          <div className="text-base">🍎</div>
+          <span className="text-gray-800 dark:text-gray-200 font-medium macos-text-semibold">{t('desktop.name')}</span>
+        </div>
+
+        {/* Center - Window title */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <span className="text-gray-700 dark:text-gray-300 text-xs macos-text">
+            {t('desktop.name')}
+          </span>
         </div>
 
         {/* Right side - Status indicators and time */}
-        <div className="flex items-center space-x-3 text-gray-700 dark:text-gray-300">
-          <Battery className="h-4 w-4" />
-          <Wifi className="h-4 w-4" />
-          <div className="text-xs">
-            {currentDate} {currentTime}
+        <div className="flex items-center space-x-4 text-gray-700 dark:text-gray-300">
+          <div className="flex items-center space-x-2">
+            <Battery className="h-3.5 w-3.5" />
+            <Wifi className="h-3.5 w-3.5" />
+          </div>
+          <div className="text-xs macos-text font-medium">
+            <span className="hidden sm:inline">{currentDate} </span>
+            {currentTime}
           </div>
         </div>
       </div>
 
       {/* Desktop content */}
-      <div className="relative z-10 p-8 h-[calc(100vh-24px)]">
+      <div className="relative z-10 p-8 h-[calc(100vh-28px)]">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
