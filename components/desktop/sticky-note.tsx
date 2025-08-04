@@ -12,7 +12,7 @@ interface StickyNoteProps {
 
 export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
   const { t } = useLanguage()
-  const [position, setPosition] = useState({ x: 60, y: 80 })
+  const [position, setPosition] = useState({ x: 60, y: 40 })
   const [isDragging, setIsDragging] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const dragRef = useRef<HTMLDivElement>(null)
@@ -20,7 +20,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
   const handleDragEnd = (event: any, info: PanInfo) => {
     const newPosition = {
       x: Math.max(20, Math.min(window.innerWidth - 250, position.x + info.offset.x)),
-      y: Math.max(20, Math.min(window.innerHeight - 300, position.y + info.offset.y))
+      y: Math.max(20, Math.min(window.innerHeight - 200, position.y + info.offset.y))
     }
     
     setPosition(newPosition)
@@ -57,7 +57,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
         left: 20,
         right: typeof window !== 'undefined' ? window.innerWidth - 250 : 1000,
         top: 20,
-        bottom: typeof window !== 'undefined' ? window.innerHeight - 300 : 600,
+        bottom: typeof window !== 'undefined' ? window.innerHeight - 200 : 600,
       }}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
@@ -79,7 +79,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
     >
       {/* Sticky Note */}
       <div 
-        className="w-60 h-72 relative"
+        className="w-60 min-h-fit relative"
         style={{
           background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
           boxShadow: `
@@ -109,7 +109,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
         </div>
 
         {/* Sticky Note Content */}
-        <div className="p-4 space-y-2 text-xs text-gray-700 max-h-52 overflow-y-auto">
+        <div className="p-4 pb-6 space-y-2 text-xs text-gray-700">
           {displayItems.map((item, index) => (
             <motion.div
               key={index}
