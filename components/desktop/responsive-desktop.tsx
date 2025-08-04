@@ -8,7 +8,7 @@ import { TrashCan } from '@/components/desktop/trash-can'
 import { CentralWelcome } from '@/components/desktop/central-welcome'
 import { MacOSFolder } from '@/components/desktop/macos-folder'
 import { FolderWindow } from '@/components/desktop/folder-window'
-import { DesktopResetButton } from '@/components/desktop/desktop-reset-button'
+
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 
@@ -215,7 +215,7 @@ export function ResponsiveDesktop() {
   return (
     <>
       <MacOSCursor />
-      <MacOSWindow>
+      <MacOSWindow onReset={resetFolderPositions}>
         <div className="relative min-h-full overflow-hidden">
           {/* Sticky Note */}
           {showStickyNote && (
@@ -287,9 +287,6 @@ export function ResponsiveDesktop() {
           {window.content}
         </FolderWindow>
       ))}
-      
-      {/* Reset Button */}
-      <DesktopResetButton onReset={resetFolderPositions} />
     </>
   )
 }

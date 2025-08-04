@@ -6,13 +6,14 @@ import { useLanguage } from '@/contexts/language-context'
 import { LanguageToggle } from '@/components/shared/language-toggle'
 import { ModeToggle } from '@/components/shared/mode-toggle'
 import { MacOSParticles } from '@/components/effects/macos-particles'
-import { Wifi, Battery } from 'lucide-react'
+import { Wifi, Battery, RotateCcw } from 'lucide-react'
 
 interface MacOSWindowProps {
   children: React.ReactNode
+  onReset?: () => void
 }
 
-export function MacOSWindow({ children }: MacOSWindowProps) {
+export function MacOSWindow({ children, onReset }: MacOSWindowProps) {
   const { t } = useLanguage()
   const [currentTime, setCurrentTime] = useState('')
   const [currentDate, setCurrentDate] = useState('')
@@ -130,6 +131,17 @@ export function MacOSWindow({ children }: MacOSWindowProps) {
 
             {/* Controls */}
             <div className="flex items-center space-x-2">
+              {onReset && (
+                <motion.button
+                  onClick={onReset}
+                  className="macos-glass rounded-full p-2 shadow-sm border border-white/20 backdrop-blur-xl hover:scale-105 transition-transform group"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Reset folders"
+                >
+                  <RotateCcw className="w-4 h-4 text-gray-700 dark:text-gray-300 group-hover:rotate-180 transition-transform duration-300" />
+                </motion.button>
+              )}
               <LanguageToggle />
               <ModeToggle />
             </div>
