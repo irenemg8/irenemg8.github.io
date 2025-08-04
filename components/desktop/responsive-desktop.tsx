@@ -51,18 +51,54 @@ export function ResponsiveDesktop() {
     }, 300)
   }
 
-  // Fixed folder positions - top left arrangement
+  // Fixed folder positions - centered towards right, two rows, right to left arrangement
   const getFolderPositions = () => {
+    if (typeof window !== 'undefined') {
+      const windowWidth = window.innerWidth
+      const folderWidth = 100 // Approximate folder width including spacing
+      const centerX = windowWidth / 2 // Center of screen
+      const rightOffset = 280 // Offset towards right from center (increased from 200)
+      const startX = centerX + rightOffset // Start position (center + right offset)
+      
+      return {
+        projects: [
+          // Primera fila (4 elementos de derecha a izquierda) - moved up from y: 80 to y: 60
+          { x: startX, y: 60 },                           // Project 02 (Simplingo) - más a la derecha
+          { x: startX - folderWidth, y: 60 },             // Project 01 (AbsolutMess)
+          { x: startX - (folderWidth * 2), y: 60 },       // Project 03 (Leafpress)  
+          { x: startX - (folderWidth * 3), y: 60 },       // Project 04 (Amazon)
+          // Segunda fila (1 elemento restante) - moved up from y: 180 to y: 150
+          { x: startX, y: 150 }                           // Don't Look - más a la derecha en segunda fila
+        ],
+        // Segunda fila (2 elementos más de derecha a izquierda) - moved up from y: 180 to y: 150
+        aboutMe: { x: startX - folderWidth, y: 150 },     // About Me 
+        resume: { x: startX - (folderWidth * 2), y: 150 }, // Resume.pdf
+        // Posición de la papelera - abajo a la izquierda del área de carpetas - moved up from y: 280 to y: 240
+        trash: { x: startX - (folderWidth * 4), y: 240 }
+      }
+    }
+    
+    // Fallback positions for SSR - centered towards right
+    const fallbackCenterX = 640 // Approximate center for 1280px width
+    const rightOffset = 280 // Increased from 200 to match above
+    const fallbackStartX = fallbackCenterX + rightOffset
+    const folderWidth = 100
+    
     return {
       projects: [
-        { x: 80, y: 120 },   // Project 02 (Simplingo)
-        { x: 180, y: 120 },  // Project 01 (AbsolutMess) 
-        { x: 280, y: 120 },  // Project 04 (Amazon)
-        { x: 380, y: 120 },  // Project 03 (Leafpress)
-        { x: 480, y: 120 }   // Don't Look
+        // Primera fila (4 elementos de derecha a izquierda) - moved up from y: 80 to y: 60
+        { x: fallbackStartX, y: 60 },                      // Project 02 (Simplingo)
+        { x: fallbackStartX - folderWidth, y: 60 },        // Project 01 (AbsolutMess)
+        { x: fallbackStartX - (folderWidth * 2), y: 60 },  // Project 03 (Leafpress)
+        { x: fallbackStartX - (folderWidth * 3), y: 60 },  // Project 04 (Amazon)
+        // Segunda fila (1 elemento restante) - moved up from y: 180 to y: 150
+        { x: fallbackStartX, y: 150 }                      // Don't Look
       ],
-      aboutMe: { x: 80, y: 220 },     // About Me - second row
-      resume: { x: 180, y: 220 }      // Resume.pdf - second row
+      // Segunda fila (2 elementos más de derecha a izquierda) - moved up from y: 180 to y: 150
+      aboutMe: { x: fallbackStartX - folderWidth, y: 150 },     // About Me
+      resume: { x: fallbackStartX - (folderWidth * 2), y: 150 }, // Resume.pdf
+      // Posición de la papelera - abajo a la izquierda del área de carpetas - moved up from y: 280 to y: 240
+      trash: { x: fallbackStartX - (folderWidth * 4), y: 240 }
     }
   }
 
@@ -124,8 +160,8 @@ export function ResponsiveDesktop() {
             />
           )}
           
-          {/* Central Welcome Text - Always centered */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {/* Central Welcome Text - Always centered, behind everything */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
             <CentralWelcome />
           </div>
           
@@ -165,6 +201,11 @@ export function ResponsiveDesktop() {
             size="md"
           />
 
+          {/* Trash Can - inside desktop */}
+          <TrashCan 
+            isActive={isTrashActive} 
+            position={positions.trash}
+          />
 
         </div>
       </MacOSWindow>
@@ -181,9 +222,6 @@ export function ResponsiveDesktop() {
           {window.content}
         </FolderWindow>
       ))}
-      
-      {/* Trash Can */}
-      <TrashCan isActive={isTrashActive} />
       
       {/* Reset Button */}
       <DesktopResetButton onReset={resetFolderPositions} />

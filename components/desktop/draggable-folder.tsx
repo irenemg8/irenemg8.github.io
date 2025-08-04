@@ -131,6 +131,9 @@ export function DraggableFolder({
             backgroundColor: isSelected ? '#3b82f6' : 'transparent',
             color: isSelected ? '#ffffff' : undefined
           }}
+          style={{
+            textShadow: !isSelected ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
+          }}
         >
           {name}
         </motion.div>

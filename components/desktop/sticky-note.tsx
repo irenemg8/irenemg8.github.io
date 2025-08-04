@@ -12,7 +12,7 @@ interface StickyNoteProps {
 
 export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
   const { t } = useLanguage()
-  const [position, setPosition] = useState({ x: 60, y: 120 })
+  const [position, setPosition] = useState({ x: 60, y: 80 })
   const [isDragging, setIsDragging] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const dragRef = useRef<HTMLDivElement>(null)
@@ -40,10 +40,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
   const displayItems = Array.isArray(todoItems) ? todoItems : [
     'Land my dream UX job',
     'Drink water',
-    'Move to the US',
-    'Finish grad school without losing my mind',
-    'Build that banger spotify playlist',
-    'World domination',
+    'Graduate in 2026',
     'Get really good at making pasta',
     'Travel somewhere new every year'
   ]
@@ -69,7 +66,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
         y: position.y,
         rotate: isDragging ? 2 : -1,
         scale: isDragging ? 1.05 : 1,
-        zIndex: isDragging ? 100 : 20
+        zIndex: isDragging ? 100 : 30
       }}
       initial={{ opacity: 0, scale: 0.8, rotate: -1 }}
       whileInView={{ opacity: 1, scale: 1 }}

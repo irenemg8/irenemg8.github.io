@@ -213,9 +213,11 @@ export function EnhancedFolder({
             transition-all duration-200 shadow-sm
           `}
           animate={{ 
-            backgroundColor: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.8)',
-            color: isSelected ? '#ffffff' : undefined,
-            backdropFilter: 'blur(10px)'
+            backgroundColor: isSelected ? '#3b82f6' : 'transparent',
+            color: isSelected ? '#ffffff' : undefined
+          }}
+          style={{
+            textShadow: !isSelected ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
           }}
         >
           {name}

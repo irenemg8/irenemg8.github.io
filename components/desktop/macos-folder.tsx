@@ -44,7 +44,7 @@ export function MacOSFolder({
     if (dragDistance > 5) {
       setHasBeenMoved(true)
       setPosition(prev => ({
-        x: Math.max(20, Math.min(window.innerWidth - 120, prev.x + info.offset.x)),
+        x: Math.max(20, Math.min(window.innerWidth - 100, prev.x + info.offset.x)),
         y: Math.max(20, Math.min(window.innerHeight - 120, prev.y + info.offset.y))
       }))
     }
@@ -83,7 +83,7 @@ export function MacOSFolder({
       dragElastic={0.1}
       dragConstraints={{
         left: 20,
-        right: typeof window !== 'undefined' ? window.innerWidth - 120 : 1200,
+        right: typeof window !== 'undefined' ? window.innerWidth - 100 : 1200,
         top: 20,
         bottom: typeof window !== 'undefined' ? window.innerHeight - 120 : 800,
       }}
@@ -93,7 +93,7 @@ export function MacOSFolder({
         x: position.x,
         y: position.y,
         scale: isDragging ? 1.05 : 1,
-        zIndex: isDragging ? 100 : isSelected ? 50 : hasBeenMoved ? 10 : 1
+        zIndex: isDragging ? 100 : isSelected ? 50 : hasBeenMoved ? 20 : 10
       }}
       initial={{ opacity: 0, scale: 0.8 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -173,9 +173,8 @@ export function MacOSFolder({
             transition-all duration-200
           `}
           style={{
-            textShadow: !isSelected ? '0 1px 2px rgba(255, 255, 255, 0.8)' : 'none',
-            backdropFilter: isSelected ? 'none' : 'blur(10px)',
-            backgroundColor: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.8)'
+            textShadow: !isSelected ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none',
+            backgroundColor: isSelected ? '#3b82f6' : 'transparent'
           }}
         >
           {name}

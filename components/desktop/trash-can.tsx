@@ -2,18 +2,27 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Trash2 } from 'lucide-react'
+import Image from 'next/image'
 
 interface TrashCanProps {
   isActive?: boolean
+  position?: { x: number, y: number }
 }
 
-export function TrashCan({ isActive = false }: TrashCanProps) {
+export function TrashCan({ isActive = false, position }: TrashCanProps) {
   const [isHovered, setIsHovered] = useState(false)
+
+  // Default position if not provided
+  const defaultPosition = { x: window?.innerWidth ? window.innerWidth - 100 : 1180, y: window?.innerHeight ? window.innerHeight - 120 : 580 }
+  const finalPosition = position || defaultPosition
 
   return (
     <motion.div
-      className="fixed bottom-8 right-8 z-30"
+      className="absolute z-30"
+      style={{
+        left: finalPosition.x,
+        top: finalPosition.y
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       animate={{
@@ -27,14 +36,14 @@ export function TrashCan({ isActive = false }: TrashCanProps) {
           w-16 h-16 rounded-xl flex items-center justify-center
           transition-all duration-200
           ${isActive 
-            ? 'bg-red-500 shadow-xl shadow-red-500/30' 
-            : 'bg-gray-600 hover:bg-gray-500'
+            ? 'shadow-xl shadow-red-500/30' 
+            : 'hover:bg-black/10'
           }
         `}
         style={{
           boxShadow: isActive 
             ? '0 8px 25px rgba(239, 68, 68, 0.4), 0 0 0 2px rgba(239, 68, 68, 0.3)' 
-            : '0 4px 12px rgba(0, 0, 0, 0.3)'
+            : 'none'
         }}
       >
         <motion.div
@@ -47,8 +56,12 @@ export function TrashCan({ isActive = false }: TrashCanProps) {
             ease: 'easeInOut'
           }}
         >
-          <Trash2 
-            className={`w-8 h-8 ${isActive ? 'text-white' : 'text-gray-300'} transition-colors`} 
+          <Image
+            src="/bin.png"
+            alt="Papelera"
+            width={32}
+            height={32}
+            className={`transition-all duration-200 ${isActive ? 'brightness-110' : 'brightness-90'}`}
           />
         </motion.div>
       </div>
