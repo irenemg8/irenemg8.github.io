@@ -13,48 +13,98 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    /* Lavender & Purple Light Theme */
+    --background: 310 20% 98%;
+    --foreground: 260 15% 15%;
+    --card: 315 25% 96%;
+    --card-foreground: 260 15% 20%;
+    --popover: 315 30% 97%;
+    --popover-foreground: 260 15% 15%;
+    --primary: 270 50% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 290 30% 90%;
+    --secondary-foreground: 260 20% 25%;
+    --muted: 300 25% 92%;
+    --muted-foreground: 260 10% 45%;
+    --accent: 280 45% 75%;
+    --accent-foreground: 260 20% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 290 20% 85%;
+    --input: 295 15% 88%;
+    --ring: 270 50% 65%;
     --radius: 1rem;
+    
+    /* Custom Lavender Palette */
+    --lavender-50: 310 25% 98%;
+    --lavender-100: 305 20% 95%;
+    --lavender-200: 300 25% 88%;
+    --lavender-300: 295 30% 78%;
+    --lavender-400: 285 35% 68%;
+    --lavender-500: 275 40% 58%;
+    --lavender-600: 270 45% 50%;
+    --lavender-700: 265 50% 42%;
+    --lavender-800: 260 55% 34%;
+    --lavender-900: 255 60% 26%;
+    
+    /* Lilac Palette */
+    --lilac-50: 290 30% 97%;
+    --lilac-100: 285 25% 93%;
+    --lilac-200: 280 30% 85%;
+    --lilac-300: 275 35% 75%;
+    --lilac-400: 270 40% 65%;
+    --lilac-500: 265 45% 55%;
+    --lilac-600: 260 50% 47%;
+    --lilac-700: 255 55% 39%;
+    --lilac-800: 250 60% 31%;
+    --lilac-900: 245 65% 23%;
+    
+    /* Neutrals with purple undertones */
+    --neutral-50: 300 10% 98%;
+    --neutral-100: 295 8% 95%;
+    --neutral-200: 290 6% 88%;
+    --neutral-300: 285 5% 75%;
+    --neutral-400: 280 4% 60%;
+    --neutral-500: 275 3% 45%;
+    --neutral-600: 270 4% 35%;
+    --neutral-700: 265 5% 25%;
+    --neutral-800: 260 6% 18%;
+    --neutral-900: 255 8% 12%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    /* Lavender & Purple Dark Theme */
+    --background: 260 15% 8%;
+    --foreground: 310 20% 95%;
+    --card: 265 20% 12%;
+    --card-foreground: 310 15% 90%;
+    --popover: 260 25% 10%;
+    --popover-foreground: 310 20% 95%;
+    --primary: 275 60% 70%;
+    --primary-foreground: 260 15% 10%;
+    --secondary: 270 25% 18%;
+    --secondary-foreground: 310 15% 85%;
+    --muted: 265 20% 15%;
+    --muted-foreground: 290 8% 65%;
+    --accent: 280 55% 65%;
+    --accent-foreground: 260 15% 10%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 270 15% 20%;
+    --input: 275 12% 22%;
+    --ring: 275 60% 70%;
+    
+    /* Dark theme custom colors */
+    --lavender-50: 255 8% 12%;
+    --lavender-100: 260 12% 18%;
+    --lavender-200: 265 15% 25%;
+    --lavender-300: 270 20% 35%;
+    --lavender-400: 275 25% 45%;
+    --lavender-500: 280 35% 55%;
+    --lavender-600: 285 45% 65%;
+    --lavender-700: 290 50% 75%;
+    --lavender-800: 295 55% 85%;
+    --lavender-900: 300 60% 95%;
   }
 }
 
@@ -82,4 +132,80 @@
 /* Clase para la fuente Pecita */
 .font-pecita {
   font-family: 'Pecita', cursive;
+}
+
+/* Estilos para el diseño desktop */
+.desktop-bg {
+  background: linear-gradient(135deg, #f6f8fb 0%, #e7ecf4 100%);
+}
+
+.dark .desktop-bg {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+/* Estilos para las transiciones suaves */
+.smooth-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Estilo para truncar texto en múltiples líneas */
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Efectos de hover para las tarjetas */
+.project-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.dark .project-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Animación para la barra de título de la ventana */
+.window-controls {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.window-controls button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Scrollbar personalizada para la ventana */
+.desktop-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.desktop-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.desktop-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.desktop-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark .desktop-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .desktop-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark .desktop-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }

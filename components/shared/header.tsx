@@ -26,12 +26,14 @@ export function Header({ activeSection }: HeaderProps) {
   }, [])
 
   const navItems = [
-    { name: "Projects", href: "#projects" },
-    { name: "Artworks", href: "#artworks" },
+    { name: "Inicio", href: "#hero" },
+    { name: "Sobre mí", href: "#about" },
+    { name: "Proyectos", href: "#projects" },
+    { name: "Arte", href: "#artworks" },
     { name: "Hackathons", href: "#hackathons" },
-    { name: "Press", href: "#press" },
+    { name: "Prensa", href: "#press" },
     { name: "GE", href: "#ge" },
-    { name: "World", href: "#travels" },
+    { name: "Mundo", href: "#travels" },
   ]
 
   return (
