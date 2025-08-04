@@ -37,8 +37,7 @@ export function ResponsiveDesktop() {
         { x: 840, y: 150 }   // Don't Look
       ],
       aboutMe: { x: 740, y: 150 },
-      resume: { x: 640, y: 150 },
-      trash: { x: 440, y: 240 }
+      resume: { x: 640, y: 150 }
     }
   })
 
@@ -114,8 +113,7 @@ export function ResponsiveDesktop() {
             { x: windowWidth - 150, y: 380 }   // Don't Look
           ],
           aboutMe: { x: windowWidth - 270, y: 60 },   // About Me (left column)
-          resume: { x: windowWidth - 270, y: 140 },   // Resume.pdf (left column)
-          trash: { x: windowWidth - 270, y: 220 }     // Trash (left column)
+          resume: { x: windowWidth - 270, y: 140 }    // Resume.pdf (left column)
         }
       }
       
@@ -131,9 +129,7 @@ export function ResponsiveDesktop() {
         ],
         // Segunda fila (2 elementos más de derecha a izquierda) - with constraints
         aboutMe: { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 150 },     
-        resume: { x: Math.max(startX - (folderWidth * 2), minMargin), y: 150 }, 
-        // Posición de la papelera - with constraints
-        trash: { x: Math.max(startX - (folderWidth * 4), minMargin), y: 240 }
+        resume: { x: Math.max(startX - (folderWidth * 2), minMargin), y: 150 }
       }
     }
     
@@ -163,9 +159,7 @@ export function ResponsiveDesktop() {
       ],
       // Segunda fila (2 elementos más de derecha a izquierda) - with constraints
       aboutMe: { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 150 },     
-      resume: { x: Math.max(fallbackStartX - (folderWidth * 2), minMargin), y: 150 }, 
-      // Posición de la papelera - with constraints
-      trash: { x: Math.max(fallbackStartX - (folderWidth * 4), minMargin), y: 240 }
+      resume: { x: Math.max(fallbackStartX - (folderWidth * 2), minMargin), y: 150 }
     }
   }
 
@@ -266,10 +260,9 @@ export function ResponsiveDesktop() {
             size="md"
           />
 
-          {/* Trash Can - inside desktop */}
+          {/* Trash Can - always bottom right, unaffected by reset */}
           <TrashCan 
-            isActive={isTrashActive} 
-            position={positions.trash}
+            isActive={isTrashActive}
           />
 
         </div>

@@ -80,7 +80,7 @@ export function DesktopWindow({ children }: DesktopWindowProps) {
 
           {/* Title */}
           <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
-            {t('desktop.name')}
+            {t('desktop.irene')}
           </div>
 
           {/* Date & Time + Controls */}

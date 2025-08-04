@@ -60,14 +60,14 @@ export function MacOSWindow({ children, onReset }: MacOSWindowProps) {
       <div className="relative z-10 h-7 bg-gray-100/90 dark:bg-gray-800/90 backdrop-blur-xl border-b border-gray-300/30 dark:border-gray-600/30 flex items-center justify-between px-4 text-sm macos-menubar">
         {/* Left side - Apple logo and app name */}
         <div className="flex items-center space-x-4">
-          <div className="text-base">🍎</div>
-          <span className="text-gray-800 dark:text-gray-200 font-medium macos-text-semibold">{t('desktop.name')}</span>
+          <div className="text-base">🍒​</div>
+          <span className="text-gray-800 dark:text-gray-200 font-medium macos-text-semibold">{t('desktop.irene')}</span>
         </div>
 
         {/* Center - Window title */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <span className="text-gray-700 dark:text-gray-300 text-xs macos-text">
-            {t('desktop.name')}
+            {t('')}
           </span>
         </div>
 
@@ -125,7 +125,7 @@ export function MacOSWindow({ children, onReset }: MacOSWindowProps) {
             {/* Window Title */}
             <div className="flex-1 flex justify-center">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('desktop.name')}
+                {t('Irene`s desktop')}
               </span>
             </div>
 
