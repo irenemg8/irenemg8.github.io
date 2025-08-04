@@ -37,7 +37,7 @@ export function DesktopAbout() {
       >
         {/* About Me Title */}
         <motion.h2 
-          className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8"
+          className="text-3xl md:text-4xl macos-text-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -53,15 +53,15 @@ export function DesktopAbout() {
             transition={{ delay: 0.3 }}
             className="space-y-4"
           >
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="macos-text text-gray-600 dark:text-gray-400 leading-relaxed">
               {t('about.bio.1')}
             </p>
             
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="macos-text text-gray-600 dark:text-gray-400 leading-relaxed">
               {t('about.bio.2')}
             </p>
 
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="macos-text text-gray-600 dark:text-gray-400 leading-relaxed">
               {t('about.bio.3')}
             </p>
           </motion.div>
@@ -72,7 +72,7 @@ export function DesktopAbout() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+            <h3 className="text-xl macos-text-semibold text-gray-900 dark:text-gray-100 mb-6">
               {t('about.todo')}
             </h3>
 
@@ -86,7 +86,7 @@ export function DesktopAbout() {
                 <motion.li
                   key={index}
                   variants={item}
-                  className="flex items-start gap-3 text-gray-600 dark:text-gray-400"
+                  className="flex items-start gap-3 macos-text text-gray-600 dark:text-gray-400"
                 >
                   <motion.div
                     initial={{ scale: 0 }}

@@ -1,7 +1,7 @@
 "use client"
 
-import { DesktopLayout } from "@/components/layout/desktop-layout"
+import { ResponsiveDesktop } from "@/components/desktop/responsive-desktop"
 
 export default function Home() {
-  return <DesktopLayout />
+  return <ResponsiveDesktop />
 }

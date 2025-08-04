@@ -16,7 +16,7 @@ export function PortfolioHeader() {
       >
         {/* Welcome text */}
         <motion.h1 
-          className="text-4xl md:text-6xl lg:text-7xl font-light text-gray-900 dark:text-gray-100"
+          className="text-4xl md:text-6xl lg:text-7xl macos-text text-gray-900 dark:text-gray-100"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
@@ -26,7 +26,7 @@ export function PortfolioHeader() {
         
         {/* Portfolio text with emphasis */}
         <motion.h2 
-          className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-gray-100"
+          className="text-4xl md:text-6xl lg:text-7xl macos-text-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -40,7 +40,7 @@ export function PortfolioHeader() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.8 }}
-        className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mt-8 max-w-2xl mx-auto"
+        className="text-lg md:text-xl macos-text text-gray-600 dark:text-gray-400 mt-8 max-w-2xl mx-auto"
       >
         {t('desktop.name')}
       </motion.p>

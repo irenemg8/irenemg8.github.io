@@ -20,22 +20,22 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="relative rounded-full border-muted hover:bg-lavender-50 dark:hover:bg-lavender-900/20 transition-colors">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-lavender-600 dark:text-lavender-400" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-lavender-600 dark:text-lavender-400" />
+        <Button variant="outline" size="icon" className="relative rounded-full macos-button macos-glass">
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-gray-700 dark:text-gray-300" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-gray-700 dark:text-gray-300" />
           <span className="sr-only">Cambiar tema</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[8rem]">
-        <DropdownMenuItem onClick={() => handleThemeChange("light")} className="cursor-pointer">
+      <DropdownMenuContent align="end" className="min-w-[8rem] macos-glass border border-white/30 dark:border-gray-700/30">
+        <DropdownMenuItem onClick={() => handleThemeChange("light")} className="cursor-pointer macos-text-semibold">
           <Sun className="h-4 w-4 mr-2" />
           Claro
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleThemeChange("dark")} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => handleThemeChange("dark")} className="cursor-pointer macos-text-semibold">
           <Moon className="h-4 w-4 mr-2" />
           Oscuro
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleThemeChange("system")} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => handleThemeChange("system")} className="cursor-pointer macos-text-semibold">
           <Laptop className="h-4 w-4 mr-2" />
           Sistema
         </DropdownMenuItem>

@@ -31,7 +31,7 @@ export function NavigationMenu() {
           onClick={handleContactClick}
           variant="outline"
           size="lg"
-          className="w-full sm:w-auto bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
+          className="w-full sm:w-auto macos-button macos-glass macos-text-semibold"
         >
           <Mail className="h-4 w-4 mr-2" />
           {t('nav.contact')}
@@ -46,7 +46,7 @@ export function NavigationMenu() {
           onClick={handleResumeClick}
           variant="outline"
           size="lg"
-          className="w-full sm:w-auto bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
+          className="w-full sm:w-auto macos-button macos-glass macos-text-semibold"
         >
           <Download className="h-4 w-4 mr-2" />
           {t('nav.resume')}

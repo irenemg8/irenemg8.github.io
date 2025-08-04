@@ -19,7 +19,7 @@ export function DesktopFooter() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2 }}
-          className="flex items-center justify-center gap-2"
+          className="flex items-center justify-center gap-2 macos-text"
         >
           {t('footer.madeWith')}
           <motion.span

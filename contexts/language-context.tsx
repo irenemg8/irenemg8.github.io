@@ -149,7 +149,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       value = value?.[k]
     }
     
-    return value || key
+    return value !== undefined ? value : key
   }
 
   return (

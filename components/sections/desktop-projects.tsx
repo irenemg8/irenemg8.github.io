@@ -90,10 +90,10 @@ export function DesktopProjects() {
             variants={item}
             whileHover={{ scale: 1.02, y: -5 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="project-card bg-gray-50 dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 group cursor-pointer"
+            className="macos-project-card macos-glass rounded-xl p-6 group cursor-pointer macos-shadow"
           >
             {/* Project number */}
-            <div className="text-xs font-mono text-gray-500 dark:text-gray-400 mb-3">
+            <div className="text-xs macos-text font-medium text-gray-500 dark:text-gray-400 mb-3">
               {t('projects.project')} {String(index + 1).padStart(2, '0')}
             </div>
 
@@ -110,12 +110,12 @@ export function DesktopProjects() {
             </div>
 
             {/* Project title */}
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h3 className="macos-text-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {project.title}
             </h3>
 
             {/* Project description */}
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+            <p className="text-sm macos-text text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
               {project.description}
             </p>
 
@@ -124,7 +124,7 @@ export function DesktopProjects() {
               {project.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full"
+                  className="text-xs macos-text px-2 py-1 bg-gray-200/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 rounded-full backdrop-blur-sm"
                 >
                   {tag}
                 </span>
@@ -146,7 +146,7 @@ export function DesktopProjects() {
                     e.stopPropagation()
                     window.open(project.githubUrl, '_blank')
                   }}
-                  className="flex-1"
+                  className="flex-1 macos-button macos-text-semibold"
                 >
                   <Github className="h-3 w-3 mr-1" />
                   Code
@@ -160,7 +160,7 @@ export function DesktopProjects() {
                     e.stopPropagation()
                     window.open(project.liveUrl, '_blank')
                   }}
-                  className="flex-1"
+                  className="flex-1 macos-button macos-text-semibold"
                 >
                   <ExternalLink className="h-3 w-3 mr-1" />
                   Live
@@ -181,7 +181,7 @@ export function DesktopProjects() {
         <Button
           variant="ghost"
           onClick={() => setShowAllProjects(true)}
-          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+          className="macos-text-semibold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
         >
           {t('projects.viewMore')} →
         </Button>

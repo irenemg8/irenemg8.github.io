@@ -17,10 +17,10 @@ export function LanguageToggle() {
         variant="outline"
         size="sm"
         onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-        className="relative overflow-hidden border-gray-300 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm"
+        className="relative overflow-hidden macos-button macos-glass macos-text-semibold"
       >
         <Globe className="h-4 w-4 mr-2" />
-        <span className="font-medium">
+        <span>
           {language.toUpperCase()}
         </span>
       </Button>

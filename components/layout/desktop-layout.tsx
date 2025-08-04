@@ -1,6 +1,8 @@
 "use client"
 
-import { DesktopWindow } from '@/components/layout/desktop-window'
+import { MacOSWindow } from '@/components/layout/macos-window'
+import { MacOSCursor } from '@/components/ui/macos-cursor'
+import { MacOSDock } from '@/components/ui/macos-dock'
 import { PortfolioHeader } from '@/components/layout/portfolio-header'
 import { NavigationMenu } from '@/components/layout/navigation-menu'
 import { DesktopProjects } from '@/components/sections/desktop-projects'
@@ -9,7 +11,9 @@ import { DesktopFooter } from '@/components/layout/desktop-footer'
 
 export function DesktopLayout() {
   return (
-    <DesktopWindow>
+    <>
+      <MacOSCursor />
+      <MacOSWindow>
       <div className="min-h-full flex flex-col">
         {/* Header Section */}
         <PortfolioHeader />
@@ -30,6 +34,8 @@ export function DesktopLayout() {
         {/* Footer */}
         <DesktopFooter />
       </div>
-    </DesktopWindow>
+    </MacOSWindow>
+    <MacOSDock />
+    </>
   )
 }
