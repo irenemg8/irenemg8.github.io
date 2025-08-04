@@ -9,7 +9,7 @@ import { CentralWelcome } from '@/components/desktop/central-welcome'
 import { MacOSFolder } from '@/components/desktop/macos-folder'
 import { FolderWindow } from '@/components/desktop/folder-window'
 import { DesktopResetButton } from '@/components/desktop/desktop-reset-button'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 
 interface OpenWindow {
@@ -24,6 +24,23 @@ export function ResponsiveDesktop() {
   const [resetKey, setResetKey] = useState(0)
   const [showStickyNote, setShowStickyNote] = useState(true)
   const [isTrashActive, setIsTrashActive] = useState(false)
+  
+  // State for positions to avoid hydration mismatch
+  const [positions, setPositions] = useState(() => {
+    // Static initial positions that are the same on server and client
+    return {
+      projects: [
+        { x: 840, y: 60 },   // Project 02 (Simplingo)
+        { x: 740, y: 60 },   // Project 01 (AbsolutMess)
+        { x: 640, y: 60 },   // Project 03 (Leafpress)
+        { x: 540, y: 60 },   // Project 04 (Amazon)
+        { x: 840, y: 150 }   // Don't Look
+      ],
+      aboutMe: { x: 740, y: 150 },
+      resume: { x: 640, y: 150 },
+      trash: { x: 440, y: 240 }
+    }
+  })
 
   const openWindow = (id: string, title: string, content: React.ReactNode) => {
     if (!openWindows.find(w => w.id === id)) {
@@ -51,58 +68,106 @@ export function ResponsiveDesktop() {
     }, 300)
   }
 
+  // Update positions after hydration to avoid SSR/client mismatch
+  useEffect(() => {
+    const updatePositions = () => {
+      if (typeof window !== 'undefined') {
+        const calculatedPositions = getFolderPositions()
+        setPositions(calculatedPositions)
+      }
+    }
+
+    updatePositions()
+    
+    // Update positions on window resize
+    window.addEventListener('resize', updatePositions)
+    return () => window.removeEventListener('resize', updatePositions)
+  }, [resetKey]) // Also update when resetKey changes
+
   // Fixed folder positions - centered towards right, two rows, right to left arrangement
   const getFolderPositions = () => {
     if (typeof window !== 'undefined') {
       const windowWidth = window.innerWidth
       const folderWidth = 100 // Approximate folder width including spacing
-      const centerX = windowWidth / 2 // Center of screen
-      const rightOffset = 280 // Offset towards right from center (increased from 200)
-      const startX = centerX + rightOffset // Start position (center + right offset)
+      const minMargin = 50 // Minimum margin from edges
+      const maxMargin = 120 // Maximum margin from right edge
+      
+      // Calculate constraints for small screens
+      const centerX = windowWidth / 2
+      const rightOffset = Math.min(280, windowWidth * 0.25) // Responsive right offset
+      let startX = Math.min(centerX + rightOffset, windowWidth - maxMargin)
+      
+      // Ensure all folders fit within screen bounds
+      const totalFoldersWidth = folderWidth * 4 // 4 folders in first row
+      const minStartX = totalFoldersWidth + minMargin
+      startX = Math.max(startX, minStartX)
+      
+      // For very small screens, reorganize in single column
+      if (windowWidth < 800) {
+        return {
+          projects: [
+            // Single column layout for small screens
+            { x: windowWidth - 150, y: 60 },   // Project 02 (Simplingo)
+            { x: windowWidth - 150, y: 140 },  // Project 01 (AbsolutMess)
+            { x: windowWidth - 150, y: 220 },  // Project 03 (Leafpress)
+            { x: windowWidth - 150, y: 300 },  // Project 04 (Amazon)
+            { x: windowWidth - 150, y: 380 }   // Don't Look
+          ],
+          aboutMe: { x: windowWidth - 270, y: 60 },   // About Me (left column)
+          resume: { x: windowWidth - 270, y: 140 },   // Resume.pdf (left column)
+          trash: { x: windowWidth - 270, y: 220 }     // Trash (left column)
+        }
+      }
       
       return {
         projects: [
-          // Primera fila (4 elementos de derecha a izquierda) - moved up from y: 80 to y: 60
-          { x: startX, y: 60 },                           // Project 02 (Simplingo) - más a la derecha
-          { x: startX - folderWidth, y: 60 },             // Project 01 (AbsolutMess)
-          { x: startX - (folderWidth * 2), y: 60 },       // Project 03 (Leafpress)  
-          { x: startX - (folderWidth * 3), y: 60 },       // Project 04 (Amazon)
-          // Segunda fila (1 elemento restante) - moved up from y: 180 to y: 150
-          { x: startX, y: 150 }                           // Don't Look - más a la derecha en segunda fila
+          // Primera fila (4 elementos de derecha a izquierda) - with constraints
+          { x: Math.min(startX, windowWidth - maxMargin), y: 60 },                           
+          { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 60 },             
+          { x: Math.min(startX - (folderWidth * 2), windowWidth - maxMargin), y: 60 },       
+          { x: Math.max(startX - (folderWidth * 3), minMargin), y: 60 },       
+          // Segunda fila (1 elemento restante)
+          { x: Math.min(startX, windowWidth - maxMargin), y: 150 }                           
         ],
-        // Segunda fila (2 elementos más de derecha a izquierda) - moved up from y: 180 to y: 150
-        aboutMe: { x: startX - folderWidth, y: 150 },     // About Me 
-        resume: { x: startX - (folderWidth * 2), y: 150 }, // Resume.pdf
-        // Posición de la papelera - abajo a la izquierda del área de carpetas - moved up from y: 280 to y: 240
-        trash: { x: startX - (folderWidth * 4), y: 240 }
+        // Segunda fila (2 elementos más de derecha a izquierda) - with constraints
+        aboutMe: { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 150 },     
+        resume: { x: Math.max(startX - (folderWidth * 2), minMargin), y: 150 }, 
+        // Posición de la papelera - with constraints
+        trash: { x: Math.max(startX - (folderWidth * 4), minMargin), y: 240 }
       }
     }
     
-    // Fallback positions for SSR - centered towards right
-    const fallbackCenterX = 640 // Approximate center for 1280px width
-    const rightOffset = 280 // Increased from 200 to match above
-    const fallbackStartX = fallbackCenterX + rightOffset
+    // Fallback positions for SSR - centered towards right with constraints
+    const fallbackWidth = 1280 // Assumed width for SSR
+    const fallbackCenterX = fallbackWidth / 2
+    const rightOffset = Math.min(280, fallbackWidth * 0.25)
+    const minMargin = 50
+    const maxMargin = 120
     const folderWidth = 100
+    let fallbackStartX = Math.min(fallbackCenterX + rightOffset, fallbackWidth - maxMargin)
+    
+    // Ensure all folders fit within bounds
+    const totalFoldersWidth = folderWidth * 4
+    const minStartX = totalFoldersWidth + minMargin
+    fallbackStartX = Math.max(fallbackStartX, minStartX)
     
     return {
       projects: [
-        // Primera fila (4 elementos de derecha a izquierda) - moved up from y: 80 to y: 60
-        { x: fallbackStartX, y: 60 },                      // Project 02 (Simplingo)
-        { x: fallbackStartX - folderWidth, y: 60 },        // Project 01 (AbsolutMess)
-        { x: fallbackStartX - (folderWidth * 2), y: 60 },  // Project 03 (Leafpress)
-        { x: fallbackStartX - (folderWidth * 3), y: 60 },  // Project 04 (Amazon)
-        // Segunda fila (1 elemento restante) - moved up from y: 180 to y: 150
-        { x: fallbackStartX, y: 150 }                      // Don't Look
+        // Primera fila (4 elementos de derecha a izquierda) - with constraints
+        { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 60 },                      
+        { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 60 },        
+        { x: Math.min(fallbackStartX - (folderWidth * 2), fallbackWidth - maxMargin), y: 60 },  
+        { x: Math.max(fallbackStartX - (folderWidth * 3), minMargin), y: 60 },  
+        // Segunda fila (1 elemento restante) - with constraints
+        { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 150 }                      
       ],
-      // Segunda fila (2 elementos más de derecha a izquierda) - moved up from y: 180 to y: 150
-      aboutMe: { x: fallbackStartX - folderWidth, y: 150 },     // About Me
-      resume: { x: fallbackStartX - (folderWidth * 2), y: 150 }, // Resume.pdf
-      // Posición de la papelera - abajo a la izquierda del área de carpetas - moved up from y: 280 to y: 240
-      trash: { x: fallbackStartX - (folderWidth * 4), y: 240 }
+      // Segunda fila (2 elementos más de derecha a izquierda) - with constraints
+      aboutMe: { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 150 },     
+      resume: { x: Math.max(fallbackStartX - (folderWidth * 2), minMargin), y: 150 }, 
+      // Posición de la papelera - with constraints
+      trash: { x: Math.max(fallbackStartX - (folderWidth * 4), minMargin), y: 240 }
     }
   }
-
-  const positions = getFolderPositions()
 
   const projects = [
     { id: 'project-02', name: 'Project 02 (Simplingo)', icon: '📁', color: 'bg-blue-400' },

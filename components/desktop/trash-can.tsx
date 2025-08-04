@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
 interface TrashCanProps {
@@ -10,11 +10,21 @@ interface TrashCanProps {
 }
 
 export function TrashCan({ isActive = false, position }: TrashCanProps) {
-  const [isHovered, setIsHovered] = useState(false)
+  const [currentPosition, setCurrentPosition] = useState(position || { x: 520, y: 240 }) // Fixed initial position to avoid hydration mismatch
 
-  // Default position if not provided
-  const defaultPosition = { x: window?.innerWidth ? window.innerWidth - 100 : 1180, y: window?.innerHeight ? window.innerHeight - 120 : 580 }
-  const finalPosition = position || defaultPosition
+  // Update position after hydration to avoid SSR mismatch
+  useEffect(() => {
+    if (!position && typeof window !== 'undefined') {
+      setCurrentPosition({ 
+        x: window.innerWidth - 100, 
+        y: window.innerHeight - 120 
+      })
+    } else if (position) {
+      setCurrentPosition(position)
+    }
+  }, [position])
+  
+  const finalPosition = currentPosition
 
   return (
     <motion.div
@@ -23,10 +33,8 @@ export function TrashCan({ isActive = false, position }: TrashCanProps) {
         left: finalPosition.x,
         top: finalPosition.y
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       animate={{
-        scale: isActive ? 1.2 : isHovered ? 1.1 : 1,
+        scale: isActive ? 1.2 : 1,
         y: isActive ? -10 : 0
       }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -37,7 +45,7 @@ export function TrashCan({ isActive = false, position }: TrashCanProps) {
           transition-all duration-200
           ${isActive 
             ? 'shadow-xl shadow-red-500/30' 
-            : 'hover:bg-black/10'
+            : ''
           }
         `}
         style={{
@@ -59,25 +67,12 @@ export function TrashCan({ isActive = false, position }: TrashCanProps) {
           <Image
             src="/bin.png"
             alt="Papelera"
-            width={32}
-            height={32}
+            width={48}
+            height={48}
             className={`transition-all duration-200 ${isActive ? 'brightness-110' : 'brightness-90'}`}
           />
         </motion.div>
       </div>
-
-      {/* Trash can label */}
-      {isHovered && (
-        <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.8 }}
-          animate={{ opacity: 1, y: -60, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.8 }}
-          className="absolute left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap"
-        >
-          Papelera
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black/80 rotate-45"></div>
-        </motion.div>
-      )}
     </motion.div>
   )
 }

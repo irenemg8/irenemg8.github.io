@@ -18,7 +18,7 @@ export function ProjectFolders() {
   const projects: ProjectFolder[] = [
     { id: '1', name: 'Project 02 (Simplingo)', icon: '📁', color: 'bg-blue-400' },
     { id: '2', name: 'Project 01 (AbsolutMess)', icon: '📁', color: 'bg-blue-400' },
-    { id: '3', name: 'Project 03 (Leafpress)', icon: '📁', color: 'bg-blue-400' },
+    { id: '3', name: 'Project 03', icon: '📁', color: 'bg-blue-400' },
     { id: '4', name: 'Project 04 (Amazon)', icon: '📁', color: 'bg-blue-400' },
     { id: '5', name: "Don't Look", icon: '⚫', color: 'bg-gray-400' }
   ]

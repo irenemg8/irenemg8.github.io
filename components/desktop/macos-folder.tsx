@@ -2,7 +2,8 @@
 
 import { motion, PanInfo } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
-import { FileText, FileIcon } from 'lucide-react'
+import { FileIcon } from 'lucide-react'
+import Image from 'next/image'
 
 interface MacOSFolderProps {
   id: string
@@ -146,17 +147,18 @@ export function MacOSFolder({
             <div 
               className="absolute inset-0 rounded-lg flex items-center justify-center"
               style={{
-                background: fileType === 'pdf' 
-                  ? 'linear-gradient(135deg, #F56565 0%, #E53E3E 50%, #C53030 100%)'
-                  : 'linear-gradient(135deg, #63B3ED 0%, #4299E1 50%, #3182CE 100%)',
-                boxShadow: `
-                  0 2px 8px rgba(0, 0, 0, 0.2),
-                  inset 0 1px 2px rgba(255, 255, 255, 0.2)
-                `
+                background: 'transparent',
+                boxShadow: 'none'
               }}
             >
               {fileType === 'pdf' ? (
-                <FileText className="w-8 h-8 text-white drop-shadow-sm" />
+                <Image
+                  src="/document.png"
+                  alt="Documento"
+                  width={45}
+                  height={45}
+                  className="drop-shadow-sm object-contain"
+                />
               ) : (
                 <FileIcon className="w-8 h-8 text-white drop-shadow-sm" />
               )}
