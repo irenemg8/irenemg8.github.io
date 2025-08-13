@@ -11,7 +11,7 @@ interface MacOSFolderProps {
   initialPosition: { x: number; y: number }
   onOpen?: () => void
   type?: 'folder' | 'file'
-  fileType?: 'pdf' | 'image' | 'code' | 'music' | 'text'
+  fileType?: 'pdf' | 'image' | 'code' | 'music' | 'text' | 'world'
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -155,6 +155,14 @@ export function MacOSFolder({
                 <Image
                   src="/document.png"
                   alt="Documento"
+                  width={45}
+                  height={45}
+                  className="drop-shadow-sm object-contain"
+                />
+              ) : fileType === 'world' ? (
+                <Image
+                  src="/mundo.png"
+                  alt="World Map"
                   width={45}
                   height={45}
                   className="drop-shadow-sm object-contain"

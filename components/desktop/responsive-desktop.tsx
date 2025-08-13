@@ -8,6 +8,7 @@ import { TrashCan } from '@/components/desktop/trash-can'
 import { CentralWelcome } from '@/components/desktop/central-welcome'
 import { MacOSFolder } from '@/components/desktop/macos-folder'
 import { FolderWindow } from '@/components/desktop/folder-window'
+import { WorldGlobe } from '@/components/shared/world-globe'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -30,14 +31,16 @@ export function ResponsiveDesktop() {
     // Static initial positions that are the same on server and client
     return {
       projects: [
-        { x: 840, y: 60 },   // Project 02 (Simplingo)
-        { x: 740, y: 60 },   // Project 01 (AbsolutMess)
-        { x: 640, y: 60 },   // Project 03 (Leafpress)
-        { x: 540, y: 60 },   // Project 04 (Amazon)
-        { x: 840, y: 150 }   // Don't Look
+        { x: 840, y: 60 },   // Projects
+        { x: 740, y: 60 },   // Work experience
+        { x: 640, y: 60 },   // Artworks
+        { x: 840, y: 150 },  // GE
+        { x: 740, y: 150 },  // Hackathons and Contests
+        { x: 640, y: 150 }   // Press
       ],
-      aboutMe: { x: 740, y: 150 },
-      resume: { x: 640, y: 150 }
+      worldGlobe: { x: 540, y: 60 },
+      aboutMe: { x: 540, y: 150 },
+      resume: { x: 440, y: 150 }
     }
   })
 
@@ -106,12 +109,14 @@ export function ResponsiveDesktop() {
         return {
           projects: [
             // Single column layout for small screens
-            { x: windowWidth - 150, y: 60 },   // Project 02 (Simplingo)
-            { x: windowWidth - 150, y: 140 },  // Project 01 (AbsolutMess)
-            { x: windowWidth - 150, y: 220 },  // Project 03 (Leafpress)
-            { x: windowWidth - 150, y: 300 },  // Project 04 (Amazon)
-            { x: windowWidth - 150, y: 380 }   // Don't Look
+            { x: windowWidth - 150, y: 60 },   // Projects
+            { x: windowWidth - 150, y: 140 },  // Work experience
+            { x: windowWidth - 150, y: 220 },  // Artworks
+            { x: windowWidth - 150, y: 300 },  // GE
+            { x: windowWidth - 150, y: 380 },  // Hackathons and Contests
+            { x: windowWidth - 150, y: 460 }   // Press
           ],
+          worldGlobe: { x: windowWidth - 270, y: 220 },  // World Globe (left column)
           aboutMe: { x: windowWidth - 270, y: 60 },   // About Me (left column)
           resume: { x: windowWidth - 270, y: 140 }    // Resume.pdf (left column)
         }
@@ -119,17 +124,19 @@ export function ResponsiveDesktop() {
       
       return {
         projects: [
-          // Primera fila (4 elementos de derecha a izquierda) - with constraints
-          { x: Math.min(startX, windowWidth - maxMargin), y: 60 },                           
-          { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 60 },             
-          { x: Math.min(startX - (folderWidth * 2), windowWidth - maxMargin), y: 60 },       
-          { x: Math.max(startX - (folderWidth * 3), minMargin), y: 60 },       
-          // Segunda fila (1 elemento restante)
-          { x: Math.min(startX, windowWidth - maxMargin), y: 150 }                           
+          // Primera fila (3 elementos de derecha a izquierda) - with constraints
+          { x: Math.min(startX, windowWidth - maxMargin), y: 60 },                      
+          { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 60 },        
+          { x: Math.min(startX - (folderWidth * 2), windowWidth - maxMargin), y: 60 },  
+          // Segunda fila (3 elementos de derecha a izquierda) - with constraints
+          { x: Math.min(startX, windowWidth - maxMargin), y: 150 },                     
+          { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 150 },       
+          { x: Math.min(startX - (folderWidth * 2), windowWidth - maxMargin), y: 150 }  
         ],
-        // Segunda fila (2 elementos más de derecha a izquierda) - with constraints
-        aboutMe: { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 150 },     
-        resume: { x: Math.max(startX - (folderWidth * 2), minMargin), y: 150 }
+        // Globo terráqueo y otras carpetas - with constraints
+        worldGlobe: { x: Math.max(startX - (folderWidth * 3), minMargin), y: 60 },
+        aboutMe: { x: Math.max(startX - (folderWidth * 3), minMargin), y: 150 },     
+        resume: { x: Math.max(startX - (folderWidth * 4), minMargin), y: 150 }
       }
     }
     
@@ -149,26 +156,29 @@ export function ResponsiveDesktop() {
     
     return {
       projects: [
-        // Primera fila (4 elementos de derecha a izquierda) - with constraints
+        // Primera fila (3 elementos de derecha a izquierda) - with constraints
         { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 60 },                      
         { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 60 },        
         { x: Math.min(fallbackStartX - (folderWidth * 2), fallbackWidth - maxMargin), y: 60 },  
-        { x: Math.max(fallbackStartX - (folderWidth * 3), minMargin), y: 60 },  
-        // Segunda fila (1 elemento restante) - with constraints
-        { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 150 }                      
+        // Segunda fila (3 elementos de derecha a izquierda) - with constraints
+        { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 150 },                     
+        { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 150 },       
+        { x: Math.min(fallbackStartX - (folderWidth * 2), fallbackWidth - maxMargin), y: 150 }  
       ],
-      // Segunda fila (2 elementos más de derecha a izquierda) - with constraints
-      aboutMe: { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 150 },     
-      resume: { x: Math.max(fallbackStartX - (folderWidth * 2), minMargin), y: 150 }
+      // Globo terráqueo y otras carpetas - with constraints
+      worldGlobe: { x: Math.max(fallbackStartX - (folderWidth * 3), minMargin), y: 60 },
+      aboutMe: { x: Math.max(fallbackStartX - (folderWidth * 3), minMargin), y: 150 },     
+      resume: { x: Math.max(fallbackStartX - (folderWidth * 4), minMargin), y: 150 }
     }
   }
 
   const projects = [
-    { id: 'project-02', name: 'Project 02 (Simplingo)', icon: '📁', color: 'bg-blue-400' },
-    { id: 'project-01', name: 'Project 01 (AbsolutMess)', icon: '📁', color: 'bg-blue-400' },
-    { id: 'project-03', name: 'Project 03 (Leafpress)', icon: '📁', color: 'bg-blue-400' },
-    { id: 'project-04', name: 'Project 04 (Amazon)', icon: '📁', color: 'bg-blue-400' },
-    { id: 'dont-look', name: "Don't Look", icon: '⚫', color: 'bg-gray-400' }
+    { id: 'projects', name: 'Projects', icon: '📁', color: 'bg-blue-400' },
+    { id: 'work-experience', name: 'Work experience', icon: '📁', color: 'bg-green-400' },
+    { id: 'artworks', name: 'Artworks', icon: '📁', color: 'bg-purple-400' },
+    { id: 'ge', name: 'GE', icon: '📁', color: 'bg-red-400' },
+    { id: 'hackathons', name: 'Hackathons and Contests', icon: '📁', color: 'bg-yellow-400' },
+    { id: 'press', name: 'Press', icon: '📁', color: 'bg-indigo-400' }
   ]
 
   const projectContent = (projectName: string) => (
@@ -260,6 +270,22 @@ export function ResponsiveDesktop() {
             size="md"
           />
 
+          {/* World Globe */}
+          <MacOSFolder
+            key={`world-globe-${resetKey}`}
+            id="world-globe"
+            name="World Map"
+            initialPosition={positions.worldGlobe}
+            onOpen={() => {
+              // Trigger the dialog directly
+              const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
+              if (button) button.click();
+            }}
+            size="md"
+            type="file"
+            fileType="world"
+          />
+
           {/* Trash Can - always bottom right, unaffected by reset */}
           <TrashCan 
             isActive={isTrashActive}
@@ -280,6 +306,9 @@ export function ResponsiveDesktop() {
           {window.content}
         </FolderWindow>
       ))}
+      
+      {/* Hidden World Globe component */}
+      <WorldGlobe />
     </>
   )
 }

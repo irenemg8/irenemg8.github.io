@@ -50,8 +50,8 @@ export function TrashCan({ isActive = false, position }: TrashCanProps) {
           <Image
             src="/bin.png"
             alt="Papelera"
-            width={250}
-            height={250}
+            width={50}
+            height={50}
             className={`transition-all duration-200 ${isActive ? 'brightness-110' : 'brightness-90'}`}
           />
         </motion.div>
