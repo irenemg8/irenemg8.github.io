@@ -1,14 +1,15 @@
 "use client"
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useRef, forwardRef } from 'react'
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
-import { Search, Calendar, BookOpen, ExternalLink } from 'lucide-react'
+import { Search, Calendar, BookOpen, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+// import HTMLFlipBook from 'react-pageflip' // Temporarily commented due to installation issues
 
 interface PressItem {
   id: number
@@ -162,10 +163,192 @@ function parsePressDate(dateString: string): Date {
   return new Date(year, monthNumber, 1)
 }
 
+// Componente de página individual usando forwardRef
+const NewspaperPage = forwardRef<HTMLDivElement, {
+  children: React.ReactNode;
+  className?: string;
+}>((props, ref) => {
+  return (
+    <div 
+      className={`bg-white dark:bg-gray-100 border border-gray-300 dark:border-gray-400 shadow-lg ${props.className || ''}`} 
+      ref={ref}
+    >
+      {props.children}
+    </div>
+  );
+});
+
+NewspaperPage.displayName = 'NewspaperPage';
+
+// Componente de portada del periódico
+const NewspaperCover = forwardRef<HTMLDivElement, {
+  item: PressItem;
+}>((props, ref) => {
+  const { item } = props;
+  return (
+    <NewspaperPage ref={ref} className="p-4">
+      <div className="h-full flex flex-col text-sm">
+        {/* Header del periódico más compacto */}
+        <div className="border-b-2 border-gray-700 dark:border-gray-600 pb-3 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-xs text-gray-500 dark:text-gray-400">{item.date}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">EDICIÓN DIGITAL</div>
+          </div>
+          <div className="flex items-center justify-center mb-3">
+            <Image
+              src={item.logo}
+              alt={item.platform}
+              width={80}
+              height={40}
+              className="object-contain filter grayscale"
+            />
+          </div>
+          <div className="text-center border-t border-b border-gray-600 dark:border-gray-500 py-1">
+            <h1 className="text-xs font-bold text-gray-700 dark:text-gray-600 tracking-wider">
+              {item.platform.toUpperCase()}
+            </h1>
+          </div>
+        </div>
+
+        {/* Titular principal */}
+        <div className="flex-1 flex flex-col justify-center">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-700 leading-tight mb-3 text-center">
+            {item.title}
+          </h2>
+          <p className="text-sm text-gray-700 dark:text-gray-600 leading-relaxed text-justify">
+            {item.excerpt}
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-gray-600 dark:border-gray-500 pt-2 mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+          Pasa la página para leer el artículo completo →
+        </div>
+      </div>
+    </NewspaperPage>
+  );
+});
+
+NewspaperCover.displayName = 'NewspaperCover';
+
+// Componente de página de contenido
+const NewspaperContentPage = forwardRef<HTMLDivElement, {
+  item: PressItem;
+  isLastPage?: boolean;
+}>((props, ref) => {
+  const { item, isLastPage } = props;
+  return (
+    <NewspaperPage ref={ref} className="p-6">
+      <div className="h-full flex flex-col">
+        {/* Header de página interior */}
+        <div className="border-b border-gray-400 dark:border-gray-500 pb-2 mb-4 flex justify-between items-center">
+          <div className="text-xs text-gray-600 dark:text-gray-500">{item.platform}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-500">{item.date}</div>
+        </div>
+
+        {/* Contenido del artículo */}
+        <div className="flex-1">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-700 mb-4 leading-tight">
+            {item.title}
+          </h3>
+          <div className="prose prose-sm text-gray-800 dark:text-gray-700 leading-relaxed">
+            <p className="text-justify whitespace-pre-line">
+              {item.fullArticle}
+            </p>
+          </div>
+        </div>
+
+        {/* Footer con enlace */}
+        {isLastPage && (
+          <div className="border-t border-gray-400 dark:border-gray-500 pt-4 mt-4">
+            <div className="text-center">
+              <p className="text-xs text-gray-600 dark:text-gray-500 mb-2">{item.contextualSummary}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open(item.source, '_blank')}
+                className="text-xs"
+              >
+                <ExternalLink className="w-3 h-3 mr-1" />
+                Leer artículo original
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </NewspaperPage>
+  );
+});
+
+NewspaperContentPage.displayName = 'NewspaperContentPage';
+
+// Componente de página de contenido paginado
+const NewspaperArticlePage = forwardRef<HTMLDivElement, {
+  item: PressItem;
+  content: string;
+  isLastPage?: boolean;
+  pageNumber: number;
+}>((props, ref) => {
+  const { item, content, isLastPage, pageNumber } = props;
+  return (
+    <NewspaperPage ref={ref} className="p-4">
+      <div className="h-full flex flex-col text-sm">
+        {/* Header de página interior más compacto */}
+        <div className="border-b border-gray-300 dark:border-gray-500 pb-2 mb-3 flex justify-between items-center">
+          <div className="text-xs text-gray-500 dark:text-gray-400">{item.platform}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Pág. {pageNumber}</div>
+        </div>
+
+        {/* Contenido del artículo */}
+        <div className="flex-1">
+          {/* Título solo en la primera página de contenido */}
+          {pageNumber === 1 && (
+            <h3 className="text-base font-bold text-gray-800 dark:text-gray-700 mb-3 leading-tight">
+              {item.title}
+            </h3>
+          )}
+          
+          <div className="text-gray-800 dark:text-gray-700 leading-relaxed">
+            <p className="text-justify text-sm">
+              {content}
+            </p>
+          </div>
+        </div>
+
+        {/* Footer con enlace solo en la última página */}
+        {isLastPage && (
+          <div className="border-t border-gray-300 dark:border-gray-500 pt-3 mt-3">
+            <div className="text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{item.contextualSummary}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open(item.source, '_blank')}
+                className="text-xs h-7"
+              >
+                <ExternalLink className="w-3 h-3 mr-1" />
+                Leer original
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </NewspaperPage>
+  );
+});
+
+NewspaperArticlePage.displayName = 'NewspaperArticlePage';
+
 export function PressLibraryModal() {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedItem, setSelectedItem] = useState<PressItem | null>(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStartX, setDragStartX] = useState(0)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [totalPages, setTotalPages] = useState(2)
+  const flipBookRef = useRef<any>(null)
 
   // Filtrar artículos (ordenados por fecha descendente)
   const filteredAndSortedItems = useMemo(() => {
@@ -184,6 +367,143 @@ export function PressLibraryModal() {
 
   const openArticle = (url: string) => {
     window.open(url, '_blank')
+  }
+
+  // Función para dividir el contenido en páginas
+  const splitContentIntoPages = (content: string) => {
+    const wordsPerPage = 120 // Menos palabras por página ya que son más pequeñas
+    const words = content.split(' ')
+    const pages = []
+    
+    for (let i = 0; i < words.length; i += wordsPerPage) {
+      const pageContent = words.slice(i, i + wordsPerPage).join(' ')
+      pages.push(pageContent)
+    }
+    
+    return pages
+  }
+
+  // Obtener páginas del artículo actual
+  const articlePages = useMemo(() => {
+    if (!selectedItem) return []
+    return splitContentIntoPages(selectedItem.fullArticle)
+  }, [selectedItem])
+
+  // Calcular total de páginas (portada + páginas de contenido)
+  const totalPagesCount = useMemo(() => {
+    return 1 + articlePages.length // 1 portada + páginas del artículo
+  }, [articlePages])
+
+  const goToNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPagesCount - 1))
+  }
+
+  const goToPrevPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 0))
+  }
+
+  const handleSelectItem = (item: PressItem) => {
+    setSelectedItem(item)
+    setCurrentPage(0) // Reset to first page
+    setDragOffset(0)
+  }
+
+  // Función para obtener el contenido de la página actual
+  const getCurrentPageContent = () => {
+    if (!selectedItem) return null
+    
+    if (currentPage === 0) {
+      // Página 0 es la portada
+      return { type: 'cover', item: selectedItem }
+    } else {
+      // Páginas 1+ son contenido del artículo
+      const contentPageIndex = currentPage - 1
+      const pageContent = articlePages[contentPageIndex]
+      const isLastPage = contentPageIndex === articlePages.length - 1
+      
+      return { 
+        type: 'content', 
+        item: selectedItem,
+        content: pageContent,
+        isLastPage,
+        pageNumber: currentPage
+      }
+    }
+  }
+
+  // Función para obtener el contenido de la página siguiente (para mostrar en la trasera)
+  const getNextPageContent = () => {
+    if (!selectedItem || currentPage >= totalPagesCount - 1) return null
+    
+    const nextPageIndex = currentPage + 1
+    if (nextPageIndex === 0) {
+      return { type: 'cover', item: selectedItem }
+    } else {
+      const contentPageIndex = nextPageIndex - 1
+      const pageContent = articlePages[contentPageIndex]
+      const isLastPage = contentPageIndex === articlePages.length - 1
+      
+      return { 
+        type: 'content', 
+        item: selectedItem,
+        content: pageContent,
+        isLastPage,
+        pageNumber: nextPageIndex
+      }
+    }
+  }
+
+  // Funciones de drag
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault() // Prevenir selección de texto
+    setIsDragging(true)
+    setDragStartX(e.clientX)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return
+    const deltaX = e.clientX - dragStartX
+    setDragOffset(deltaX)
+  }
+
+  const handleMouseUp = () => {
+    if (!isDragging) return
+    setIsDragging(false)
+    
+    // Si el drag fue significativo, cambiar página
+    if (dragOffset > 80) {
+      goToPrevPage()
+    } else if (dragOffset < -80) {
+      goToNextPage()
+    }
+    
+    setDragOffset(0)
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault() // Prevenir comportamientos por defecto
+    setIsDragging(true)
+    setDragStartX(e.touches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return
+    const deltaX = e.touches[0].clientX - dragStartX
+    setDragOffset(deltaX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return
+    setIsDragging(false)
+    
+    // Si el drag fue significativo, cambiar página
+    if (dragOffset > 80) {
+      goToPrevPage()
+    } else if (dragOffset < -80) {
+      goToNextPage()
+    }
+    
+    setDragOffset(0)
   }
 
   return (
@@ -221,51 +541,178 @@ export function PressLibraryModal() {
         </div>
 
         {selectedItem ? (
-          // Vista de artículo completo
+          // Vista de periódico con páginas hojeables
           <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="p-6 border-b border-border/50 bg-muted/30">
+            {/* Barra de controles del periódico */}
+            <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
               <Button
                 variant="outline"
                 onClick={() => setSelectedItem(null)}
-                className="mb-4"
+                size="sm"
               >
-                ← Volver a la biblioteca
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Volver a la biblioteca
               </Button>
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex-shrink-0">
-                  <Image
-                    src={selectedItem.logo}
-                    alt={selectedItem.platform}
-                    width={100}
-                    height={100}
-                    className="rounded-lg object-cover"
-                  />
+              
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-muted-foreground">
+                  Página {currentPage + 1} de {totalPagesCount}
                 </div>
-                <div className="flex-1">
-                  <Badge className="mb-2">{selectedItem.platform}</Badge>
-                  <h1 className="text-2xl font-bold mb-2">{selectedItem.title}</h1>
-                  <p className="text-muted-foreground mb-4 flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    {selectedItem.date}
-                  </p>
-                  <p className="text-sm text-muted-foreground italic mb-4">
-                    {selectedItem.contextualSummary}
-                  </p>
+                <div className="flex gap-2">
                   <Button
-                    onClick={() => openArticle(selectedItem.source)}
-                    className="flex items-center gap-2"
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPrevPage}
+                    disabled={currentPage === 0}
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    Ver artículo original
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPagesCount - 1}
+                  >
+                    <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             </div>
-            <div className="flex-1 overflow-auto p-6">
-              <div className="prose prose-slate dark:prose-invert max-w-none">
-                <p className="text-lg leading-relaxed whitespace-pre-line">
-                  {selectedItem.fullArticle}
-                </p>
+
+            {/* Periódico hojeable personalizado */}
+            <div className="flex-1 flex items-center justify-center p-4 bg-background overflow-hidden">
+              <div className="relative select-none">
+                {/* Libro de periódico con efecto de voltear */}
+                <div 
+                  className="relative mx-auto cursor-grab active:cursor-grabbing"
+                  style={{ 
+                    width: 'min(75vw, 320px)', 
+                    height: 'min(60vh, 450px)', 
+                    perspective: '1500px' 
+                  }}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  {/* Página trasera (siempre visible) */}
+                  <div className="absolute inset-0 bg-white dark:bg-gray-100 border border-gray-300 dark:border-gray-400 shadow-xl rounded-r-sm overflow-hidden transform-gpu">
+                    {(() => {
+                      const nextPageContent = getNextPageContent()
+                      if (!nextPageContent) return null
+                      
+                      if (nextPageContent.type === 'cover') {
+                        return <NewspaperCover item={nextPageContent.item} />
+                      } else {
+                        return (
+                          <NewspaperArticlePage 
+                            item={nextPageContent.item}
+                            content={nextPageContent.content}
+                            isLastPage={nextPageContent.isLastPage}
+                            pageNumber={nextPageContent.pageNumber}
+                          />
+                        )
+                      }
+                    })()}
+                  </div>
+                  
+                  {/* Página frontal (se voltea) - maleable */}
+                  <div 
+                    className="absolute inset-0 bg-white dark:bg-gray-100 border border-gray-300 dark:border-gray-400 shadow-2xl rounded-r-sm overflow-hidden transform-gpu"
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      backfaceVisibility: 'hidden',
+                      transformOrigin: 'left center',
+                      transform: `rotateY(${
+                        isDragging 
+                          ? Math.max(-120, Math.min(0, (dragOffset / 150) * -120)) 
+                          : currentPage < totalPagesCount - 1 ? 0 : -180
+                      }deg) ${isDragging ? 'scale(1.01) rotateX(1deg)' : 'scale(1)'}`,
+                      transition: isDragging ? 'none' : 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                      filter: isDragging ? 'drop-shadow(6px 6px 15px rgba(0,0,0,0.2))' : 'none'
+                    }}
+                  >
+                    {/* Cara frontal */}
+                    <div 
+                      className="absolute inset-0" 
+                      style={{ 
+                        backfaceVisibility: 'hidden',
+                        transform: isDragging && dragOffset < -30 ? `skewY(${Math.max(-1, dragOffset / 150)}deg) rotateX(${Math.max(-3, dragOffset / 80)}deg)` : 'none'
+                      }}
+                    >
+                      {(() => {
+                        const currentPageContent = getCurrentPageContent()
+                        if (!currentPageContent) return null
+                        
+                        if (currentPageContent.type === 'cover') {
+                          return <NewspaperCover item={currentPageContent.item} />
+                        } else {
+                          return (
+                            <NewspaperArticlePage 
+                              item={currentPageContent.item}
+                              content={currentPageContent.content}
+                              isLastPage={currentPageContent.isLastPage}
+                              pageNumber={currentPageContent.pageNumber}
+                            />
+                          )
+                        }
+                      })()}
+                    </div>
+                    
+                    {/* Cara trasera (próxima página) */}
+                    <div 
+                      className="absolute inset-0" 
+                      style={{ 
+                        backfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)'
+                      }}
+                    >
+                      {(() => {
+                        const nextPageContent = getNextPageContent()
+                        if (!nextPageContent) return null
+                        
+                        if (nextPageContent.type === 'cover') {
+                          return <NewspaperCover item={nextPageContent.item} />
+                        } else {
+                          return (
+                            <NewspaperArticlePage 
+                              item={nextPageContent.item}
+                              content={nextPageContent.content}
+                              isLastPage={nextPageContent.isLastPage}
+                              pageNumber={nextPageContent.pageNumber}
+                            />
+                          )
+                        }
+                      })()}
+                    </div>
+                  </div>
+                  
+                  {/* Sombra dinámica más sutil */}
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-r from-black/15 via-black/5 to-transparent rounded-r-sm pointer-events-none transition-all duration-200"
+                    style={{ 
+                      transform: 'translateX(3px) translateY(3px)', 
+                      zIndex: -1,
+                      opacity: isDragging ? 0.7 : 0.4
+                    }}
+                  />
+                  
+                  {/* Indicador de curvatura más sutil */}
+                  <div 
+                    className={`absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-r from-black/20 to-transparent transition-all duration-200 ${
+                      isDragging && dragOffset < -20 ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    style={{
+                      transform: `rotateY(${isDragging ? Math.max(-30, (dragOffset / 200) * -30) : 0}deg)`,
+                      transformOrigin: 'left center'
+                    }}
+                  />
+                </div>
+                
+                
               </div>
             </div>
           </div>
@@ -326,7 +773,7 @@ export function PressLibraryModal() {
                                 stiffness: 100
                               }}
                               className="group cursor-pointer transform-gpu"
-                              onClick={() => setSelectedItem(item)}
+                              onClick={() => handleSelectItem(item)}
                               style={{ perspective: "1000px" }}
                             >
                               <div className="relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:rotate-1 hover:shadow-2xl group-hover:z-10">
@@ -375,7 +822,7 @@ export function PressLibraryModal() {
                                 
                                 {/* Tooltip al hover */}
                                 <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
-                                  Haz clic para leer
+                                  Haz clic para hojear
                                   <div className="absolute top-full left-1/2 transform -translate-x-1/2">
                                     <div className="border-4 border-transparent border-t-black"></div>
                                   </div>
