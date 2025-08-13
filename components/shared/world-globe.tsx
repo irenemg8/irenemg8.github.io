@@ -233,20 +233,23 @@ export function WorldGlobe() {
       
       const startEarthRotation = () => {
         const animate = () => {
-          if (!isUserInteracting && globe && globeRef.current) {
+          // SIEMPRE rotar automáticamente, incluso durante interacción del usuario
+          if (globe && globeRef.current) {
             // Incrementar el ángulo de rotación de forma constante
-            rotationAngle += 0.15 // grados por frame (un poco más rápido para que sea más visible)
+            rotationAngle += 0.2 // grados por frame (velocidad visible pero realista)
             
-            // Obtener la vista actual para mantener latitud y altitud
-            const currentView = globe.pointOfView()
-            if (currentView) {
-              const newView = {
-                lat: currentView.lat,
-                lng: rotationAngle % 360,
-                altitude: currentView.altitude
+            // Solo aplicar rotación automática si no hay interacción del usuario
+            if (!isUserInteracting) {
+              const currentView = globe.pointOfView()
+              if (currentView) {
+                const newView = {
+                  lat: currentView.lat,
+                  lng: rotationAngle % 360,
+                  altitude: currentView.altitude
+                }
+                globe.pointOfView(newView, 0) // Sin animación para rotación suave
+                setGlobeRotation({ lat: newView.lat, lng: newView.lng })
               }
-              globe.pointOfView(newView, 0) // Sin animación para rotación suave
-              setGlobeRotation({ lat: newView.lat, lng: newView.lng })
             }
           }
           
@@ -351,21 +354,109 @@ export function WorldGlobe() {
           <DialogTitle>Mapa Mundial Interactivo</DialogTitle>
         </VisuallyHidden.Root>
         
-        {/* Barra superior estilo macOS con solo botón rojo */}
-        <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600">
+        {/* Barra superior estilo macOS con 3 botones - altura igual al desktop */}
+        <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600 h-12">
           <div className="flex items-center space-x-2">
-            <button 
-              onClick={() => setIsOpen(false)}
-              className="w-3 h-3 bg-red-500 hover:bg-red-600 rounded-full transition-colors duration-200 flex items-center justify-center"
-            />
+            <div className="flex space-x-2">
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="w-3 h-3 bg-red-500 hover:bg-red-600 rounded-full transition-colors duration-200"
+                title="Cerrar"
+              />
+              <div className="w-3 h-3 bg-yellow-500 hover:bg-yellow-600 rounded-full transition-colors duration-200" title="Minimizar" />
+              <div className="w-3 h-3 bg-green-500 hover:bg-green-600 rounded-full transition-colors duration-200" title="Maximizar" />
+            </div>
           </div>
           <div className="text-white text-sm font-medium">
             Mapa Mundial - Mis Viajes
           </div>
-          <div className="w-6"></div> {/* Espaciador más pequeño */}
+          <div className="w-16"></div> {/* Espaciador */}
         </div>
 
         <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
+          {/* Fondo de estrellas con destellos */}
+          {isOpen && (
+            <div className="absolute inset-0 z-0 overflow-hidden">
+              {/* Estrellas que parpadean */}
+              {[...Array(25)].map((_, i) => {
+                const delay = Math.random() * 4;
+                const duration = Math.random() * 3 + 2;
+                const size = Math.random() * 3 + 1;
+                return (
+                  <div
+                    key={`star-${i}`}
+                    className="absolute bg-white rounded-full opacity-60"
+                    style={{
+                      width: `${size}px`,
+                      height: `${size}px`,
+                      top: `${Math.random() * 100}%`,
+                      left: `${Math.random() * 100}%`,
+                      animation: `twinkle ${duration}s infinite`,
+                      animationDelay: `${delay}s`,
+                    }}
+                  />
+                );
+              })}
+              
+              {/* Estrellas fugaces ocasionales con menor frecuencia */}
+              {[...Array(2)].map((_, i) => (
+                <div
+                  key={`shooting-star-${i}`}
+                  className="absolute w-1 h-1 bg-white rounded-full opacity-80"
+                  style={{
+                    top: `${Math.random() * 50}%`,
+                    right: '100%',
+                    animation: `shootingStar ${Math.random() * 2 + 4}s infinite`,
+                    animationDelay: `${Math.random() * 20 + 10}s`, // Aparecen cada 10-30 segundos
+                  }}
+                />
+              ))}
+              
+              {/* CSS para las animaciones */}
+              <style jsx>{`
+                @keyframes twinkle {
+                  0%, 100% { 
+                    opacity: 0.3;
+                    transform: scale(1);
+                  }
+                  25% {
+                    opacity: 0.8;
+                    transform: scale(1.2);
+                  }
+                  50% { 
+                    opacity: 1;
+                    transform: scale(1.4);
+                  }
+                  75% {
+                    opacity: 0.6;
+                    transform: scale(1.1);
+                  }
+                }
+                
+                @keyframes shootingStar {
+                  0% {
+                    right: 100%;
+                    opacity: 0;
+                    transform: translateY(0) scale(0);
+                  }
+                  10% {
+                    opacity: 1;
+                    transform: translateY(-20px) scale(1);
+                  }
+                  90% {
+                    opacity: 1;
+                    transform: translateY(-200px) scale(1);
+                  }
+                  100% {
+                    right: -10%;
+                    opacity: 0;
+                    transform: translateY(-250px) scale(0);
+                  }
+                }
+              `}</style>
+            </div>
+          )}
+          
           {isOpen && (
             <Suspense fallback={<div className="h-full w-full flex items-center justify-center text-white">Cargando mapa...</div>}>
               <GlobeGL

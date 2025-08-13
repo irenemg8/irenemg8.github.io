@@ -412,8 +412,8 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                 
                 // Crear el punto rojo (chincheta) mucho más grande
                 const dot = document.createElement('div');
-                dot.style.width = '18px';
-                dot.style.height = '18px';
+                dot.style.width = '8px';
+                dot.style.height = '8px';
                 dot.style.borderRadius = '50%';
                 dot.style.background = 'radial-gradient(circle at 30% 30%, #ff6b6b, #ff3838, #d32f2f)';
                 dot.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.9), 0 0 16px 4px rgba(255,41,41,0.8), 0 0 24px 6px rgba(255,41,41,0.4)';
