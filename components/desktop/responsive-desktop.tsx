@@ -5,7 +5,7 @@ import { MacOSCursor } from '@/components/ui/macos-cursor'
 import { MacOSDock } from '@/components/ui/macos-dock'
 
 import { StickyNote } from '@/components/desktop/sticky-note'
-import { TrashCan } from '@/components/desktop/trash-can'
+
 import { CentralWelcome } from '@/components/desktop/central-welcome'
 import { MacOSFolder } from '@/components/desktop/macos-folder'
 import { FolderWindow } from '@/components/desktop/folder-window'
@@ -25,7 +25,7 @@ export function ResponsiveDesktop() {
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([])
   const [resetKey, setResetKey] = useState(0)
   const [showStickyNote, setShowStickyNote] = useState(true)
-  const [isTrashActive, setIsTrashActive] = useState(false)
+
   const [isMounted, setIsMounted] = useState(false)
   
   // State for positions to avoid hydration mismatch
@@ -65,10 +65,8 @@ export function ResponsiveDesktop() {
   }
 
   const handleDragToTrash = (position: { x: number; y: number }) => {
-    setIsTrashActive(true)
     setTimeout(() => {
       setShowStickyNote(false)
-      setIsTrashActive(false)
     }, 300)
   }
 
@@ -288,11 +286,6 @@ export function ResponsiveDesktop() {
             size="md"
             type="file"
             fileType="world"
-          />
-
-          {/* Trash Can - always bottom right, unaffected by reset */}
-          <TrashCan 
-            isActive={isTrashActive}
           />
 
           {/* macOS Dock */}
