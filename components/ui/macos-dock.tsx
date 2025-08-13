@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { CalendarModal } from '@/components/shared/calendar-modal'
 
 interface DockItem {
   id: string
@@ -85,7 +86,12 @@ export function MacOSDock() {
       name: 'Calendar',
       image: '/Dock/Calendar.png',
       label: 'Calendario',
-      action: () => console.log('Calendar clicked')
+      action: () => {
+        const trigger = document.querySelector('[data-calendar-trigger]') as HTMLElement
+        if (trigger) {
+          trigger.click()
+        }
+      }
     },
     {
       id: 'notes',
@@ -150,6 +156,7 @@ export function MacOSDock() {
   }, [screenSize])
 
   return (
+    <>
     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
       <div className="macos-glass rounded-2xl px-4 py-3 macos-shadow border border-white/20 dark:border-gray-700/20">
         <div className="flex items-center space-x-2">
@@ -205,5 +212,9 @@ export function MacOSDock() {
         </div>
       </div>
     </div>
+    
+    {/* Calendar Modal */}
+    <CalendarModal />
+    </>
   )
 }
