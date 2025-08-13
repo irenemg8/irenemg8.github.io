@@ -330,37 +330,41 @@ export function PressLibraryModal() {
                               style={{ perspective: "1000px" }}
                             >
                               <div className="relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:rotate-1 hover:shadow-2xl group-hover:z-10">
-                                {/* Periódico como portada de revista */}
-                                <div className="w-32 h-44 bg-white dark:bg-gray-100 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-300 overflow-hidden transform rotate-2 group-hover:rotate-0 transition-all duration-300">
-                                  {/* Header del periódico */}
-                                  <div className="h-8 bg-gradient-to-r from-red-600 to-red-700 flex items-center justify-center">
-                                    <span className="text-white font-bold text-xs tracking-wide">PRESS</span>
-                                  </div>
+                                {/* Periódico realista */}
+                                <div className="w-32 h-44 bg-white rounded-sm shadow-lg border border-gray-300 overflow-hidden transform rotate-2 group-hover:rotate-0 transition-all duration-300">
                                   
-                                  {/* Logo/Imagen */}
-                                  <div className="h-20 bg-gray-50 dark:bg-gray-200 flex items-center justify-center border-b border-gray-200">
+                                  {/* Header con logo del medio */}
+                                  <div className="h-16 bg-white border-b-2 border-black flex items-center justify-center p-2">
                                     <Image
                                       src={item.logo}
                                       alt={item.platform}
-                                      width={60}
-                                      height={60}
-                                      className="object-contain rounded"
+                                      width={48}
+                                      height={48}
+                                      className="object-contain filter grayscale"
                                     />
                                   </div>
                                   
-                                  {/* Contenido */}
-                                  <div className="p-2 h-16">
-                                    <h4 className="text-xs font-bold text-gray-800 dark:text-gray-900 line-clamp-2 mb-1">
+                                  {/* Líneas de separación del periódico */}
+                                  <div className="h-px bg-black"></div>
+                                  
+                                  {/* Título principal del artículo */}
+                                  <div className="p-2 h-24 bg-white">
+                                    <h4 className="text-xs font-bold text-black leading-tight line-clamp-4 mb-2" style={{ fontFamily: 'serif' }}>
                                       {item.title}
                                     </h4>
-                                    <p className="text-xs text-gray-600 dark:text-gray-700 line-clamp-2">
-                                      {item.platform}
-                                    </p>
+                                    
+                                    {/* Líneas simulando texto de periódico */}
+                                    <div className="space-y-1">
+                                      <div className="h-px bg-gray-400 w-full"></div>
+                                      <div className="h-px bg-gray-400 w-4/5"></div>
+                                      <div className="h-px bg-gray-400 w-full"></div>
+                                      <div className="h-px bg-gray-400 w-3/4"></div>
+                                    </div>
                                   </div>
                                   
-                                  {/* Fecha en esquina */}
-                                  <div className="absolute top-10 right-1">
-                                    <div className="bg-yellow-300 text-black text-xs px-1 py-0.5 rounded transform rotate-12 shadow-sm">
+                                  {/* Footer con fecha */}
+                                  <div className="absolute bottom-1 left-2 right-2 border-t border-black pt-1">
+                                    <div className="text-xs text-black font-bold text-center" style={{ fontFamily: 'serif' }}>
                                       {item.date}
                                     </div>
                                   </div>
