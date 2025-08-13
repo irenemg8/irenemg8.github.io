@@ -25,6 +25,7 @@ export function ResponsiveDesktop() {
   const [resetKey, setResetKey] = useState(0)
   const [showStickyNote, setShowStickyNote] = useState(true)
   const [isTrashActive, setIsTrashActive] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   
   // State for positions to avoid hydration mismatch
   const [positions, setPositions] = useState(() => {
@@ -72,6 +73,8 @@ export function ResponsiveDesktop() {
 
   // Update positions after hydration to avoid SSR/client mismatch
   useEffect(() => {
+    setIsMounted(true) // Mark component as mounted on client
+    
     const updatePositions = () => {
       if (typeof window !== 'undefined') {
         const calculatedPositions = getFolderPositions()
@@ -308,7 +311,7 @@ export function ResponsiveDesktop() {
       ))}
       
       {/* Hidden World Globe component */}
-      <WorldGlobe />
+      {isMounted && <WorldGlobe />}
     </>
   )
 }

@@ -410,30 +410,49 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                 el.style.alignItems = 'center';
                 el.setAttribute('data-name', d.name);
                 
-                // Crear el punto rojo (chincheta)
+                // Crear el punto rojo (chincheta) mucho más grande
                 const dot = document.createElement('div');
-                dot.style.width = '10px';
-                dot.style.height = '10px';
+                dot.style.width = '18px';
+                dot.style.height = '18px';
                 dot.style.borderRadius = '50%';
-                dot.style.background = 'radial-gradient(circle at 40% 40%, #ff5252, #d32f2f)';
-                dot.style.boxShadow = '0 0 0 2px rgba(255,255,255,0.6), 0 0 8px 2px rgba(255,41,41,0.6)';
-                dot.style.marginTop = '2px'; // Pequeño espacio entre la etiqueta y el punto
+                dot.style.background = 'radial-gradient(circle at 30% 30%, #ff6b6b, #ff3838, #d32f2f)';
+                dot.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.9), 0 0 16px 4px rgba(255,41,41,0.8), 0 0 24px 6px rgba(255,41,41,0.4)';
+                dot.style.marginTop = '3px';
+                dot.style.cursor = 'pointer';
+                dot.style.transition = 'all 0.3s ease';
+                dot.style.animation = 'pulse 2s infinite';
                 
-                // Crear la etiqueta permanente con el nombre
+                // Añadir animación CSS para el pulso
+                const style = document.createElement('style');
+                if (!document.getElementById('marker-animations')) {
+                  style.id = 'marker-animations';
+                  style.textContent = `
+                    @keyframes pulse {
+                      0% { box-shadow: 0 0 0 4px rgba(255,255,255,0.9), 0 0 16px 4px rgba(255,41,41,0.8), 0 0 24px 6px rgba(255,41,41,0.4); }
+                      50% { box-shadow: 0 0 0 6px rgba(255,255,255,1), 0 0 20px 6px rgba(255,41,41,0.9), 0 0 35px 10px rgba(255,41,41,0.5); }
+                      100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.9), 0 0 16px 4px rgba(255,41,41,0.8), 0 0 24px 6px rgba(255,41,41,0.4); }
+                    }
+                  `;
+                  document.head.appendChild(style);
+                }
+                
+                // Crear la etiqueta permanente con el nombre más grande
                 const nameLabel = document.createElement('div');
                 nameLabel.textContent = d.name;
-                nameLabel.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                nameLabel.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
                 nameLabel.style.color = 'white';
-                nameLabel.style.padding = '2px 5px';
-                nameLabel.style.borderRadius = '3px';
-                nameLabel.style.fontSize = '10px';
+                nameLabel.style.padding = '4px 10px';
+                nameLabel.style.borderRadius = '8px';
+                nameLabel.style.fontSize = '14px'; // Texto más grande
                 nameLabel.style.fontWeight = 'bold';
-                nameLabel.style.whiteSpace = 'nowrap'; // Mantener el texto en una sola línea
+                nameLabel.style.whiteSpace = 'nowrap';
                 nameLabel.style.textAlign = 'center';
-                nameLabel.style.boxShadow = '0 1px 3px rgba(0,0,0,0.3)';
-                nameLabel.style.pointerEvents = 'none'; // Para que no interfiera con los eventos
-                nameLabel.style.display = 'block'; // Para que se ajuste al contenido
-                nameLabel.style.maxWidth = '100px'; // Ancho máximo por si hay nombres muy largos
+                nameLabel.style.boxShadow = '0 3px 8px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.3)';
+                nameLabel.style.pointerEvents = 'none';
+                nameLabel.style.display = 'block';
+                nameLabel.style.maxWidth = '150px'; // Más ancho para texto más grande
+                nameLabel.style.border = '1px solid rgba(255,255,255,0.4)';
+                nameLabel.style.textShadow = '2px 2px 4px rgba(0,0,0,0.9)';
                 
                 // Estado para el tooltip detallado
                 let tooltipVisible = false;
@@ -454,11 +473,12 @@ export function WorldMapSection({ title }: WorldMapSectionProps) {
                   detailTooltip.style.transform = 'translateX(-50%)';
                   detailTooltip.style.backgroundColor = 'white';
                   detailTooltip.style.color = 'black';
-                  detailTooltip.style.padding = '10px';
-                  detailTooltip.style.borderRadius = '6px';
-                  detailTooltip.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
-                  detailTooltip.style.width = '220px';
+                  detailTooltip.style.padding = '12px';
+                  detailTooltip.style.borderRadius = '8px';
+                  detailTooltip.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.1)';
+                  detailTooltip.style.width = '240px';
                   detailTooltip.style.zIndex = '10000';
+                  detailTooltip.style.border = '1px solid rgba(0,0,0,0.1)';
                   
                   // Contenido
                   detailTooltip.innerHTML = `
