@@ -349,13 +349,13 @@ export function WorldGlobe() {
           />
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-0 border-0 bg-gradient-to-b from-slate-900/98 to-black/98 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden">
+      <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-0 border border-border bg-gradient-to-b from-slate-900 to-black rounded-xl shadow-2xl overflow-hidden flex flex-col">
         <VisuallyHidden.Root>
           <DialogTitle>Mapa Mundial Interactivo</DialogTitle>
         </VisuallyHidden.Root>
         
-        {/* Barra superior estilo macOS con 3 botones - altura igual al desktop */}
-        <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-700 border-b border-gray-600 h-12">
+        {/* Barra superior estilo macOS con 3 botones - altura igual al desktop - adaptada para modo claro */}
+        <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 h-12 flex-shrink-0 rounded-t-xl">
           <div className="flex items-center space-x-2">
             <div className="flex space-x-2">
               <button 
@@ -367,16 +367,16 @@ export function WorldGlobe() {
               <div className="w-3 h-3 bg-green-500 hover:bg-green-600 rounded-full transition-colors duration-200" title="Maximizar" />
             </div>
           </div>
-          <div className="text-white text-sm font-medium">
+          <div className="text-foreground text-sm font-medium">
             Mapa Mundial - Mis Viajes
           </div>
           <div className="w-16"></div> {/* Espaciador */}
         </div>
 
-        <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
-          {/* Fondo de estrellas con destellos */}
+        <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+          {/* Fondo oscuro con estrellas - siempre oscuro independientemente del modo */}
           {isOpen && (
-            <div className="absolute inset-0 z-0 overflow-hidden">
+            <div className="absolute inset-0 z-0 overflow-hidden bg-gradient-to-b from-slate-900 to-black">
               {/* Estrellas que parpadean */}
               {[...Array(25)].map((_, i) => {
                 const delay = Math.random() * 4;
@@ -516,10 +516,10 @@ export function WorldGlobe() {
                   document.head.appendChild(style);
                 }
                 
-                // Crear la etiqueta permanente con el nombre
+                // Crear la etiqueta permanente con el nombre - optimizada para visibilidad en fondo oscuro
                 const nameLabel = document.createElement('div');
                 nameLabel.textContent = d.name;
-                nameLabel.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                nameLabel.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
                 nameLabel.style.color = 'white';
                 nameLabel.style.padding = '4px 8px';
                 nameLabel.style.borderRadius = '6px';
@@ -527,12 +527,12 @@ export function WorldGlobe() {
                 nameLabel.style.fontWeight = 'bold';
                 nameLabel.style.whiteSpace = 'nowrap';
                 nameLabel.style.textAlign = 'center';
-                nameLabel.style.boxShadow = '0 2px 6px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.3)';
+                nameLabel.style.boxShadow = '0 3px 8px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,255,255,0.4)';
                 nameLabel.style.pointerEvents = 'none';
                 nameLabel.style.display = 'block';
                 nameLabel.style.maxWidth = '120px';
-                nameLabel.style.border = '1px solid rgba(255,255,255,0.3)';
-                nameLabel.style.textShadow = '1px 1px 2px rgba(0,0,0,0.8)';
+                nameLabel.style.border = '2px solid rgba(255,255,255,0.5)';
+                nameLabel.style.textShadow = '2px 2px 4px rgba(0,0,0,1)';
                 nameLabel.style.marginBottom = '2px';
                 
                 // Estado para el tooltip detallado
@@ -552,14 +552,16 @@ export function WorldGlobe() {
                   detailTooltip.style.bottom = '35px';
                   detailTooltip.style.left = '50%';
                   detailTooltip.style.transform = 'translateX(-50%)';
-                  detailTooltip.style.backgroundColor = 'white';
+                  // Tooltip con mejor contraste para fondo oscuro
+                  detailTooltip.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
                   detailTooltip.style.color = 'black';
                   detailTooltip.style.padding = '12px';
                   detailTooltip.style.borderRadius = '8px';
-                  detailTooltip.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.1)';
+                  detailTooltip.style.boxShadow = '0 6px 25px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,255,255,0.9)';
                   detailTooltip.style.width = '260px';
                   detailTooltip.style.zIndex = '10000';
-                  detailTooltip.style.border = '1px solid rgba(0,0,0,0.1)';
+                  detailTooltip.style.border = '2px solid rgba(0,0,0,0.15)';
+                  detailTooltip.style.backdropFilter = 'blur(8px)';
                   
                   // Contenido del tooltip
                   detailTooltip.innerHTML = `
