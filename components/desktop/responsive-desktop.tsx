@@ -295,6 +295,9 @@ export function ResponsiveDesktop() {
             isActive={isTrashActive}
           />
 
+          {/* macOS Dock */}
+          <MacOSDock />
+
         </div>
       </MacOSWindow>
       
@@ -313,9 +316,6 @@ export function ResponsiveDesktop() {
       
       {/* Hidden World Globe component */}
       {isMounted && <WorldGlobe />}
-      
-      {/* macOS Dock */}
-      <MacOSDock />
     </>
   )
 }

@@ -87,6 +87,13 @@ export function MacOSDock() {
       image: '/Dock/Notes.png',
       label: 'Notas',
       action: () => console.log('Notes clicked')
+    },
+    {
+      id: 'trash',
+      name: 'Trash',
+      image: '/bin.png',
+      label: 'Papelera',
+      action: () => console.log('Trash clicked')
     }
   ]
 
@@ -116,16 +123,16 @@ export function MacOSDock() {
     
     switch (screenSize) {
       case 'sm':
-        // Móvil: solo los más importantes (4 iconos)
-        itemsToShow = allDockItems.slice(0, 4)
+        // Móvil: iconos más importantes + papelera (5 iconos)
+        itemsToShow = [...allDockItems.slice(0, 4), allDockItems[allDockItems.length - 1]]
         break
       case 'md':
-        // Tablet: iconos principales (6 iconos)
-        itemsToShow = allDockItems.slice(0, 6)
+        // Tablet: iconos principales + papelera (7 iconos)
+        itemsToShow = [...allDockItems.slice(0, 6), allDockItems[allDockItems.length - 1]]
         break
       case 'lg':
-        // Desktop pequeño: mayoría de iconos (8 iconos)
-        itemsToShow = allDockItems.slice(0, 8)
+        // Desktop pequeño: mayoría de iconos + papelera (9 iconos)
+        itemsToShow = [...allDockItems.slice(0, 8), allDockItems[allDockItems.length - 1]]
         break
       case 'xl':
         // Desktop grande: todos los iconos
@@ -141,24 +148,28 @@ export function MacOSDock() {
       <div className="macos-glass rounded-2xl px-4 py-3 macos-shadow border border-white/20 dark:border-gray-700/20">
         <div className="flex items-center space-x-2">
           {visibleItems.map((item, index) => (
-            <button
-              key={item.id}
-              className="macos-dock-item relative flex flex-col items-center group transition-transform duration-200 ease-out hover:scale-110"
-              onMouseEnter={() => setHoveredItem(item.id)}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={item.action}
-            >
+            <div key={item.id} className="flex items-center">
+              {/* Separador antes de la papelera */}
+              {item.id === 'trash' && (
+                <div className="w-px h-10 bg-white/20 dark:bg-gray-600/30 mx-2" />
+              )}
+              <button
+                className="macos-dock-item relative flex flex-col items-center group transition-transform duration-200 ease-out hover:scale-110"
+                onMouseEnter={() => setHoveredItem(item.id)}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={item.action}
+              >
               {/* Icon container */}
               <div className={`${
                 screenSize === 'sm' ? 'w-12 h-12' : 
                 screenSize === 'md' ? 'w-14 h-14' : 'w-16 h-16'
-              } rounded-xl overflow-hidden shadow-lg border border-white/10 relative`}>
+              } rounded-xl overflow-hidden shadow-lg relative`}>
                 <Image
                   src={item.image}
                   alt={item.name}
                   width={64}
                   height={64}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
 
@@ -173,11 +184,12 @@ export function MacOSDock() {
                 </div>
               )}
 
-              {/* Active indicator para Finder */}
-              {item.id === 'finder' && (
+              {/* Active indicator para Papelera */}
+              {item.id === 'trash' && (
                 <div className="absolute -bottom-1 w-1 h-1 bg-gray-600 dark:bg-gray-400 rounded-full" />
               )}
-            </button>
+              </button>
+            </div>
           ))}
         </div>
       </div>
