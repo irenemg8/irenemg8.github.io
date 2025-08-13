@@ -30,8 +30,8 @@ export function TrashCan({ isActive = false, position }: TrashCanProps) {
             }
           `}
           style={{
-            width: 72,
-            height: 58,
+            width: 60,
+            height: 48,
             boxShadow: isActive 
               ? '0 8px 25px rgba(239, 68, 68, 0.4), 0 0 0 2px rgba(239, 68, 68, 0.3)' 
               : 'none'
@@ -50,13 +50,12 @@ export function TrashCan({ isActive = false, position }: TrashCanProps) {
           <Image
             src="/bin.png"
             alt="Papelera"
-            width={50}
-            height={50}
+            width={40}
+            height={40}
             className={`transition-all duration-200 ${isActive ? 'brightness-110' : 'brightness-90'}`}
           />
         </motion.div>
       </div>
-      
       {/* Label */}
       <span 
         className="text-xs text-gray-800 dark:text-gray-200 macos-text text-center leading-tight break-words max-w-20"

@@ -51,7 +51,13 @@ export function MacOSDock() {
       name: 'Maps',
       image: '/Dock/Maps.png',
       label: 'Mapas',
-      action: () => console.log('Maps clicked')
+      action: () => {
+        // Buscar y hacer click en el botón del globo mundial
+        const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
+        if (button) {
+          button.click();
+        }
+      }
     },
     {
       id: 'photos',
@@ -161,8 +167,13 @@ export function MacOSDock() {
               >
               {/* Icon container */}
               <div className={`${
-                screenSize === 'sm' ? 'w-12 h-12' : 
-                screenSize === 'md' ? 'w-14 h-14' : 'w-16 h-16'
+                item.id === 'trash' ? (
+                  screenSize === 'sm' ? 'w-10 h-10' : 
+                  screenSize === 'md' ? 'w-12 h-12' : 'w-14 h-14'
+                ) : (
+                  screenSize === 'sm' ? 'w-12 h-12' : 
+                  screenSize === 'md' ? 'w-14 h-14' : 'w-16 h-16'
+                )
               } rounded-xl overflow-hidden shadow-lg relative`}>
                 <Image
                   src={item.image}

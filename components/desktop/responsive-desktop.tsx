@@ -222,7 +222,7 @@ export function ResponsiveDesktop() {
     <>
       <MacOSCursor />
       <MacOSWindow onReset={resetFolderPositions}>
-        <div className="relative min-h-full overflow-hidden">
+        <div className="relative h-full overflow-hidden">
           {/* Sticky Note */}
           {showStickyNote && (
             <StickyNote 

@@ -153,8 +153,6 @@ export function MacOSWindow({ children, onReset }: MacOSWindowProps) {
           </div>
         </motion.div>
       </div>
-
-
     </div>
   )
 }
