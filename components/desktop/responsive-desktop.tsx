@@ -10,6 +10,7 @@ import { CentralWelcome } from '@/components/desktop/central-welcome'
 import { MacOSFolder } from '@/components/desktop/macos-folder'
 import { FolderWindow } from '@/components/desktop/folder-window'
 import { WorldGlobe } from '@/components/shared/world-globe'
+import { PressLibraryModal } from '@/components/shared/press-library-modal'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -243,7 +244,15 @@ export function ResponsiveDesktop() {
               id={project.id}
               name={project.name}
               initialPosition={positions.projects[index]}
-              onOpen={() => openWindow(project.id, project.name, projectContent(project.name))}
+              onOpen={() => {
+                if (project.id === 'press') {
+                  // Trigger the press library modal directly
+                  const button = document.querySelector('[data-press-library-trigger]') as HTMLButtonElement;
+                  if (button) button.click();
+                } else {
+                  openWindow(project.id, project.name, projectContent(project.name))
+                }
+              }}
               size="md"
               type="folder"
             />
@@ -309,6 +318,9 @@ export function ResponsiveDesktop() {
       
       {/* Hidden World Globe component */}
       {isMounted && <WorldGlobe />}
+      
+      {/* Hidden Press Library Modal component */}
+      {isMounted && <PressLibraryModal />}
     </>
   )
 }

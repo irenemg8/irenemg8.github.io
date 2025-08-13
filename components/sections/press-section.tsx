@@ -25,7 +25,7 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
     },
     {
       id: 2,
-      platform: "Tercera edición del Campus Salud Gandía",
+      platform: "3ª edición del Campus Salud Gandía",
       logo: "/press/upvgandia.jpg?height=200&width=200",
       title: "URBANVIVE Wins First Prize at the 3rd Campus Salud Gandía Hackathon",
       excerpt: "URBANVIVE, an interdisciplinary team from UPV, wins the top award with an innovative urban project enhancing public health through biotechnology and smart design.",
