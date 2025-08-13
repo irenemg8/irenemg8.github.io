@@ -1,119 +1,186 @@
 "use client"
 
-import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Grid3X3, Search, Mail, FileDown } from 'lucide-react'
-import { useLanguage } from '@/contexts/language-context'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+
+interface DockItem {
+  id: string
+  name: string
+  image: string
+  label: string
+  action: () => void
+}
 
 export function MacOSDock() {
-  const { t } = useLanguage()
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
+  const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
+  const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
 
-  const dockItems = [
+  // Todos los iconos del dock en el orden especificado
+  const allDockItems: DockItem[] = [
     {
-      id: 'portfolio',
-      icon: '💼',
-      label: t('nav.portfolio'),
-      action: () => window.scrollTo({ top: 0, behavior: 'smooth' })
+      id: 'finder',
+      name: 'Finder',
+      image: '/Dock/finder.png',
+      label: 'Finder',
+      action: () => console.log('Finder clicked')
     },
     {
-      id: 'projects',
-      icon: Grid3X3,
-      label: t('projects.title'),
-      action: () => {
-        const projectsSection = document.getElementById('projects')
-        projectsSection?.scrollIntoView({ behavior: 'smooth' })
-      }
+      id: 'safari',
+      name: 'Safari',
+      image: '/Dock/Safari.png',
+      label: 'Safari',
+      action: () => console.log('Safari clicked')
     },
     {
-      id: 'search',
-      icon: Search,
-      label: 'Spotlight',
-      action: () => console.log('Search')
+      id: 'messages',
+      name: 'Messages',
+      image: '/Dock/Messages.png',
+      label: 'Mensajes',
+      action: () => console.log('Messages clicked')
     },
     {
-      id: 'contact',
-      icon: Mail,
-      label: t('nav.contact'),
-      action: () => window.location.href = 'mailto:irenemedgarcia@gmail.com'
+      id: 'mail',
+      name: 'Mail',
+      image: '/Dock/Mail.png',
+      label: 'Mail',
+      action: () => window.location.href = 'mailto:irenebati4@gmail.com'
     },
     {
-      id: 'resume',
-      icon: FileDown,
-      label: t('nav.resume'),
-      action: () => window.open('/irene-medina-garcia-cv.pdf', '_blank')
+      id: 'maps',
+      name: 'Maps',
+      image: '/Dock/Maps.png',
+      label: 'Mapas',
+      action: () => console.log('Maps clicked')
+    },
+    {
+      id: 'photos',
+      name: 'Photos',
+      image: '/Dock/Photos.png',
+      label: 'Fotos',
+      action: () => console.log('Photos clicked')
+    },
+    {
+      id: 'facetime',
+      name: 'FaceTime',
+      image: '/Dock/FaceTime.png',
+      label: 'FaceTime',
+      action: () => console.log('FaceTime clicked')
+    },
+    {
+      id: 'settings',
+      name: 'System Preferences',
+      image: '/Dock/SystemPreferences.png',
+      label: 'Preferencias del Sistema',
+      action: () => console.log('Settings clicked')
+    },
+    {
+      id: 'calendar',
+      name: 'Calendar',
+      image: '/Dock/Calendar.png',
+      label: 'Calendario',
+      action: () => console.log('Calendar clicked')
+    },
+    {
+      id: 'notes',
+      name: 'Notes',
+      image: '/Dock/Notes.png',
+      label: 'Notas',
+      action: () => console.log('Notes clicked')
     }
   ]
 
+  // Detectar tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth
+      if (width < 640) {
+        setScreenSize('sm')
+      } else if (width < 768) {
+        setScreenSize('md')
+      } else if (width < 1024) {
+        setScreenSize('lg')
+      } else {
+        setScreenSize('xl')
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Actualizar iconos visibles según el tamaño de pantalla
+  useEffect(() => {
+    let itemsToShow: DockItem[] = []
+    
+    switch (screenSize) {
+      case 'sm':
+        // Móvil: solo los más importantes (4 iconos)
+        itemsToShow = allDockItems.slice(0, 4)
+        break
+      case 'md':
+        // Tablet: iconos principales (6 iconos)
+        itemsToShow = allDockItems.slice(0, 6)
+        break
+      case 'lg':
+        // Desktop pequeño: mayoría de iconos (8 iconos)
+        itemsToShow = allDockItems.slice(0, 8)
+        break
+      case 'xl':
+        // Desktop grande: todos los iconos
+        itemsToShow = allDockItems
+        break
+    }
+    
+    setVisibleItems(itemsToShow)
+  }, [screenSize])
+
   return (
-    <motion.div
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.5, duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-      className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-30"
-    >
-      <motion.div className="macos-glass rounded-2xl px-4 py-3 macos-shadow border border-white/30 dark:border-gray-700/30">
-        <div className="flex items-end space-x-2">
-          {dockItems.map((item, index) => (
-            <motion.button
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+      <div className="macos-glass rounded-2xl px-4 py-3 macos-shadow border border-white/20 dark:border-gray-700/20">
+        <div className="flex items-center space-x-2">
+          {visibleItems.map((item, index) => (
+            <button
               key={item.id}
-              className="macos-dock-item relative flex flex-col items-center group"
+              className="macos-dock-item relative flex flex-col items-center group transition-transform duration-200 ease-out hover:scale-110"
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
               onClick={item.action}
-              whileHover={{ 
-                scale: 1.4, 
-                y: -16,
-                transition: { type: "spring", stiffness: 400, damping: 25 }
-              }}
-              whileTap={{ scale: 1.2 }}
             >
               {/* Icon container */}
-              <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-xl flex items-center justify-center shadow-lg border border-white/50 dark:border-gray-600/50 relative overflow-hidden">
-                {/* Icon */}
-                {typeof item.icon === 'string' ? (
-                  <span className="text-2xl">{item.icon}</span>
-                ) : (
-                  <item.icon className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-                )}
-                
-                {/* Shine effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"
-                  initial={{ x: -100, opacity: 0 }}
-                  animate={hoveredItem === item.id ? { x: 100, opacity: 1 } : { x: -100, opacity: 0 }}
-                  transition={{ duration: 0.6 }}
+              <div className={`${
+                screenSize === 'sm' ? 'w-12 h-12' : 
+                screenSize === 'md' ? 'w-14 h-14' : 'w-16 h-16'
+              } rounded-xl overflow-hidden shadow-lg border border-white/10 relative`}>
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
                 />
               </div>
 
-              {/* Tooltip */}
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                animate={hoveredItem === item.id ? 
-                  { opacity: 1, y: -50, scale: 1 } : 
-                  { opacity: 0, y: 10, scale: 0.8 }
-                }
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="absolute macos-glass rounded-lg px-3 py-1 text-xs macos-text-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap pointer-events-none"
-              >
-                {item.label}
-                {/* Tooltip arrow */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rotate-45 border-r border-b border-white/30 dark:border-gray-700/30"></div>
-              </motion.div>
-
-              {/* Active indicator */}
-              {index === 0 && (
-                <motion.div
-                  className="absolute -bottom-1 w-1 h-1 bg-gray-600 dark:bg-gray-400 rounded-full"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.8 }}
-                />
+              {/* Tooltip - solo en pantallas medianas y grandes */}
+              {screenSize !== 'sm' && hoveredItem === item.id && (
+                <div
+                  className="absolute -top-12 left-1/2 transform -translate-x-1/2 macos-glass rounded-lg px-3 py-1 text-xs font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap pointer-events-none transition-opacity duration-200"
+                >
+                  {item.label}
+                  {/* Tooltip arrow */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rotate-45 border-r border-b border-white/30 dark:border-gray-700/30"></div>
+                </div>
               )}
-            </motion.button>
+
+              {/* Active indicator para Finder */}
+              {item.id === 'finder' && (
+                <div className="absolute -bottom-1 w-1 h-1 bg-gray-600 dark:bg-gray-400 rounded-full" />
+              )}
+            </button>
           ))}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }

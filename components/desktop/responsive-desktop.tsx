@@ -2,6 +2,7 @@
 
 import { MacOSWindow } from '@/components/layout/macos-window'
 import { MacOSCursor } from '@/components/ui/macos-cursor'
+import { MacOSDock } from '@/components/ui/macos-dock'
 
 import { StickyNote } from '@/components/desktop/sticky-note'
 import { TrashCan } from '@/components/desktop/trash-can'
@@ -312,6 +313,9 @@ export function ResponsiveDesktop() {
       
       {/* Hidden World Globe component */}
       {isMounted && <WorldGlobe />}
+      
+      {/* macOS Dock */}
+      <MacOSDock />
     </>
   )
 }

@@ -9,7 +9,7 @@ export function NavigationMenu() {
   const { t } = useLanguage()
 
   const handleContactClick = () => {
-    window.location.href = 'mailto:irenemedgarcia@gmail.com'
+    window.location.href = 'mailto:irenebati4@gmail.com'
   }
 
   const handleResumeClick = () => {
