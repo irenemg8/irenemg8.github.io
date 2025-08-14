@@ -150,12 +150,12 @@ export function ArtworksGallery() {
           Art Gallery Trigger
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0 border border-border bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-black rounded-xl shadow-2xl overflow-hidden flex flex-col">
+      <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0 border border-border bg-background rounded-xl shadow-2xl overflow-hidden flex flex-col">
         <VisuallyHidden.Root>
           <DialogTitle>Galería de Arte Digital</DialogTitle>
         </VisuallyHidden.Root>
         
-        {/* Barra superior estilo macOS con 3 botones */}
+        {/* Barra superior estilo macOS - consistente con tu web */}
         <div className="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 h-12 flex-shrink-0 rounded-t-xl">
           <div className="flex items-center space-x-2">
             <div className="flex space-x-2">
@@ -169,124 +169,212 @@ export function ArtworksGallery() {
             </div>
           </div>
           <div className="text-foreground text-sm font-medium">
-            Galería de Arte - Mis Obras ({currentIndex + 1}/{artworks.length})
+            Galería de Arte - {currentIndex + 1} de {artworks.length}
           </div>
           <div className="w-16"></div>
         </div>
 
-        {/* Galería principal */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Controles de navegación */}
-          <div className="flex items-center justify-between p-4 bg-background/50 border-b border-border/50">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={prevArtwork}
-              className="flex items-center space-x-1"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span>Anterior</span>
-            </Button>
-            
-            <div className="text-center">
-              <h3 className="text-lg font-semibold">{artworks[currentIndex].title}</h3>
-              <p className="text-sm text-muted-foreground">{artworks[currentIndex].type} • {artworks[currentIndex].year}</p>
-            </div>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={nextArtwork}
-              className="flex items-center space-x-1"
-            >
-              <span>Siguiente</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Artwork principal */}
-          <div className="flex-1 flex relative">
-            {/* Imagen principal */}
-            <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-stone-50 to-stone-100 dark:from-stone-900 dark:to-stone-800">
-              <div className="relative max-w-full max-h-full group cursor-pointer" onClick={() => openArtworkDetail(artworks[currentIndex])}>
-                {/* Marco del cuadro */}
-                <div className="relative bg-gradient-to-br from-amber-200 to-amber-300 dark:from-amber-800 dark:to-amber-900 p-6 rounded-lg shadow-2xl">
-                  <div className="relative bg-white dark:bg-gray-100 p-3 rounded">
-                    <Image
-                      src={artworks[currentIndex].image}
-                      alt={artworks[currentIndex].title}
-                      width={500}
-                      height={400}
-                      className="object-contain rounded max-w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
-                    />
-                  </div>
-                  {/* Placa informativa */}
-                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-amber-700 dark:bg-amber-800 text-white text-sm px-4 py-2 rounded shadow-lg">
-                    {artworks[currentIndex].title} ({artworks[currentIndex].year})
-                  </div>
+        {/* Galería principal - completamente responsive */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-muted/20 to-background">
+          
+          {/* Panel de imagen principal */}
+          <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 min-h-0">
+            <div className="relative group cursor-pointer w-full max-w-2xl" onClick={() => openArtworkDetail(artworks[currentIndex])}>
+              {/* Card container responsive */}
+              <div className="relative bg-card border border-border/50 rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-2 sm:p-3 md:p-4 lg:p-6 group-hover:-translate-y-1">
+                <div className="relative bg-muted/30 rounded-lg sm:rounded-xl overflow-hidden">
+                  <Image
+                    src={artworks[currentIndex].image}
+                    alt={artworks[currentIndex].title}
+                    width={600}
+                    height={450}
+                    className="object-contain w-full h-auto max-h-[35vh] sm:max-h-[45vh] md:max-h-[55vh] lg:max-h-[60vh] rounded-lg sm:rounded-xl transition-transform duration-500 group-hover:scale-105"
+                  />
                 </div>
                 
-                {/* Overlay de interacción */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="bg-white dark:bg-black text-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-lg">
+                {/* Información de la obra - responsive */}
+                <div className="mt-2 sm:mt-3 md:mt-4 text-center">
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-foreground">{artworks[currentIndex].title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{artworks[currentIndex].type} • {artworks[currentIndex].year}</p>
+                </div>
+                
+                {/* Hover overlay - solo en desktop */}
+                <div className="hidden md:flex absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl items-center justify-center">
+                  <div className="bg-background/90 backdrop-blur-sm text-foreground px-4 py-2 rounded-xl text-sm font-medium shadow-lg border border-border/50">
                     Click para ver detalles
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Panel de información */}
-            <div className="w-80 bg-background/95 border-l border-border/50 p-6 overflow-y-auto">
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Descripción</h4>
-                  <p className="text-sm mt-2 leading-relaxed">{artworks[currentIndex].description}</p>
+            {/* Controles de navegación móvil */}
+            <div className="flex md:hidden items-center justify-between w-full mt-4 px-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={prevArtwork}
+                className="flex items-center space-x-1 rounded-xl"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              
+              <div className="text-center">
+                <div className="text-sm text-muted-foreground">
+                  {currentIndex + 1} de {artworks.length}
                 </div>
+                <h4 className="text-sm font-semibold truncate max-w-[150px]">{artworks[currentIndex].title}</h4>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={nextArtwork}
+                className="flex items-center space-x-1 rounded-xl"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
 
-                <div>
-                  <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Herramientas</h4>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {artworks[currentIndex].tools.map((tool: string) => (
-                      <Badge key={tool} variant="outline" className="text-xs">
-                        {tool}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={() => openArtworkDetail(artworks[currentIndex])}
-                  className="w-full"
-                  variant="default"
-                >
-                  Ver Detalles Completos
-                </Button>
+          {/* Panel inferior/lateral responsive */}
+          <div className="w-full bg-card/50 border-t border-border/50 p-3 sm:p-4 md:hidden">
+            {/* Información compacta móvil */}
+            <div className="space-y-3 mb-4">
+              <div>
+                <p className="text-xs leading-relaxed text-foreground">{artworks[currentIndex].description}</p>
               </div>
 
-              {/* Miniaturas */}
-              <div className="mt-6 pt-6 border-t border-border/50">
-                <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-3">Todas las Obras</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  {artworks.map((artwork, index) => (
-                    <div
-                      key={artwork.id}
-                      className={`aspect-square cursor-pointer rounded border-2 overflow-hidden transition-all duration-200 ${
-                        index === currentIndex 
-                          ? 'border-primary ring-2 ring-primary/20' 
-                          : 'border-border/50 hover:border-primary/50'
-                      }`}
-                      onClick={() => setCurrentIndex(index)}
-                    >
-                      <Image
-                        src={artwork.image}
-                        alt={artwork.title}
-                        width={80}
-                        height={80}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
+              <div className="flex flex-wrap gap-1.5">
+                {artworks[currentIndex].tools.slice(0, 4).map((tool: string) => (
+                  <Badge key={tool} variant="secondary" className="text-xs rounded-lg">
+                    {tool}
+                  </Badge>
+                ))}
+                {artworks[currentIndex].tools.length > 4 && (
+                  <Badge variant="secondary" className="text-xs rounded-lg">
+                    +{artworks[currentIndex].tools.length - 4}
+                  </Badge>
+                )}
+              </div>
+
+              <Button 
+                onClick={() => openArtworkDetail(artworks[currentIndex])}
+                className="w-full rounded-xl"
+                variant="default"
+                size="sm"
+              >
+                Ver Detalles
+              </Button>
+            </div>
+
+            {/* Carrusel horizontal de miniaturas móvil */}
+            <div className="space-y-2">
+              <h4 className="font-semibold text-xs text-muted-foreground uppercase tracking-wide">Todas las Obras</h4>
+              <div className="flex space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+                {artworks.map((artwork, index) => (
+                  <div
+                    key={artwork.id}
+                    className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                      index === currentIndex 
+                        ? 'border-primary ring-2 ring-primary/20 shadow-lg' 
+                        : 'border-border/50'
+                    }`}
+                    onClick={() => setCurrentIndex(index)}
+                  >
+                    <Image
+                      src={artwork.image}
+                      alt={artwork.title}
+                      width={60}
+                      height={60}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Panel lateral desktop */}
+          <div className="hidden md:block w-80 lg:w-96 bg-card/50 border-l border-border/50 p-4 lg:p-6 overflow-y-auto">
+            {/* Controles de navegación desktop */}
+            <div className="flex items-center justify-between mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={prevArtwork}
+                className="flex items-center space-x-1 rounded-xl"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span>Anterior</span>
+              </Button>
+              
+              <div className="text-center">
+                <div className="text-sm text-muted-foreground">
+                  {currentIndex + 1} de {artworks.length}
+                </div>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={nextArtwork}
+                className="flex items-center space-x-1 rounded-xl"
+              >
+                <span>Siguiente</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Información completa desktop */}
+            <div className="space-y-4 mb-6">
+              <div>
+                <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2">Descripción</h4>
+                <p className="text-sm leading-relaxed text-foreground">{artworks[currentIndex].description}</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide mb-2">Herramientas</h4>
+                <div className="flex flex-wrap gap-2">
+                  {artworks[currentIndex].tools.map((tool: string) => (
+                    <Badge key={tool} variant="secondary" className="text-xs rounded-lg">
+                      {tool}
+                    </Badge>
                   ))}
                 </div>
+              </div>
+
+              <Button 
+                onClick={() => openArtworkDetail(artworks[currentIndex])}
+                className="w-full rounded-xl"
+                variant="default"
+              >
+                Ver Detalles Completos
+              </Button>
+            </div>
+
+            {/* Grid de miniaturas desktop */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Todas las Obras</h4>
+              <div className="grid grid-cols-3 gap-3">
+                {artworks.map((artwork, index) => (
+                  <div
+                    key={artwork.id}
+                    className={`aspect-square cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200 hover:-translate-y-1 ${
+                      index === currentIndex 
+                        ? 'border-primary ring-2 ring-primary/20 shadow-lg' 
+                        : 'border-border/50 hover:border-primary/50 hover:shadow-md'
+                    }`}
+                    onClick={() => setCurrentIndex(index)}
+                  >
+                    <Image
+                      src={artwork.image}
+                      alt={artwork.title}
+                      width={100}
+                      height={100}
+                      className="object-cover w-full h-full transition-transform duration-300 hover:scale-110"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -297,50 +385,65 @@ export function ArtworksGallery() {
       <AnimatePresence>
         {selectedArtwork && (
           <Dialog open={!!selectedArtwork} onOpenChange={() => setSelectedArtwork(null)}>
-            <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden">
+            <DialogContent className="max-w-5xl w-[95vw] h-[90vh] sm:h-[85vh] p-0 overflow-hidden bg-background border border-border rounded-lg sm:rounded-xl">
               <VisuallyHidden.Root>
                 <DialogTitle>{selectedArtwork.title}</DialogTitle>
               </VisuallyHidden.Root>
               
               <div className="relative h-full flex flex-col">
-                {/* Imagen */}
-                <div className="relative flex-1">
-                  <Image
-                    src={selectedArtwork.image}
-                    alt={selectedArtwork.title}
-                    fill
-                    className="object-contain bg-gradient-to-br from-stone-50 to-stone-100 dark:from-stone-900 dark:to-stone-800"
-                  />
+                {/* Imagen principal responsive */}
+                <div className="relative flex-1 min-h-0 flex items-center justify-center bg-gradient-to-br from-muted/20 to-background p-3 sm:p-4 md:p-6">
+                  <div className="relative bg-card border border-border/50 rounded-lg sm:rounded-xl md:rounded-2xl shadow-xl p-2 sm:p-3 md:p-4 max-w-full max-h-full">
+                    <div className="relative bg-muted/20 rounded-lg sm:rounded-xl overflow-hidden">
+                      <Image
+                        src={selectedArtwork.image}
+                        alt={selectedArtwork.title}
+                        width={800}
+                        height={600}
+                        className="max-w-[85vw] max-h-[50vh] sm:max-h-[55vh] md:max-h-[60vh] object-contain rounded-lg sm:rounded-xl"
+                      />
+                    </div>
+                  </div>
+                  
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-4 right-4 rounded-full bg-background/80 hover:bg-background/90"
+                    className="absolute top-2 right-2 sm:top-4 sm:right-4 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm border border-border/50"
                     onClick={() => setSelectedArtwork(null)}
                   >
-                    <X className="h-5 w-5" />
+                    <X className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </div>
 
-                {/* Información */}
-                <div className="p-6 bg-background border-t">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                    <div>
-                      <h2 className="text-2xl font-bold mb-2">{selectedArtwork.title}</h2>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="secondary">{selectedArtwork.type}</Badge>
-                        <span className="text-muted-foreground">{selectedArtwork.year}</span>
-                      </div>
+                {/* Panel de información responsive */}
+                <div className="p-3 sm:p-4 md:p-6 bg-card border-t border-border/50 flex-shrink-0 max-h-[35vh] sm:max-h-none overflow-y-auto">
+                  <div className="text-center mb-4 md:mb-6">
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 text-foreground">{selectedArtwork.title}</h2>
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                      <Badge variant="secondary" className="rounded-lg text-xs">{selectedArtwork.type}</Badge>
+                      <span className="text-muted-foreground text-sm">{selectedArtwork.year}</span>
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
                     <div>
-                      <h3 className="font-semibold mb-2">Descripción Completa</h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">{selectedArtwork.fullDescription}</p>
+                      <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base text-foreground">Descripción Completa</h3>
+                      <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{selectedArtwork.fullDescription}</p>
                     </div>
                     <div>
-                      <h3 className="font-semibold mb-2">Notas de Diseño</h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">{selectedArtwork.designNotes}</p>
+                      <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base text-foreground">Notas de Diseño</h3>
+                      <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{selectedArtwork.designNotes}</p>
+                    </div>
+                  </div>
+
+                  <div className="text-center mt-4 md:mt-6">
+                    <h4 className="font-semibold mb-2 md:mb-3 text-xs md:text-sm text-muted-foreground uppercase tracking-wide">Herramientas</h4>
+                    <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center">
+                      {selectedArtwork.tools.map((tool: string) => (
+                        <Badge key={tool} variant="outline" className="text-xs rounded-lg">
+                          {tool}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                 </div>
