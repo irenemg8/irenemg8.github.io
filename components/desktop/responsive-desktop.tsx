@@ -11,6 +11,7 @@ import { MacOSFolder } from '@/components/desktop/macos-folder'
 import { FolderWindow } from '@/components/desktop/folder-window'
 import { WorldGlobe } from '@/components/shared/world-globe'
 import { PressLibraryModal } from '@/components/shared/press-library-modal'
+import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -249,6 +250,10 @@ export function ResponsiveDesktop() {
                   // Trigger the press library modal directly
                   const button = document.querySelector('[data-press-library-trigger]') as HTMLButtonElement;
                   if (button) button.click();
+                } else if (project.id === 'artworks') {
+                  // Trigger the artworks modal directly
+                  const button = document.querySelector('[data-artworks-trigger]') as HTMLButtonElement;
+                  if (button) button.click();
                 } else {
                   openWindow(project.id, project.name, projectContent(project.name))
                 }
@@ -321,6 +326,9 @@ export function ResponsiveDesktop() {
       
       {/* Hidden Press Library Modal component */}
       {isMounted && <PressLibraryModal />}
+      
+      {/* Hidden Artworks Gallery component */}
+      {isMounted && <ArtworksGallery />}
     </>
   )
 }

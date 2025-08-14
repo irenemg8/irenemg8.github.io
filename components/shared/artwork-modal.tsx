@@ -64,12 +64,12 @@ export function ArtworkModal({ content, onClose }: ArtworkModalProps) {
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-2">Description</h3>
+                <h3 className="text-lg font-semibold mb-2">Descripción</h3>
                 <p className="text-muted-foreground">{content.fullDescription}</p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-2">Tools Used</h3>
+                <h3 className="text-lg font-semibold mb-2">Herramientas Utilizadas</h3>
                 <div className="flex flex-wrap gap-2">
                   {content.tools?.map((tool: string) => (
                     <Badge key={tool} variant="outline">
@@ -80,7 +80,7 @@ export function ArtworkModal({ content, onClose }: ArtworkModalProps) {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-2">Design Notes</h3>
+                <h3 className="text-lg font-semibold mb-2">Notas de Diseño</h3>
                 <p className="text-muted-foreground">{content.designNotes}</p>
               </div>
             </div>

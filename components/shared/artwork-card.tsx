@@ -14,7 +14,9 @@ interface Artwork {
   image: string
   year: string
   description: string
+  fullDescription: string
   tools: string[]
+  designNotes: string
 }
 
 interface ArtworkCardProps {
