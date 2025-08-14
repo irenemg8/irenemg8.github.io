@@ -108,7 +108,7 @@ const pressItems: PressItem[] = [
     id: 7,
     platform: "Bon Dia Safor",
     logo: "/press/urbalab.png?height=200&width=200",
-    title: "UrbanVive Showcased at Innpulso Emprende Gandía 2025",
+    title: "UrbanVive Showcased at Innpulso Emprende Gandía",
     date: "Jun 2025",
     excerpt:
       "Our award-winning project UrbanVive, which earned first prize at the Campus Salud Gandía Hackathon, was featured at the VIII Innpulso Emprende Gandía 2025, a national innovation contest supported by the Ministry of Science, Innovation and Universities.",
@@ -122,7 +122,7 @@ const pressItems: PressItem[] = [
     id: 19,
     platform: "ENHANCE Alliance",
     logo: "/press/enhance.jpg?height=200&width=200",
-    title: "Selected for the ENHANCE Summer School in Climate Change 2025",
+    title: "Selected for the ENHANCE School in Climate Change",
     date: "Jun 2025",
     excerpt:
       "I have been officially selected to participate in the prestigious ENHANCE Summer School in Climate Change 2025, hosted by the ENHANCE Alliance and Warsaw University of Technology.",
@@ -1009,7 +1009,7 @@ export function PressLibraryModal() {
                           if (!leftPage) return (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">
                               <div className="text-center">
-                                <p className="text-sm">Página en blanco</p>
+                                <p className="text-sm"></p>
                               </div>
                             </div>
                           )
@@ -1039,7 +1039,7 @@ export function PressLibraryModal() {
                           if (!rightPage) return (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">
                               <div className="text-center">
-                                <p className="text-sm">Página en blanco</p>
+                                <p className="text-sm"></p>
                               </div>
                             </div>
                           )
@@ -1100,7 +1100,7 @@ export function PressLibraryModal() {
                           const { rightPage } = getCurrentSpreadPages()
                           if (!rightPage) return (
                             <div className="w-full h-full flex items-center justify-center text-gray-400 bg-white dark:bg-gray-50">
-                              <p className="text-sm">Página en blanco</p>
+                              <p className="text-sm"></p>
                             </div>
                           )
                           
@@ -1132,7 +1132,7 @@ export function PressLibraryModal() {
                           const { leftPage } = getNextSpreadPages()
                           if (!leftPage) return (
                             <div className="w-full h-full flex items-center justify-center text-gray-400 bg-white dark:bg-gray-50">
-                              <p className="text-sm">Página en blanco</p>
+                              <p className="text-sm"></p>
                             </div>
                           )
                           

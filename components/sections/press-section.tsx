@@ -96,7 +96,7 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
   "id": 7,
   "platform": "Bon Dia Safor",
   "logo": "/press/urbalab.png?height=200&width=200",
-  "title": "UrbanVive Showcased at Innpulso Emprende Gandía 2025",
+  "title": "UrbanVive Showcased at Innpulso Emprende Gandía",
   "date": "Jun 2025",
   "excerpt":
     "Our award-winning project UrbanVive, which earned first prize at the Campus Salud Gandía Hackathon, was featured at the VIII Innpulso Emprende Gandía 2025, a national innovation contest supported by the Ministry of Science, Innovation and Universities.",
