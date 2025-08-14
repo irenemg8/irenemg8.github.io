@@ -458,6 +458,11 @@ export function PressLibraryModal() {
     e.preventDefault() // Prevenir selección de texto
     setIsDragging(true)
     setDragStartX(e.clientX)
+    
+    // Agregar feedback háptico en dispositivos que lo soporten
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10)
+    }
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -470,10 +475,10 @@ export function PressLibraryModal() {
     if (!isDragging) return
     setIsDragging(false)
     
-    // Si el drag fue significativo, cambiar página
-    if (dragOffset > 80) {
+    // Si el drag fue significativo, cambiar página (más sensible)
+    if (dragOffset > 60) {
       goToPrevPage()
-    } else if (dragOffset < -80) {
+    } else if (dragOffset < -60) {
       goToNextPage()
     }
     
@@ -484,6 +489,11 @@ export function PressLibraryModal() {
     e.preventDefault() // Prevenir comportamientos por defecto
     setIsDragging(true)
     setDragStartX(e.touches[0].clientX)
+    
+    // Feedback háptico más fuerte para touch
+    if ('vibrate' in navigator) {
+      navigator.vibrate(15)
+    }
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -496,10 +506,10 @@ export function PressLibraryModal() {
     if (!isDragging) return
     setIsDragging(false)
     
-    // Si el drag fue significativo, cambiar página
-    if (dragOffset > 80) {
+    // Si el drag fue significativo, cambiar página (más sensible)
+    if (dragOffset > 60) {
       goToPrevPage()
-    } else if (dragOffset < -80) {
+    } else if (dragOffset < -60) {
       goToNextPage()
     }
     
@@ -555,9 +565,16 @@ export function PressLibraryModal() {
               </Button>
               
               <div className="flex items-center gap-4">
-                <div className="text-sm text-muted-foreground">
-                  Página {currentPage + 1} de {totalPagesCount}
-                </div>
+                                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <span>Página {currentPage + 1} de {totalPagesCount}</span>
+                              {isDragging && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                />
+                              )}
+                            </div>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -588,7 +605,8 @@ export function PressLibraryModal() {
                   style={{ 
                     width: 'min(75vw, 320px)', 
                     height: 'min(60vh, 450px)', 
-                    perspective: '1500px' 
+                    perspective: '2000px',
+                    perspectiveOrigin: '50% 50%'
                   }}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
@@ -610,9 +628,9 @@ export function PressLibraryModal() {
                         return (
                           <NewspaperArticlePage 
                             item={nextPageContent.item}
-                            content={nextPageContent.content}
-                            isLastPage={nextPageContent.isLastPage}
-                            pageNumber={nextPageContent.pageNumber}
+                            content={nextPageContent.content || ''}
+                            isLastPage={nextPageContent.isLastPage || false}
+                            pageNumber={nextPageContent.pageNumber || 1}
                           />
                         )
                       }
@@ -626,13 +644,22 @@ export function PressLibraryModal() {
                       transformStyle: 'preserve-3d',
                       backfaceVisibility: 'hidden',
                       transformOrigin: 'left center',
-                      transform: `rotateY(${
-                        isDragging 
-                          ? Math.max(-120, Math.min(0, (dragOffset / 150) * -120)) 
-                          : currentPage < totalPagesCount - 1 ? 0 : -180
-                      }deg) ${isDragging ? 'scale(1.01) rotateX(1deg)' : 'scale(1)'}`,
-                      transition: isDragging ? 'none' : 'transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                      filter: isDragging ? 'drop-shadow(6px 6px 15px rgba(0,0,0,0.2))' : 'none'
+                      transform: `
+                        rotateY(${
+                          isDragging 
+                            ? Math.max(-140, Math.min(0, (dragOffset / 120) * -140)) 
+                            : currentPage < totalPagesCount - 1 ? 0 : -180
+                        }deg) 
+                        ${isDragging ? 'scale(1.02)' : 'scale(1)'} 
+                        ${isDragging ? `rotateX(${Math.max(-5, dragOffset / 50)}deg)` : 'rotateX(0deg)'}
+                        ${isDragging ? `translateZ(${Math.abs(dragOffset / 10)}px)` : 'translateZ(0px)'}
+                      `,
+                      transition: isDragging 
+                        ? 'none' 
+                        : 'transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)',
+                      filter: isDragging 
+                        ? `drop-shadow(${Math.abs(dragOffset / 20)}px ${Math.abs(dragOffset / 20)}px 20px rgba(0,0,0,${Math.min(0.4, Math.abs(dragOffset) / 200)}))` 
+                        : 'drop-shadow(2px 2px 8px rgba(0,0,0,0.1))'
                     }}
                   >
                     {/* Cara frontal */}
@@ -640,7 +667,14 @@ export function PressLibraryModal() {
                       className="absolute inset-0" 
                       style={{ 
                         backfaceVisibility: 'hidden',
-                        transform: isDragging && dragOffset < -30 ? `skewY(${Math.max(-1, dragOffset / 150)}deg) rotateX(${Math.max(-3, dragOffset / 80)}deg)` : 'none'
+                        transform: isDragging && dragOffset < -20 
+                          ? `
+                            skewY(${Math.max(-2, dragOffset / 100)}deg) 
+                            rotateX(${Math.max(-4, dragOffset / 60)}deg)
+                            scaleX(${Math.max(0.98, 1 + dragOffset / 1000)})
+                          ` 
+                          : 'none',
+                        transition: isDragging ? 'none' : 'transform 0.3s ease-out'
                       }}
                     >
                       {(() => {
@@ -653,9 +687,9 @@ export function PressLibraryModal() {
                           return (
                             <NewspaperArticlePage 
                               item={currentPageContent.item}
-                              content={currentPageContent.content}
-                              isLastPage={currentPageContent.isLastPage}
-                              pageNumber={currentPageContent.pageNumber}
+                              content={currentPageContent.content || ''}
+                              isLastPage={currentPageContent.isLastPage || false}
+                              pageNumber={currentPageContent.pageNumber || 1}
                             />
                           )
                         }
@@ -680,9 +714,9 @@ export function PressLibraryModal() {
                           return (
                             <NewspaperArticlePage 
                               item={nextPageContent.item}
-                              content={nextPageContent.content}
-                              isLastPage={nextPageContent.isLastPage}
-                              pageNumber={nextPageContent.pageNumber}
+                              content={nextPageContent.content || ''}
+                              isLastPage={nextPageContent.isLastPage || false}
+                              pageNumber={nextPageContent.pageNumber || 1}
                             />
                           )
                         }
@@ -690,24 +724,64 @@ export function PressLibraryModal() {
                     </div>
                   </div>
                   
-                  {/* Sombra dinámica más sutil */}
+                  {/* Sistema de sombras múltiples más realista */}
                   <div 
-                    className="absolute inset-0 bg-gradient-to-r from-black/15 via-black/5 to-transparent rounded-r-sm pointer-events-none transition-all duration-200"
-                    style={{ 
-                      transform: 'translateX(3px) translateY(3px)', 
-                      zIndex: -1,
-                      opacity: isDragging ? 0.7 : 0.4
-                    }}
-                  />
+                    className="absolute inset-0 pointer-events-none rounded-r-sm"
+                    style={{ zIndex: -1 }}
+                  >
+                    {/* Sombra base */}
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/10 to-black/5 rounded-r-sm"
+                      style={{ 
+                        transform: `translateX(${isDragging ? Math.abs(dragOffset / 15) : 4}px) translateY(${isDragging ? Math.abs(dragOffset / 20) : 4}px)`,
+                        opacity: isDragging ? Math.min(0.8, Math.abs(dragOffset) / 100) : 0.6,
+                        filter: `blur(${isDragging ? Math.abs(dragOffset / 30) : 4}px)`
+                      }}
+                    />
+                    
+                    {/* Sombra de contacto */}
+                    <div 
+                      className="absolute inset-0 bg-black/30 rounded-r-sm"
+                      style={{ 
+                        transform: 'translateX(1px) translateY(1px)',
+                        opacity: isDragging ? Math.min(0.4, Math.abs(dragOffset) / 150) : 0.2,
+                        filter: 'blur(1px)'
+                      }}
+                    />
+                  </div>
                   
-                  {/* Indicador de curvatura más sutil */}
+                  {/* Indicador de curvatura y plegado del papel */}
                   <div 
-                    className={`absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-r from-black/20 to-transparent transition-all duration-200 ${
-                      isDragging && dragOffset < -20 ? 'opacity-100' : 'opacity-0'
+                    className={`absolute left-0 top-0 bottom-0 transition-all duration-300 ${
+                      isDragging && dragOffset < -15 ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  >
+                    {/* Línea de doblez */}
+                    <div 
+                      className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-black/40 to-transparent"
+                      style={{
+                        transform: `translateX(${isDragging ? Math.max(-2, dragOffset / 100) : 0}px)`,
+                      }}
+                    />
+                    
+                    {/* Gradiente de curvatura */}
+                    <div 
+                      className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/15 to-transparent"
+                      style={{
+                        transform: `rotateY(${isDragging ? Math.max(-45, (dragOffset / 150) * -45) : 0}deg)`,
+                        transformOrigin: 'left center',
+                        opacity: isDragging ? Math.min(1, Math.abs(dragOffset) / 80) : 0
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Efecto de brillo en el borde durante el drag */}
+                  <div 
+                    className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-white/30 to-transparent transition-opacity duration-200 ${
+                      isDragging && dragOffset < -25 ? 'opacity-100' : 'opacity-0'
                     }`}
                     style={{
-                      transform: `rotateY(${isDragging ? Math.max(-30, (dragOffset / 200) * -30) : 0}deg)`,
-                      transformOrigin: 'left center'
+                      transform: `translateX(${isDragging ? Math.max(-1, dragOffset / 200) : 0}px)`,
                     }}
                   />
                 </div>
@@ -747,93 +821,124 @@ export function PressLibraryModal() {
               </div>
 
               <motion.div 
-                className="relative z-10 p-6 space-y-8"
+                className="relative z-10 p-6"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                {/* Dividir en estantes */}
-                {[...Array(Math.ceil(filteredAndSortedItems.length / 4))].map((_, shelfIndex) => (
-                  <div key={shelfIndex} className="relative">
-                    {/* Estante */}
-                    <div className="flex gap-3 justify-start items-end min-h-[180px] pt-4">
-                      <AnimatePresence>
-                        {filteredAndSortedItems
-                          .slice(shelfIndex * 4, (shelfIndex + 1) * 4)
-                          .map((item, index) => (
-                            <motion.div
-                              key={item.id}
-                              initial={{ opacity: 0, y: 30, rotateY: -10 }}
-                              animate={{ opacity: 1, y: 0, rotateY: 0 }}
-                              exit={{ opacity: 0, y: 30 }}
-                              transition={{ 
-                                duration: 0.4, 
-                                delay: index * 0.1,
-                                type: "spring",
-                                stiffness: 100
-                              }}
-                              className="group cursor-pointer transform-gpu"
-                              onClick={() => handleSelectItem(item)}
-                              style={{ perspective: "1000px" }}
-                            >
-                              <div className="relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:rotate-1 hover:shadow-2xl group-hover:z-10">
-                                {/* Periódico realista */}
-                                <div className="w-32 h-44 bg-white rounded-sm shadow-lg border border-gray-300 overflow-hidden transform rotate-2 group-hover:rotate-0 transition-all duration-300">
-                                  
-                                  {/* Header con logo del medio */}
-                                  <div className="h-16 bg-white border-b-2 border-black flex items-center justify-center p-2">
-                                    <Image
-                                      src={item.logo}
-                                      alt={item.platform}
-                                      width={48}
-                                      height={48}
-                                      className="object-contain filter grayscale"
-                                    />
-                                  </div>
-                                  
-                                  {/* Líneas de separación del periódico */}
-                                  <div className="h-px bg-black"></div>
-                                  
-                                  {/* Título principal del artículo */}
-                                  <div className="p-2 h-24 bg-white">
-                                    <h4 className="text-xs font-bold text-black leading-tight line-clamp-4 mb-2" style={{ fontFamily: 'serif' }}>
-                                      {item.title}
-                                    </h4>
-                                    
-                                    {/* Líneas simulando texto de periódico */}
-                                    <div className="space-y-1">
-                                      <div className="h-px bg-gray-400 w-full"></div>
-                                      <div className="h-px bg-gray-400 w-4/5"></div>
-                                      <div className="h-px bg-gray-400 w-full"></div>
-                                      <div className="h-px bg-gray-400 w-3/4"></div>
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Footer con fecha */}
-                                  <div className="absolute bottom-1 left-2 right-2 border-t border-black pt-1">
-                                    <div className="text-xs text-black font-bold text-center" style={{ fontFamily: 'serif' }}>
-                                      {item.date}
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                {/* Sombra del periódico */}
-                                <div className="absolute inset-0 bg-black/20 rounded-lg transform translate-x-1 translate-y-1 -z-10"></div>
-                                
-                                {/* Tooltip al hover */}
-                                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
-                                  Haz clic para hojear
-                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2">
-                                    <div className="border-4 border-transparent border-t-black"></div>
-                                  </div>
-                                </div>
+                {/* Grid responsive de periódicos */}
+                <div className="grid gap-6 justify-items-center" style={{
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                  maxWidth: '100%'
+                }}>
+                  <AnimatePresence>
+                    {filteredAndSortedItems.map((item, index) => (
+                      <motion.div
+                        key={item.id}
+                        layout
+                        initial={{ opacity: 0, y: 30, rotateY: -10 }}
+                        animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ 
+                          duration: 0.5, 
+                          delay: index * 0.05,
+                          type: "spring",
+                          stiffness: 120,
+                          damping: 20
+                        }}
+                        className="group cursor-pointer transform-gpu w-full max-w-[140px]"
+                        onClick={() => handleSelectItem(item)}
+                        style={{ perspective: "1000px" }}
+                      >
+                        <motion.div 
+                          className="relative transform transition-all duration-500 hover:scale-110 hover:-translate-y-4 hover:rotate-2 hover:shadow-2xl group-hover:z-10"
+                          whileHover={{
+                            rotateY: 8,
+                            rotateX: -3,
+                            scale: 1.1,
+                            translateY: -16
+                          }}
+                          whileTap={{
+                            scale: 0.95,
+                            rotateY: -5
+                          }}
+                        >
+                          {/* Periódico realista con mejor aspecto 3D */}
+                          <div 
+                            className="w-full h-48 bg-white rounded-sm shadow-lg border border-gray-300 overflow-hidden transform rotate-1 group-hover:rotate-0 transition-all duration-500"
+                            style={{
+                              background: 'linear-gradient(145deg, #ffffff, #f5f5f5)',
+                              transformStyle: 'preserve-3d'
+                            }}
+                          >
+                            
+                            {/* Header con logo del medio */}
+                            <div className="h-12 bg-white border-b-2 border-black flex items-center justify-center p-2">
+                              <Image
+                                src={item.logo}
+                                alt={item.platform}
+                                width={36}
+                                height={36}
+                                className="object-contain filter grayscale"
+                              />
+                            </div>
+                            
+                            {/* Líneas de separación del periódico */}
+                            <div className="h-px bg-black"></div>
+                            
+                            {/* Título principal del artículo */}
+                            <div className="p-2 flex-1 bg-white">
+                              <h4 className="text-xs font-bold text-black leading-tight line-clamp-3 mb-2" style={{ fontFamily: 'serif' }}>
+                                {item.title}
+                              </h4>
+                              
+                              {/* Líneas simulando texto de periódico con efecto más realista */}
+                              <div className="space-y-1 mt-2">
+                                <div className="h-px bg-gray-400 w-full opacity-60"></div>
+                                <div className="h-px bg-gray-400 w-4/5 opacity-60"></div>
+                                <div className="h-px bg-gray-400 w-full opacity-60"></div>
+                                <div className="h-px bg-gray-400 w-3/4 opacity-60"></div>
+                                <div className="h-px bg-gray-400 w-5/6 opacity-60"></div>
                               </div>
-                            </motion.div>
-                          ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                ))}
+                            </div>
+                            
+                            {/* Footer con fecha */}
+                            <div className="absolute bottom-2 left-2 right-2 border-t border-black pt-1">
+                              <div className="text-xs text-black font-bold text-center" style={{ fontFamily: 'serif' }}>
+                                {item.date}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Sombra dinámica mejorada */}
+                          <div 
+                            className="absolute inset-0 bg-gradient-to-br from-black/10 via-black/20 to-black/30 rounded-lg transform translate-x-2 translate-y-2 -z-10 transition-all duration-500"
+                            style={{
+                              filter: 'blur(6px)'
+                            }}
+                          ></div>
+                          
+                          {/* Efecto de brillo en hover */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-sm pointer-events-none"></div>
+                          
+                          {/* Tooltip al hover mejorado */}
+                          <motion.div 
+                            className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-black/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-30 shadow-lg"
+                            initial={{ y: 10, opacity: 0 }}
+                            whileHover={{ y: 0, opacity: 1 }}
+                          >
+                            <span className="font-medium">📰 {item.platform}</span>
+                            <br />
+                            <span className="text-xs opacity-80">Haz clic para hojear</span>
+                            <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                              <div className="border-4 border-transparent border-t-black/90"></div>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
               </motion.div>
               
               {filteredAndSortedItems.length === 0 && (
