@@ -282,56 +282,42 @@ const NewspaperContentPage = forwardRef<HTMLDivElement, {
 
 NewspaperContentPage.displayName = 'NewspaperContentPage';
 
-// Componente de página de contenido paginado
+// Componente de página de contenido paginado con altura fija
 const NewspaperArticlePage = forwardRef<HTMLDivElement, {
   item: PressItem;
   content: string;
-  isLastPage?: boolean;
   pageNumber: number;
 }>((props, ref) => {
-  const { item, content, isLastPage, pageNumber } = props;
+  const { item, content, pageNumber } = props;
   return (
-    <NewspaperPage ref={ref} className="p-4">
+    <NewspaperPage ref={ref} className="p-4 h-full">
       <div className="h-full flex flex-col text-sm">
-        {/* Header de página interior más compacto */}
-        <div className="border-b border-gray-300 dark:border-gray-500 pb-2 mb-3 flex justify-between items-center">
+        {/* Header de página interior - altura fija */}
+        <div className="border-b border-gray-300 dark:border-gray-500 pb-2 mb-3 flex justify-between items-center flex-shrink-0">
           <div className="text-xs text-gray-500 dark:text-gray-400">{item.platform}</div>
           <div className="text-xs text-gray-500 dark:text-gray-400">Pág. {pageNumber}</div>
         </div>
 
-        {/* Contenido del artículo */}
-        <div className="flex-1">
-          {/* Título solo en la primera página de contenido */}
+        {/* Contenido del artículo - altura fija con scroll si es necesario */}
+        <div className="flex-1 flex flex-col min-h-0">
+          {/* Título solo en la primera página de contenido - altura fija */}
           {pageNumber === 1 && (
-            <h3 className="text-base font-bold text-gray-800 dark:text-gray-700 mb-3 leading-tight">
-              {item.title}
-            </h3>
+            <div className="flex-shrink-0 mb-3">
+              <h3 className="text-base font-bold text-gray-800 dark:text-gray-700 leading-tight">
+                {item.title}
+              </h3>
+            </div>
           )}
           
-          <div className="text-gray-800 dark:text-gray-700 leading-relaxed">
-            <p className="text-justify text-sm">
+          {/* Contenido principal - se expande para llenar el espacio disponible */}
+          <div className="flex-1 text-gray-800 dark:text-gray-700 leading-relaxed min-h-0">
+            <p className="text-justify text-sm h-full">
               {content}
             </p>
           </div>
         </div>
 
-        {/* Footer con enlace solo en la última página */}
-        {isLastPage && (
-          <div className="border-t border-gray-300 dark:border-gray-500 pt-3 mt-3">
-            <div className="text-center">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{item.contextualSummary}</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.open(item.source, '_blank')}
-                className="text-xs h-7"
-              >
-                <ExternalLink className="w-3 h-3 mr-1" />
-                Leer original
-              </Button>
-            </div>
-          </div>
-        )}
+
       </div>
     </NewspaperPage>
   );
@@ -339,15 +325,72 @@ const NewspaperArticlePage = forwardRef<HTMLDivElement, {
 
 NewspaperArticlePage.displayName = 'NewspaperArticlePage';
 
+// Componente de página final con resumen y enlace
+const NewspaperFinalPage = forwardRef<HTMLDivElement, {
+  item: PressItem;
+}>((props, ref) => {
+  const { item } = props;
+  return (
+    <NewspaperPage ref={ref} className="p-6 h-full">
+      <div className="h-full flex flex-col justify-center items-center text-center">
+        {/* Título de la página final */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-700 mb-4 leading-tight">
+            {item.title}
+          </h3>
+          <div className="w-16 h-px bg-gray-400 dark:bg-gray-500 mx-auto"></div>
+        </div>
+
+        {/* Resumen contextual */}
+        <div className="flex-1 flex items-center justify-center max-w-md">
+          <div className="space-y-6">
+            <div className="text-center">
+              <p className="text-sm text-gray-700 dark:text-gray-600 leading-relaxed italic">
+                {item.contextualSummary}
+              </p>
+            </div>
+
+            {/* Botón para leer el artículo original */}
+            <div className="text-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open(item.source, '_blank')}
+                className="text-sm px-6 py-2 transition-all duration-200 hover:scale-105"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Leer artículo original
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer con información del medio */}
+        <div className="mt-6 pt-4 border-t border-gray-300 dark:border-gray-500 w-full">
+          <div className="flex items-center justify-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+            <span>{item.platform}</span>
+            <span>•</span>
+            <span>{item.date}</span>
+          </div>
+        </div>
+      </div>
+    </NewspaperPage>
+  );
+});
+
+NewspaperFinalPage.displayName = 'NewspaperFinalPage';
+
 export function PressLibraryModal() {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedItem, setSelectedItem] = useState<PressItem | null>(null)
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentSpread, setCurrentSpread] = useState(0) // Índice del "spread" (par de páginas)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
   const [dragOffset, setDragOffset] = useState(0)
-  const [totalPages, setTotalPages] = useState(2)
+  const [isFlipping, setIsFlipping] = useState(false)
+  const [flipDirection, setFlipDirection] = useState<'forward' | 'backward' | null>(null)
+  const [rotationAngle, setRotationAngle] = useState(0)
   const flipBookRef = useRef<any>(null)
 
   // Filtrar artículos (ordenados por fecha descendente)
@@ -369,148 +412,458 @@ export function PressLibraryModal() {
     window.open(url, '_blank')
   }
 
-  // Función para dividir el contenido en páginas
+  // Función inteligente para dividir el contenido en páginas
   const splitContentIntoPages = (content: string) => {
-    const wordsPerPage = 120 // Menos palabras por página ya que son más pequeñas
-    const words = content.split(' ')
+    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0)
     const pages = []
+    let currentPage = ''
+    const maxWordsPerPage = 100 // Palabras máximas por página (reducido para páginas más pequeñas)
+    const maxCharsPerPage = 650 // Caracteres máximos por página para mejor control
     
-    for (let i = 0; i < words.length; i += wordsPerPage) {
-      const pageContent = words.slice(i, i + wordsPerPage).join(' ')
-      pages.push(pageContent)
+    for (let sentence of sentences) {
+      const trimmedSentence = sentence.trim()
+      if (!trimmedSentence) continue
+      
+      const sentenceWithPunctuation = trimmedSentence + '.'
+      const currentWords = currentPage.split(' ').filter(w => w.trim()).length
+      const sentenceWords = sentenceWithPunctuation.split(' ').filter(w => w.trim()).length
+      const newLength = currentPage.length + sentenceWithPunctuation.length
+      
+      // Si agregar esta oración excede el límite, crear nueva página
+      if ((currentWords + sentenceWords > maxWordsPerPage || newLength > maxCharsPerPage) && currentPage.length > 0) {
+        pages.push(currentPage.trim())
+        currentPage = sentenceWithPunctuation + ' '
+      } else {
+        currentPage += (currentPage ? ' ' : '') + sentenceWithPunctuation + ' '
+      }
+    }
+    
+    // Agregar la última página si tiene contenido
+    if (currentPage.trim()) {
+      pages.push(currentPage.trim())
+    }
+    
+    // Si no hay páginas, crear una con el contenido original (dividido por palabras como fallback)
+    if (pages.length === 0) {
+      const words = content.split(' ')
+      for (let i = 0; i < words.length; i += 100) {
+        const pageContent = words.slice(i, i + 100).join(' ')
+        pages.push(pageContent)
+      }
     }
     
     return pages
   }
 
-  // Obtener páginas del artículo actual
-  const articlePages = useMemo(() => {
+  // Obtener todas las páginas del artículo (portada + contenido + página final)
+  const allPages = useMemo(() => {
     if (!selectedItem) return []
-    return splitContentIntoPages(selectedItem.fullArticle)
+    const contentPages = splitContentIntoPages(selectedItem.fullArticle)
+    return [
+      { type: 'cover', item: selectedItem }, // Página 0: Portada
+      ...contentPages.map((content, index) => ({ // Páginas 1+: Contenido
+        type: 'content' as const, 
+        item: selectedItem,
+        content,
+        pageNumber: index + 1
+      })),
+      { type: 'final', item: selectedItem } // Página final: Resumen y enlace
+    ]
   }, [selectedItem])
 
-  // Calcular total de páginas (portada + páginas de contenido)
-  const totalPagesCount = useMemo(() => {
-    return 1 + articlePages.length // 1 portada + páginas del artículo
-  }, [articlePages])
+  // Calcular total de spreads (pares de páginas)
+  const totalSpreads = useMemo(() => {
+    return Math.ceil(allPages.length / 2)
+  }, [allPages])
 
-  const goToNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPagesCount - 1))
+  // Obtener las páginas del spread actual
+  const getCurrentSpreadPages = () => {
+    const leftPageIndex = currentSpread * 2
+    const rightPageIndex = leftPageIndex + 1
+    
+    return {
+      leftPage: allPages[leftPageIndex] || null,
+      rightPage: allPages[rightPageIndex] || null
+    }
   }
 
-  const goToPrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 0))
+  // Obtener las páginas del siguiente spread (para mostrar durante el volteo)
+  const getNextSpreadPages = () => {
+    const nextSpread = currentSpread + 1
+    if (nextSpread >= totalSpreads) return { leftPage: null, rightPage: null }
+    
+    const leftPageIndex = nextSpread * 2
+    const rightPageIndex = leftPageIndex + 1
+    
+    return {
+      leftPage: allPages[leftPageIndex] || null,
+      rightPage: allPages[rightPageIndex] || null
+    }
+  }
+
+  const goToNextSpread = () => {
+    if (isFlipping || currentSpread >= totalSpreads - 1) return
+    
+    setIsFlipping(true)
+    setFlipDirection('forward')
+    
+    // Animación de volteo más natural con física realista
+    let progress = 0
+    const animate = () => {
+      progress += 0.016 // Más lento y suave (≈60fps)
+      
+      // Curva de easing más física: inicia lento, acelera en el medio, desacelera al final
+      const easeInOutCubic = progress < 0.5 
+        ? 4 * progress * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2
+      
+      // Agregar un pequeño efecto de "settle" al final
+      let angle = -180 * easeInOutCubic
+      if (progress > 0.85) {
+        const settleProgress = (progress - 0.85) / 0.15
+        const settle = Math.sin(settleProgress * Math.PI * 3) * (1 - settleProgress) * 2
+        angle += settle
+      }
+      
+      setRotationAngle(angle)
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      } else {
+        // Animación de "settle" final más suave
+        let settleProgress = 0
+        const settleAnimate = () => {
+          settleProgress += 0.08
+          const settleEase = 1 - Math.exp(-settleProgress * 4)
+          const finalAngle = -180 + (180 * settleEase)
+          setRotationAngle(finalAngle)
+          
+          if (settleProgress < 1) {
+            requestAnimationFrame(settleAnimate)
+          } else {
+            setCurrentSpread(prev => prev + 1)
+            setRotationAngle(0)
+            setIsFlipping(false)
+            setFlipDirection(null)
+          }
+        }
+        settleAnimate()
+      }
+    }
+    requestAnimationFrame(animate)
+  }
+
+  const goToPrevSpread = () => {
+    if (isFlipping || currentSpread <= 0) return
+    
+    setIsFlipping(true)
+    setFlipDirection('backward')
+    
+    // Cambiar spread primero para el efecto backward
+    setCurrentSpread(prev => prev - 1)
+    setRotationAngle(-180)
+    
+    // Animación de volteo hacia atrás más natural
+    let progress = 0
+    const animate = () => {
+      progress += 0.016 // Misma velocidad que forward
+      
+      // Curva de easing física para backward
+      const easeInOutCubic = progress < 0.5 
+        ? 4 * progress * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2
+      
+      // Efecto de "settle" para el volteo hacia atrás
+      let angle = -180 + (180 * easeInOutCubic)
+      if (progress > 0.85) {
+        const settleProgress = (progress - 0.85) / 0.15
+        const settle = Math.sin(settleProgress * Math.PI * 3) * (1 - settleProgress) * 2
+        angle -= settle
+      }
+      
+      setRotationAngle(angle)
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      } else {
+        // Settle final para backward
+        let settleProgress = 0
+        const settleAnimate = () => {
+          settleProgress += 0.08
+          const settleEase = 1 - Math.exp(-settleProgress * 4)
+          const finalAngle = (settleEase - 1) * 5 // Pequeño overshoot y regreso
+          setRotationAngle(finalAngle)
+          
+          if (settleProgress < 1) {
+            requestAnimationFrame(settleAnimate)
+          } else {
+            setRotationAngle(0)
+            setIsFlipping(false)
+            setFlipDirection(null)
+          }
+        }
+        settleAnimate()
+      }
+    }
+    requestAnimationFrame(animate)
   }
 
   const handleSelectItem = (item: PressItem) => {
     setSelectedItem(item)
-    setCurrentPage(0) // Reset to first page
+    setCurrentSpread(0) // Reset to first spread
     setDragOffset(0)
+    setRotationAngle(0) // Reset rotation
+    setIsFlipping(false) // Reset flipping state
+    setFlipDirection(null)
+    setIsDragging(false) // Reset dragging state
   }
 
-  // Función para obtener el contenido de la página actual
-  const getCurrentPageContent = () => {
-    if (!selectedItem) return null
-    
-    if (currentPage === 0) {
-      // Página 0 es la portada
-      return { type: 'cover', item: selectedItem }
-    } else {
-      // Páginas 1+ son contenido del artículo
-      const contentPageIndex = currentPage - 1
-      const pageContent = articlePages[contentPageIndex]
-      const isLastPage = contentPageIndex === articlePages.length - 1
-      
-      return { 
-        type: 'content', 
-        item: selectedItem,
-        content: pageContent,
-        isLastPage,
-        pageNumber: currentPage
-      }
-    }
-  }
 
-  // Función para obtener el contenido de la página siguiente (para mostrar en la trasera)
-  const getNextPageContent = () => {
-    if (!selectedItem || currentPage >= totalPagesCount - 1) return null
-    
-    const nextPageIndex = currentPage + 1
-    if (nextPageIndex === 0) {
-      return { type: 'cover', item: selectedItem }
-    } else {
-      const contentPageIndex = nextPageIndex - 1
-      const pageContent = articlePages[contentPageIndex]
-      const isLastPage = contentPageIndex === articlePages.length - 1
-      
-      return { 
-        type: 'content', 
-        item: selectedItem,
-        content: pageContent,
-        isLastPage,
-        pageNumber: nextPageIndex
-      }
-    }
-  }
 
-  // Funciones de drag
+  // Funciones de drag mejoradas
   const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault() // Prevenir selección de texto
+    if (isFlipping) return
+    e.preventDefault()
     setIsDragging(true)
     setDragStartX(e.clientX)
     
-    // Agregar feedback háptico en dispositivos que lo soporten
     if ('vibrate' in navigator) {
       navigator.vibrate(10)
     }
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return
+    if (!isDragging || isFlipping) return
     const deltaX = e.clientX - dragStartX
-    setDragOffset(deltaX)
+    const maxDrag = 120 // Más sensible
+    const clampedDelta = Math.max(-maxDrag, Math.min(maxDrag, deltaX))
+    
+    setDragOffset(clampedDelta)
+    
+    // Rotación más suave y realista con curva física
+    const rotationPercent = Math.abs(clampedDelta) / maxDrag
+    const easedPercent = rotationPercent * rotationPercent * (3 - 2 * rotationPercent) // smoothstep
+    const dragRotation = clampedDelta < 0 ? -easedPercent * 75 : easedPercent * 75 // Menos rotación máxima
+    
+    // Agregar pequeño efecto de "resistance" cerca del límite
+    const resistance = rotationPercent > 0.8 ? Math.sin((rotationPercent - 0.8) * 10) * 2 : 0
+    setRotationAngle(dragRotation + resistance)
   }
 
   const handleMouseUp = () => {
-    if (!isDragging) return
+    if (!isDragging || isFlipping) return
     setIsDragging(false)
     
-    // Si el drag fue significativo, cambiar página (más sensible)
-    if (dragOffset > 60) {
-      goToPrevPage()
-    } else if (dragOffset < -60) {
-      goToNextPage()
+    const threshold = 40 // Más sensible para mejor experiencia
+    const shouldFlip = Math.abs(dragOffset) > threshold
+    
+    if (shouldFlip) {
+      if (dragOffset < 0 && currentSpread < totalSpreads - 1) {
+        // Completar el flip hacia adelante (página derecha se voltea hacia la izquierda)
+        setIsFlipping(true)
+        setFlipDirection('forward')
+        
+        let currentAngle = rotationAngle
+        const targetAngle = -180
+        
+        const completeFlip = () => {
+          const diff = targetAngle - currentAngle
+          currentAngle += diff * 0.08 // Más suave para consistencia
+          
+          // Agregar pequeño settle effect
+          if (Math.abs(diff) < 10) {
+            const settleOffset = Math.sin(Date.now() * 0.02) * (10 - Math.abs(diff)) * 0.3
+            setRotationAngle(currentAngle + settleOffset)
+          } else {
+            setRotationAngle(currentAngle)
+          }
+          
+          if (Math.abs(diff) > 0.5) {
+            requestAnimationFrame(completeFlip)
+          } else {
+            setCurrentSpread(prev => prev + 1)
+            setRotationAngle(0)
+            setIsFlipping(false)
+            setFlipDirection(null)
+          }
+        }
+        completeFlip()
+        
+      } else if (dragOffset > 0 && currentSpread > 0) {
+        // Completar el flip hacia atrás (página izquierda viene desde la derecha)
+        setIsFlipping(true)
+        setFlipDirection('backward')
+        setCurrentSpread(prev => prev - 1)
+        
+        let currentAngle = rotationAngle
+        const targetAngle = 0
+        
+        const completeFlip = () => {
+          const diff = targetAngle - currentAngle
+          currentAngle += diff * 0.08 // Consistente con forward
+          
+          // Settle effect para backward también
+          if (Math.abs(diff) < 10) {
+            const settleOffset = Math.sin(Date.now() * 0.02) * (10 - Math.abs(diff)) * 0.3
+            setRotationAngle(currentAngle - settleOffset) // Dirección opuesta para backward
+          } else {
+            setRotationAngle(currentAngle)
+          }
+          
+          if (Math.abs(diff) > 0.5) {
+            requestAnimationFrame(completeFlip)
+          } else {
+            setRotationAngle(0)
+            setIsFlipping(false)
+            setFlipDirection(null)
+          }
+        }
+        completeFlip()
+      } else {
+        // Regresar a posición original si no se puede voltear
+        setRotationAngle(0)
+      }
+    } else {
+      // Snap back más natural con efecto de elasticidad
+      let currentAngle = rotationAngle
+      let velocity = currentAngle * -0.15 // Velocidad inicial hacia 0
+      const snapBack = () => {
+        const springForce = -currentAngle * 0.1 // Fuerza hacia 0
+        const damping = velocity * 0.85 // Amortiguación
+        
+        velocity += springForce
+        velocity *= 0.92 // Friction
+        currentAngle += velocity
+        
+        setRotationAngle(currentAngle)
+        
+        if (Math.abs(currentAngle) > 0.1 || Math.abs(velocity) > 0.1) {
+          requestAnimationFrame(snapBack)
+        } else {
+          setRotationAngle(0)
+        }
+      }
+      snapBack()
     }
     
     setDragOffset(0)
   }
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault() // Prevenir comportamientos por defecto
+    if (isFlipping) return
+    e.preventDefault()
     setIsDragging(true)
     setDragStartX(e.touches[0].clientX)
     
-    // Feedback háptico más fuerte para touch
     if ('vibrate' in navigator) {
       navigator.vibrate(15)
     }
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return
+    if (!isDragging || isFlipping) return
     const deltaX = e.touches[0].clientX - dragStartX
-    setDragOffset(deltaX)
+    const maxDrag = 120 // Consistente con mouse
+    const clampedDelta = Math.max(-maxDrag, Math.min(maxDrag, deltaX))
+    
+    setDragOffset(clampedDelta)
+    
+    // Misma lógica de rotación suave para touch
+    const rotationPercent = Math.abs(clampedDelta) / maxDrag
+    const easedPercent = rotationPercent * rotationPercent * (3 - 2 * rotationPercent)
+    const dragRotation = clampedDelta < 0 ? -easedPercent * 75 : easedPercent * 75
+    
+    // Resistance effect para touch también
+    const resistance = rotationPercent > 0.8 ? Math.sin((rotationPercent - 0.8) * 10) * 2 : 0
+    setRotationAngle(dragRotation + resistance)
   }
 
   const handleTouchEnd = () => {
-    if (!isDragging) return
+    if (!isDragging || isFlipping) return
     setIsDragging(false)
     
-    // Si el drag fue significativo, cambiar página (más sensible)
-    if (dragOffset > 60) {
-      goToPrevPage()
-    } else if (dragOffset < -60) {
-      goToNextPage()
+    const threshold = 40 // Más sensible para mejor experiencia
+    const shouldFlip = Math.abs(dragOffset) > threshold
+    
+    if (shouldFlip) {
+      if (dragOffset < 0 && currentSpread < totalSpreads - 1) {
+        // Completar flip hacia adelante (página derecha se voltea hacia la izquierda)
+        setIsFlipping(true)
+        setFlipDirection('forward')
+        
+        let currentAngle = rotationAngle
+        const targetAngle = -180
+        
+        const completeFlip = () => {
+          const diff = targetAngle - currentAngle
+          currentAngle += diff * 0.08 // Consistente y más suave
+          
+          // Settle effect dinámico
+          if (Math.abs(diff) < 10) {
+            const settleOffset = Math.sin(Date.now() * 0.02) * (10 - Math.abs(diff)) * 0.3
+            setRotationAngle(currentAngle + (Math.random() > 0.5 ? settleOffset : -settleOffset))
+          } else {
+            setRotationAngle(currentAngle)
+          }
+          
+          if (Math.abs(diff) > 0.5) {
+            requestAnimationFrame(completeFlip)
+          } else {
+            setCurrentSpread(prev => prev + 1)
+            setRotationAngle(0)
+            setIsFlipping(false)
+            setFlipDirection(null)
+          }
+        }
+        completeFlip()
+        
+      } else if (dragOffset > 0 && currentSpread > 0) {
+        // Completar flip hacia atrás (página izquierda viene desde la derecha)
+        setIsFlipping(true)
+        setFlipDirection('backward')
+        setCurrentSpread(prev => prev - 1)
+        
+        let currentAngle = rotationAngle
+        const targetAngle = 0
+        
+        const completeFlip = () => {
+          const diff = targetAngle - currentAngle
+          currentAngle += diff * 0.08 // Consistente y más suave
+          
+          // Settle effect dinámico
+          if (Math.abs(diff) < 10) {
+            const settleOffset = Math.sin(Date.now() * 0.02) * (10 - Math.abs(diff)) * 0.3
+            setRotationAngle(currentAngle + (Math.random() > 0.5 ? settleOffset : -settleOffset))
+          } else {
+            setRotationAngle(currentAngle)
+          }
+          
+          if (Math.abs(diff) > 0.5) {
+            requestAnimationFrame(completeFlip)
+          } else {
+            setRotationAngle(0)
+            setIsFlipping(false)
+            setFlipDirection(null)
+          }
+        }
+        completeFlip()
+      } else {
+        setRotationAngle(0)
+      }
+    } else {
+      // Snap back animation
+      let currentAngle = rotationAngle
+      const snapBack = () => {
+        currentAngle *= 0.85
+        setRotationAngle(currentAngle)
+        
+        if (Math.abs(currentAngle) > 0.5) {
+          requestAnimationFrame(snapBack)
+        } else {
+          setRotationAngle(0)
+        }
+      }
+      snapBack()
     }
     
     setDragOffset(0)
@@ -566,12 +919,23 @@ export function PressLibraryModal() {
               
               <div className="flex items-center gap-4">
                                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>Página {currentPage + 1} de {totalPagesCount}</span>
-                              {isDragging && (
+                              <span>
+                                Páginas {currentSpread * 2 + 1}-{Math.min((currentSpread + 1) * 2, allPages.length)} de {allPages.length}
+                              </span>
+                              {(isDragging || isFlipping) && (
                                 <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  className="w-2 h-2 bg-blue-500 rounded-full"
+                                  initial={{ scale: 0, rotate: 0 }}
+                                  animate={{ 
+                                    scale: 1, 
+                                    rotate: isFlipping ? 360 : Math.abs(rotationAngle) * 2 
+                                  }}
+                                  className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                                    isFlipping 
+                                      ? 'bg-green-500' 
+                                      : Math.abs(rotationAngle) > 50 
+                                        ? 'bg-blue-500' 
+                                        : 'bg-gray-400'
+                                  }`}
                                 />
                               )}
                             </div>
@@ -579,16 +943,20 @@ export function PressLibraryModal() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={goToPrevPage}
-                    disabled={currentPage === 0}
+                    onClick={goToPrevSpread}
+                    disabled={currentSpread === 0 || isFlipping}
+                    className={isFlipping ? 'opacity-50' : ''}
+                    title="Spread anterior"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPagesCount - 1}
+                    onClick={goToNextSpread}
+                    disabled={currentSpread === totalSpreads - 1 || isFlipping}
+                    className={isFlipping ? 'opacity-50' : ''}
+                    title="Spread siguiente"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -596,16 +964,22 @@ export function PressLibraryModal() {
               </div>
             </div>
 
-            {/* Periódico hojeable personalizado */}
+            {/* Libro abierto con 2 páginas */}
             <div className="flex-1 flex items-center justify-center p-4 bg-background overflow-hidden">
               <div className="relative select-none">
-                {/* Libro de periódico con efecto de voltear */}
+                {/* Contenedor del libro abierto */}
                 <div 
-                  className="relative mx-auto cursor-grab active:cursor-grabbing"
+                  className={`relative mx-auto transition-all duration-200 ${
+                    isFlipping 
+                      ? 'cursor-wait' 
+                      : isDragging 
+                        ? 'cursor-grabbing' 
+                        : 'cursor-grab'
+                  }`}
                   style={{ 
-                    width: 'min(75vw, 320px)', 
-                    height: 'min(60vh, 450px)', 
-                    perspective: '2000px',
+                    width: 'min(90vw, 640px)', // Más ancho para 2 páginas
+                    height: 'min(65vh, 480px)', 
+                    perspective: '2500px',
                     perspectiveOrigin: '50% 50%'
                   }}
                   onMouseDown={handleMouseDown}
@@ -616,177 +990,195 @@ export function PressLibraryModal() {
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}
                 >
-                  {/* Página trasera (siempre visible) */}
-                  <div className="absolute inset-0 bg-white dark:bg-gray-100 border border-gray-300 dark:border-gray-400 shadow-xl rounded-r-sm overflow-hidden transform-gpu">
-                    {(() => {
-                      const nextPageContent = getNextPageContent()
-                      if (!nextPageContent) return null
-                      
-                      if (nextPageContent.type === 'cover') {
-                        return <NewspaperCover item={nextPageContent.item} />
-                      } else {
-                        return (
-                          <NewspaperArticlePage 
-                            item={nextPageContent.item}
-                            content={nextPageContent.content || ''}
-                            isLastPage={nextPageContent.isLastPage || false}
-                            pageNumber={nextPageContent.pageNumber || 1}
-                          />
-                        )
-                      }
-                    })()}
-                  </div>
-                  
-                  {/* Página frontal (se voltea) - maleable */}
-                  <div 
-                    className="absolute inset-0 bg-white dark:bg-gray-100 border border-gray-300 dark:border-gray-400 shadow-2xl rounded-r-sm overflow-hidden transform-gpu"
-                    style={{
-                      transformStyle: 'preserve-3d',
-                      backfaceVisibility: 'hidden',
-                      transformOrigin: 'left center',
-                      transform: `
-                        rotateY(${
-                          isDragging 
-                            ? Math.max(-140, Math.min(0, (dragOffset / 120) * -140)) 
-                            : currentPage < totalPagesCount - 1 ? 0 : -180
-                        }deg) 
-                        ${isDragging ? 'scale(1.02)' : 'scale(1)'} 
-                        ${isDragging ? `rotateX(${Math.max(-5, dragOffset / 50)}deg)` : 'rotateX(0deg)'}
-                        ${isDragging ? `translateZ(${Math.abs(dragOffset / 10)}px)` : 'translateZ(0px)'}
-                      `,
-                      transition: isDragging 
-                        ? 'none' 
-                        : 'transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)',
-                      filter: isDragging 
-                        ? `drop-shadow(${Math.abs(dragOffset / 20)}px ${Math.abs(dragOffset / 20)}px 20px rgba(0,0,0,${Math.min(0.4, Math.abs(dragOffset) / 200)}))` 
-                        : 'drop-shadow(2px 2px 8px rgba(0,0,0,0.1))'
-                    }}
-                  >
-                    {/* Cara frontal */}
-                    <div 
-                      className="absolute inset-0" 
-                      style={{ 
-                        backfaceVisibility: 'hidden',
-                        transform: isDragging && dragOffset < -20 
-                          ? `
-                            skewY(${Math.max(-2, dragOffset / 100)}deg) 
-                            rotateX(${Math.max(-4, dragOffset / 60)}deg)
-                            scaleX(${Math.max(0.98, 1 + dragOffset / 1000)})
-                          ` 
-                          : 'none',
-                        transition: isDragging ? 'none' : 'transform 0.3s ease-out'
-                      }}
-                    >
-                      {(() => {
-                        const currentPageContent = getCurrentPageContent()
-                        if (!currentPageContent) return null
-                        
-                        if (currentPageContent.type === 'cover') {
-                          return <NewspaperCover item={currentPageContent.item} />
-                        } else {
-                          return (
-                            <NewspaperArticlePage 
-                              item={currentPageContent.item}
-                              content={currentPageContent.content || ''}
-                              isLastPage={currentPageContent.isLastPage || false}
-                              pageNumber={currentPageContent.pageNumber || 1}
-                            />
-                          )
-                        }
-                      })()}
-                    </div>
+                  {/* Libro base (fondo) */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-950/20 rounded-lg shadow-2xl" style={{ zIndex: 1 }}>
+                    {/* Línea central del libro */}
+                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-black/20 to-transparent transform -translate-x-0.5" />
                     
-                    {/* Cara trasera (próxima página) */}
-                    <div 
-                      className="absolute inset-0" 
-                      style={{ 
-                        backfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)'
-                      }}
-                    >
-                      {(() => {
-                        const nextPageContent = getNextPageContent()
-                        if (!nextPageContent) return null
-                        
-                        if (nextPageContent.type === 'cover') {
-                          return <NewspaperCover item={nextPageContent.item} />
-                        } else {
-                          return (
-                            <NewspaperArticlePage 
-                              item={nextPageContent.item}
-                              content={nextPageContent.content || ''}
-                              isLastPage={nextPageContent.isLastPage || false}
-                              pageNumber={nextPageContent.pageNumber || 1}
-                            />
+                    {/* Sombra central del libro */}
+                    <div className="absolute left-1/2 top-0 bottom-0 w-6 bg-gradient-to-r from-black/10 via-black/20 to-black/10 transform -translate-x-1/2" style={{ filter: 'blur(4px)' }} />
+                  </div>
+
+                  {/* Páginas del spread actual */}
+                  <div className="absolute inset-0 flex" style={{ zIndex: 2 }}>
+                    {/* Página izquierda */}
+                    <div className="w-1/2 h-full pr-2">
+                      <div className="w-full h-full bg-white dark:bg-gray-50 border border-gray-300 dark:border-gray-400 rounded-l-lg shadow-lg overflow-hidden">
+                        {(() => {
+                          const { leftPage } = getCurrentSpreadPages()
+                          if (!leftPage) return (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              <div className="text-center">
+                                <p className="text-sm">Página en blanco</p>
+                              </div>
+                            </div>
                           )
-                        }
-                      })()}
+                          
+                          if (leftPage.type === 'cover') {
+                            return <NewspaperCover item={leftPage.item} />
+                          } else if (leftPage.type === 'final') {
+                            return <NewspaperFinalPage item={leftPage.item} />
+                          } else {
+                            return (
+                              <NewspaperArticlePage 
+                                item={leftPage.item}
+                                content={(leftPage as any).content || ''}
+                                pageNumber={(leftPage as any).pageNumber || 1}
+                              />
+                            )
+                          }
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Página derecha */}
+                    <div className="w-1/2 h-full pl-2">
+                      <div className="w-full h-full bg-white dark:bg-gray-50 border border-gray-300 dark:border-gray-400 rounded-r-lg shadow-lg overflow-hidden">
+                        {(() => {
+                          const { rightPage } = getCurrentSpreadPages()
+                          if (!rightPage) return (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              <div className="text-center">
+                                <p className="text-sm">Página en blanco</p>
+                              </div>
+                            </div>
+                          )
+                          
+                          if (rightPage.type === 'cover') {
+                            return <NewspaperCover item={rightPage.item} />
+                          } else if (rightPage.type === 'final') {
+                            return <NewspaperFinalPage item={rightPage.item} />
+                          } else {
+                            return (
+                              <NewspaperArticlePage 
+                                item={rightPage.item}
+                                content={(rightPage as any).content || ''}
+                                pageNumber={(rightPage as any).pageNumber || 1}
+                              />
+                            )
+                          }
+                        })()}
+                      </div>
                     </div>
                   </div>
-                  
-                  {/* Sistema de sombras múltiples más realista */}
+
+                  {/* Página que se voltea (siempre la página derecha) */}
                   <div 
-                    className="absolute inset-0 pointer-events-none rounded-r-sm"
-                    style={{ zIndex: -1 }}
+                    className="absolute right-0 top-0 w-1/2 h-full"
+                    style={{ zIndex: 3 }}
                   >
-                    {/* Sombra base */}
                     <div 
-                      className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/10 to-black/5 rounded-r-sm"
-                      style={{ 
-                        transform: `translateX(${isDragging ? Math.abs(dragOffset / 15) : 4}px) translateY(${isDragging ? Math.abs(dragOffset / 20) : 4}px)`,
-                        opacity: isDragging ? Math.min(0.8, Math.abs(dragOffset) / 100) : 0.6,
-                        filter: `blur(${isDragging ? Math.abs(dragOffset / 30) : 4}px)`
-                      }}
-                    />
-                    
-                    {/* Sombra de contacto */}
-                    <div 
-                      className="absolute inset-0 bg-black/30 rounded-r-sm"
-                      style={{ 
-                        transform: 'translateX(1px) translateY(1px)',
-                        opacity: isDragging ? Math.min(0.4, Math.abs(dragOffset) / 150) : 0.2,
-                        filter: 'blur(1px)'
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Indicador de curvatura y plegado del papel */}
-                  <div 
-                    className={`absolute left-0 top-0 bottom-0 transition-all duration-300 ${
-                      isDragging && dragOffset < -15 ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  >
-                    {/* Línea de doblez */}
-                    <div 
-                      className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-black/40 to-transparent"
+                      className="absolute inset-0 bg-white dark:bg-gray-50 border border-gray-300 dark:border-gray-400 rounded-r-lg shadow-2xl overflow-hidden transform-gpu"
                       style={{
-                        transform: `translateX(${isDragging ? Math.max(-2, dragOffset / 100) : 0}px)`,
-                      }}
-                    />
-                    
-                    {/* Gradiente de curvatura */}
-                    <div 
-                      className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-black/15 to-transparent"
-                      style={{
-                        transform: `rotateY(${isDragging ? Math.max(-45, (dragOffset / 150) * -45) : 0}deg)`,
+                        transformStyle: 'preserve-3d',
+                        backfaceVisibility: 'hidden',
                         transformOrigin: 'left center',
-                        opacity: isDragging ? Math.min(1, Math.abs(dragOffset) / 80) : 0
+                        transform: `
+                          rotateY(${rotationAngle}deg) 
+                          ${isDragging || isFlipping ? 'scale(1.005)' : 'scale(1)'} 
+                          ${Math.abs(rotationAngle) > 5 ? `translateZ(${Math.abs(rotationAngle) / 8}px)` : 'translateZ(0px)'}
+                        `,
+                        transition: isDragging || isFlipping
+                          ? 'none' 
+                          : 'transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), filter 0.3s ease-out',
+                        filter: Math.abs(rotationAngle) > 5
+                          ? `drop-shadow(${Math.abs(rotationAngle) / 25}px ${Math.abs(rotationAngle) / 35}px ${Math.abs(rotationAngle) / 20}px rgba(0,0,0,${Math.min(0.25, Math.abs(rotationAngle) / 500)}))` 
+                          : 'drop-shadow(1px 1px 3px rgba(0,0,0,0.08))'
+                      }}
+                    >
+                      {/* Cara frontal (página derecha actual) */}
+                      <div 
+                        className="absolute inset-0" 
+                        style={{ 
+                          backfaceVisibility: 'hidden',
+                          transform: (isDragging || isFlipping) && Math.abs(rotationAngle) > 15
+                            ? `skewY(${Math.sin(rotationAngle * Math.PI / 180) * -1}deg)` 
+                            : 'none'
+                        }}
+                      >
+                        {(() => {
+                          const { rightPage } = getCurrentSpreadPages()
+                          if (!rightPage) return (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-white dark:bg-gray-50">
+                              <p className="text-sm">Página en blanco</p>
+                            </div>
+                          )
+                          
+                          if (rightPage.type === 'cover') {
+                            return <NewspaperCover item={rightPage.item} />
+                          } else if (rightPage.type === 'final') {
+                            return <NewspaperFinalPage item={rightPage.item} />
+                          } else {
+                            return (
+                              <NewspaperArticlePage 
+                                item={rightPage.item}
+                                content={(rightPage as any).content || ''}
+                                pageNumber={(rightPage as any).pageNumber || 1}
+                              />
+                            )
+                          }
+                        })()}
+                      </div>
+
+                      {/* Cara trasera (página izquierda del siguiente spread) */}
+                      <div 
+                        className="absolute inset-0" 
+                        style={{ 
+                          backfaceVisibility: 'hidden',
+                          transform: 'rotateY(180deg) scaleX(-1)' // scaleX(-1) para que el texto no se vea al revés
+                        }}
+                      >
+                        {(() => {
+                          const { leftPage } = getNextSpreadPages()
+                          if (!leftPage) return (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-white dark:bg-gray-50">
+                              <p className="text-sm">Página en blanco</p>
+                            </div>
+                          )
+                          
+                          if (leftPage.type === 'cover') {
+                            return <NewspaperCover item={leftPage.item} />
+                          } else if (leftPage.type === 'final') {
+                            return <NewspaperFinalPage item={leftPage.item} />
+                          } else {
+                            return (
+                              <NewspaperArticlePage 
+                                item={leftPage.item}
+                                content={(leftPage as any).content || ''}
+                                pageNumber={(leftPage as any).pageNumber || 1}
+                              />
+                            )
+                          }
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Efectos de sombra y brillo para el volteo */}
+                  <div 
+                    className={`absolute right-0 top-0 w-1/2 h-full pointer-events-none transition-opacity duration-200 ${
+                      Math.abs(rotationAngle) > 10 ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    style={{ zIndex: 4 }}
+                  >
+                    {/* Sombra en la página derecha fija */}
+                    <div 
+                      className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"
+                      style={{
+                        opacity: Math.min(0.6, Math.abs(rotationAngle) / 150),
+                        transform: `scaleX(${Math.max(0.5, 1 - Math.abs(rotationAngle) / 180)})`
+                      }}
+                    />
+                    
+                    {/* Línea de separación central más pronunciada */}
+                    <div 
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-black/30 to-transparent"
+                      style={{
+                        opacity: Math.min(1, Math.abs(rotationAngle) / 90)
                       }}
                     />
                   </div>
-                  
-                  {/* Efecto de brillo en el borde durante el drag */}
-                  <div 
-                    className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-white/30 to-transparent transition-opacity duration-200 ${
-                      isDragging && dragOffset < -25 ? 'opacity-100' : 'opacity-0'
-                    }`}
-                    style={{
-                      transform: `translateX(${isDragging ? Math.max(-1, dragOffset / 200) : 0}px)`,
-                    }}
-                  />
                 </div>
-                
-                
               </div>
             </div>
           </div>
