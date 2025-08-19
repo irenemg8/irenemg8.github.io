@@ -2,7 +2,6 @@
 
 import { motion, PanInfo } from 'framer-motion'
 import { useState, useRef } from 'react'
-import { X } from 'lucide-react'
 import { useLanguage } from '@/contexts/language-context'
 
 interface StickyNoteProps {
@@ -95,20 +94,29 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
         }}
       >
         {/* Sticky Note Header */}
-        <div className="flex items-center justify-between p-4 border-b border-yellow-300/30">
+        <div className="flex items-center justify-between p-4 border-b border-yellow-300/30 cursor-grab" 
+             onPointerDown={(e) => {
+               // Solo permitir drag si no es en el botón de cerrar
+               if (e.target instanceof HTMLElement && !e.target.closest('button')) {
+                 // El drag se maneja por el motion.div padre
+               }
+             }}>
           <h3 className="text-sm font-semibold text-gray-800 macos-text-semibold">
             {t('about.todo')}
           </h3>
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => {
+            onPointerDown={(e) => {
+              e.stopPropagation() // Evitar que active el drag
+            }}
+            onClick={(e) => {
+              e.stopPropagation() // Evitar que active el drag
               setIsVisible(false)
               if (onDelete) onDelete()
             }}
-            className="w-5 h-5 rounded-full bg-red-400 hover:bg-red-500 flex items-center justify-center transition-colors group"
+            className="w-4 h-4 rounded-full bg-red-400 hover:bg-red-500 flex items-center justify-center transition-colors group cursor-pointer z-10 relative"
           >
-            <X className="w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
           </motion.button>
         </div>
 
@@ -130,14 +138,7 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
           ))}
         </div>
 
-        {/* Sticky Note Fold */}
-        <div 
-          className="absolute top-0 right-0 w-8 h-8"
-          style={{
-            background: 'linear-gradient(135deg, transparent 0%, transparent 45%, #F59E0B 50%, #D97706 100%)',
-            clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)'
-          }}
-        />
+
 
         {/* Paper texture overlay */}
         <div 
