@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowLeft, ArrowRight, RotateCcw, Share, Star, GitFork, Calendar, Code, X, Globe, RefreshCw, Clock, ChevronDown } from 'lucide-react'
+import { Search, ArrowLeft, ArrowRight, RotateCcw, Share, Star, GitFork, Calendar, Code, X, Globe, RefreshCw, Clock, ChevronDown, Image } from 'lucide-react'
 import { useLanguage } from '@/contexts/language-context'
 
 interface GitHubRepo {
@@ -17,6 +17,7 @@ interface GitHubRepo {
   updated_at: string
   topics: string[]
   private: boolean
+  social_preview_url?: string
 }
 
 interface GitHubSafariBrowserProps {
@@ -35,6 +36,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set())
 
   // Fetch repositories from GitHub API on open and auto-refresh
   useEffect(() => {
@@ -66,6 +68,22 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
     }
   }, [isDropdownOpen])
 
+  // Generate GitHub social preview URL
+  const getSocialPreviewUrl = (repo: GitHubRepo) => {
+    // GitHub's social preview image URL pattern
+    return `https://opengraph.githubassets.com/1/${repo.full_name}`
+  }
+
+  // Check if social preview image exists
+  const checkSocialPreviewExists = async (url: string): Promise<boolean> => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' })
+      return response.ok
+    } catch {
+      return false
+    }
+  }
+
   const fetchRepositories = async () => {
     setLoading(true)
     try {
@@ -95,6 +113,12 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
         console.log('Could not fetch collaborative repos:', searchError)
       }
       
+      // Add social preview URLs to all repos
+      allRepos = allRepos.map(repo => ({
+        ...repo,
+        social_preview_url: getSocialPreviewUrl(repo)
+      }))
+      
       // Sort all repositories by updated date (most recent first)
       allRepos.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
       
@@ -115,9 +139,13 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
       repo.name === `${repo.full_name.split('/')[0]}.github.io` || // User/org pages
       repo.name.endsWith('.github.io') || // Custom domain pages
       repo.topics.includes('github-pages') || // Explicitly tagged
+      repo.topics.includes('website') || // Website topic
       repo.description?.toLowerCase().includes('github pages') ||
       repo.description?.toLowerCase().includes('portfolio') ||
-      repo.description?.toLowerCase().includes('website')
+      repo.description?.toLowerCase().includes('website') ||
+      repo.description?.toLowerCase().includes('blog') ||
+      // Check if it has gh-pages branch (we can't check this via API without auth, but we can infer)
+      (repo.name.includes('portfolio') || repo.name.includes('website') || repo.name.includes('blog'))
     )
   }
 
@@ -346,7 +374,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
           {/* Content Area */}
           <div className="flex flex-col lg:flex-row h-[calc(100%-3rem)] md:h-[calc(100%-3.5rem)]">
             {/* Repositories List */}
-            <div className="w-full lg:w-2/5 xl:w-1/2 lg:border-r border-gray-200/50 dark:border-gray-700/50 overflow-y-auto">
+            <div className="w-full lg:w-1/3 xl:w-2/5 lg:border-r border-gray-200/50 dark:border-gray-700/50 overflow-y-auto">
               <div className="p-3 md:p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 md:mb-4 gap-2">
                   <div>
@@ -373,52 +401,47 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
                       onClick={() => setSelectedRepo(repo)}
-                      className={`p-3 md:p-4 rounded-lg md:rounded-xl border cursor-pointer transition-all ${
+                      className={`p-3 rounded-lg border cursor-pointer transition-all ${
                         selectedRepo?.id === repo.id
                           ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
                           : 'bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/70'
                       }`}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-1 truncate">
-                            {repo.name}
-                          </h3>
-                         {/* {repo.description && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
-                            {repo.description}
-                          </p>
-                          )}*/}
-                          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
-                            <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
-                              {repo.language && (
-                                <div className="flex items-center space-x-1">
-                                  <div
-                                    className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full"
-                                    style={{ backgroundColor: getLanguageColor(repo.language) }}
-                                  />
-                                  <span className="truncate max-w-20">{repo.language}</span>
-                                </div>
-                              )}
-                              <div className="flex items-center space-x-1">
-                                <Star className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                                <span>{repo.stargazers_count}</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <GitFork className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                                <span>{repo.forks_count}</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <Calendar className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                                <span className="hidden sm:inline">{formatDate(repo.updated_at)}</span>
-                              </div>
-                            </div>
+                                                <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="font-semibold text-gray-800 dark:text-gray-200 truncate">
+                              {repo.name}
+                            </h3>
                             {hasGitHubPages(repo) && (
-                              <div className="flex items-center space-x-1 text-xs text-blue-500 dark:text-blue-400 flex-shrink-0">
+                              <div className="flex items-center space-x-1 text-xs text-blue-500 dark:text-blue-400 flex-shrink-0 ml-2">
                                 <Globe className="w-3 h-3" />
-                                <span>Pages</span>
+                                <span className="hidden sm:inline">Pages</span>
                               </div>
                             )}
+                          </div>
+                          <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+                            {repo.language && (
+                              <div className="flex items-center space-x-1">
+                                <div
+                                  className="w-2.5 h-2.5 rounded-full"
+                                  style={{ backgroundColor: getLanguageColor(repo.language) }}
+                                />
+                                <span className="truncate max-w-16">{repo.language}</span>
+                              </div>
+                            )}
+                            <div className="flex items-center space-x-1">
+                              <Star className="w-2.5 h-2.5" />
+                              <span>{repo.stargazers_count}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <GitFork className="w-2.5 h-2.5" />
+                              <span>{repo.forks_count}</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="w-2.5 h-2.5" />
+                              <span className="hidden lg:inline">{formatDate(repo.updated_at)}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -429,7 +452,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
             </div>
 
             {/* Repository Detail */}
-            <div className="w-full lg:w-3/5 xl:w-1/2 overflow-y-auto border-t lg:border-t-0 border-gray-200/50 dark:border-gray-700/50">
+            <div className="w-full lg:w-2/3 xl:w-3/5 overflow-y-auto border-t lg:border-t-0 border-gray-200/50 dark:border-gray-700/50">
               {selectedRepo ? (
                 <div className="p-4 md:p-6">
                   <div className="mb-4 md:mb-6">
@@ -444,6 +467,36 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
                       <p className="text-gray-600 dark:text-gray-400 mb-4">
                         {selectedRepo.description}
                       </p>
+                    )}
+
+                    {/* Social Preview Image */}
+                    {selectedRepo.social_preview_url && !imageLoadErrors.has(selectedRepo.social_preview_url) && (
+                      <div className="mb-4 md:mb-6">
+                        <div className="relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                          <img
+                            src={selectedRepo.social_preview_url}
+                            alt={`Vista previa de ${selectedRepo.name}`}
+                            className="w-full h-auto max-h-64 object-cover"
+                            onError={() => {
+                              setImageLoadErrors(prev => new Set(prev).add(selectedRepo.social_preview_url!))
+                            }}
+                            onLoad={() => {
+                              // Remove from error set if it loads successfully
+                              setImageLoadErrors(prev => {
+                                const newSet = new Set(prev)
+                                newSet.delete(selectedRepo.social_preview_url!)
+                                return newSet
+                              })
+                            }}
+                          />
+                           {/*<<div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-md px-2 py-1">
+                           div className="flex items-center space-x-1 text-white text-xs">
+                              <Image className="w-3 h-3" />
+                              <span>Social Preview</span>
+                            </div>
+                          </div>*/}
+                        </div>
+                      </div>
                     )}
 
                     <div className="flex flex-wrap items-center gap-3 mb-4 md:mb-6">

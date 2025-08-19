@@ -15,14 +15,24 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
   const dragRef = useRef<HTMLDivElement>(null)
+
+  // Ensure component is mounted before showing
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Update position when initialPosition changes (e.g., on resize)
   useEffect(() => {
-    setPosition(initialPosition)
-  }, [initialPosition])
+    if (isMounted) {
+      setPosition(initialPosition)
+    }
+  }, [initialPosition, isMounted])
 
   const handleDragEnd = (event: any, info: PanInfo) => {
+    if (typeof window === 'undefined' || !isMounted) return
+    
     const newPosition = {
       x: Math.max(20, Math.min(window.innerWidth - 250, position.x + info.offset.x)),
       y: Math.max(20, Math.min(window.innerHeight - 200, position.y + info.offset.y))
@@ -54,7 +64,7 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
     'Travel somewhere new every year'
   ]
 
-  if (!isVisible) return null
+  if (!isVisible || !isMounted) return null
 
   return (
     <motion.div
@@ -62,11 +72,16 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
       drag
       dragMomentum={false}
       dragElastic={0.1}
-      dragConstraints={{
+      dragConstraints={isMounted ? {
         left: 20,
-        right: typeof window !== 'undefined' ? window.innerWidth - 250 : 1000,
+        right: window.innerWidth - 250,
         top: 20,
-        bottom: typeof window !== 'undefined' ? window.innerHeight - 200 : 600,
+        bottom: window.innerHeight - 200,
+      } : {
+        left: 20,
+        right: 1000,
+        top: 20,
+        bottom: 600,
       }}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}

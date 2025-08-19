@@ -86,7 +86,7 @@ export function ResponsiveDesktop() {
 
   // Calculate safe position for sticky note avoiding folder collisions
   const getSafePositionForStickyNote = () => {
-    if (typeof window === 'undefined') return { x: 60, y: 40 }
+    if (typeof window === 'undefined' || !isMounted) return { x: 60, y: 40 }
     
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
@@ -151,7 +151,8 @@ export function ResponsiveDesktop() {
         const calculatedPositions = getFolderPositions()
         setPositions(calculatedPositions)
         // Update sticky note visibility based on screen size
-        setShowStickyNote(window.innerWidth >= 1024) // Only show on large screens (when dock is fully visible)
+        const shouldShow = window.innerWidth >= 1024
+        setShowStickyNote(shouldShow) // Only show on large screens (when dock is fully visible)
       }
     }
 
@@ -329,7 +330,7 @@ export function ResponsiveDesktop() {
       <MacOSWindow>
         <div className="relative h-full overflow-hidden">
           {/* Sticky Note - Only on large screens */}
-          {showStickyNote && typeof window !== 'undefined' && window.innerWidth >= 1024 && (
+          {isMounted && showStickyNote && (
             <StickyNote 
               key={stickyNoteKey} // Resetear posición cuando cambie el key
               onDelete={handleStickyNoteDelete}
