@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowLeft, ArrowRight, RotateCcw, Share, Star, GitFork, Calendar, Code, X, Globe, RefreshCw, Clock, ChevronDown, Image } from 'lucide-react'
+import { Search, ArrowLeft, ArrowRight, RotateCcw, Share, Star, GitFork, Calendar, Code, X, Globe, RefreshCw, Clock, ChevronDown, Image, Menu, Filter } from 'lucide-react'
 import { useLanguage } from '@/contexts/language-context'
 
 interface GitHubRepo {
@@ -37,6 +37,17 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set())
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Mount check for client-side only operations
+  useEffect(() => {
+    setIsMounted(true)
+    // Set sidebar open by default on small/medium screens
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsSidebarOpen(true)
+    }
+  }, [])
 
   // Fetch repositories from GitHub API on open and auto-refresh
   useEffect(() => {
@@ -293,7 +304,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
                 className="flex-1 bg-transparent outline-none text-sm text-gray-800 dark:text-gray-200 placeholder-gray-500 min-w-0"
               />
               
-              {/* Custom Dropdown */}
+              {/* Filter Dropdown - Back in search bar */}
               <div className="relative ml-2">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -316,7 +327,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-20 min-w-[120px]"
+                      className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-[99999] min-w-[120px]"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {[
@@ -346,6 +357,17 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
               </div>
             </div>
 
+            {/* Sidebar Toggle Button - Only visible on smaller screens */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              title={isSidebarOpen ? 'Ocultar lista' : 'Mostrar lista'}
+            >
+              <Menu className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            </motion.button>
+
             {/* Auto-refresh Toggle */}
             {/*<motion.button
               whileHover={{ scale: 1.05 }}
@@ -371,88 +393,132 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
             </motion.button>*/}
           </div>
 
-          {/* Content Area */}
-          <div className="flex flex-col lg:flex-row h-[calc(100%-3rem)] md:h-[calc(100%-3.5rem)]">
-            {/* Repositories List */}
-            <div className="w-full lg:w-1/3 xl:w-2/5 lg:border-r border-gray-200/50 dark:border-gray-700/50 overflow-y-auto">
-              <div className="p-3 md:p-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 md:mb-4 gap-2">
-                  <div>
-                    <h2 className="text-base md:text-lg font-semibold text-gray-800 dark:text-gray-200">
-                      Repositorios ({filteredRepos.length})
-                    </h2>
-                    {lastUpdated && (
-                      <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <Clock className="w-3 h-3" />
-                        <span className="hidden sm:inline">Actualizado: </span>
-                        <span>{lastUpdated.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
-                      </div>
-                    )}
-                  </div>
-                  {loading && (
-                    <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                  )}
-                </div>
 
-                <div className="space-y-2 md:space-y-3">
-                  {filteredRepos.map((repo) => (
-                    <motion.div
-                      key={repo.id}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => setSelectedRepo(repo)}
-                      className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                        selectedRepo?.id === repo.id
-                          ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
-                          : 'bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/70'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                                                <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold text-gray-800 dark:text-gray-200 truncate">
-                              {repo.name}
-                            </h3>
-                            {hasGitHubPages(repo) && (
-                              <div className="flex items-center space-x-1 text-xs text-blue-500 dark:text-blue-400 flex-shrink-0 ml-2">
-                                <Globe className="w-3 h-3" />
-                                <span className="hidden sm:inline">Pages</span>
-                              </div>
-                            )}
+
+          {/* Content Area */}
+          <div className="flex h-[calc(100%-3rem)] md:h-[calc(100%-3.5rem)]">
+            {/* Repositories Sidebar */}
+            <AnimatePresence>
+              {(isSidebarOpen || (isMounted && window.innerWidth >= 1024)) && (
+                <motion.div
+                  initial={{ x: -300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -300, opacity: 0 }}
+                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  className={`${
+                    isSidebarOpen && isMounted && window.innerWidth < 1024 
+                      ? 'absolute inset-y-0 left-0 z-30 w-80 bg-white dark:bg-gray-900 border-r border-gray-200/50 dark:border-gray-700/50' 
+                      : 'w-full lg:w-1/3 xl:w-2/5 lg:border-r border-gray-200/50 dark:border-gray-700/50'
+                  } overflow-y-auto`}
+                >
+                  <div className="p-3 md:p-4">
+                    <div className="flex items-center justify-between mb-3 md:mb-4">
+                      <div>
+                        <h2 className="text-base md:text-lg font-semibold text-gray-800 dark:text-gray-200">
+                          Repositorios ({filteredRepos.length})
+                        </h2>
+                        {lastUpdated && (
+                          <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <Clock className="w-3 h-3" />
+                            <span className="hidden sm:inline">Actualizado: </span>
+                            <span>{lastUpdated.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
-                          <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
-                            {repo.language && (
-                              <div className="flex items-center space-x-1">
-                                <div
-                                  className="w-2.5 h-2.5 rounded-full"
-                                  style={{ backgroundColor: getLanguageColor(repo.language) }}
-                                />
-                                <span className="truncate max-w-16">{repo.language}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-2.5 h-2.5" />
-                              <span>{repo.stargazers_count}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <GitFork className="w-2.5 h-2.5" />
-                              <span>{repo.forks_count}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-2.5 h-2.5" />
-                              <span className="hidden lg:inline">{formatDate(repo.updated_at)}</span>
-                            </div>
-                          </div>
-                        </div>
+                        )}
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
+                      <div className="flex items-center space-x-2">
+                        {loading && (
+                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                        )}
+                        {/* Close button for mobile */}
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setIsSidebarOpen(false)}
+                          className="lg:hidden p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          <X className="w-4 h-4 text-gray-500" />
+                        </motion.button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 md:space-y-3">
+                      {filteredRepos.map((repo) => (
+                        <motion.div
+                          key={repo.id}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          onClick={() => {
+                            setSelectedRepo(repo)
+                            // Auto-close sidebar on mobile after selection
+                            if (isMounted && window.innerWidth < 1024) {
+                              setIsSidebarOpen(false)
+                            }
+                          }}
+                          className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                            selectedRepo?.id === repo.id
+                              ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
+                              : 'bg-white/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/70'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-2">
+                                <h3 className="font-semibold text-gray-800 dark:text-gray-200 truncate">
+                                  {repo.name}
+                                </h3>
+                                {hasGitHubPages(repo) && (
+                                  <div className="flex items-center space-x-1 text-xs text-blue-500 dark:text-blue-400 flex-shrink-0 ml-2">
+                                    <Globe className="w-3 h-3" />
+                                    <span className="hidden sm:inline">Pages</span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+                                {repo.language && (
+                                  <div className="flex items-center space-x-1">
+                                    <div
+                                      className="w-2.5 h-2.5 rounded-full"
+                                      style={{ backgroundColor: getLanguageColor(repo.language) }}
+                                    />
+                                    <span className="truncate max-w-16">{repo.language}</span>
+                                  </div>
+                                )}
+                                <div className="flex items-center space-x-1">
+                                  <Star className="w-2.5 h-2.5" />
+                                  <span>{repo.stargazers_count}</span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <GitFork className="w-2.5 h-2.5" />
+                                  <span>{repo.forks_count}</span>
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <Calendar className="w-2.5 h-2.5" />
+                                  <span className="hidden lg:inline">{formatDate(repo.updated_at)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Overlay for mobile sidebar */}
+            {isSidebarOpen && isMounted && window.innerWidth < 1024 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsSidebarOpen(false)}
+                className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-20"
+              />
+            )}
 
             {/* Repository Detail */}
-            <div className="w-full lg:w-2/3 xl:w-3/5 overflow-y-auto border-t lg:border-t-0 border-gray-200/50 dark:border-gray-700/50">
+            <div className="flex-1 overflow-y-auto">
               {selectedRepo ? (
                 <div className="p-4 md:p-6">
                   <div className="mb-4 md:mb-6">
