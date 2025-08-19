@@ -43,7 +43,9 @@ export function MacOSDock({ onShowStickyNote }: MacOSDockProps) {
       label: 'Safari',
       action: () => {
         setActiveItem('safari')
-        console.log('Safari clicked')
+        // Trigger the GitHub Safari browser
+        const button = document.querySelector('[data-github-safari-trigger]') as HTMLButtonElement;
+        if (button) button.click();
       }
     },
     {

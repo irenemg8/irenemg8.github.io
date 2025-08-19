@@ -1,20 +1,26 @@
 "use client"
 
 import { motion, PanInfo } from 'framer-motion'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 
 interface StickyNoteProps {
   onDelete?: () => void
   onDragToTrash?: (position: { x: number; y: number }) => void
+  initialPosition?: { x: number; y: number }
 }
 
-export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
+export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60, y: 40 } }: StickyNoteProps) {
   const { t } = useLanguage()
-  const [position, setPosition] = useState({ x: 60, y: 40 })
+  const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const dragRef = useRef<HTMLDivElement>(null)
+
+  // Update position when initialPosition changes (e.g., on resize)
+  useEffect(() => {
+    setPosition(initialPosition)
+  }, [initialPosition])
 
   const handleDragEnd = (event: any, info: PanInfo) => {
     const newPosition = {

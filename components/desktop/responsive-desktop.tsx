@@ -12,6 +12,7 @@ import { FolderWindow } from '@/components/desktop/folder-window'
 import { WorldGlobe } from '@/components/shared/world-globe'
 import { PressLibraryModal } from '@/components/shared/press-library-modal'
 import { ArtworksGallery } from '@/components/shared/artworks-gallery'
+import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -28,6 +29,7 @@ export function ResponsiveDesktop() {
   const [resetKey, setResetKey] = useState(0)
   const [showStickyNote, setShowStickyNote] = useState(true)
   const [stickyNoteKey, setStickyNoteKey] = useState(0) // Para resetear posición
+  const [showGitHubBrowser, setShowGitHubBrowser] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -59,9 +61,10 @@ export function ResponsiveDesktop() {
     setOpenWindows(prev => prev.filter(w => w.id !== id))
   }
 
-  const resetFolderPositions = () => {
-    setResetKey(prev => prev + 1)
-  }
+  // This function is no longer needed as reorganization is completely automatic
+  // const resetFolderPositions = () => {
+  //   setResetKey(prev => prev + 1)
+  // }
 
   const handleStickyNoteDelete = () => {
     setShowStickyNote(false)
@@ -74,8 +77,69 @@ export function ResponsiveDesktop() {
   }
 
   const showStickyNoteFromDock = () => {
-    setShowStickyNote(true)
-    setStickyNoteKey(prev => prev + 1) // Forzar reset de posición
+    // Only show sticky note on large screens (when dock is fully visible)
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setShowStickyNote(true)
+      setStickyNoteKey(prev => prev + 1) // Forzar reset de posición
+    }
+  }
+
+  // Calculate safe position for sticky note avoiding folder collisions
+  const getSafePositionForStickyNote = () => {
+    if (typeof window === 'undefined') return { x: 60, y: 40 }
+    
+    const windowWidth = window.innerWidth
+    const windowHeight = window.innerHeight
+    const stickyWidth = 250 // Sticky note width
+    const stickyHeight = 200 // Sticky note height
+    const margin = 20
+    
+    // Get all folder positions
+    const allPositions = [
+      ...positions.projects,
+      positions.worldGlobe,
+      positions.aboutMe,
+      positions.resume
+    ]
+    
+    // Try different positions starting from top-left
+    const possiblePositions = [
+      { x: margin, y: margin }, // Top-left
+      { x: margin, y: windowHeight / 2 - stickyHeight / 2 }, // Left center
+      { x: margin, y: windowHeight - stickyHeight - 100 }, // Bottom-left (above dock)
+      { x: windowWidth / 2 - stickyWidth / 2, y: margin }, // Top center
+      { x: windowWidth - stickyWidth - margin, y: margin }, // Top-right
+      { x: windowWidth - stickyWidth - margin, y: windowHeight / 2 - stickyHeight / 2 }, // Right center
+    ]
+    
+    // Check each position for collisions
+    for (const pos of possiblePositions) {
+      let hasCollision = false
+      
+      for (const folderPos of allPositions) {
+        const folderWidth = 100
+        const folderHeight = 90
+        
+        // Check if sticky note overlaps with folder
+        if (!(pos.x > folderPos.x + folderWidth || 
+              pos.x + stickyWidth < folderPos.x ||
+              pos.y > folderPos.y + folderHeight ||
+              pos.y + stickyHeight < folderPos.y)) {
+          hasCollision = true
+          break
+        }
+      }
+      
+      if (!hasCollision) {
+        return pos
+      }
+    }
+    
+    // If no safe position found, use default but ensure it's within bounds
+    return { 
+      x: Math.min(Math.max(margin, 60), windowWidth - stickyWidth - margin), 
+      y: Math.min(Math.max(margin, 40), windowHeight - stickyHeight - 100) 
+    }
   }
 
   // Update positions after hydration to avoid SSR/client mismatch
@@ -86,99 +150,132 @@ export function ResponsiveDesktop() {
       if (typeof window !== 'undefined') {
         const calculatedPositions = getFolderPositions()
         setPositions(calculatedPositions)
+        // Update sticky note visibility based on screen size
+        setShowStickyNote(window.innerWidth >= 1024) // Only show on large screens (when dock is fully visible)
       }
     }
 
     updatePositions()
     
-    // Update positions on window resize
-    window.addEventListener('resize', updatePositions)
-    return () => window.removeEventListener('resize', updatePositions)
-  }, [resetKey]) // Also update when resetKey changes
+    // Auto-reset and reposition on window resize - completely automatic
+    const handleResize = () => {
+      // Immediate position update
+      updatePositions()
+      // Force reset of all components for immediate reorganization
+      setResetKey(prev => prev + 1)
+      setStickyNoteKey(prev => prev + 1) // Also reset sticky note position
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, []) // Remove resetKey dependency to avoid loops
 
-  // Fixed folder positions - centered towards right, two rows, right to left arrangement
+  // Responsive folder positioning based on screen size
   const getFolderPositions = () => {
     if (typeof window !== 'undefined') {
       const windowWidth = window.innerWidth
+      const windowHeight = window.innerHeight
       const folderWidth = 100 // Approximate folder width including spacing
-      const minMargin = 50 // Minimum margin from edges
-      const maxMargin = 120 // Maximum margin from right edge
+      const folderHeight = 90 // Approximate folder height including spacing
+      const margin = 50 // Base margin
       
-      // Calculate constraints for small screens
-      const centerX = windowWidth / 2
-      const rightOffset = Math.min(280, windowWidth * 0.25) // Responsive right offset
-      let startX = Math.min(centerX + rightOffset, windowWidth - maxMargin)
-      
-      // Ensure all folders fit within screen bounds
-      const totalFoldersWidth = folderWidth * 4 // 4 folders in first row
-      const minStartX = totalFoldersWidth + minMargin
-      startX = Math.max(startX, minStartX)
-      
-      // For very small screens, reorganize in single column
-      if (windowWidth < 800) {
+      // Large screens (1024px and up): Right side positioning (current behavior)
+      if (windowWidth >= 1024) {
+        const centerX = windowWidth / 2
+        const rightOffset = Math.min(280, windowWidth * 0.25)
+        const startX = Math.min(centerX + rightOffset, windowWidth - 120)
+        const minStartX = folderWidth * 4 + margin
+        const finalStartX = Math.max(startX, minStartX)
+        
         return {
           projects: [
-            // Single column layout for small screens
-            { x: windowWidth - 150, y: 60 },   // Projects
-            { x: windowWidth - 150, y: 140 },  // Work experience
-            { x: windowWidth - 150, y: 220 },  // Artworks
-            { x: windowWidth - 150, y: 300 },  // GE
-            { x: windowWidth - 150, y: 380 },  // Hackathons and Contests
-            { x: windowWidth - 150, y: 460 }   // Press
+            { x: Math.min(finalStartX, windowWidth - 120), y: 60 },
+            { x: Math.min(finalStartX - folderWidth, windowWidth - 120), y: 60 },
+            { x: Math.min(finalStartX - (folderWidth * 2), windowWidth - 120), y: 60 },
+            { x: Math.min(finalStartX, windowWidth - 120), y: 150 },
+            { x: Math.min(finalStartX - folderWidth, windowWidth - 120), y: 150 },
+            { x: Math.min(finalStartX - (folderWidth * 2), windowWidth - 120), y: 150 }
           ],
-          worldGlobe: { x: windowWidth - 270, y: 220 },  // World Globe (left column)
-          aboutMe: { x: windowWidth - 270, y: 60 },   // About Me (left column)
-          resume: { x: windowWidth - 270, y: 140 }    // Resume.pdf (left column)
+          worldGlobe: { x: Math.max(finalStartX - (folderWidth * 3), margin), y: 60 },
+          aboutMe: { x: Math.max(finalStartX - (folderWidth * 3), margin), y: 150 },
+          resume: { x: Math.max(finalStartX - (folderWidth * 4), margin), y: 150 }
         }
       }
       
+             // Medium screens (500px-1023px): Center, 2 equal rows
+       if (windowWidth >= 500 && windowWidth < 1024) {
+         const centerX = windowWidth / 2
+         const centerY = windowHeight / 2
+         const totalWidth = folderWidth * 3 // 3 folders per row
+         const startX = centerX - (totalWidth / 2)
+         const rowHeight = folderHeight
+         const heightOffset = 80 // Subir las carpetas un poco más
+         const firstRowY = centerY - rowHeight - heightOffset
+         const secondRowY = centerY - 20 // Small gap above center
+         
+         return {
+           projects: [
+             // First row - 3 folders centered
+             { x: startX, y: firstRowY },
+             { x: startX + folderWidth, y: firstRowY },
+             { x: startX + (folderWidth * 2), y: firstRowY },
+             // Second row - 3 folders centered  
+             { x: startX, y: secondRowY },
+             { x: startX + folderWidth, y: secondRowY },
+             { x: startX + (folderWidth * 2), y: secondRowY }
+           ],
+           // Additional folders positioned below the main grid, centered
+           worldGlobe: { x: centerX - folderWidth, y: secondRowY + rowHeight + 20 },
+           aboutMe: { x: centerX - (folderWidth / 2), y: secondRowY + rowHeight + 20 },
+           resume: { x: centerX, y: secondRowY + rowHeight + 20 }
+         }
+       }
+      
+             // Small screens (less than 500px): 3x3 grid centered
+       const centerX = windowWidth / 2
+       const totalWidth = folderWidth * 3
+       const startX = centerX - (totalWidth / 2) // Perfect horizontal centering
+       
+       // 🎯 CONFIGURA AQUÍ LA ALTURA: Posición directa desde arriba
+       const topMargin = 120 // Píxeles desde la parte superior (menor número = más arriba)
+       const startY = topMargin
+      
       return {
         projects: [
-          // Primera fila (3 elementos de derecha a izquierda) - with constraints
-          { x: Math.min(startX, windowWidth - maxMargin), y: 60 },                      
-          { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 60 },        
-          { x: Math.min(startX - (folderWidth * 2), windowWidth - maxMargin), y: 60 },  
-          // Segunda fila (3 elementos de derecha a izquierda) - with constraints
-          { x: Math.min(startX, windowWidth - maxMargin), y: 150 },                     
-          { x: Math.min(startX - folderWidth, windowWidth - maxMargin), y: 150 },       
-          { x: Math.min(startX - (folderWidth * 2), windowWidth - maxMargin), y: 150 }  
+          // Row 1
+          { x: startX, y: startY },
+          { x: startX + folderWidth, y: startY },
+          { x: startX + (folderWidth * 2), y: startY },
+          // Row 2
+          { x: startX, y: startY + folderHeight },
+          { x: startX + folderWidth, y: startY + folderHeight },
+          { x: startX + (folderWidth * 2), y: startY + folderHeight }
         ],
-        // Globo terráqueo y otras carpetas - with constraints
-        worldGlobe: { x: Math.max(startX - (folderWidth * 3), minMargin), y: 60 },
-        aboutMe: { x: Math.max(startX - (folderWidth * 3), minMargin), y: 150 },     
-        resume: { x: Math.max(startX - (folderWidth * 4), minMargin), y: 150 }
+        // Row 3 - remaining folders
+        worldGlobe: { x: startX, y: startY + (folderHeight * 2) },
+        aboutMe: { x: startX + folderWidth, y: startY + (folderHeight * 2) },
+        resume: { x: startX + (folderWidth * 2), y: startY + (folderHeight * 2) }
       }
     }
     
-    // Fallback positions for SSR - centered towards right with constraints
-    const fallbackWidth = 1280 // Assumed width for SSR
+    // Fallback positions for SSR (large screen layout)
+    const fallbackWidth = 1280
     const fallbackCenterX = fallbackWidth / 2
-    const rightOffset = Math.min(280, fallbackWidth * 0.25)
-    const minMargin = 50
-    const maxMargin = 120
-    const folderWidth = 100
-    let fallbackStartX = Math.min(fallbackCenterX + rightOffset, fallbackWidth - maxMargin)
-    
-    // Ensure all folders fit within bounds
-    const totalFoldersWidth = folderWidth * 4
-    const minStartX = totalFoldersWidth + minMargin
-    fallbackStartX = Math.max(fallbackStartX, minStartX)
+    const rightOffset = 280
+    const fallbackStartX = fallbackCenterX + rightOffset - 120
     
     return {
       projects: [
-        // Primera fila (3 elementos de derecha a izquierda) - with constraints
-        { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 60 },                      
-        { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 60 },        
-        { x: Math.min(fallbackStartX - (folderWidth * 2), fallbackWidth - maxMargin), y: 60 },  
-        // Segunda fila (3 elementos de derecha a izquierda) - with constraints
-        { x: Math.min(fallbackStartX, fallbackWidth - maxMargin), y: 150 },                     
-        { x: Math.min(fallbackStartX - folderWidth, fallbackWidth - maxMargin), y: 150 },       
-        { x: Math.min(fallbackStartX - (folderWidth * 2), fallbackWidth - maxMargin), y: 150 }  
+        { x: fallbackStartX, y: 60 },
+        { x: fallbackStartX - 100, y: 60 },
+        { x: fallbackStartX - 200, y: 60 },
+        { x: fallbackStartX, y: 150 },
+        { x: fallbackStartX - 100, y: 150 },
+        { x: fallbackStartX - 200, y: 150 }
       ],
-      // Globo terráqueo y otras carpetas - with constraints
-      worldGlobe: { x: Math.max(fallbackStartX - (folderWidth * 3), minMargin), y: 60 },
-      aboutMe: { x: Math.max(fallbackStartX - (folderWidth * 3), minMargin), y: 150 },     
-      resume: { x: Math.max(fallbackStartX - (folderWidth * 4), minMargin), y: 150 }
+      worldGlobe: { x: fallbackStartX - 300, y: 60 },
+      aboutMe: { x: fallbackStartX - 300, y: 150 },
+      resume: { x: fallbackStartX - 400, y: 150 }
     }
   }
 
@@ -229,14 +326,15 @@ export function ResponsiveDesktop() {
   return (
     <>
       <MacOSCursor />
-      <MacOSWindow onReset={resetFolderPositions}>
+      <MacOSWindow>
         <div className="relative h-full overflow-hidden">
-          {/* Sticky Note */}
-          {showStickyNote && (
+          {/* Sticky Note - Only on large screens */}
+          {showStickyNote && typeof window !== 'undefined' && window.innerWidth >= 1024 && (
             <StickyNote 
               key={stickyNoteKey} // Resetear posición cuando cambie el key
               onDelete={handleStickyNoteDelete}
               onDragToTrash={handleDragToTrash}
+              initialPosition={getSafePositionForStickyNote()}
             />
           )}
           
@@ -336,6 +434,23 @@ export function ResponsiveDesktop() {
       
       {/* Hidden Artworks Gallery component */}
       {isMounted && <ArtworksGallery />}
+      
+      {/* Hidden GitHub Safari Browser trigger */}
+      {isMounted && (
+        <button
+          data-github-safari-trigger
+          onClick={() => setShowGitHubBrowser(true)}
+          className="hidden"
+        />
+      )}
+      
+      {/* GitHub Safari Browser */}
+      {isMounted && (
+        <GitHubSafariBrowser
+          isOpen={showGitHubBrowser}
+          onClose={() => setShowGitHubBrowser(false)}
+        />
+      )}
     </>
   )
 }
