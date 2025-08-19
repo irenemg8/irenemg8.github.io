@@ -12,10 +12,15 @@ interface DockItem {
   action: () => void
 }
 
-export function MacOSDock() {
+interface MacOSDockProps {
+  onShowStickyNote?: () => void
+}
+
+export function MacOSDock({ onShowStickyNote }: MacOSDockProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
+  const [activeItem, setActiveItem] = useState<string | null>('trash') // Papelera activa por defecto
 
   // Todos los iconos del dock en el orden especificado
   const allDockItems: DockItem[] = [
@@ -24,28 +29,42 @@ export function MacOSDock() {
       name: 'Finder',
       image: '/Dock/finder.png',
       label: 'Finder',
-      action: () => console.log('Finder clicked')
+      action: () => {
+        setActiveItem('finder')
+        if (onShowStickyNote) {
+          onShowStickyNote()
+        }
+      }
     },
     {
       id: 'safari',
       name: 'Safari',
       image: '/Dock/Safari.png',
       label: 'Safari',
-      action: () => console.log('Safari clicked')
+      action: () => {
+        setActiveItem('safari')
+        console.log('Safari clicked')
+      }
     },
     {
       id: 'messages',
       name: 'Messages',
       image: '/Dock/Messages.png',
       label: 'Mensajes',
-      action: () => console.log('Messages clicked')
+      action: () => {
+        setActiveItem('messages')
+        console.log('Messages clicked')
+      }
     },
     {
       id: 'mail',
       name: 'Mail',
       image: '/Dock/Mail.png',
       label: 'Mail',
-      action: () => window.location.href = 'mailto:irenebati4@gmail.com'
+      action: () => {
+        setActiveItem('mail')
+        window.location.href = 'mailto:irenebati4@gmail.com'
+      }
     },
     {
       id: 'maps',
@@ -53,6 +72,7 @@ export function MacOSDock() {
       image: '/Dock/Maps.png',
       label: 'Mapas',
       action: () => {
+        setActiveItem('maps')
         // Buscar y hacer click en el botón del globo mundial
         const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
         if (button) {
@@ -65,21 +85,30 @@ export function MacOSDock() {
       name: 'Photos',
       image: '/Dock/Photos.png',
       label: 'Fotos',
-      action: () => console.log('Photos clicked')
+      action: () => {
+        setActiveItem('photos')
+        console.log('Photos clicked')
+      }
     },
     {
       id: 'facetime',
       name: 'FaceTime',
       image: '/Dock/FaceTime.png',
       label: 'FaceTime',
-      action: () => console.log('FaceTime clicked')
+      action: () => {
+        setActiveItem('facetime')
+        console.log('FaceTime clicked')
+      }
     },
     {
       id: 'settings',
       name: 'System Preferences',
       image: '/Dock/SystemPreferences.png',
       label: 'Preferencias del Sistema',
-      action: () => console.log('Settings clicked')
+      action: () => {
+        setActiveItem('settings')
+        console.log('Settings clicked')
+      }
     },
     {
       id: 'calendar',
@@ -87,6 +116,7 @@ export function MacOSDock() {
       image: '/Dock/Calendar.png',
       label: 'Calendario',
       action: () => {
+        setActiveItem('calendar')
         const trigger = document.querySelector('[data-calendar-trigger]') as HTMLElement
         if (trigger) {
           trigger.click()
@@ -98,14 +128,20 @@ export function MacOSDock() {
       name: 'Notes',
       image: '/Dock/Notes.png',
       label: 'Notas',
-      action: () => console.log('Notes clicked')
+      action: () => {
+        setActiveItem('notes')
+        console.log('Notes clicked')
+      }
     },
     {
       id: 'trash',
       name: 'Trash',
       image: '/bin.png',
       label: 'Papelera',
-      action: () => console.log('Trash clicked')
+      action: () => {
+        setActiveItem('trash')
+        console.log('Trash clicked')
+      }
     }
   ]
 
@@ -202,8 +238,8 @@ export function MacOSDock() {
                 </div>
               )}
 
-              {/* Active indicator para Papelera */}
-              {item.id === 'trash' && (
+              {/* Active indicator */}
+              {activeItem === item.id && (
                 <div className="absolute -bottom-1 w-1 h-1 bg-gray-600 dark:bg-gray-400 rounded-full" />
               )}
               </button>

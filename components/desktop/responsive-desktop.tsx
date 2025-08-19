@@ -27,6 +27,7 @@ export function ResponsiveDesktop() {
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([])
   const [resetKey, setResetKey] = useState(0)
   const [showStickyNote, setShowStickyNote] = useState(true)
+  const [stickyNoteKey, setStickyNoteKey] = useState(0) // Para resetear posición
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -70,6 +71,11 @@ export function ResponsiveDesktop() {
     setTimeout(() => {
       setShowStickyNote(false)
     }, 300)
+  }
+
+  const showStickyNoteFromDock = () => {
+    setShowStickyNote(true)
+    setStickyNoteKey(prev => prev + 1) // Forzar reset de posición
   }
 
   // Update positions after hydration to avoid SSR/client mismatch
@@ -228,6 +234,7 @@ export function ResponsiveDesktop() {
           {/* Sticky Note */}
           {showStickyNote && (
             <StickyNote 
+              key={stickyNoteKey} // Resetear posición cuando cambie el key
               onDelete={handleStickyNoteDelete}
               onDragToTrash={handleDragToTrash}
             />
@@ -303,7 +310,7 @@ export function ResponsiveDesktop() {
           />
 
           {/* macOS Dock */}
-          <MacOSDock />
+          <MacOSDock onShowStickyNote={showStickyNoteFromDock} />
 
         </div>
       </MacOSWindow>

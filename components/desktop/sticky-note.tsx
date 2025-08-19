@@ -26,9 +26,13 @@ export function StickyNote({ onDelete, onDragToTrash }: StickyNoteProps) {
     setPosition(newPosition)
     setIsDragging(false)
 
-    // Check if dragged to trash area (bottom right corner)
-    const isNearTrash = newPosition.x > window.innerWidth - 200 && 
-                       newPosition.y > window.innerHeight - 200
+    // Check if dragged to trash area (dock area at bottom center)
+    const dockCenterX = window.innerWidth / 2
+    const dockY = window.innerHeight - 80 // Área del dock
+    
+    // Área más amplia alrededor del dock para facilitar el drop
+    const isNearTrash = Math.abs(newPosition.x - dockCenterX) < 150 && 
+                       newPosition.y > window.innerHeight - 150
     
     if (isNearTrash && onDragToTrash) {
       onDragToTrash(newPosition)
