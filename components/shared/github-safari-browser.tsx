@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ArrowLeft, ArrowRight, RotateCcw, Share, Star, GitFork, Calendar, Code, X } from 'lucide-react'
+import { Search, ArrowLeft, ArrowRight, RotateCcw, Share, Star, GitFork, Calendar, Code, X, Globe, RefreshCw, Clock } from 'lucide-react'
 import { useLanguage } from '@/contexts/language-context'
 
 interface GitHubRepo {
@@ -32,13 +32,24 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
   const [loading, setLoading] = useState(false)
   const [selectedRepo, setSelectedRepo] = useState<GitHubRepo | null>(null)
   const [searchFilter, setSearchFilter] = useState<'all' | 'type' | 'language'>('all')
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
 
-  // Fetch repositories from GitHub API
+  // Fetch repositories from GitHub API on open and auto-refresh
   useEffect(() => {
-    if (isOpen && repositories.length === 0) {
+    if (isOpen) {
       fetchRepositories()
+      
+      // Auto-refresh every 30 seconds if enabled
+      const interval = autoRefreshEnabled ? setInterval(() => {
+        fetchRepositories()
+      }, 30000) : null
+      
+      return () => {
+        if (interval) clearInterval(interval)
+      }
     }
-  }, [isOpen])
+  }, [isOpen, autoRefreshEnabled])
 
   const fetchRepositories = async () => {
     setLoading(true)
@@ -48,12 +59,35 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
         const data = await response.json()
         setRepositories(data)
         setFilteredRepos(data)
+        setLastUpdated(new Date())
       }
     } catch (error) {
       console.error('Error fetching repositories:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  // Check if repository has GitHub Pages
+  const hasGitHubPages = (repo: GitHubRepo) => {
+    // Check for common GitHub Pages patterns
+    return (
+      repo.name === `${repo.full_name.split('/')[0]}.github.io` || // User/org pages
+      repo.name.endsWith('.github.io') || // Custom domain pages
+      repo.topics.includes('github-pages') || // Explicitly tagged
+      repo.description?.toLowerCase().includes('github pages') ||
+      repo.description?.toLowerCase().includes('portfolio') ||
+      repo.description?.toLowerCase().includes('website')
+    )
+  }
+
+  // Generate GitHub Pages URL
+  const getGitHubPagesUrl = (repo: GitHubRepo) => {
+    const [owner] = repo.full_name.split('/')
+    if (repo.name === `${owner}.github.io`) {
+      return `https://${owner}.github.io`
+    }
+    return `https://${owner}.github.io/${repo.name}`
   }
 
   // Filter repositories based on search query
@@ -155,7 +189,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
             </div>
 
             {/* Navigation Buttons */}
-            <div className="flex items-center space-x-2 mr-4">
+            {/*<div className="flex items-center space-x-2 mr-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -178,7 +212,7 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
               >
                 <RotateCcw className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               </motion.button>
-            </div>
+            </div>*/}
 
             {/* Search Bar */}
             <div className="flex-1 flex items-center bg-white/80 dark:bg-gray-800/80 rounded-lg px-4 py-2 mx-4 border border-gray-300/50 dark:border-gray-600/50">
@@ -201,14 +235,29 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
               </select>
             </div>
 
+            {/* Auto-refresh Toggle */}
+            {/*<motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
+              className={`p-2 rounded-lg transition-colors ${
+                autoRefreshEnabled 
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
+                  : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'
+              }`}
+              title={autoRefreshEnabled ? 'Auto-actualización activada' : 'Auto-actualización desactivada'}
+            >
+              <RefreshCw className={`w-4 h-4 ${autoRefreshEnabled ? 'animate-spin' : ''}`} />
+            </motion.button>*/}
+
             {/* Share Button */}
-            <motion.button
+            {/*<motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
               <Share className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-            </motion.button>
+            </motion.button>*/}
           </div>
 
           {/* Content Area */}
@@ -217,9 +266,20 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
             <div className="w-1/2 border-r border-gray-200/50 dark:border-gray-700/50 overflow-y-auto">
               <div className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                    Repositorios ({filteredRepos.length})
-                  </h2>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      Repositorios ({filteredRepos.length})
+                    </h2>
+                    {lastUpdated && (
+                      <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <Clock className="w-3 h-3" />
+                        <span>Actualizado: {lastUpdated.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                        {autoRefreshEnabled && (
+                          <span className="text-green-500">• Auto-actualización ON</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   {loading && (
                     <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   )}
@@ -248,28 +308,36 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
                               {repo.description}
                             </p>
                           )}
-                          <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                            {repo.language && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+                              {repo.language && (
+                                <div className="flex items-center space-x-1">
+                                  <div
+                                    className="w-3 h-3 rounded-full"
+                                    style={{ backgroundColor: getLanguageColor(repo.language) }}
+                                  />
+                                  <span>{repo.language}</span>
+                                </div>
+                              )}
                               <div className="flex items-center space-x-1">
-                                <div
-                                  className="w-3 h-3 rounded-full"
-                                  style={{ backgroundColor: getLanguageColor(repo.language) }}
-                                />
-                                <span>{repo.language}</span>
+                                <Star className="w-3 h-3" />
+                                <span>{repo.stargazers_count}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <GitFork className="w-3 h-3" />
+                                <span>{repo.forks_count}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>{formatDate(repo.updated_at)}</span>
+                              </div>
+                            </div>
+                            {hasGitHubPages(repo) && (
+                              <div className="flex items-center space-x-1 text-xs text-blue-500 dark:text-blue-400">
+                                <Globe className="w-3 h-3" />
+                                <span>Pages</span>
                               </div>
                             )}
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-3 h-3" />
-                              <span>{repo.stargazers_count}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <GitFork className="w-3 h-3" />
-                              <span>{repo.forks_count}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>{formatDate(repo.updated_at)}</span>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -346,19 +414,21 @@ export function GitHubSafariBrowser({ isOpen, onClose }: GitHubSafariBrowserProp
                         whileTap={{ scale: 0.98 }}
                         className="block w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-center font-medium transition-colors"
                       >
+                        <Code className="w-4 h-4 inline mr-2" />
                         Ver en GitHub
                       </motion.a>
                       
-                      {selectedRepo.name === 'irenemg8.github.io' && (
+                      {hasGitHubPages(selectedRepo) && (
                         <motion.a
-                          href="https://irenemg8.github.io"
+                          href={getGitHubPagesUrl(selectedRepo)}
                           target="_blank"
                           rel="noopener noreferrer"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           className="block w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg text-center font-medium transition-colors"
                         >
-                          Ver Sitio Web
+                          <Globe className="w-4 h-4 inline mr-2" />
+                          Ver GitHub Pages
                         </motion.a>
                       )}
                     </div>
