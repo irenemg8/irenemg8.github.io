@@ -13,9 +13,11 @@ import { WorldGlobe } from '@/components/shared/world-globe'
 import { PressLibraryModal } from '@/components/shared/press-library-modal'
 import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
+import { WorkFolderWindow } from '@/components/desktop/work-folder-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
+import { AnimatePresence } from 'framer-motion'
 
 interface OpenWindow {
   id: string
@@ -30,6 +32,7 @@ export function ResponsiveDesktop() {
   const [showStickyNote, setShowStickyNote] = useState(true)
   const [stickyNoteKey, setStickyNoteKey] = useState(0) // Para resetear posición
   const [showGitHubBrowser, setShowGitHubBrowser] = useState(false)
+  const [showWorkFolder, setShowWorkFolder] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -324,6 +327,8 @@ export function ResponsiveDesktop() {
     </div>
   )
 
+
+
   return (
     <>
       <MacOSCursor />
@@ -360,6 +365,9 @@ export function ResponsiveDesktop() {
                   // Trigger the artworks modal directly
                   const button = document.querySelector('[data-artworks-trigger]') as HTMLButtonElement;
                   if (button) button.click();
+                } else if (project.id === 'work-experience') {
+                  // Show work folder window
+                  setShowWorkFolder(true);
                 } else {
                   openWindow(project.id, project.name, projectContent(project.name))
                 }
@@ -450,6 +458,14 @@ export function ResponsiveDesktop() {
         <GitHubSafariBrowser
           isOpen={showGitHubBrowser}
           onClose={() => setShowGitHubBrowser(false)}
+        />
+      )}
+      
+      {/* Work Experience Folder Window */}
+      {isMounted && (
+        <WorkFolderWindow
+          isOpen={showWorkFolder}
+          onClose={() => setShowWorkFolder(false)}
         />
       )}
     </>
