@@ -27,7 +27,7 @@ export function WorkNote({ work, onClose, initialPosition = { x: 200, y: 200 } }
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
-  const [size, setSize] = useState({ width: 400, height: 500 })
+  const [size, setSize] = useState({ width: 450, height: 550 })
   const [isResizing, setIsResizing] = useState(false)
   const noteRef = useRef<HTMLDivElement>(null)
 
@@ -119,7 +119,7 @@ export function WorkNote({ work, onClose, initialPosition = { x: 200, y: 200 } }
         stiffness: 300, 
         damping: 30
       }}
-      className={`fixed z-[60] ${isDragging ? 'cursor-grabbing' : ''} select-none`}
+      className={`fixed z-[100] ${isDragging ? 'cursor-grabbing' : ''} select-none`}
       style={{ 
         width: isMinimized ? '300px' : `${size.width}px`,
         height: isMinimized ? 'auto' : `${size.height}px`,
@@ -159,87 +159,82 @@ export function WorkNote({ work, onClose, initialPosition = { x: 200, y: 200 } }
           
           {/* Título de la ventana */}
           <div className="flex items-center space-x-2 flex-1 justify-center">
-            {work.icon && work.icon.includes('/work/') && (
-              <img 
-                src={work.icon} 
-                alt={work.company}
-                className="w-4 h-4 object-cover rounded"
-              />
-            )}
+            <span className="text-xs">📝</span>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {work.company}
+              Bloc de notas - {work.company}
             </span>
           </div>
           <div className="w-14"></div>
         </div>
 
-        {/* Contenido de la nota */}
+        {/* Contenido de la nota - estilo bloc de notas */}
         {!isMinimized && (
-          <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-            {/* Título y posición */}
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                {work.position}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {work.type}
-              </p>
-            </div>
-
-            {/* Metadatos */}
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                <Calendar className="w-4 h-4" />
-                <span>{work.date}</span>
+          <div className="flex-1 overflow-auto" 
+               style={{ 
+                 background: 'linear-gradient(#fef3c7 0%, #fef3c7 95%, transparent 95%), repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #d4d4d8 28px)',
+                 backgroundSize: '100% 100%, 100% 28px'
+               }}>
+            <div className="p-6 font-mono text-sm space-y-4" style={{ lineHeight: '28px' }}>
+              {/* Título y posición */}
+              <div className="text-blue-700 dark:text-blue-400">
+                <div className="font-bold text-base underline">{work.position}</div>
+                <div className="text-xs italic">{work.type}</div>
               </div>
-              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                <MapPin className="w-4 h-4" />
-                <span>{work.location}</span>
+
+              {/* Metadatos con estilo de nota escrita */}
+              <div className="space-y-0 text-gray-700 dark:text-gray-300">
+                <div>📅 {work.date}</div>
+                <div>📍 {work.location}</div>
               </div>
-            </div>
 
-            {/* Descripción */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                {work.description}
-              </p>
-            </div>
+              {/* Línea separadora estilo lápiz */}
+              <div className="border-b-2 border-gray-400 dark:border-gray-600 my-2"></div>
 
-            {/* Responsabilidades */}
-            {work.responsibilities.length > 0 && (
-              <div>
-                <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                  Responsabilidades principales:
-                </h4>
-                <ul className="space-y-1">
-                  {work.responsibilities.map((resp, index) => (
-                    <li key={index} className="text-sm flex items-start gap-2">
-                      <span className="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
-                      <span className="text-gray-700 dark:text-gray-300">{resp}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* Descripción con estilo manuscrito */}
+              <div className="text-gray-800 dark:text-gray-200">
+                <p className="italic">{work.description}</p>
               </div>
-            )}
 
-            {/* Habilidades */}
-            {work.skills.length > 0 && (
-              <div>
-                <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                  Habilidades:
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {work.skills.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-xs font-medium"
-                    >
-                      {skill}
-                    </span>
-                  ))}
+              {/* Responsabilidades con viñetas de bloc */}
+              {work.responsibilities.length > 0 && (
+                <div>
+                  <div className="font-semibold text-gray-800 dark:text-gray-200 underline mb-1">
+                    Tareas principales:
+                  </div>
+                  <div className="pl-4 space-y-0">
+                    {work.responsibilities.map((resp, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <span className="text-gray-600 dark:text-gray-400">-</span>
+                        <span className="text-gray-700 dark:text-gray-300">{resp}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Habilidades como tags pegados */}
+              {work.skills.length > 0 && (
+                <div>
+                  <div className="font-semibold text-gray-800 dark:text-gray-200 underline mb-1">
+                    Skills:
+                  </div>
+                  <div className="flex flex-wrap gap-2 pl-4">
+                    {work.skills.map((skill, index) => (
+                      <span
+                        key={index}
+                        className="relative px-3 py-1 text-xs bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-600 dark:border-yellow-700"
+                        style={{
+                          transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)`,
+                          boxShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        <span className="text-gray-800 dark:text-gray-200">{skill}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

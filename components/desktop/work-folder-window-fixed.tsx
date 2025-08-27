@@ -291,7 +291,8 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
                   ref={contentRef}
                   className="relative h-[calc(100%-44px)] overflow-auto bg-white dark:bg-gray-800"
                 >
-               
+                  {/* Instrucción para el usuario */}
+                  
                  
                   {workExperiences.map((work) => {
                     const isDragging = draggedFile === work.id
