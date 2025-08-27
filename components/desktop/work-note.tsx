@@ -98,14 +98,10 @@ export function WorkNote({ work, onClose, initialPosition = { x: 200, y: 200 } }
         bottom: window.innerHeight - position.y - size.height
       }}
       initial={{ 
-        x: position.x, 
-        y: position.y,
         opacity: 0,
         scale: 0.8
       }}
       animate={{ 
-        x: position.x, 
-        y: position.y,
         opacity: 1,
         scale: 1
       }}
@@ -119,8 +115,10 @@ export function WorkNote({ work, onClose, initialPosition = { x: 200, y: 200 } }
         stiffness: 300, 
         damping: 30
       }}
-      className={`fixed z-[100] ${isDragging ? 'cursor-grabbing' : ''} select-none`}
+      className={`fixed z-[1000] ${isDragging ? 'cursor-grabbing' : ''} select-none`}
       style={{ 
+        left: `${position.x}px`,
+        top: `${position.y}px`,
         width: isMinimized ? '300px' : `${size.width}px`,
         height: isMinimized ? 'auto' : `${size.height}px`,
         cursor: isResizing ? 'nwse-resize' : isDragging ? 'grabbing' : 'auto'

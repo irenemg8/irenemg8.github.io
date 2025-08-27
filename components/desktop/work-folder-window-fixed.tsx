@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import { X, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -424,19 +424,21 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
       </AnimatePresence>
 
       {/* Work Notes - aparecen encima de la ventana de archivos */}
-      <AnimatePresence>
-        {openNotes.map((work, index) => (
-          <WorkNote
-            key={work.id}
-            work={work}
-            onClose={() => handleCloseNote(work.id)}
-            initialPosition={{
-              x: 100 + index * 40,
-              y: 100 + index * 40
-            }}
-          />
-        ))}
-      </AnimatePresence>
+      {isOpen && (
+        <AnimatePresence>
+          {openNotes.map((work, index) => (
+              <WorkNote
+                key={work.id}
+                work={work}
+                onClose={() => handleCloseNote(work.id)}
+                initialPosition={{
+                  x: 300 + index * 50,
+                  y: 150 + index * 50
+                }}
+              />
+          ))}
+        </AnimatePresence>
+      )}
     </>
   )
 }
