@@ -169,7 +169,7 @@ export function WorkNote({ work, onClose, initialPosition = { x: 200, y: 200 } }
         {!isMinimized && (
           <div className="flex-1 overflow-auto" 
                style={{ 
-                 background: 'linear-gradient(#fef3c7 0%, #fef3c7 95%, transparent 95%), repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #d4d4d8 28px)',
+                 background: 'linear-gradient(#fef3c7 0%, #fef3c7 100%), repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #d4d4d8 28px)',
                  backgroundSize: '100% 100%, 100% 28px'
                }}>
             <div className="p-6 font-mono text-sm space-y-4" style={{ lineHeight: '28px' }}>
