@@ -106,8 +106,6 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
   }
 
   if (!isOpen) return null
-
-
   
   return (
     <>
@@ -192,6 +190,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                   <div
                     key={team.id}
                     onClick={() => handleTeamClick(team)}
+                    className="hover:scale-105 transition-transform"
                     style={{ cursor: 'pointer' }}
                   >
                     <ProfileCard
@@ -228,15 +227,26 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
       </AnimatePresence>
 
       {/* Sticky Note para información del equipo */}
-      {showStickyNote && stickyNoteContent && (
-        <StickyNote
-          onDelete={handleCloseSticky}
-          onDragToTrash={handleCloseSticky}
-          initialPosition={{ 
-            x: Math.min(position.x + size.width + 20, window.innerWidth - 350),
-            y: position.y + 50 
-          }}
-          customContent={
+      <AnimatePresence>
+        {showStickyNote && stickyNoteContent && (
+          <div style={{ 
+            position: 'fixed', 
+            left: 0, 
+            top: 0, 
+            width: '100%', 
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 100000 
+          }}>
+            <div style={{ pointerEvents: 'auto' }}>
+              <StickyNote
+                onDelete={handleCloseSticky}
+                onDragToTrash={handleCloseSticky}
+                initialPosition={{ 
+                  x: 400,
+                  y: 100
+                }}
+                customContent={
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 mb-4">
                       <img 
@@ -302,7 +312,10 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                   </div>
                 }
               />
-      )}
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
