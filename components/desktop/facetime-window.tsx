@@ -77,20 +77,22 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
       const video = videoRef.current
       const canvas = canvasRef.current
       
-      // Log detallado del estado del video
-      console.log('[DetectFaces] 📹 Estado del video:', {
-        paused: video.paused,
-        ended: video.ended,
-        readyState: video.readyState,
-        readyStateText: ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'][video.readyState],
-        currentTime: video.currentTime,
-        duration: video.duration,
-        videoWidth: video.videoWidth,
-        videoHeight: video.videoHeight,
-        srcObject: !!video.srcObject,
-        networkState: video.networkState,
-        error: video.error
-      })
+      // Solo mostrar log si hay problemas
+      if (video.paused || video.ended || video.readyState < 2) {
+        console.log('[DetectFaces] 📹 Estado problemático del video:', {
+          paused: video.paused,
+          ended: video.ended,
+          readyState: video.readyState,
+          readyStateText: ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'][video.readyState],
+          currentTime: video.currentTime,
+          duration: video.duration,
+          videoWidth: video.videoWidth,
+          videoHeight: video.videoHeight,
+          srcObject: !!video.srcObject,
+          networkState: video.networkState,
+          error: video.error
+        })
+      }
       
       // Verificar que el video esté realmente reproduciendo
       if (video.paused || video.ended || video.readyState < 2) {
@@ -110,7 +112,6 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
         
         // Esperar un poco antes de reintentar
         setTimeout(() => {
-          console.log('[DetectFaces] ⏳ Reintentando en 100ms...')
           animationRef.current = requestAnimationFrame(detectFaces)
         }, 100)
         return
@@ -133,17 +134,18 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
       canvas.width = video.videoWidth
       canvas.height = video.videoHeight
       
-      console.log('[DetectFaces] ✅ Video funcionando correctamente', {
-        width: video.videoWidth,
-        height: video.videoHeight,
-        currentTime: video.currentTime
-      })
+      // Log solo la primera vez que funciona
+      if (cameraFailureCount > 0) {
+        console.log('[DetectFaces] ✅ Video recuperado y funcionando correctamente')
+      }
       
       // Limpiar canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       // Resetear contador de fallos si llegamos aquí
-      setCameraFailureCount(0)
+      if (cameraFailureCount > 0) {
+        setCameraFailureCount(0)
+      }
       // Intentar usar FaceDetector API si está disponible
       if (faceDetectorSupported && faceDetectorRef.current) {
         const faces = await faceDetectorRef.current.detect(video)
@@ -264,6 +266,78 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
     }
   }, [faceDetectorSupported]) // No incluir cameraFailureCount para evitar recrear la función constantemente
 
+  // Asignar stream al video cuando ambos estén disponibles
+  useEffect(() => {
+    console.log('[UseEffect-Stream] 🔄 useEffect ejecutado')
+    console.log('[UseEffect-Stream] Condiciones:', {
+      hasStream: !!stream,
+      hasVideoRef: !!videoRef.current,
+      hasPermission,
+      useSimulator
+    })
+    
+    if (!stream) {
+      console.log('[UseEffect-Stream] ⏸️ No hay stream todavía')
+      return
+    }
+    
+    if (!hasPermission) {
+      console.log('[UseEffect-Stream] ⏸️ No hay permisos')
+      return
+    }
+    
+    if (useSimulator) {
+      console.log('[UseEffect-Stream] ⏸️ Usando simulador')
+      return
+    }
+    
+    // Verificar repetidamente hasta que el video esté disponible
+    const checkInterval = setInterval(() => {
+      console.log('[UseEffect-Stream] 🔍 Verificando videoRef...')
+      
+      if (videoRef.current && stream) {
+        console.log('[UseEffect-Stream] ✅ Video y stream disponibles!')
+        
+        if (videoRef.current.srcObject !== stream) {
+          console.log('[UseEffect-Stream] 🎬 Asignando stream al video')
+          videoRef.current.srcObject = stream
+          
+          // Configurar todos los event handlers aquí mismo
+          videoRef.current.onloadedmetadata = () => {
+            console.log('[UseEffect-Stream] 📊 Metadata cargada desde useEffect')
+            if (videoRef.current) {
+              videoRef.current.play()
+                .then(() => {
+                  console.log('[UseEffect-Stream] ▶️ Video reproduciendo')
+                  setTimeout(() => {
+                    detectFaces()
+                  }, 500)
+                })
+                .catch(e => {
+                  console.error('[UseEffect-Stream] ❌ Error al reproducir:', e)
+                })
+            }
+          }
+        }
+        
+        clearInterval(checkInterval)
+      }
+    }, 100) // Verificar cada 100ms
+    
+    // Limpiar el interval después de 3 segundos si no se encuentra el video
+    setTimeout(() => {
+      clearInterval(checkInterval)
+      if (!videoRef.current) {
+        console.error('[UseEffect-Stream] ❌ Timeout: No se pudo encontrar videoRef después de 3 segundos')
+      }
+    }, 3000)
+    
+    return () => {
+      console.log('[UseEffect-Stream] 🧹 Limpiando interval')
+      clearInterval(checkInterval)
+    }
+  }, [stream, hasPermission, useSimulator, detectFaces])
+
   // Solicitar permisos de cámara
   const requestCameraPermission = async () => {
     console.log('[Camera] 🎥 Iniciando solicitud de permisos de cámara...')
@@ -340,208 +414,34 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
       }
       
       console.log('[Camera] 🎯 Configurando stream en el componente...')
+      
+      // Solo guardar el stream, el useEffect se encargará de asignarlo al video
       setStream(mediaStream)
       setHasPermission(true)
       setErrorMessage('')
       setCameraFailureCount(0) // Resetear contador
       
-      if (videoRef.current) {
-        console.log('[Camera] 🎬 Asignando stream al elemento video...')
-        videoRef.current.srcObject = mediaStream
-        
-        // Configurar timeout para detectar si la cámara falla después de iniciar
-        cameraTimeoutRef.current = setTimeout(() => {
-          console.log('[Camera-Timeout] ⏱️ Verificando estado después de 3 segundos...')
-          
-          if (!videoRef.current) {
-            console.error('[Camera-Timeout] ❌ videoRef ya no existe')
-            return
-          }
-          
-          const videoState = {
-            paused: videoRef.current.paused,
-            ended: videoRef.current.ended,
-            readyState: videoRef.current.readyState,
-            readyStateText: ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'][videoRef.current.readyState],
-            currentTime: videoRef.current.currentTime,
-            srcObject: !!videoRef.current.srcObject
-          }
-          
-          console.log('[Camera-Timeout] Estado del video:', videoState)
-          
-          // Si después de 3 segundos no funciona, manejar el fallo
-          if (videoRef.current.paused || videoRef.current.readyState < 2) {
-            console.log('[Camera-Timeout] ⚠️ La cámara no está funcionando correctamente')
-            
-            // En localhost, activar simulador automáticamente
-            if (window.location.hostname === 'localhost') {
-              console.log('En localhost, activando simulador automáticamente...')
-              // Detener el stream primero
-              if (stream) {
-                stream.getTracks().forEach(track => track.stop())
-                setStream(null)
-              }
-              // Activar simulador
-              setUseSimulator(true)
-              setErrorMessage('')
-            } else {
-              handleCameraFailure()
-            }
-          }
-        }, 3000)
-        
-        // Configurar eventos del video
-        videoRef.current.onloadedmetadata = () => {
-          if (!videoRef.current) return
-          
-          console.log('[Video-Event] 📊 Metadata cargada:', {
-            videoWidth: videoRef.current.videoWidth,
-            videoHeight: videoRef.current.videoHeight,
-            duration: videoRef.current.duration,
-            readyState: videoRef.current.readyState
-          })
-          
-          console.log('[Video-Event] ▶️ Intentando reproducir video...')
-          videoRef.current.play()
-            .then(() => {
-              console.log('[Video-Event] ✅ Video reproduciendo exitosamente')
-              // Limpiar timeout ya que el video está funcionando
-              if (cameraTimeoutRef.current) {
-                console.log('[Video-Event] 🧹 Limpiando timeout inicial')
-                clearTimeout(cameraTimeoutRef.current)
-              }
-              
-              // Iniciar detección de rostros después de un pequeño delay
-              console.log('[Video-Event] ⏰ Iniciando detección de rostros en 500ms...')
-              setTimeout(() => {
-                console.log('[Video-Event] 🔍 Llamando a detectFaces()')
-                detectFaces()
-              }, 500)
-              
-              // Configurar nuevo timeout para detectar si se detiene después
-              cameraTimeoutRef.current = setTimeout(() => {
-                console.log('[Video-Event-5s] 🕐 Verificando detecciones después de 5 segundos...')
-                if (detections.length === 0) {
-                  console.warn('[Video-Event-5s] ⚠️ No hay detecciones después de 5 segundos')
-                  handleCameraFailure()
-                } else {
-                  console.log('[Video-Event-5s] ✅ Detecciones encontradas:', detections.length)
-                }
-              }, 5000)
-            })
-            .catch(error => {
-              console.error('[Video-Event] ❌ Error al reproducir video:', {
-                name: error.name,
-                message: error.message,
-                error
-              })
-              setCameraFailureCount(prev => {
-                const newCount = prev + 1
-                console.log(`[Video-Event] Incrementando contador de fallos a: ${newCount}`)
-                return newCount
-              })
-              // Intentar de nuevo o mostrar error
-              setTimeout(() => {
-                console.log('[Video-Event] 💔 Llamando handleCameraFailure después de 2s...')
-                handleCameraFailure()
-              }, 2000)
-            })
-        }
-        
-        // Agregar más eventos para debugging
-        videoRef.current.onloadstart = () => {
-          console.log('[Video-Event] 🎬 loadstart - Comenzando a cargar')
-        }
-        
-        videoRef.current.oncanplay = () => {
-          console.log('[Video-Event] ✅ canplay - Video puede comenzar a reproducirse')
-        }
-        
-        videoRef.current.oncanplaythrough = () => {
-          console.log('[Video-Event] ✅ canplaythrough - Video puede reproducirse sin interrupciones')
-        }
-        
-        videoRef.current.onplaying = () => {
-          console.log('[Video-Event] ▶️ playing - Video está reproduciendo')
-        }
-        
-        videoRef.current.onstalled = () => {
-          console.warn('[Video-Event] ⚠️ stalled - Carga detenida inesperadamente')
-        }
-        
-        videoRef.current.onsuspend = () => {
-          console.warn('[Video-Event] ⚠️ suspend - Carga suspendida')
-        }
-        
-        videoRef.current.onwaiting = () => {
-          console.warn('[Video-Event] ⏳ waiting - Esperando más datos')
-        }
-        
-        // Monitorear cambios de estado del video
-        videoRef.current.onpause = () => {
-          console.warn('[Video-Event] ⏸️ Video pausado inesperadamente')
-          if (videoRef.current && stream) {
-            console.log('[Video-Event] 🔄 Intentando reanudar...')
-            videoRef.current.play().catch(e => {
-              console.error('[Video-Event] ❌ No se pudo reanudar:', e)
-              handleCameraFailure()
-            })
-          }
-        }
-        
-        videoRef.current.onended = () => {
-          console.warn('[Video-Event] 🛑 Video terminado inesperadamente')
-          handleCameraFailure()
-        }
-        
-        // Manejar errores del video
-        videoRef.current.onerror = (e) => {
-          const video = videoRef.current
-          const error = video?.error
-          console.error('[Video-Event] ❌ Error en video:', {
-            code: error?.code,
-            message: error?.message,
-            MEDIA_ERR_ABORTED: error?.code === 1,
-            MEDIA_ERR_NETWORK: error?.code === 2,
-            MEDIA_ERR_DECODE: error?.code === 3,
-            MEDIA_ERR_SRC_NOT_SUPPORTED: error?.code === 4
-          })
-          handleCameraFailure()
-        }
-        
-        // Detectar si el stream se detiene
-        const tracks = mediaStream.getTracks()
-        console.log('[Camera] 🎞️ Configurando eventos para tracks:', tracks.length)
-        tracks.forEach((track, index) => {
-          console.log(`[Camera] Track ${index + 1}:`, {
-            kind: track.kind,
-            label: track.label,
-            id: track.id,
-            readyState: track.readyState,
-            enabled: track.enabled,
-            muted: track.muted,
-            constraints: track.getConstraints(),
-            settings: track.getSettings()
-          })
-          
-          track.onended = () => {
-            console.error(`[Track] 🛑 Track ${track.kind} terminado inesperadamente`)
-            handleCameraFailure()
-          }
-          
-          track.onmute = () => {
-            console.warn(`[Track] 🔇 Track ${track.kind} muteado`)
-          }
-          
-          track.onunmute = () => {
-            console.log(`[Track] 🔊 Track ${track.kind} desmuteado`)
-          }
+      // Monitorear los tracks del stream
+      const tracks = mediaStream.getTracks()
+      console.log('[Camera] 🎞️ Monitoreando tracks del stream:', tracks.length)
+      tracks.forEach((track, index) => {
+        console.log(`[Camera] Track ${index + 1}:`, {
+          kind: track.kind,
+          label: track.label,
+          readyState: track.readyState,
+          enabled: track.enabled
         })
         
-        console.log('[Camera] ✅ Configuración completa del video')
-      } else {
-        console.warn('[Camera] ⚠️ videoRef.current no disponible')
-      }
+        // Detectar si el track se detiene
+        track.onended = () => {
+          console.error(`[Track] 🛑 Track ${track.kind} terminado inesperadamente`)
+          if (handleCameraFailure) {
+            handleCameraFailure()
+          }
+        }
+      })
+      
+      console.log('[Camera] ✅ Estado actualizado, el useEffect manejará la conexión del video')
     } catch (error: any) {
       console.error('[Camera] ❌ Error crítico al acceder a la cámara:', error)
       
@@ -860,8 +760,17 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
                     playsInline={true}
                     muted={true}
                     controls={false}
+                    style={{ display: stream ? 'block' : 'none' }}
                     onContextMenu={(e) => e.preventDefault()}
                   />
+                  {!stream && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                        <div className="text-gray-400">Iniciando cámara...</div>
+                      </div>
+                    </div>
+                  )}
                   <canvas
                     ref={canvasRef}
                     className="absolute top-0 left-0 w-full h-full pointer-events-none"
