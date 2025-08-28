@@ -15,6 +15,7 @@ import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
 import { WorkFolderWindow } from '@/components/desktop/work-folder-window'
 import { FaceTimeWindow } from '@/components/desktop/facetime-window'
+import { GEFolderWindow } from '@/components/desktop/ge-folder-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -35,6 +36,7 @@ export function ResponsiveDesktop() {
   const [showGitHubBrowser, setShowGitHubBrowser] = useState(false)
   const [showWorkFolder, setShowWorkFolder] = useState(false)
   const [showFaceTime, setShowFaceTime] = useState(false)
+  const [showGEFolder, setShowGEFolder] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -370,6 +372,9 @@ export function ResponsiveDesktop() {
                 } else if (project.id === 'work-experience') {
                   // Show work folder window
                   setShowWorkFolder(true);
+                } else if (project.id === 'ge') {
+                  // Show GE folder window
+                  setShowGEFolder(true);
                 } else {
                   openWindow(project.id, project.name, projectContent(project.name))
                 }
@@ -477,6 +482,14 @@ export function ResponsiveDesktop() {
       {/* FaceTime Window */}
       {isMounted && showFaceTime && (
         <FaceTimeWindow onClose={() => setShowFaceTime(false)} />
+      )}
+      
+      {/* GE Folder Window */}
+      {isMounted && (
+        <GEFolderWindow
+          isOpen={showGEFolder}
+          onClose={() => setShowGEFolder(false)}
+        />
       )}
     </>
   )

@@ -8,9 +8,10 @@ interface StickyNoteProps {
   onDelete?: () => void
   onDragToTrash?: (position: { x: number; y: number }) => void
   initialPosition?: { x: number; y: number }
+  customContent?: React.ReactNode
 }
 
-export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60, y: 40 } }: StickyNoteProps) {
+export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60, y: 40 }, customContent }: StickyNoteProps) {
   const { t } = useLanguage()
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
@@ -143,20 +144,24 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
 
         {/* Sticky Note Content */}
         <div className="p-4 pb-6 space-y-2 text-xs text-gray-700">
-          {displayItems.map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 + index * 0.05 }}
-              className={`flex items-start space-x-2 ${
-                [2, 6].includes(index) ? 'line-through text-gray-400' : ''
-              }`}
-            >
-              <span className="text-yellow-600 mt-0.5">•</span>
-              <span className="macos-text leading-relaxed">{item}</span>
-            </motion.div>
-          ))}
+          {customContent ? (
+            customContent
+          ) : (
+            displayItems.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + index * 0.05 }}
+                className={`flex items-start space-x-2 ${
+                  [2, 6].includes(index) ? 'line-through text-gray-400' : ''
+                }`}
+              >
+                <span className="text-yellow-600 mt-0.5">•</span>
+                <span className="macos-text leading-relaxed">{item}</span>
+              </motion.div>
+            ))
+          )}
         </div>
 
 

@@ -1,0 +1,310 @@
+/* ProfileCard CSS - ReactBits Style */
+.pc-card-wrapper {
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --pointer-from-center: 0;
+  --pointer-from-top: 0.5;
+  --pointer-from-left: 0.5;
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --background-x: 50%;
+  --background-y: 50%;
+  --card-opacity: 0.8;
+  
+  position: relative;
+  width: 240px;
+  height: 320px;
+  margin: 0;
+  perspective: 600px;
+  transform-style: preserve-3d;
+}
+
+.pc-card-wrapper.active {
+  --card-opacity: 0.95;
+}
+
+.pc-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: 
+    rotateY(var(--rotate-x)) 
+    rotateX(var(--rotate-y))
+    translateZ(0);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
+
+.pc-inside {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.2),
+    0 0 80px rgba(120, 119, 198, 0.15),
+    inset 0 0 60px rgba(255, 255, 255, 0.05);
+}
+
+.pc-card::before {
+  content: "";
+  position: absolute;
+  inset: -100px;
+  background: var(--behind-gradient);
+  filter: blur(80px);
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center));
+  z-index: -1;
+  transform: translateZ(-100px);
+}
+
+.pc-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, calc(0.3 * var(--pointer-from-center))) 50%,
+    transparent 60%
+  );
+  mix-blend-mode: plus-lighter;
+  opacity: calc(var(--pointer-from-center) * 0.8);
+  transform: 
+    translateX(calc(var(--pointer-from-left) * 100% - 50%))
+    translateY(calc(var(--pointer-from-top) * 100% - 50%));
+  pointer-events: none;
+}
+
+.pc-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--pointer-x) var(--pointer-y),
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 50%
+  );
+  mix-blend-mode: overlay;
+  opacity: calc(var(--pointer-from-center) * 0.6);
+  pointer-events: none;
+}
+
+.pc-content {
+  position: relative;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.pc-avatar-content {
+  padding-bottom: 0;
+  justify-content: flex-start;
+  padding-top: 24px;
+}
+
+.pc-content .avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.pc-details {
+  text-align: center;
+  color: white;
+  margin-top: auto;
+}
+
+.pc-details h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pc-details p {
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0;
+  opacity: 0.9;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pc-user-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 16px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0 0 20px 20px;
+}
+
+.pc-user-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pc-mini-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pc-mini-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pc-user-text {
+  color: white;
+}
+
+.pc-handle {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.pc-status {
+  font-size: 10px;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pc-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00ff00;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pc-contact-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-contact-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px) scale(1.1);
+}
+
+/* Grain effect */
+.pc-inside::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Icon background */
+.pc-inside::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background-image: var(--icon);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .pc-card-wrapper {
+    width: 280px;
+    height: 360px;
+  }
+
+  .pc-content .avatar {
+    width: 160px;
+    height: 160px;
+  }
+
+  .pc-details h3 {
+    font-size: 20px;
+  }
+
+  .pc-details p {
+    font-size: 14px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .pc-inside {
+    background: linear-gradient(
+      135deg,
+      rgba(20, 20, 30, 0.8) 0%,
+      rgba(10, 10, 20, 0.6) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
