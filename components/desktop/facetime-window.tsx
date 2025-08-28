@@ -35,6 +35,7 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
   const animationRef = useRef<number | null>(null)
   const faceDetectorRef = useRef<any>(null)
   const cameraTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const previousDetectionsRef = useRef<Detection[]>([])
   
   console.log('[FaceTime] Estado inicial:', {
     hostname: window.location.hostname,
@@ -63,54 +64,325 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
     checkFaceDetector()
   }, [])
 
+  // Función para suavizar las detecciones (evitar saltos bruscos)
+  const smoothDetections = (newDetections: Detection[], previousDetections: Detection[]): Detection[] => {
+    if (previousDetections.length === 0) return newDetections
+    
+    return newDetections.map(newDet => {
+      // Buscar la detección más cercana en el frame anterior
+      let closestPrev = previousDetections[0]
+      let minDistance = Infinity
+      
+      previousDetections.forEach(prevDet => {
+        const distance = Math.sqrt(
+          Math.pow(newDet.x - prevDet.x, 2) + 
+          Math.pow(newDet.y - prevDet.y, 2)
+        )
+        if (distance < minDistance) {
+          minDistance = distance
+          closestPrev = prevDet
+        }
+      })
+      
+      // Si la detección está muy lejos, es probablemente una nueva cara
+      if (minDistance > 100) return newDet
+      
+      // Suavizar la posición y tamaño (interpolación)
+      const smoothingFactor = 0.5 // Balance entre suavidad y respuesta
+      
+      return {
+        ...newDet,
+        x: closestPrev.x + (newDet.x - closestPrev.x) * smoothingFactor,
+        y: closestPrev.y + (newDet.y - closestPrev.y) * smoothingFactor,
+        width: closestPrev.width + (newDet.width - closestPrev.width) * smoothingFactor,
+        height: closestPrev.height + (newDet.height - closestPrev.height) * smoothingFactor
+      }
+    })
+  }
+  
+  // Función mejorada para analizar el estado de ánimo
+  const analyzeExpression = (imageData: ImageData, x: number, y: number, width: number, height: number) => {
+    const data = imageData.data
+    
+    // Analizar diferentes regiones del rostro
+    const analyzeRegion = (rx: number, ry: number, rw: number, rh: number) => {
+      let brightness = 0
+      let contrast = 0
+      let pixelCount = 0
+      let minBright = 255
+      let maxBright = 0
+      
+      for (let py = ry; py < ry + rh && py < imageData.height; py += 3) {
+        for (let px = rx; px < rx + rw && px < imageData.width; px += 3) {
+          const idx = (py * imageData.width + px) * 4
+          const bright = (data[idx] + data[idx + 1] + data[idx + 2]) / 3
+          brightness += bright
+          minBright = Math.min(minBright, bright)
+          maxBright = Math.max(maxBright, bright)
+          pixelCount++
+        }
+      }
+      
+      if (pixelCount > 0) {
+        brightness /= pixelCount
+        contrast = maxBright - minBright
+      }
+      
+      return { brightness, contrast }
+    }
+    
+    // Analizar región superior (frente/cejas) - detecta preocupación
+    const upperRegion = analyzeRegion(
+      Math.floor(x + width * 0.2),
+      Math.floor(y + height * 0.1),
+      Math.floor(width * 0.6),
+      Math.floor(height * 0.3)
+    )
+    
+    // Analizar región media (ojos) - detecta felicidad/tristeza
+    const middleRegion = analyzeRegion(
+      Math.floor(x + width * 0.15),
+      Math.floor(y + height * 0.35),
+      Math.floor(width * 0.7),
+      Math.floor(height * 0.25)
+    )
+    
+    // Analizar región inferior (boca) - detecta sonrisa
+    const lowerRegion = analyzeRegion(
+      Math.floor(x + width * 0.25),
+      Math.floor(y + height * 0.65),
+      Math.floor(width * 0.5),
+      Math.floor(height * 0.25)
+    )
+    
+    // Análisis de expresión basado en patrones
+    const avgBrightness = (upperRegion.brightness + middleRegion.brightness + lowerRegion.brightness) / 3
+    const avgContrast = (upperRegion.contrast + middleRegion.contrast + lowerRegion.contrast) / 3
+    
+    // Análisis más preciso de expresión basado en regiones faciales
+    const smileScore = (lowerRegion.brightness - avgBrightness) / avgBrightness
+    const eyeOpenness = middleRegion.contrast / 100
+    const foreheadTension = upperRegion.contrast / 100
+    
+    // Detectar sonrisa (región inferior más brillante)
+    if (smileScore > 0.15 && lowerRegion.contrast > 40) {
+      if (smileScore > 0.25) return '😄 Muy feliz'
+      return '😊 Feliz'
+    }
+    
+    // Detectar tristeza (región inferior más oscura)
+    if (smileScore < -0.1 && eyeOpenness < 0.5) {
+      return '😞 Triste'
+    }
+    
+    // Detectar preocupación (alta tensión en frente)
+    if (foreheadTension > 0.8 && middleRegion.brightness < avgBrightness) {
+      return '😟 Preocupado'
+    }
+    
+    // Detectar sorpresa (ojos muy abiertos)
+    if (eyeOpenness > 0.7 && upperRegion.brightness > avgBrightness * 1.1) {
+      return '😮 Sorprendido'
+    }
+    
+    // Detectar seriedad (bajo brillo general)
+    if (avgBrightness < 90 && avgContrast < 40) {
+      return '😔 Serio'
+    }
+    
+    // Detectar relajación (contraste uniforme)
+    if (Math.abs(smileScore) < 0.05 && avgContrast < 45) {
+      return '😎 Relajado'
+    }
+    
+    // Estados por defecto más matizados
+    if (avgBrightness > 160) return '🙂 Contento'
+    if (avgBrightness > 120) return '😐 Neutral'
+    if (avgBrightness > 80) return '🤔 Pensativo'
+    return '😑 Concentrado'
+  }
+  
+  // Función mejorada para detectar rostros con análisis de píxeles más preciso
+  const detectFacesInCanvas = (ctx: CanvasRenderingContext2D, video: HTMLVideoElement) => {
+    const width = video.videoWidth
+    const height = video.videoHeight
+    
+    // Dibujar el video en un canvas temporal para análisis
+    const tempCanvas = document.createElement('canvas')
+    tempCanvas.width = width
+    tempCanvas.height = height
+    const tempCtx = tempCanvas.getContext('2d')
+    if (!tempCtx) return []
+    
+    tempCtx.drawImage(video, 0, 0, width, height)
+    const imageData = tempCtx.getImageData(0, 0, width, height)
+    const data = imageData.data
+    
+    const detectedFaces: Detection[] = []
+    
+    // Crear mapa de densidad de tonos de piel
+    const skinMap: boolean[][] = []
+    for (let y = 0; y < height; y++) {
+      skinMap[y] = []
+      for (let x = 0; x < width; x++) {
+        skinMap[y][x] = false
+      }
+    }
+    
+    // Detectar píxeles con tono de piel con mayor precisión
+    for (let y = 0; y < height; y += 4) { // Análisis más fino
+      for (let x = 0; x < width; x += 4) {
+        const idx = (y * width + x) * 4
+        const r = data[idx]
+        const g = data[idx + 1]
+        const b = data[idx + 2]
+        
+        // Fórmula mejorada para detectar tonos de piel en diferentes iluminaciones
+        // YCrCb color space es más efectivo para detección de piel
+        const Y = 0.299 * r + 0.587 * g + 0.114 * b
+        const Cr = (r - Y) * 0.713 + 128
+        const Cb = (b - Y) * 0.564 + 128
+        
+        // Rangos mejorados para detección de piel en YCrCb
+        const isSkin = (
+          // Rangos YCrCb más ajustados para mejor precisión
+          (Cr > 135 && Cr < 180) &&
+          (Cb > 85 && Cb < 135) &&
+          (Y > 60 && Y < 255) // Rango más amplio de luminancia
+        ) || (
+          // Alternativa en RGB para pieles más claras/oscuras
+          (r > 80 && g > 50 && b > 30) &&
+          (r > g && g > b) &&
+          (r - g > 10) &&
+          (Math.max(r, g, b) - Math.min(r, g, b) > 10)
+        )
+        
+        if (isSkin) {
+          // Marcar región alrededor del píxel
+          for (let dy = -2; dy <= 2; dy++) {
+            for (let dx = -2; dx <= 2; dx++) {
+              const ny = y + dy
+              const nx = x + dx
+              if (ny >= 0 && ny < height && nx >= 0 && nx < width) {
+                skinMap[ny][nx] = true
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Buscar regiones conectadas usando flood fill
+    const visited: boolean[][] = []
+    for (let y = 0; y < height; y++) {
+      visited[y] = new Array(width).fill(false)
+    }
+    
+    const findConnectedRegion = (startX: number, startY: number): {points: number, bounds: {minX: number, minY: number, maxX: number, maxY: number}} => {
+      const stack: {x: number, y: number}[] = [{x: startX, y: startY}]
+      let minX = startX, maxX = startX
+      let minY = startY, maxY = startY
+      let points = 0
+      
+      while (stack.length > 0) {
+        const {x, y} = stack.pop()!
+        
+        if (x < 0 || x >= width || y < 0 || y >= height || visited[y][x] || !skinMap[y][x]) {
+          continue
+        }
+        
+        visited[y][x] = true
+        points++
+        
+        minX = Math.min(minX, x)
+        maxX = Math.max(maxX, x)
+        minY = Math.min(minY, y)
+        maxY = Math.max(maxY, y)
+        
+        // Agregar vecinos
+        stack.push({x: x + 1, y}, {x: x - 1, y}, {x, y: y + 1}, {x, y: y - 1})
+      }
+      
+      return {points, bounds: {minX, minY, maxX, maxY}}
+    }
+    
+    // Encontrar todas las regiones conectadas
+    const regions: {points: number, bounds: {minX: number, minY: number, maxX: number, maxY: number}}[] = []
+    
+    for (let y = 0; y < height; y += 10) {
+      for (let x = 0; x < width; x += 10) {
+        if (skinMap[y][x] && !visited[y][x]) {
+          const region = findConnectedRegion(x, y)
+          if (region.points > 500) { // Mínimo de píxeles para ser considerado rostro
+            regions.push(region)
+          }
+        }
+      }
+    }
+    
+    // Convertir regiones en detecciones de rostros
+    regions
+      .sort((a, b) => b.points - a.points) // Ordenar por tamaño
+      .slice(0, 5) // Máximo 5 rostros
+      .forEach((region, index) => {
+        const regionWidth = region.bounds.maxX - region.bounds.minX
+        const regionHeight = region.bounds.maxY - region.bounds.minY
+        
+        // Calcular el centro de la región
+        const centerX = (region.bounds.minX + region.bounds.maxX) / 2
+        const centerY = (region.bounds.minY + region.bounds.maxY) / 2
+        
+        // Estimar tamaño del rostro basado en la región de piel
+        // Un rostro típicamente es más alto que ancho (proporción 1.4:1)
+        let faceWidth = regionWidth * 0.6 // Reducir un 40% el ancho para un ajuste más preciso
+        let faceHeight = faceWidth * 1.4 // Proporción típica de rostro humano
+        
+        // Limitar tamaño máximo del rostro
+        const maxFaceSize = Math.min(width, height) * 0.25 // Reducido del 40% al 25%
+        if (faceWidth > maxFaceSize) {
+          faceWidth = maxFaceSize
+          faceHeight = faceWidth * 1.4
+        }
+        
+        // Limitar tamaño mínimo del rostro
+        const minFaceSize = Math.min(width, height) * 0.08 // Reducido del 10% al 8%
+        if (faceWidth < minFaceSize) {
+          faceWidth = minFaceSize
+          faceHeight = faceWidth * 1.4
+        }
+        
+        // Ajustar posición Y (la piel detectada suele estar en la parte media-baja del rostro)
+        const faceY = centerY - faceHeight * 0.45 // Subir el recuadro un poco más
+        const faceX = centerX - faceWidth / 2
+        
+        detectedFaces.push({
+          id: index,
+          x: Math.max(0, faceX),
+          y: Math.max(0, faceY),
+          width: Math.min(faceWidth, width - faceX),
+          height: Math.min(faceHeight, height - faceY),
+          confidence: Math.min(0.95, 0.6 + (region.points / 5000))
+        })
+      })
+    
+    return detectedFaces
+  }
+
   // Función para detectar rostros
   const detectFaces = useCallback(async () => {
     try {
       if (!videoRef.current || !canvasRef.current) {
-        console.log('[DetectFaces] ❌ Referencias no disponibles', {
-          video: !!videoRef.current,
-          canvas: !!canvasRef.current
-        })
         return
       }
 
       const video = videoRef.current
       const canvas = canvasRef.current
       
-      // Solo mostrar log si hay problemas
+      // Verificar que el video esté reproduciendo
       if (video.paused || video.ended || video.readyState < 2) {
-        console.log('[DetectFaces] 📹 Estado problemático del video:', {
-          paused: video.paused,
-          ended: video.ended,
-          readyState: video.readyState,
-          readyStateText: ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'][video.readyState],
-          currentTime: video.currentTime,
-          duration: video.duration,
-          videoWidth: video.videoWidth,
-          videoHeight: video.videoHeight,
-          srcObject: !!video.srcObject,
-          networkState: video.networkState,
-          error: video.error
-        })
-      }
-      
-      // Verificar que el video esté realmente reproduciendo
-      if (video.paused || video.ended || video.readyState < 2) {
-        console.log('[DetectFaces] ⚠️ Video no está listo para reproducir')
-        
         if (video.paused) {
-          console.log('[DetectFaces] 🔄 Intentando reproducir video pausado...')
-          video.play().catch(e => {
-            console.error('[DetectFaces] ❌ Error al intentar reproducir video:', e.name, e.message)
-            setCameraFailureCount(prev => {
-              const newCount = prev + 1
-              console.log(`[DetectFaces] Incrementando contador de fallos: ${newCount}`)
-              return newCount
-            })
-          })
+          video.play().catch(() => {})
         }
-        
-        // Esperar un poco antes de reintentar
         setTimeout(() => {
           animationRef.current = requestAnimationFrame(detectFaces)
         }, 100)
@@ -120,12 +392,6 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
       const ctx = canvas.getContext('2d')
       
       if (!ctx || video.videoWidth === 0 || video.videoHeight === 0) {
-        console.log('[DetectFaces] ⚠️ Canvas no listo:', {
-          ctx: !!ctx,
-          videoWidth: video.videoWidth,
-          videoHeight: video.videoHeight
-        })
-        // Reintentar en el siguiente frame
         animationRef.current = requestAnimationFrame(detectFaces)
         return
       }
@@ -134,74 +400,60 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
       canvas.width = video.videoWidth
       canvas.height = video.videoHeight
       
-      // Log solo la primera vez que funciona
-      if (cameraFailureCount > 0) {
-        console.log('[DetectFaces] ✅ Video recuperado y funcionando correctamente')
-      }
-      
       // Limpiar canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Resetear contador de fallos si llegamos aquí
+      
+      // Resetear contador de fallos
       if (cameraFailureCount > 0) {
         setCameraFailureCount(0)
       }
+
+      let detectedFaces: Detection[] = []
+      
       // Intentar usar FaceDetector API si está disponible
       if (faceDetectorSupported && faceDetectorRef.current) {
-        const faces = await faceDetectorRef.current.detect(video)
+        try {
+          const faces = await faceDetectorRef.current.detect(video)
         
-        const newDetections: Detection[] = faces.map((face: any, index: number) => ({
-          id: index,
-          x: face.boundingBox.x,
-          y: face.boundingBox.y,
-          width: face.boundingBox.width,
-          height: face.boundingBox.height,
-          confidence: 0.95
-        }))
-        
-        setDetections(newDetections)
-        
-        // Dibujar detecciones
-        newDetections.forEach((detection) => {
-          ctx.strokeStyle = '#00ff00'
-          ctx.lineWidth = 2
-          ctx.strokeRect(detection.x, detection.y, detection.width, detection.height)
-          
-          ctx.fillStyle = '#00ff00'
-          ctx.font = '16px Arial'
-          ctx.fillText(`Usuario ${detection.id + 1}`, detection.x, detection.y - 10)
-          ctx.fillText(`Confianza: ${Math.round(detection.confidence * 100)}%`, detection.x, detection.y + detection.height + 20)
-        })
-      } else {
-        // Detección simulada cuando no hay FaceDetector API
-        // Análisis simplificado de imagen para detectar rostros
-        const centerX = video.videoWidth / 2
-        const centerY = video.videoHeight / 2
-        const boxSize = Math.min(video.videoWidth, video.videoHeight) * 0.35
-        
-        // Simular detección con animación suave
-        const time = Date.now() / 1000
-        const offsetX = Math.sin(time * 0.5) * 20
-        const offsetY = Math.cos(time * 0.3) * 15
-        
-        const detection: Detection = {
-          id: 0,
-          x: centerX - boxSize/2 + offsetX,
-          y: centerY - boxSize/2 + offsetY - 30,
-          width: boxSize,
-          height: boxSize,
-          confidence: 0.85 + Math.sin(time) * 0.1
+          detectedFaces = faces.map((face: any, index: number) => ({
+            id: index,
+            x: face.boundingBox.x,
+            y: face.boundingBox.y,
+            width: face.boundingBox.width,
+            height: face.boundingBox.height,
+            confidence: 0.95
+          }))
+        } catch (e) {
+          console.log('[DetectFaces] FaceDetector API falló, usando detección por píxeles')
         }
-        
-        setDetections([detection])
-        
-        // Dibujar caja de detección
+      }
+      
+      // Si no hay detecciones con FaceDetector, usar detección por análisis de píxeles
+      if (detectedFaces.length === 0) {
+        detectedFaces = detectFacesInCanvas(ctx, video)
+      }
+      
+      // Aplicar suavizado a las detecciones
+      const smoothedDetections = smoothDetections(detectedFaces, previousDetectionsRef.current)
+      previousDetectionsRef.current = smoothedDetections
+      
+      setDetections(smoothedDetections)
+      
+      // Obtener imagen para análisis de expresiones
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      
+      // Dibujar las detecciones suavizadas
+      smoothedDetections.forEach((detection, index) => {
+        // Configurar estilo para el cuadro
         ctx.strokeStyle = '#00ff00'
         ctx.lineWidth = 2
+        ctx.setLineDash([])
+        
+        // Dibujar rectángulo principal
         ctx.strokeRect(detection.x, detection.y, detection.width, detection.height)
         
         // Dibujar esquinas decorativas
-        const cornerLength = 20
+        const cornerLength = 15
         ctx.lineWidth = 3
         
         // Esquina superior izquierda
@@ -232,19 +484,51 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
         ctx.lineTo(detection.x + detection.width, detection.y + detection.height - cornerLength)
         ctx.stroke()
         
-        // Texto informativo
+        // Analizar expresión
+        const expression = analyzeExpression(imageData, detection.x, detection.y, detection.width, detection.height)
+        
+        // Dibujar información
         ctx.fillStyle = '#00ff00'
-        ctx.font = '16px Arial'
-        ctx.fillText('Usuario detectado', detection.x, detection.y - 10)
+        ctx.font = 'bold 14px monospace'
+        ctx.shadowColor = 'black'
+        ctx.shadowBlur = 3
+        ctx.shadowOffsetX = 1
+        ctx.shadowOffsetY = 1
         
-        // Simular análisis facial
-        const expressions = ['😊 Feliz', '😐 Neutral', '😎 Relajado', '🙂 Contento']
-        const randomExpression = expressions[Math.floor(time * 0.5) % expressions.length]
-        ctx.fillText(`Estado: ${randomExpression}`, detection.x, detection.y + detection.height + 20)
+        // Etiqueta del usuario
+        const userLabel = smoothedDetections.length > 1 ? `Persona ${index + 1}` : 'Usuario detectado'
+        ctx.fillText(userLabel, detection.x, detection.y - 10)
         
-        // Indicador de confianza
+        // Estado de ánimo
+        ctx.fillText(`Estado: ${expression}`, detection.x, detection.y + detection.height + 20)
+        
+        // Confianza
         const confidencePercent = Math.round(detection.confidence * 100)
-        ctx.fillText(`Confianza: ${confidencePercent}%`, detection.x, detection.y + detection.height + 40)
+        ctx.fillText(`Precisión: ${confidencePercent}%`, detection.x, detection.y + detection.height + 40)
+        
+        // Reset shadow
+        ctx.shadowColor = 'transparent'
+        ctx.shadowBlur = 0
+        ctx.shadowOffsetX = 0
+        ctx.shadowOffsetY = 0
+      })
+      
+      // Si no hay detecciones, mostrar indicador de búsqueda
+      if (smoothedDetections.length === 0) {
+        const time = Date.now() / 1000
+        const scanLineY = (Math.sin(time * 2) * 0.5 + 0.5) * canvas.height
+        
+        ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)'
+        ctx.lineWidth = 2
+        ctx.setLineDash([5, 5])
+        ctx.beginPath()
+        ctx.moveTo(0, scanLineY)
+        ctx.lineTo(canvas.width, scanLineY)
+        ctx.stroke()
+        
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.8)'
+        ctx.font = '12px monospace'
+        ctx.fillText('Buscando rostros...', 10, 30)
       }
 
       // Continuar detección si todo está bien
@@ -789,11 +1073,7 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
                     <div>
                       Rostros detectados: {detections.length > 0 ? detections.length : 'Escaneando...'}
                     </div>
-                    {!faceDetectorSupported && (
-                      <div className="text-yellow-400 text-xs">
-                        Detección básica (FaceDetector API no disponible)
-                      </div>
-                    )}
+                   
                   </div>
                 </div>
               )}
