@@ -105,31 +105,14 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
     setIsMaximized(!isMaximized)
   }
 
-  // Generar posición aleatoria para la sticky note
-  const getStickyNotePosition = () => {
-    const windowWidth = window.innerWidth || 1024
-    const windowHeight = window.innerHeight || 768
-    const noteWidth = 320
-    const noteHeight = 400
-
-    return {
-      x: Math.min(
-        Math.max(50, position.x + size.width + 20),
-        windowWidth - noteWidth - 50
-      ),
-      y: Math.min(
-        Math.max(50, position.y + 50),
-        windowHeight - noteHeight - 50
-      )
-    }
-  }
-
   if (!isOpen) return null
+
+
   
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
+    <>
+      <AnimatePresence>
+        {isOpen && (
           <motion.div
             ref={windowRef}
             drag
@@ -206,63 +189,64 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
               {/* Profile Cards Grid */}
               <div className="flex justify-center items-center gap-5">
                 {geTeams.map((team) => (
-                  <ProfileCard
+                  <div
                     key={team.id}
-                    title={team.role}
-                    handle={team.handle}
-                    status="Active"
-                    contactText="+"
-                    avatarUrl={team.avatarUrl}
-                    iconUrl={team.iconUrl}
-                    miniAvatarUrl={team.iconUrl}
-                    showUserInfo={true}
-                    enableTilt={true}
-                    enableMobileTilt={false}
-                    onContactClick={() => handleTeamClick(team)}
-                    showBehindGradient={true}
-                    behindGradient={
-                      team.id === 'talpa' 
-                        ? "radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(217,100%,70%,var(--card-opacity)) 4%,hsla(217,80%,50%,calc(var(--card-opacity)*0.75)) 10%,hsla(217,60%,40%,calc(var(--card-opacity)*0.5)) 50%,hsla(217,0%,30%,0) 100%),linear-gradient(135deg,#00338Dff 0%,#00338Daa 50%,#00338D66 100%)"
-                        : "radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(280,70%,80%,var(--card-opacity)) 4%,hsla(280,50%,70%,calc(var(--card-opacity)*0.75)) 10%,hsla(280,30%,60%,calc(var(--card-opacity)*0.5)) 50%,hsla(280,0%,40%,0) 100%),linear-gradient(135deg,#FFA28Dff 0%,#9A5796ff 50%,#340073ff 100%)"
-                    }
-                    innerGradient={
-                      team.id === 'talpa'
-                        ? "linear-gradient(135deg,#00338D55 0%,#00338D33 100%)"
-                        : "linear-gradient(135deg,#FFA28D44 0%,#9A579644 50%,#34007344 100%)"
-                    }
-                  />
+                    onClick={() => handleTeamClick(team)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <ProfileCard
+                      title={team.role}
+                      handle={team.handle}
+                      status="Active"
+                      contactText="+"
+                      avatarUrl={team.avatarUrl}
+                      iconUrl={team.iconUrl}
+                      miniAvatarUrl={team.iconUrl}
+                      showUserInfo={true}
+                      enableTilt={true}
+                      enableMobileTilt={false}
+                      showBehindGradient={true}
+                      behindGradient={
+                        team.id === 'talpa' 
+                          ? "radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(217,100%,70%,var(--card-opacity)) 4%,hsla(217,80%,50%,calc(var(--card-opacity)*0.75)) 10%,hsla(217,60%,40%,calc(var(--card-opacity)*0.5)) 50%,hsla(217,0%,30%,0) 100%),linear-gradient(135deg,#00338Dff 0%,#00338Daa 50%,#00338D66 100%)"
+                          : "radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(280,70%,80%,var(--card-opacity)) 4%,hsla(280,50%,70%,calc(var(--card-opacity)*0.75)) 10%,hsla(280,30%,60%,calc(var(--card-opacity)*0.5)) 50%,hsla(280,0%,40%,0) 100%),linear-gradient(135deg,#FFA28Dff 0%,#9A5796ff 50%,#340073ff 100%)"
+                      }
+                      innerGradient={
+                        team.id === 'talpa'
+                          ? "linear-gradient(135deg,#00338D55 0%,#00338D33 100%)"
+                          : "linear-gradient(135deg,#FFA28D44 0%,#9A579644 50%,#34007344 100%)"
+                      }
+                    />
+                  </div>
                 ))}
               </div>
 
             
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
 
-          {/* Sticky Note para información del equipo */}
-          {showStickyNote && stickyNoteContent && (
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", damping: 20 }}
-              style={{
-                position: 'fixed',
-                ...getStickyNotePosition(),
-                zIndex: 60
-              }}
-            >
-              <StickyNote
-                onDelete={handleCloseSticky}
-                initialPosition={getStickyNotePosition()}
-                customContent={
+      {/* Sticky Note para información del equipo */}
+      {showStickyNote && stickyNoteContent && (
+        <StickyNote
+          onDelete={handleCloseSticky}
+          onDragToTrash={handleCloseSticky}
+          initialPosition={{ 
+            x: Math.min(position.x + size.width + 20, window.innerWidth - 350),
+            y: position.y + 50 
+          }}
+          customContent={
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 mb-4">
                       <img 
                         src={stickyNoteContent.iconUrl} 
-                        className="w-12 h-12 object-contain"
+                        className="w-14 h-14 object-contain"
                       />
                       <div>
-                        
+                        <h3 className="font-bold text-lg text-gray-800">
+                          {stickyNoteContent.id === 'talpa' ? 'Talpa Tunneling UPV' : 'Zyndra'}
+                        </h3>
                         <p className="text-sm text-gray-600">{stickyNoteContent.role}</p>
                       </div>
                     </div>
@@ -280,7 +264,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                       <ul className="text-xs space-y-1">
                         {stickyNoteContent.responsibilities.map((resp, idx) => (
                           <li key={idx} className="flex items-start">
-                            <span className="mr-2">•</span>
+                            <span className="mr-2 text-yellow-600">•</span>
                             <span className="text-gray-600">{resp}</span>
                           </li>
                         ))}
@@ -318,10 +302,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                   </div>
                 }
               />
-            </motion.div>
-          )}
-        </>
       )}
-    </AnimatePresence>
+    </>
   )
 }

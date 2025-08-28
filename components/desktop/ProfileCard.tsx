@@ -70,7 +70,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   title = "Title",
   handle = "handle",
   status = "Online",
-  contactText = "Ver Info",
+  contactText = "+",
   showUserInfo = true,
   onContactClick,
 }) => {
