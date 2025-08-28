@@ -10,7 +10,6 @@ import ProfileCard from './ProfileCard'
 
 interface GETeam {
   id: string
-  name: string
   role: string
   handle: string
   description: string
@@ -31,9 +30,9 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
   const [selectedTeam, setSelectedTeam] = useState<GETeam | null>(null)
   const [showStickyNote, setShowStickyNote] = useState(false)
   const [stickyNoteContent, setStickyNoteContent] = useState<GETeam | null>(null)
-  const [size, setSize] = useState({ width: 540, height: 440 })
+  const [size, setSize] = useState({ width: 580, height: 480 })
   const [isResizing, setIsResizing] = useState(false)
-  const [position, setPosition] = useState({ x: 250, y: 100 })
+  const [position, setPosition] = useState({ x: 230, y: 80 })
   const [isMaximized, setIsMaximized] = useState(false)
   const windowRef = useRef<HTMLDivElement>(null)
   const dragControls = useDragControls()
@@ -42,8 +41,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
   const geTeams: GETeam[] = [
     {
       id: 'talpa',
-      name: 'Talpa Tunneling UPV',
-      role: 'Especialista en automatización',
+      role: 'Automatización',
       handle: 'talpatunneling',
       description: 'Desarrollo de soluciones de automatización y análisis de datos para sistemas de túneles. UX/UI designer & developer, data analyst, and performance optimizer.',
       responsibilities: [
@@ -60,8 +58,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
     },
     {
       id: 'zyndra',
-      name: 'Zyndra',
-      role: 'Full Stack Developer',
+      role: 'Co-fundadora',
       handle: 'zyndra',
       description: 'Desarrollo de aplicaciones web y móviles innovadoras con enfoque en experiencia de usuario y rendimiento optimizado.',
       responsibilities: [
@@ -99,8 +96,8 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
 
   const handleMaximize = () => {
     if (isMaximized) {
-      setSize({ width: 540, height: 440 })
-      setPosition({ x: 250, y: 100 })
+      setSize({ width: 580, height: 480 })
+      setPosition({ x: 230, y: 80 })
     } else {
       setSize({ width: window.innerWidth - 40, height: window.innerHeight - 100 })
       setPosition({ x: 20, y: 30 })
@@ -211,7 +208,6 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                 {geTeams.map((team) => (
                   <ProfileCard
                     key={team.id}
-                    name={team.name}
                     title={team.role}
                     handle={team.handle}
                     status="Active"
@@ -263,13 +259,10 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                     <div className="flex items-center gap-3 mb-4">
                       <img 
                         src={stickyNoteContent.iconUrl} 
-                        alt={stickyNoteContent.name}
                         className="w-12 h-12 object-contain"
                       />
                       <div>
-                        <h3 className="font-bold text-lg text-gray-800">
-                          {stickyNoteContent.name}
-                        </h3>
+                        
                         <p className="text-sm text-gray-600">{stickyNoteContent.role}</p>
                       </div>
                     </div>

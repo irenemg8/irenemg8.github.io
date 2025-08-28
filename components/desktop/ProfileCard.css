@@ -12,8 +12,8 @@
   --card-opacity: 0.8;
   
   position: relative;
-  width: 220px;
-  height: 300px;
+  width: 240px;
+  height: 340px;
   margin: 0;
   perspective: 600px;
   transform-style: preserve-3d;
@@ -43,17 +43,17 @@
   border-radius: 20px;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 100%
+    rgba(30, 35, 50, 0.95) 0%,
+    rgba(25, 30, 45, 0.95) 100%
   );
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(100, 120, 160, 0.2);
   overflow: hidden;
   box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.2),
-    0 0 80px rgba(120, 119, 198, 0.15),
-    inset 0 0 60px rgba(255, 255, 255, 0.05);
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    0 0 80px rgba(80, 100, 140, 0.15),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
 }
 
 .pc-card::before {
@@ -101,68 +101,75 @@
 
 .pc-content {
   position: relative;
-  padding: 16px;
+  padding: 24px 20px 16px;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   z-index: 1;
 }
 
-.pc-avatar-content {
-  padding-bottom: 0;
-  justify-content: flex-start;
-  padding-top: 20px;
-}
-
-.pc-content .avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 18px;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.pc-details {
+/* Top section with name and title */
+.pc-details-top {
   text-align: center;
   color: white;
-  margin-top: auto;
+  margin-bottom: 16px;
 }
 
-.pc-details h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0 0 4px 0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+.pc-details-top h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.3px;
 }
 
-.pc-details p {
-  font-size: 13px;
+.pc-details-top p {
+  font-size: 14px;
   font-weight: 400;
   margin: 0;
-  opacity: 0.9;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.2px;
 }
 
-.pc-user-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+/* Avatar container - takes remaining space */
+.pc-avatar-container {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px 0 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.pc-avatar-container .avatar {
+  width: 150px;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
+  object-position: bottom center;
+  border: none;
+  background: transparent;
+  filter: grayscale(100%) contrast(1.2) brightness(1.05);
+  opacity: 0.95;
+  position: relative;
+  z-index: 2;
+}
+
+/* Bottom user info section */
+.pc-user-info-bottom {
+  width: 100%;
   padding: 12px 14px;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0.3) 50%,
-    transparent 100%
-  );
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 0 0 20px 20px;
+  border-radius: 12px;
+  margin-top: auto;
 }
 
 .pc-user-details {
@@ -187,21 +194,23 @@
 }
 
 .pc-user-text {
-  color: white;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .pc-handle {
   font-size: 12px;
   font-weight: 600;
   margin-bottom: 2px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .pc-status {
   font-size: 10px;
-  opacity: 0.8;
+  opacity: 0.75;
   display: flex;
   align-items: center;
   gap: 4px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .pc-status::before {
@@ -223,27 +232,26 @@
 }
 
 .pc-contact-btn {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  color: white;
-  font-size: 18px;
-  font-weight: 300;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  letter-spacing: 0.3px;
 }
 
 .pc-contact-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px) scale(1.1);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Grain effect */
@@ -259,21 +267,40 @@
   border-radius: inherit;
 }
 
-/* Icon background */
+/* Icon background with glow effect on hover */
 .pc-inside::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   background-image: var(--icon);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.05;
+  opacity: 0.03;
   pointer-events: none;
+  transition: all 0.4s ease;
+  filter: brightness(1);
+}
+
+/* Glowing icon on hover */
+.pc-card:hover .pc-inside::before {
+  opacity: 0.15;
+  filter: brightness(1.5) drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Additional glow layer for icon on hover */
+.pc-card:hover .pc-inside::after {
+  background-image: var(--icon);
+  background-size: 200px 200px;
+  background-repeat: no-repeat;
+  background-position: center;
+  mix-blend-mode: screen;
+  opacity: 0.08;
 }
 
 /* Mobile adjustments */

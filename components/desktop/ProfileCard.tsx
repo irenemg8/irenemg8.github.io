@@ -15,7 +15,6 @@ interface ProfileCardProps {
   enableMobileTilt?: boolean
   mobileTiltSensitivity?: number
   miniAvatarUrl?: string
-  name?: string
   title?: string
   handle?: string
   status?: string
@@ -68,11 +67,10 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   enableMobileTilt = false,
   mobileTiltSensitivity = 5,
   miniAvatarUrl,
-  name = "Name",
   title = "Title",
   handle = "handle",
   status = "Online",
-  contactText = "+",
+  contactText = "Ver Info",
   showUserInfo = true,
   onContactClick,
 }) => {
@@ -317,24 +315,32 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
         <div className="pc-inside">
           <div className="pc-shine" />
           <div className="pc-glare" />
-          <div className="pc-content pc-avatar-content">
-            <img
-              className="avatar"
-              src={avatarUrl}
-              alt={`${name || "User"} avatar`}
-              loading="lazy"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.src = "/placeholder-user.jpg"
-              }}
-            />
+          <div className="pc-content">
+            {/* Top Details */}
+            <div className="pc-details-top">
+              <p>{title}</p>
+            </div>
+
+            {/* Avatar Container */}
+            <div className="pc-avatar-container">
+              <img
+                className="avatar"
+                src={avatarUrl}
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.src = "/placeholder-user.jpg"
+                }}
+              />
+            </div>
+
+            {/* Bottom User Info */}
             {showUserInfo && (
-              <div className="pc-user-info">
+              <div className="pc-user-info-bottom">
                 <div className="pc-user-details">
                   <div className="pc-mini-avatar">
                     <img
                       src={miniAvatarUrl || avatarUrl}
-                      alt={`${name || "User"} mini avatar`}
                       loading="lazy"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
@@ -353,18 +359,11 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                   onClick={handleContactClick}
                   style={{ pointerEvents: "auto" }}
                   type="button"
-                  aria-label={`Contact ${name || "user"}`}
                 >
                   {contactText}
                 </button>
               </div>
             )}
-          </div>
-          <div className="pc-content">
-            <div className="pc-details">
-              <h3>{name}</h3>
-              <p>{title}</p>
-            </div>
           </div>
         </div>
       </section>
