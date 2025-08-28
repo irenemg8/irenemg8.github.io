@@ -14,9 +14,10 @@ interface DockItem {
 
 interface MacOSDockProps {
   onShowStickyNote?: () => void
+  onShowFaceTime?: () => void
 }
 
-export function MacOSDock({ onShowStickyNote }: MacOSDockProps) {
+export function MacOSDock({ onShowStickyNote, onShowFaceTime }: MacOSDockProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
@@ -99,7 +100,9 @@ export function MacOSDock({ onShowStickyNote }: MacOSDockProps) {
       label: 'FaceTime',
       action: () => {
         setActiveItem('facetime')
-        console.log('FaceTime clicked')
+        if (onShowFaceTime) {
+          onShowFaceTime()
+        }
       }
     },
     {

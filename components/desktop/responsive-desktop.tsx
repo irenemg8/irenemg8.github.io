@@ -14,6 +14,7 @@ import { PressLibraryModal } from '@/components/shared/press-library-modal'
 import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
 import { WorkFolderWindow } from '@/components/desktop/work-folder-window'
+import { FaceTimeWindow } from '@/components/desktop/facetime-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -33,6 +34,7 @@ export function ResponsiveDesktop() {
   const [stickyNoteKey, setStickyNoteKey] = useState(0) // Para resetear posición
   const [showGitHubBrowser, setShowGitHubBrowser] = useState(false)
   const [showWorkFolder, setShowWorkFolder] = useState(false)
+  const [showFaceTime, setShowFaceTime] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -417,7 +419,10 @@ export function ResponsiveDesktop() {
           />
 
           {/* macOS Dock */}
-          <MacOSDock onShowStickyNote={showStickyNoteFromDock} />
+          <MacOSDock 
+            onShowStickyNote={showStickyNoteFromDock}
+            onShowFaceTime={() => setShowFaceTime(true)} 
+          />
 
         </div>
       </MacOSWindow>
@@ -467,6 +472,11 @@ export function ResponsiveDesktop() {
           isOpen={showWorkFolder}
           onClose={() => setShowWorkFolder(false)}
         />
+      )}
+      
+      {/* FaceTime Window */}
+      {isMounted && showFaceTime && (
+        <FaceTimeWindow onClose={() => setShowFaceTime(false)} />
       )}
     </>
   )
