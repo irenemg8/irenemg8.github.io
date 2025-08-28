@@ -16,6 +16,7 @@ import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
 import { WorkFolderWindow } from '@/components/desktop/work-folder-window'
 import { FaceTimeWindow } from '@/components/desktop/facetime-window'
 import { GEFolderWindow } from '@/components/desktop/ge-folder-window'
+import { MessagesWindow } from '@/components/desktop/messages-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -37,6 +38,7 @@ export function ResponsiveDesktop() {
   const [showWorkFolder, setShowWorkFolder] = useState(false)
   const [showFaceTime, setShowFaceTime] = useState(false)
   const [showGEFolder, setShowGEFolder] = useState(false)
+  const [showMessages, setShowMessages] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -426,7 +428,8 @@ export function ResponsiveDesktop() {
           {/* macOS Dock */}
           <MacOSDock 
             onShowStickyNote={showStickyNoteFromDock}
-            onShowFaceTime={() => setShowFaceTime(true)} 
+            onShowFaceTime={() => setShowFaceTime(true)}
+            onShowMessages={() => setShowMessages(true)} 
           />
 
         </div>
@@ -482,6 +485,11 @@ export function ResponsiveDesktop() {
       {/* FaceTime Window */}
       {isMounted && showFaceTime && (
         <FaceTimeWindow onClose={() => setShowFaceTime(false)} />
+      )}
+      
+      {/* Messages Window */}
+      {isMounted && showMessages && (
+        <MessagesWindow onClose={() => setShowMessages(false)} />
       )}
       
       {/* GE Folder Window */}

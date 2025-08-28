@@ -15,9 +15,10 @@ interface DockItem {
 interface MacOSDockProps {
   onShowStickyNote?: () => void
   onShowFaceTime?: () => void
+  onShowMessages?: () => void
 }
 
-export function MacOSDock({ onShowStickyNote, onShowFaceTime }: MacOSDockProps) {
+export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages }: MacOSDockProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
@@ -56,7 +57,9 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime }: MacOSDockProps) 
       label: 'Mensajes',
       action: () => {
         setActiveItem('messages')
-        console.log('Messages clicked')
+        if (onShowMessages) {
+          onShowMessages()
+        }
       }
     },
     {
