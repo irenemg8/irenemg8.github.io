@@ -91,7 +91,7 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
         y: position.y,
         rotate: isDragging ? 2 : -1,
         scale: isDragging ? 1.05 : 1,
-        zIndex: isDragging ? 100000 : 99999
+        zIndex: isDragging ? 50000 : 40000
       }}
       initial={{ opacity: 0, scale: 0.8, rotate: -1 }}
       whileInView={{ opacity: 1, scale: 1 }}

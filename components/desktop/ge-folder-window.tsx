@@ -17,6 +17,7 @@ interface GETeam {
   skills: string[]
   avatarUrl: string
   iconUrl: string
+  iconUrlDark?: string  // Logo alternativo para sticky note
   website?: string
 }
 
@@ -53,24 +54,25 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
       ],
       skills: ['Figma', 'Three.js', 'React', 'TS'],
       avatarUrl: '/placeholder-user.png', // Aquí pondrás tu foto del equipo Talpa
-      iconUrl: '/work/logo_talpa.png',
+      iconUrl: '/work/logo_talpa.png',  // Para la ProfileCard (miniatura)
+      iconUrlDark: '/work/logo_talpa_negro.png',  // Para el sticky note
       website: 'https://talpatunneling.webs.upv.es/'
     },
     {
       id: 'zyndra',
       role: 'Co-fundadora',
       handle: 'zyndra',
-      description: 'Desarrollo de aplicaciones web y móviles innovadoras con enfoque en experiencia de usuario y rendimiento optimizado.',
+      description: 'Co-fundadora y coordinadora de Zyndra. Desarrollo de un perro guía robot y asistente virtual zero-UI para invidentes y personas con movilidad reducida.',
       responsibilities: [
-        'Desarrollo de aplicaciones web full-stack',
-        'Diseño de arquitecturas escalables',
-        'Implementación de APIs REST',
-        'Optimización de rendimiento',
-        'Gestión de bases de datos'
+        'Representante del equipo en eventos',
+        'Liderazgo de equipo',
+        'Jefa de sección de frontend, márketing y partners',
+        'Diseño de interfaces',
       ],
-      skills: ['React', 'Node.js', 'TypeScript', 'MongoDB', 'AWS', 'Docker', 'GraphQL'],
+      skills: ['Trello','React','TS', 'Figma'],
       avatarUrl: '/placeholder-user.png', // Aquí pondrás tu foto del equipo Zyndra
-      iconUrl: '/work/zyndra.png', // Añadir logo de Zyndra
+      iconUrl: '/work/zyndra.png', // Para la ProfileCard (miniatura)
+      iconUrlDark: '/work/zyndra.png',  // Para el sticky note (mismo logo)
       website: 'https://zyndra.com'
     }
   ]
@@ -229,15 +231,15 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
       {/* Sticky Note para información del equipo */}
       <AnimatePresence>
         {showStickyNote && stickyNoteContent && (
-          <div style={{ 
-            position: 'fixed', 
-            left: 0, 
-            top: 0, 
-            width: '100%', 
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 100000 
-          }}>
+                     <div style={{ 
+             position: 'fixed', 
+             left: 0, 
+             top: 0, 
+             width: '100%', 
+             height: '100%',
+             pointerEvents: 'none',
+             zIndex: 50000 
+           }}>
             <div style={{ pointerEvents: 'auto' }}>
               <StickyNote
                 onDelete={handleCloseSticky}
@@ -250,7 +252,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 mb-4">
                       <img 
-                        src={stickyNoteContent.iconUrl} 
+                        src={stickyNoteContent.iconUrlDark || stickyNoteContent.iconUrl} 
                         className="w-14 h-14 object-contain"
                       />
                       <div>

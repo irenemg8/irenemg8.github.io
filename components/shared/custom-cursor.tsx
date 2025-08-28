@@ -144,7 +144,7 @@ export function CustomCursor() {
       {trail.map((point, index) => (
         <motion.div
           key={point.id}
-          className="fixed w-1 h-1 rounded-full pointer-events-none z-[9998]"
+          className="fixed w-1 h-1 rounded-full pointer-events-none z-[999998]"
           style={{
             background: `linear-gradient(135deg, 
               hsl(270, 50%, ${70 - index * 3}%), 
@@ -165,7 +165,7 @@ export function CustomCursor() {
 
       {/* Main cursor ring */}
       <motion.div
-        className="fixed top-0 left-0 rounded-full border-2 z-[9999] pointer-events-none"
+        className="fixed top-0 left-0 rounded-full border-2 z-[999999] pointer-events-none"
         style={{
           borderColor: 'hsl(270, 50%, 65%)',
           width: isHovering ? 40 : 24,
@@ -200,7 +200,7 @@ export function CustomCursor() {
 
       {/* Center dot */}
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full z-[9999] pointer-events-none"
+        className="fixed top-0 left-0 w-2 h-2 rounded-full z-[999999] pointer-events-none"
         style={{
           background: 'linear-gradient(135deg, hsl(270, 50%, 65%), hsl(285, 45%, 70%))',
         }}
@@ -219,7 +219,7 @@ export function CustomCursor() {
       {/* Hover state sparkles */}
       {isHovering && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[9997]"
+          className="fixed top-0 left-0 pointer-events-none z-[999997]"
           animate={{
             x: mousePosition.x - 20,
             y: mousePosition.y - 20,
