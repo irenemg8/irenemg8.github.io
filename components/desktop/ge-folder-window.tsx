@@ -31,9 +31,9 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
   const [selectedTeam, setSelectedTeam] = useState<GETeam | null>(null)
   const [showStickyNote, setShowStickyNote] = useState(false)
   const [stickyNoteContent, setStickyNoteContent] = useState<GETeam | null>(null)
-  const [size, setSize] = useState({ width: 600, height: 480 })
+  const [size, setSize] = useState({ width: 540, height: 440 })
   const [isResizing, setIsResizing] = useState(false)
-  const [position, setPosition] = useState({ x: 200, y: 80 })
+  const [position, setPosition] = useState({ x: 250, y: 100 })
   const [isMaximized, setIsMaximized] = useState(false)
   const windowRef = useRef<HTMLDivElement>(null)
   const dragControls = useDragControls()
@@ -54,7 +54,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
         'Investigación en tecnologías de perforación'
       ],
       skills: ['Figma', 'Python', 'Data Analysis', 'UX/UI', 'Automatización', 'React', 'IoT'],
-      avatarUrl: '/placeholder-user.jpg', // Aquí pondrás tu foto del equipo Talpa
+      avatarUrl: '/placeholder-user.png', // Aquí pondrás tu foto del equipo Talpa
       iconUrl: '/work/logo_talpa.png',
       website: 'https://talpatunneling.webs.upv.es/'
     },
@@ -72,7 +72,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
         'Gestión de bases de datos'
       ],
       skills: ['React', 'Node.js', 'TypeScript', 'MongoDB', 'AWS', 'Docker', 'GraphQL'],
-      avatarUrl: '/placeholder-user.jpg', // Aquí pondrás tu foto del equipo Zyndra
+      avatarUrl: '/placeholder-user.png', // Aquí pondrás tu foto del equipo Zyndra
       iconUrl: '/work/zyndra.png', // Añadir logo de Zyndra
       website: 'https://zyndra.com'
     }
@@ -99,8 +99,8 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
 
   const handleMaximize = () => {
     if (isMaximized) {
-      setSize({ width: 600, height: 480 })
-      setPosition({ x: 200, y: 80 })
+      setSize({ width: 540, height: 440 })
+      setPosition({ x: 250, y: 100 })
     } else {
       setSize({ width: window.innerWidth - 40, height: window.innerHeight - 100 })
       setPosition({ x: 20, y: 30 })
@@ -204,10 +204,10 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
             </div>
 
             {/* Window Content */}
-            <div className="p-8 h-[calc(100%-60px)] overflow-auto bg-white dark:bg-gray-900">
+            <div className="p-6 h-[calc(100%-60px)] overflow-hidden bg-white dark:bg-gray-900 flex items-center justify-center">
              
               {/* Profile Cards Grid */}
-              <div className="flex justify-center items-center gap-8 flex-wrap">
+              <div className="flex justify-center items-center gap-5">
                 {geTeams.map((team) => (
                   <ProfileCard
                     key={team.id}
