@@ -43,15 +43,15 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
       id: 'talpa',
       role: 'Automatización',
       handle: 'talpatunneling',
-      description: 'Desarrollo de soluciones de automatización y análisis de datos para sistemas de túneles. UX/UI designer & developer, data analyst, and performance optimizer.',
+      description: 'Diseño y desarrollo de una microtuneladora para participar en la Not A Boring Competition 2026, organizado por Elon Musk.',
       responsibilities: [
-        'Diseño UX/UI para interfaces de control',
-        'Desarrollo de aplicaciones de automatización',
+        'Diseño UX/UI para interfaces',
+        'Desarrollo de automatizaciones',
+        'Posicionamiento SEO',
         'Análisis de datos y optimización de rendimiento',
         'Colaboración en proyectos internacionales',
-        'Investigación en tecnologías de perforación'
       ],
-      skills: ['Figma', 'Python', 'Data Analysis', 'UX/UI', 'Automatización', 'React', 'IoT'],
+      skills: ['Figma', 'Three.js', 'React', 'TS'],
       avatarUrl: '/placeholder-user.png', // Aquí pondrás tu foto del equipo Talpa
       iconUrl: '/work/logo_talpa.png',
       website: 'https://talpatunneling.webs.upv.es/'
