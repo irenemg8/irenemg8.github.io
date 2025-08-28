@@ -370,67 +370,6 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
                   ref={contentRef}
                   className="relative h-[calc(100%-44px)] overflow-auto bg-white dark:bg-gray-800"
                 >
-                  {/* Botón de prueba temporal para debug */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '10px',
-                    left: '10px',
-                    zIndex: 1000
-                  }}>
-                    <button
-                      onClick={() => {
-                        console.log('🟢 BOTÓN PRUEBA: Abriendo ventana web en posición fija')
-                        const talpa = workExperiences.find(w => w.id === 'talpa')
-                        if (talpa && talpa.website) {
-                          setOpenWebsites([{ work: talpa, url: talpa.website }])
-                        }
-                      }}
-                      style={{
-                        padding: '8px 16px',
-                        background: '#00FF00',
-                        color: 'black',
-                        borderRadius: '5px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        border: '2px solid black'
-                      }}
-                    >
-                      🌐 PRUEBA WEB
-                    </button>
-                  </div>
-
-                  <div style={{
-                    position: 'absolute',
-                    top: '50px',
-                    left: '10px',
-                    zIndex: 1000
-                  }}>
-                    <button
-                      onClick={() => {
-                        console.log('🟢 BOTÓN PRUEBA: Abriendo ventana media en posición fija')
-                        const talpa = workExperiences.find(w => w.id === 'talpa')
-                        if (talpa && talpa.media) {
-                          setOpenMediaViewers([{ work: talpa, media: talpa.media }])
-                        }
-                      }}
-                      style={{
-                        padding: '8px 16px',
-                        background: '#FF6600',
-                        color: 'white',
-                        borderRadius: '5px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        border: '2px solid black'
-                      }}
-                    >
-                      📷 PRUEBA MEDIA
-                    </button>
-                  </div>
-
-               
-                 
                   {workExperiences.map((work) => {
                     const isDragging = draggedFile === work.id
                     return (
@@ -496,7 +435,7 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
                           cursor: isDragging ? 'grabbing' : 'pointer'
                         }}
                       >
-                        <div className="flex flex-col items-center space-y-1 p-2 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors group">
+                        <div className="flex flex-col items-center space-y-1 p-2 rounded-lg transition-colors group">
                           {/* Icono sin recuadro */}
                           <img 
                             src={work.icon} 
@@ -583,44 +522,6 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
           />
         ))}
       </AnimatePresence>
-
-
-      
-      {/* DEBUG PANEL - indicador visual del estado */}
-      <div style={{
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        zIndex: 999999,
-        background: 'rgba(0,0,0,0.9)',
-        color: 'white',
-        padding: '15px',
-        borderRadius: '8px',
-        fontSize: '12px',
-        fontFamily: 'monospace',
-        border: '2px solid #00FF00',
-        maxWidth: '300px'
-      }}>
-        <div style={{ fontWeight: 'bold', color: '#00FF00', marginBottom: '8px' }}>
-          🔍 DEBUG PANEL
-        </div>
-        <div>Ventanas Web: {openWebsites.length}</div>
-        {openWebsites.map((w, i) => (
-          <div key={i} style={{ fontSize: '10px', color: '#FFFF00', marginLeft: '10px' }}>
-            → {w.work.company}
-          </div>
-        ))}
-        <div>Ventanas Media: {openMediaViewers.length}</div>
-        {openMediaViewers.map((m, i) => (
-          <div key={i} style={{ fontSize: '10px', color: '#FF6600', marginLeft: '10px' }}>
-            → {m.work.company} ({m.media.length} items)
-          </div>
-        ))}
-        <div>Notas: {openNotes.length}</div>
-        <div style={{ marginTop: '8px', fontSize: '10px', color: '#CCCCCC' }}>
-          Usa los botones de prueba verdes
-        </div>
-      </div>
 
       {/* Website Windows - ventanas con sitios web embebidos */}
       {openWebsites.map(({ work, url }, index) => (

@@ -39,7 +39,7 @@ export function MacOSCursor() {
     <>
       {/* Main cursor */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+        className="fixed top-0 left-0 pointer-events-none z-[99999] mix-blend-difference"
         style={{
           x: mousePosition.x - 6,
           y: mousePosition.y - 6,
@@ -57,7 +57,7 @@ export function MacOSCursor() {
 
       {/* Outer ring for hover effect */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
+        className="fixed top-0 left-0 pointer-events-none z-[99998]"
         style={{
           x: mousePosition.x - 12,
           y: mousePosition.y - 12,

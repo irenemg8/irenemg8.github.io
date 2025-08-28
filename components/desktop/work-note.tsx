@@ -171,7 +171,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
           {/* Título de la ventana */}
           <div className="flex items-center space-x-2 flex-1 justify-center">
             <span className="text-xs">📝</span>
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <span className="text-sm font-medium" style={{ color: '#374151' }}>
               Bloc de notas - {work.company}
             </span>
           </div>
@@ -193,7 +193,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
               </div>
 
               {/* Metadatos con estilo de nota escrita */}
-              <div className="space-y-0 text-gray-700 dark:text-gray-300">
+              <div className="space-y-0 text-gray-700" style={{ color: '#374151' }}>
                 <div>📅 {work.date}</div>
                 <div>📍 {work.location}</div>
                 {(work.website || (work.media && work.media.length > 0)) && (
@@ -236,21 +236,21 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
               <div className="border-b-2 border-gray-400 dark:border-gray-600 my-2"></div>
 
               {/* Descripción con estilo manuscrito */}
-              <div className="text-gray-800 dark:text-gray-200">
+              <div style={{ color: '#374151' }}>
                 <p className="italic">{work.description}</p>
               </div>
 
               {/* Responsabilidades con viñetas de bloc */}
               {work.responsibilities.length > 0 && (
                 <div>
-                  <div className="font-semibold text-gray-800 underline mb-1">
+                  <div className="font-semibold underline mb-1" style={{ color: '#374151' }}>
                     Tareas principales:
                   </div>
                   <div className="pl-4 space-y-0">
                     {work.responsibilities.map((resp, index) => (
                       <div key={index} className="flex items-start gap-2">
-                        <span className="text-gray-600 dark:text-gray-400">-</span>
-                        <span className="text-gray-700 dark:text-gray-300">{resp}</span>
+                        <span style={{ color: '#374151' }}>-</span>
+                        <span style={{ color: '#374151' }}>{resp}</span>
                       </div>
                     ))}
                   </div>
@@ -260,7 +260,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
               {/* Habilidades como tags pegados */}
               {work.skills.length > 0 && (
                 <div>
-                  <div className="font-semibold text-gray-800 underline mb-1">
+                  <div className="font-semibold underline mb-1" style={{ color: '#374151' }}>
                     Skills:
                   </div>
                   <div className="flex flex-wrap gap-2 pl-4">
@@ -273,7 +273,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
                           boxShadow: '1px 1px 2px rgba(0,0,0,0.1)'
                         }}
                       >
-                        <span className="text-gray-800 dark:text-gray-200">{skill}</span>
+                        <span style={{ color: '#ffffff' }}>{skill}</span>
                       </span>
                     ))}
                   </div>

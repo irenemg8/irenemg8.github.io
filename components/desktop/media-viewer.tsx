@@ -45,14 +45,14 @@ export function MediaViewer({ media, title, onClose, initialPosition = { x: 100,
     setCurrentMediaIndex(prev => (prev < media.length - 1 ? prev + 1 : 0))
   }
 
-  const handleDownload = (mediaItem: MediaItem) => {
+  {/*const handleDownload = (mediaItem: MediaItem) => {
     const link = document.createElement('a')
     link.href = mediaItem.src
     link.download = mediaItem.alt || 'media-file'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-  }
+  }*/}
 
   // Handle resize
   const handleMouseDown = (e: React.MouseEvent, direction: string) => {
@@ -187,7 +187,7 @@ export function MediaViewer({ media, title, onClose, initialPosition = { x: 100,
             </span>
           </div>
           
-          {/* Botón de descarga */}
+          {/* Botón de descarga 
           <div className="flex items-center space-x-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -198,7 +198,7 @@ export function MediaViewer({ media, title, onClose, initialPosition = { x: 100,
             >
               <Download className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
             </motion.button>
-          </div>
+          </div>*/}
         </div>
 
         {/* Contenido del media */}
