@@ -13,7 +13,7 @@ import { WorldGlobe } from '@/components/shared/world-globe'
 import { PressLibraryModal } from '@/components/shared/press-library-modal'
 import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
-import { WorkFolderWindow } from '@/components/desktop/work-folder-window-fixed'
+import { WorkFolderWindow } from '@/components/desktop/work-folder-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'

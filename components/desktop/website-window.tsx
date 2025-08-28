@@ -2,58 +2,70 @@
 
 import { useState, useRef } from 'react'
 import { motion, PanInfo } from 'framer-motion'
-import { X, MapPin, Calendar, Briefcase, Globe, Image } from 'lucide-react'
+import { X, Globe, RefreshCw, ExternalLink } from 'lucide-react'
 
-interface MediaItem {
-  id: string
-  type: 'image' | 'video'
-  src: string
-  alt: string
-  title?: string
-  description?: string
-}
-
-interface WorkExperience {
-  id: string
-  company: string
-  position: string
-  type: string
-  date: string
-  location: string
-  description: string
-  responsibilities: string[]
-  skills: string[]
-  icon?: string
-  website?: string
-  media?: MediaItem[]
-}
-
-interface WorkNoteProps {
-  work: WorkExperience
+interface WebsiteWindowProps {
+  url: string
+  title: string
   onClose: () => void
-  onOpenWebsite?: () => void
-  onOpenMedia?: () => void
   initialPosition?: { x: number; y: number }
 }
 
-export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPosition = { x: 200, y: 200 } }: WorkNoteProps) {
+export function WebsiteWindow({ url, title, onClose, initialPosition = { x: 50, y: 50 } }: WebsiteWindowProps) {
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
-  const [size, setSize] = useState({ width: 450, height: 550 })
+  const [isMaximized, setIsMaximized] = useState(false)
+  const [size, setSize] = useState({ width: 800, height: 500 })
   const [isResizing, setIsResizing] = useState(false)
-  const noteRef = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
+  const windowRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const handleDragEnd = (event: any, info: PanInfo) => {
-    setPosition(prev => ({
-      x: prev.x + info.offset.x,
-      y: prev.y + info.offset.y
-    }))
+    if (!isMaximized) {
+      setPosition(prev => ({
+        x: prev.x + info.offset.x,
+        y: prev.y + info.offset.y
+      }))
+    }
     setIsDragging(false)
+  }
+
+  const handleMaximize = () => {
+    if (isMaximized) {
+      // Restaurar tamaño y posición anterior
+      setIsMaximized(false)
+      setSize({ width: 800, height: 500 })
+      setPosition(initialPosition)
+    } else {
+      // Maximizar
+      setIsMaximized(true)
+      setSize({ 
+        width: window.innerWidth - 100, 
+        height: window.innerHeight - 100 
+      })
+      setPosition({ x: 50, y: 50 })
+    }
+  }
+
+  const handleRefresh = () => {
+    if (iframeRef.current) {
+      setIsLoading(true)
+      setHasError(false)
+      iframeRef.current.src = iframeRef.current.src
+    }
+  }
+
+  const handleOpenExternal = () => {
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   // Handle resize
   const handleMouseDown = (e: React.MouseEvent, direction: string) => {
+    if (isMaximized) return
+    
     e.preventDefault()
     e.stopPropagation()
     setIsResizing(true)
@@ -81,8 +93,8 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       }
 
       setSize({
-        width: Math.max(300, Math.min(newWidth, window.innerWidth - 50)),
-        height: Math.max(200, Math.min(newHeight, window.innerHeight - 50))
+        width: Math.max(400, Math.min(newWidth, window.innerWidth - 50)),
+        height: Math.max(300, Math.min(newHeight, window.innerHeight - 50))
       })
     }
 
@@ -98,8 +110,8 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
 
   return (
     <motion.div
-      ref={noteRef}
-      drag
+      ref={windowRef}
+      drag={!isMaximized}
       dragMomentum={false}
       dragElastic={0.1}
       onDragStart={() => setIsDragging(true)}
@@ -112,7 +124,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       }}
       initial={{ 
         opacity: 0,
-        scale: 0.8
+        scale: 0.9
       }}
       animate={{ 
         opacity: 1,
@@ -120,7 +132,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       }}
       exit={{ 
         opacity: 0,
-        scale: 0.8,
+        scale: 0.9,
         transition: { duration: 0.2 }
       }}
       transition={{ 
@@ -128,13 +140,14 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
         stiffness: 300, 
         damping: 30
       }}
-      className={`fixed z-[1000] ${isDragging ? 'cursor-grabbing' : ''} select-none`}
+      className={`fixed ${isDragging ? 'cursor-grabbing' : ''} select-none`}
       style={{ 
         left: `${position.x}px`,
         top: `${position.y}px`,
         width: isMinimized ? '300px' : `${size.width}px`,
         height: isMinimized ? 'auto' : `${size.height}px`,
-        cursor: isResizing ? 'nwse-resize' : isDragging ? 'grabbing' : 'auto'
+        cursor: isResizing ? 'nwse-resize' : isDragging ? 'grabbing' : 'auto',
+        zIndex: 10000
       }}
     >
       {/* Ventana estilo macOS */}
@@ -162,129 +175,115 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleMaximize}
               className="w-3 h-3 bg-gradient-to-b from-green-400 to-green-500 rounded-full flex items-center justify-center group hover:from-green-500 hover:to-green-600 transition-colors shadow-sm"
             >
               <div className="w-1 h-1 bg-green-900 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </motion.button>
           </div>
           
-          {/* Título de la ventana */}
+          {/* Título y controles del navegador */}
           <div className="flex items-center space-x-2 flex-1 justify-center">
-            <span className="text-xs">📝</span>
+            <Globe className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Bloc de notas - {work.company}
+              {title}
             </span>
           </div>
-          <div className="w-14"></div>
+          
+          {/* Botones de navegación */}
+          <div className="flex items-center space-x-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleRefresh}
+              className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700/50 rounded transition-colors"
+              title="Refrescar"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleOpenExternal}
+              className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700/50 rounded transition-colors"
+              title="Abrir en nueva pestaña"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+            </motion.button>
+          </div>
         </div>
 
-        {/* Contenido de la nota - estilo bloc de notas */}
+        {/* Barra de URL */}
         {!isMinimized && (
-          <div className="flex-1 overflow-auto" 
-               style={{ 
-                 background: 'linear-gradient(#FCEFBC 0%, #FDE68B 100%), repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #d4d4d8 28px)',
-                 backgroundSize: '100% 100%, 100% 28px'
-               }}>
-            <div className="p-6 font-mono text-sm space-y-4" style={{ lineHeight: '28px' }}>
-              {/* Título y posición */}
-              <div style={{ color: '#3E5B8F' }}>
-                <div className="font-bold text-base underline">{work.position}</div>
-                <div className="text-xs">{work.type}</div>
-              </div>
-
-              {/* Metadatos con estilo de nota escrita */}
-              <div className="space-y-0 text-gray-700 dark:text-gray-300">
-                <div>📅 {work.date}</div>
-                <div>📍 {work.location}</div>
-                {(work.website || (work.media && work.media.length > 0)) && (
-                  <div className="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600 space-y-2">
-                    {work.website && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (onOpenWebsite) {
-                            onOpenWebsite()
-                          } else {
-                            window.open(work.website, '_blank')
-                          }
-                        }}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-xs font-medium transition-colors shadow-sm"
-                      >
-                        <Globe className="w-3.5 h-3.5" />
-                        Ver sitio web
-                      </button>
-                    )}
-                    {work.media && work.media.length > 0 && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (onOpenMedia) {
-                            onOpenMedia()
-                          }
-                        }}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-md text-xs font-medium transition-colors shadow-sm"
-                      >
-                        <Image className="w-3.5 h-3.5" />
-                        Ver fotos/videos ({work.media.length})
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Línea separadora estilo lápiz */}
-              <div className="border-b-2 border-gray-400 dark:border-gray-600 my-2"></div>
-
-              {/* Descripción con estilo manuscrito */}
-              <div className="text-gray-800 dark:text-gray-200">
-                <p className="italic">{work.description}</p>
-              </div>
-
-              {/* Responsabilidades con viñetas de bloc */}
-              {work.responsibilities.length > 0 && (
-                <div>
-                  <div className="font-semibold text-gray-800 underline mb-1">
-                    Tareas principales:
-                  </div>
-                  <div className="pl-4 space-y-0">
-                    {work.responsibilities.map((resp, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <span className="text-gray-600 dark:text-gray-400">-</span>
-                        <span className="text-gray-700 dark:text-gray-300">{resp}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Habilidades como tags pegados */}
-              {work.skills.length > 0 && (
-                <div>
-                  <div className="font-semibold text-gray-800 underline mb-1">
-                    Skills:
-                  </div>
-                  <div className="flex flex-wrap gap-2 pl-4">
-                    {work.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="relative px-3 py-1 text-xs bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-600 dark:border-yellow-700"
-                        style={{
-                          transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)`,
-                          boxShadow: '1px 1px 2px rgba(0,0,0,0.1)'
-                        }}
-                      >
-                        <span className="text-gray-800 dark:text-gray-200">{skill}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+          <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center bg-white dark:bg-gray-900 rounded-md px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
+              <Globe className="w-3 h-3 mr-2 text-gray-400" />
+              <span className="truncate">{url}</span>
             </div>
           </div>
         )}
 
-        {/* Resize handles cuando no está minimizado */}
+        {/* Contenido del iframe */}
         {!isMinimized && (
+          <div className="flex-1 relative bg-white dark:bg-gray-900">
+            {isLoading && !hasError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800 z-10">
+                <div className="flex flex-col items-center space-y-3">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <RefreshCw className="w-8 h-8 text-gray-400" />
+                  </motion.div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Cargando sitio web...</span>
+                </div>
+              </div>
+            )}
+            {hasError ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800">
+                <div className="flex flex-col items-center space-y-4 p-8 text-center">
+                  <Globe className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+                  <div>
+                    <p className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      No se puede mostrar el sitio web embebido
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                      Algunos sitios web no permiten ser mostrados en iframes por políticas de seguridad.
+                    </p>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleOpenExternal}
+                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm font-medium transition-colors flex items-center gap-2 mx-auto"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Abrir en nueva pestaña
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <iframe
+                ref={iframeRef}
+                src={url}
+                onLoad={() => {
+                  setIsLoading(false)
+                  // No verificar el contenido del iframe ya que puede causar errores de CORS
+                }}
+                onError={() => {
+                  setIsLoading(false)
+                  setHasError(true)
+                }}
+                className="w-full h-full border-0"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-storage-access-by-user-activation"
+                title={title}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Resize handles cuando no está minimizado ni maximizado */}
+        {!isMinimized && !isMaximized && (
           <>
             <div 
               className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize"

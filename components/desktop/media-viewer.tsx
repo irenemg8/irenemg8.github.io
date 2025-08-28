@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { motion, PanInfo } from 'framer-motion'
-import { X, MapPin, Calendar, Briefcase, Globe, Image } from 'lucide-react'
+import { X, Image, Video, Download, ExternalLink } from 'lucide-react'
 
 interface MediaItem {
   id: string
@@ -13,36 +13,21 @@ interface MediaItem {
   description?: string
 }
 
-interface WorkExperience {
-  id: string
-  company: string
-  position: string
-  type: string
-  date: string
-  location: string
-  description: string
-  responsibilities: string[]
-  skills: string[]
-  icon?: string
-  website?: string
-  media?: MediaItem[]
-}
-
-interface WorkNoteProps {
-  work: WorkExperience
+interface MediaViewerProps {
+  media: MediaItem[]
+  title: string
   onClose: () => void
-  onOpenWebsite?: () => void
-  onOpenMedia?: () => void
   initialPosition?: { x: number; y: number }
 }
 
-export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPosition = { x: 200, y: 200 } }: WorkNoteProps) {
+export function MediaViewer({ media, title, onClose, initialPosition = { x: 100, y: 100 } }: MediaViewerProps) {
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
-  const [size, setSize] = useState({ width: 450, height: 550 })
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
+  const [size, setSize] = useState({ width: 600, height: 450 })
   const [isResizing, setIsResizing] = useState(false)
-  const noteRef = useRef<HTMLDivElement>(null)
+  const viewerRef = useRef<HTMLDivElement>(null)
 
   const handleDragEnd = (event: any, info: PanInfo) => {
     setPosition(prev => ({
@@ -50,6 +35,23 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       y: prev.y + info.offset.y
     }))
     setIsDragging(false)
+  }
+
+  const handlePrevious = () => {
+    setCurrentMediaIndex(prev => (prev > 0 ? prev - 1 : media.length - 1))
+  }
+
+  const handleNext = () => {
+    setCurrentMediaIndex(prev => (prev < media.length - 1 ? prev + 1 : 0))
+  }
+
+  const handleDownload = (mediaItem: MediaItem) => {
+    const link = document.createElement('a')
+    link.href = mediaItem.src
+    link.download = mediaItem.alt || 'media-file'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   // Handle resize
@@ -81,8 +83,8 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       }
 
       setSize({
-        width: Math.max(300, Math.min(newWidth, window.innerWidth - 50)),
-        height: Math.max(200, Math.min(newHeight, window.innerHeight - 50))
+        width: Math.max(400, Math.min(newWidth, window.innerWidth - 50)),
+        height: Math.max(300, Math.min(newHeight, window.innerHeight - 50))
       })
     }
 
@@ -96,9 +98,13 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
     document.addEventListener('mouseup', handleMouseUp)
   }
 
+  if (media.length === 0) return null
+
+  const currentMedia = media[currentMediaIndex]
+
   return (
     <motion.div
-      ref={noteRef}
+      ref={viewerRef}
       drag
       dragMomentum={false}
       dragElastic={0.1}
@@ -112,7 +118,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       }}
       initial={{ 
         opacity: 0,
-        scale: 0.8
+        scale: 0.9
       }}
       animate={{ 
         opacity: 1,
@@ -120,7 +126,7 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
       }}
       exit={{ 
         opacity: 0,
-        scale: 0.8,
+        scale: 0.9,
         transition: { duration: 0.2 }
       }}
       transition={{ 
@@ -128,13 +134,14 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
         stiffness: 300, 
         damping: 30
       }}
-      className={`fixed z-[1000] ${isDragging ? 'cursor-grabbing' : ''} select-none`}
+      className={`fixed ${isDragging ? 'cursor-grabbing' : ''} select-none`}
       style={{ 
         left: `${position.x}px`,
         top: `${position.y}px`,
         width: isMinimized ? '300px' : `${size.width}px`,
         height: isMinimized ? 'auto' : `${size.height}px`,
-        cursor: isResizing ? 'nwse-resize' : isDragging ? 'grabbing' : 'auto'
+        cursor: isResizing ? 'nwse-resize' : isDragging ? 'grabbing' : 'auto',
+        zIndex: 10001
       }}
     >
       {/* Ventana estilo macOS */}
@@ -168,117 +175,111 @@ export function WorkNote({ work, onClose, onOpenWebsite, onOpenMedia, initialPos
             </motion.button>
           </div>
           
-          {/* Título de la ventana */}
+          {/* Título y contador */}
           <div className="flex items-center space-x-2 flex-1 justify-center">
-            <span className="text-xs">📝</span>
+            {currentMedia.type === 'image' ? (
+              <Image className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <Video className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            )}
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Bloc de notas - {work.company}
+              {title} - {currentMediaIndex + 1}/{media.length}
             </span>
           </div>
-          <div className="w-14"></div>
+          
+          {/* Botón de descarga */}
+          <div className="flex items-center space-x-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleDownload(currentMedia)}
+              className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700/50 rounded transition-colors"
+              title="Descargar"
+            >
+              <Download className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
+            </motion.button>
+          </div>
         </div>
 
-        {/* Contenido de la nota - estilo bloc de notas */}
+        {/* Contenido del media */}
         {!isMinimized && (
-          <div className="flex-1 overflow-auto" 
-               style={{ 
-                 background: 'linear-gradient(#FCEFBC 0%, #FDE68B 100%), repeating-linear-gradient(to bottom, transparent 0px, transparent 27px, #d4d4d8 28px)',
-                 backgroundSize: '100% 100%, 100% 28px'
-               }}>
-            <div className="p-6 font-mono text-sm space-y-4" style={{ lineHeight: '28px' }}>
-              {/* Título y posición */}
-              <div style={{ color: '#3E5B8F' }}>
-                <div className="font-bold text-base underline">{work.position}</div>
-                <div className="text-xs">{work.type}</div>
-              </div>
+          <div className="flex-1 relative bg-black flex items-center justify-center">
+            {currentMedia.type === 'image' ? (
+              <img
+                src={currentMedia.src}
+                alt={currentMedia.alt}
+                className="max-w-full max-h-full object-contain"
+              />
+            ) : (
+              <video
+                src={currentMedia.src}
+                controls
+                className="max-w-full max-h-full object-contain"
+                autoPlay={false}
+              />
+            )}
 
-              {/* Metadatos con estilo de nota escrita */}
-              <div className="space-y-0 text-gray-700 dark:text-gray-300">
-                <div>📅 {work.date}</div>
-                <div>📍 {work.location}</div>
-                {(work.website || (work.media && work.media.length > 0)) && (
-                  <div className="mt-2 pt-2 border-t border-gray-300 dark:border-gray-600 space-y-2">
-                    {work.website && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (onOpenWebsite) {
-                            onOpenWebsite()
-                          } else {
-                            window.open(work.website, '_blank')
-                          }
-                        }}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-xs font-medium transition-colors shadow-sm"
-                      >
-                        <Globe className="w-3.5 h-3.5" />
-                        Ver sitio web
-                      </button>
-                    )}
-                    {work.media && work.media.length > 0 && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (onOpenMedia) {
-                            onOpenMedia()
-                          }
-                        }}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-md text-xs font-medium transition-colors shadow-sm"
-                      >
-                        <Image className="w-3.5 h-3.5" />
-                        Ver fotos/videos ({work.media.length})
-                      </button>
-                    )}
-                  </div>
+            {/* Controles de navegación si hay múltiples elementos */}
+            {media.length > 1 && (
+              <>
+                <button
+                  onClick={handlePrevious}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            {/* Información del media */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+              <div className="text-white">
+                <h3 className="font-medium text-sm">{currentMedia.title || currentMedia.alt}</h3>
+                {currentMedia.description && (
+                  <p className="text-xs text-gray-300 mt-1">{currentMedia.description}</p>
                 )}
               </div>
+            </div>
+          </div>
+        )}
 
-              {/* Línea separadora estilo lápiz */}
-              <div className="border-b-2 border-gray-400 dark:border-gray-600 my-2"></div>
-
-              {/* Descripción con estilo manuscrito */}
-              <div className="text-gray-800 dark:text-gray-200">
-                <p className="italic">{work.description}</p>
-              </div>
-
-              {/* Responsabilidades con viñetas de bloc */}
-              {work.responsibilities.length > 0 && (
-                <div>
-                  <div className="font-semibold text-gray-800 underline mb-1">
-                    Tareas principales:
-                  </div>
-                  <div className="pl-4 space-y-0">
-                    {work.responsibilities.map((resp, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <span className="text-gray-600 dark:text-gray-400">-</span>
-                        <span className="text-gray-700 dark:text-gray-300">{resp}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Habilidades como tags pegados */}
-              {work.skills.length > 0 && (
-                <div>
-                  <div className="font-semibold text-gray-800 underline mb-1">
-                    Skills:
-                  </div>
-                  <div className="flex flex-wrap gap-2 pl-4">
-                    {work.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="relative px-3 py-1 text-xs bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-600 dark:border-yellow-700"
-                        style={{
-                          transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)`,
-                          boxShadow: '1px 1px 2px rgba(0,0,0,0.1)'
-                        }}
-                      >
-                        <span className="text-gray-800 dark:text-gray-200">{skill}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+        {/* Thumbnails si hay múltiples elementos y no está minimizado */}
+        {!isMinimized && media.length > 1 && (
+          <div className="border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
+            <div className="flex space-x-2 overflow-x-auto">
+              {media.map((item, index) => (
+                <button
+                  key={item.id}
+                  onClick={() => setCurrentMediaIndex(index)}
+                  className={`flex-shrink-0 w-16 h-16 rounded border-2 transition-colors ${
+                    index === currentMediaIndex 
+                      ? 'border-blue-500' 
+                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
+                  }`}
+                >
+                  {item.type === 'image' ? (
+                    <img
+                      src={item.src}
+                      alt={item.alt}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-800 rounded flex items-center justify-center">
+                      <Video className="w-6 h-6 text-white" />
+                    </div>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
         )}

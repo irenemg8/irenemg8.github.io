@@ -6,6 +6,18 @@ import { X, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLanguage } from '@/contexts/language-context'
 import { WorkNote } from './work-note'
+import { WebsiteWindow } from './website-window'
+import { SimpleWebWindow } from './simple-web-window'
+import { MediaViewer } from './media-viewer'
+
+interface MediaItem {
+  id: string
+  type: 'image' | 'video'
+  src: string
+  alt: string
+  title?: string
+  description?: string
+}
 
 interface WorkExperience {
   id: string
@@ -18,6 +30,8 @@ interface WorkExperience {
   responsibilities: string[]
   skills: string[]
   icon?: string
+  website?: string
+  media?: MediaItem[]
 }
 
 interface FilePosition {
@@ -34,6 +48,8 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
   const { t } = useLanguage()
   const [selectedWork, setSelectedWork] = useState<WorkExperience | null>(null)
   const [openNotes, setOpenNotes] = useState<WorkExperience[]>([])
+  const [openWebsites, setOpenWebsites] = useState<{ work: WorkExperience, url: string }[]>([])
+  const [openMediaViewers, setOpenMediaViewers] = useState<{ work: WorkExperience, media: MediaItem[] }[]>([])
   const [size, setSize] = useState({ width: 768, height: 520 })
   const [isResizing, setIsResizing] = useState(false)
   const [filePositions, setFilePositions] = useState<{ [key: string]: FilePosition }>({})
@@ -80,7 +96,26 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
         'Colaboración en proyectos internacionales'
       ],
       skills: ['Figma', 'Python', 'Data Analysis', 'UX/UI', 'Automatización'],
-      icon: '/work/talpa.png'
+      icon: '/work/talpa.png',
+      website: 'https://talpatunneling.webs.upv.es/',
+      media: [
+        {
+          id: 'talpa-1',
+          type: 'image',
+          src: '/work/talpa-project.png',
+          alt: 'Proyecto Talpa Dashboard',
+          title: 'Dashboard de Control',
+          description: 'Interfaz principal del sistema de automatización'
+        },
+        {
+          id: 'talpa-2',
+          type: 'image',
+          src: '/work/talpa-ui.png',
+          alt: 'UI Design Talpa',
+          title: 'Diseño UI/UX',
+          description: 'Wireframes y prototipos del sistema'
+        }
+      ]
     },
     {
       id: 'gomarco',
@@ -131,7 +166,26 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
         'Mejora continua basada en feedback'
       ],
       skills: ['Scrum', 'Trello', 'Figma', 'JavaScript', 'UX/UI'],
-      icon: '/work/centromat.png'
+      icon: '/work/centromat.png',
+      website: 'https://centromat.info/',
+      media: [
+        {
+          id: 'centromat-1',
+          type: 'image',
+          src: '/work/centromat-home.png',
+          alt: 'Página principal Centromat',
+          title: 'Diseño Homepage',
+          description: 'Página de inicio del sitio web responsivo'
+        },
+        {
+          id: 'centromat-2',
+          type: 'image',
+          src: '/work/centromat-wireframes.png',
+          alt: 'Wireframes Centromat',
+          title: 'Wireframes y Prototipos',
+          description: 'Proceso de diseño y arquitectura de información'
+        }
+      ]
     }
   ]
 
@@ -165,11 +219,36 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
   const handleOpenNote = (work: WorkExperience) => {
     if (!openNotes.find(note => note.id === work.id)) {
       setOpenNotes([...openNotes, work])
+      
+      // Si tiene website, abrirlo automáticamente
+      if (work.website && !openWebsites.find(w => w.work.id === work.id)) {
+        const websiteUrl = work.website
+        setOpenWebsites(prev => [...prev, { work, url: websiteUrl }])
+      }
+      
+      // Si tiene medios, abrirlos automáticamente también
+      if (work.media && work.media.length > 0 && !openMediaViewers.find(m => m.work.id === work.id)) {
+        setOpenMediaViewers(prev => [...prev, { work, media: work.media! }])
+      }
     }
   }
 
   const handleCloseNote = (workId: string) => {
     setOpenNotes(openNotes.filter(note => note.id !== workId))
+  }
+
+  const handleCloseWebsite = (workId: string) => {
+    setOpenWebsites(openWebsites.filter(w => w.work.id !== workId))
+  }
+
+  const handleOpenMedia = (work: WorkExperience) => {
+    if (work.media && work.media.length > 0 && !openMediaViewers.find(m => m.work.id === work.id)) {
+      setOpenMediaViewers(prev => [...prev, { work, media: work.media! }])
+    }
+  }
+
+  const handleCloseMedia = (workId: string) => {
+    setOpenMediaViewers(openMediaViewers.filter(m => m.work.id !== workId))
   }
 
   // Handle resize
@@ -291,6 +370,65 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
                   ref={contentRef}
                   className="relative h-[calc(100%-44px)] overflow-auto bg-white dark:bg-gray-800"
                 >
+                  {/* Botón de prueba temporal para debug */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    left: '10px',
+                    zIndex: 1000
+                  }}>
+                    <button
+                      onClick={() => {
+                        console.log('🟢 BOTÓN PRUEBA: Abriendo ventana web en posición fija')
+                        const talpa = workExperiences.find(w => w.id === 'talpa')
+                        if (talpa && talpa.website) {
+                          setOpenWebsites([{ work: talpa, url: talpa.website }])
+                        }
+                      }}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#00FF00',
+                        color: 'black',
+                        borderRadius: '5px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        border: '2px solid black'
+                      }}
+                    >
+                      🌐 PRUEBA WEB
+                    </button>
+                  </div>
+
+                  <div style={{
+                    position: 'absolute',
+                    top: '50px',
+                    left: '10px',
+                    zIndex: 1000
+                  }}>
+                    <button
+                      onClick={() => {
+                        console.log('🟢 BOTÓN PRUEBA: Abriendo ventana media en posición fija')
+                        const talpa = workExperiences.find(w => w.id === 'talpa')
+                        if (talpa && talpa.media) {
+                          setOpenMediaViewers([{ work: talpa, media: talpa.media }])
+                        }
+                      }}
+                      style={{
+                        padding: '8px 16px',
+                        background: '#FF6600',
+                        color: 'white',
+                        borderRadius: '5px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        border: '2px solid black'
+                      }}
+                    >
+                      📷 PRUEBA MEDIA
+                    </button>
+                  </div>
+
                
                  
                   {workExperiences.map((work) => {
@@ -429,6 +567,15 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
             key={work.id}
             work={work}
             onClose={() => handleCloseNote(work.id)}
+            onOpenWebsite={() => {
+              if (work.website && !openWebsites.find(w => w.work.id === work.id)) {
+                const websiteUrl = work.website
+                setOpenWebsites(prev => [...prev, { work, url: websiteUrl }])
+              }
+            }}
+            onOpenMedia={() => {
+              handleOpenMedia(work)
+            }}
             initialPosition={{
               x: 100 + index * 40,
               y: 100 + index * 40
@@ -436,6 +583,72 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
           />
         ))}
       </AnimatePresence>
+
+
+      
+      {/* DEBUG PANEL - indicador visual del estado */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        zIndex: 999999,
+        background: 'rgba(0,0,0,0.9)',
+        color: 'white',
+        padding: '15px',
+        borderRadius: '8px',
+        fontSize: '12px',
+        fontFamily: 'monospace',
+        border: '2px solid #00FF00',
+        maxWidth: '300px'
+      }}>
+        <div style={{ fontWeight: 'bold', color: '#00FF00', marginBottom: '8px' }}>
+          🔍 DEBUG PANEL
+        </div>
+        <div>Ventanas Web: {openWebsites.length}</div>
+        {openWebsites.map((w, i) => (
+          <div key={i} style={{ fontSize: '10px', color: '#FFFF00', marginLeft: '10px' }}>
+            → {w.work.company}
+          </div>
+        ))}
+        <div>Ventanas Media: {openMediaViewers.length}</div>
+        {openMediaViewers.map((m, i) => (
+          <div key={i} style={{ fontSize: '10px', color: '#FF6600', marginLeft: '10px' }}>
+            → {m.work.company} ({m.media.length} items)
+          </div>
+        ))}
+        <div>Notas: {openNotes.length}</div>
+        <div style={{ marginTop: '8px', fontSize: '10px', color: '#CCCCCC' }}>
+          Usa los botones de prueba verdes
+        </div>
+      </div>
+
+      {/* Website Windows - ventanas con sitios web embebidos */}
+      {openWebsites.map(({ work, url }, index) => (
+          <WebsiteWindow
+            key={`website-${work.id}`}
+            url={url}
+            title={`${work.company} - Sitio Web`}
+            onClose={() => handleCloseWebsite(work.id)}
+            initialPosition={{
+              x: 100 + index * 30,
+              y: 50 + index * 30
+            }}
+          />
+      ))}
+
+      {/* Media Viewers - ventanas con fotos/videos */}
+      {openMediaViewers.map(({ work, media }, index) => (
+        <MediaViewer
+          key={`media-${work.id}`}
+          media={media}
+          title={`${work.company} - Medios`}
+          onClose={() => handleCloseMedia(work.id)}
+          initialPosition={{
+            x: 150 + index * 40,
+            y: 100 + index * 40
+          }}
+        />
+      ))}
     </>
   )
 }
