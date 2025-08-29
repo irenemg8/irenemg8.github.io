@@ -33,9 +33,7 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages }: 
       label: 'Finder',
       action: () => {
         setActiveItem('finder')
-        if (onShowStickyNote) {
-          onShowStickyNote()
-        }
+        console.log('Finder clicked')
       }
     },
     {
@@ -138,7 +136,9 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages }: 
       label: 'Notas',
       action: () => {
         setActiveItem('notes')
-        console.log('Notes clicked')
+        if (onShowStickyNote) {
+          onShowStickyNote()
+        }
       }
     },
     {
