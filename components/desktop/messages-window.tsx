@@ -45,7 +45,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
         id: '1',
         name: 'Guillermo Castillo',
         avatar: '👨‍🍳',
-        lastMessage: 'Archivo adjunto: 1 stickers',
+        lastMessage: '¿Qué te parece?',
         lastMessageTime: '9:17 a.m.',
         unread: false,
         topic: 'cooking',
@@ -53,7 +53,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm1',
             sender: 'Guillermo Castillo',
-            content: '¡Hola! Escuché que te encanta cocinar pasta 🍝',
+            content: '¡Hola! Escuché que te encanta cocinar 🍝',
             timestamp: new Date(Date.now() - 1000 * 60 * 30),
             isUser: false,
             avatar: '👨‍🍳'
@@ -61,14 +61,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm2',
             sender: 'Tú',
-            content: '¡Sí! Me encanta la cocina italiana, especialmente la pasta fresca',
+            content: '¡Sí, me encanta! Especialmente la cocina mediterránea',
             timestamp: new Date(Date.now() - 1000 * 60 * 28),
             isUser: true
           },
           {
             id: 'm3',
             sender: 'Guillermo Castillo',
-            content: '¿Cuál es tu plato favorito para cocinar?',
+            content: '¿Cuál es tu plato favorito?',
             timestamp: new Date(Date.now() - 1000 * 60 * 25),
             isUser: false,
             avatar: '👨‍🍳'
@@ -76,15 +76,31 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm4',
             sender: 'Tú',
-            content: 'Definitivamente el cacio e pepe. Es simple pero requiere técnica perfecta',
+            content: 'Definitivamente las croquetas. Es simple pero requiere la técnica perfecta',
             timestamp: new Date(Date.now() - 1000 * 60 * 23),
             isUser: true
           },
           {
             id: 'm5',
             sender: 'Guillermo Castillo',
-            content: '¡Excelente elección! El secreto está en el agua de pasta con almidón',
+            content: '¡Excelente elección! El secreto está en la bechamel. El otro día hice un pastel de carne, te paso fotos',
             timestamp: new Date(Date.now() - 1000 * 60 * 20),
+            isUser: false,
+            avatar: '👨‍🍳'
+          },
+          {
+            id: 'm6',
+            sender: 'Guillermo Castillo',
+            content: 'Archivo adjunto: 3 fotos',
+            timestamp: new Date(Date.now() - 1000 * 60 * 19),
+            isUser: false,
+            avatar: '👨‍🍳'
+          },
+          {
+            id: 'm7',
+            sender: 'Guillermo Castillo',
+            content: '¿Qué te parece?',
+            timestamp: new Date(Date.now() - 1000 * 60 * 18),
             isUser: false,
             avatar: '👨‍🍳'
           }
@@ -92,16 +108,16 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
       },
       {
         id: '2',
-        name: 'Rigo Rangel',
+        name: 'Yolanda',
         avatar: '🧘',
-        lastMessage: '🌈😊 What a glorious day!',
+        lastMessage: '🌈😊 Me encanta verte tan motivada!',
         lastMessageTime: '9:13 a.m.',
         unread: false,
         topic: 'yoga',
         messages: [
           {
             id: 'm1',
-            sender: 'Rigo Rangel',
+            sender: 'Yolanda',
             content: 'Hey! ¿Sigues practicando yoga aéreo?',
             timestamp: new Date(Date.now() - 1000 * 60 * 45),
             isUser: false,
@@ -116,7 +132,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           },
           {
             id: 'm3',
-            sender: 'Rigo Rangel',
+            sender: 'Yolanda',
             content: '¿Cuánto tiempo llevas practicando?',
             timestamp: new Date(Date.now() - 1000 * 60 * 40),
             isUser: false,
@@ -125,14 +141,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm4',
             sender: 'Tú',
-            content: 'Llevo 2 años y me encanta la sensación de estar suspendida en el aire',
+            content: 'Llevo 5 años y a día de hoy me sigue encantando la sensación de estar flotando en el aire',
             timestamp: new Date(Date.now() - 1000 * 60 * 38),
             isUser: true
           },
           {
             id: 'm5',
-            sender: 'Rigo Rangel',
-            content: '🌈😊 What a glorious day! El yoga aéreo debe ser increíble para la creatividad',
+            sender: 'Yolanda',
+            content: '🌈😊 Me encanta verte tan motivada! El yoga aéreo debe ser increíble',
             timestamp: new Date(Date.now() - 1000 * 60 * 35),
             isUser: false,
             avatar: '🧘'
@@ -143,15 +159,15 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
         id: '3',
         name: 'Animation Team',
         avatar: '🎨',
-        lastMessage: 'Do you want to review all the renders together next time we meet and decide o...',
+        lastMessage: 'Quieres que revisemos todos los renders juntos la próxima vez para decidir el estilo final?',
         lastMessageTime: 'ayer',
-        unread: true,
+        unread: false,
         topic: '3d',
         messages: [
           {
             id: 'm1',
             sender: 'Christine Huang',
-            content: 'Irene, ¿has trabajado con Blender últimamente?',
+            content: 'Irene, ¿has estado trabajado con Blender últimamente?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
             isUser: false,
             avatar: '👩'
@@ -159,14 +175,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm2',
             sender: 'Tú',
-            content: '¡Sí! Estoy modelando personajes para un proyecto personal',
+            content: '¡Sí! Estoy modelando personajes para un videojuego sobre peces',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 23),
             isUser: true
           },
           {
             id: 'm3',
             sender: 'Chad Benjamin Potter',
-            content: 'I just finished the latest renderings for the Sushi Car! What do you all think? 🍣🚗',
+            content: 'Yo justo acabo de terminar de renderizar mis personajes para el Shushi Car. Qué os parece? 🍣🚗',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 22),
             isUser: false,
             avatar: '👨‍💻'
@@ -181,7 +197,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm5',
             sender: 'Christine Huang',
-            content: 'Do you want to review all the renders together next time we meet and decide on the final style?',
+            content: 'Quieres que revisemos todos los renders juntos la próxima vez para decidir el estilo final?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 20),
             isUser: false,
             avatar: '👩'
@@ -190,7 +206,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
       },
       {
         id: '4',
-        name: 'Ashley Rico',
+        name: 'José Luis',
         avatar: '🎯',
         lastMessage: 'Did the kids finish their homework?',
         lastMessageTime: 'ayer',
@@ -199,7 +215,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
         messages: [
           {
             id: 'm1',
-            sender: 'Ashley Rico',
+            sender: 'José Luis',
             content: 'Vi tu portfolio, ¡tus diseños de logos en Figma son geniales!',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48),
             isUser: false,
@@ -214,7 +230,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           },
           {
             id: 'm3',
-            sender: 'Ashley Rico',
+            sender: 'José Luis',
             content: '¿Cuál es tu proceso creativo para diseñar logos?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 46),
             isUser: false,
@@ -223,13 +239,13 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm4',
             sender: 'Tú',
-            content: 'Empiezo con investigación de la marca, luego bocetos a mano y finalmente Figma para vectorizar',
+            content: 'Empiezo con investigación de la marca, luego bocetos a mano y finalmente uso Figma para vectorizarlos',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 45),
             isUser: true
           },
           {
             id: 'm5',
-            sender: 'Ashley Rico',
+            sender: 'José Luis',
             content: 'Did the kids finish their homework? Ah perdón, mensaje equivocado 😅',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 44),
             isUser: false,

@@ -32,7 +32,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
      {
     id: 2,
     eventName: "Safor Salut Hackathon – 3rd Edition",
-    logo: "/hackathon/IMG_7131.png?height=200&width=200",
+    logo: "/hackathon/IMG_7131_back.png?height=200&width=200",
     projectTitle: "URBANVIVE",
     role: "UX/UI/UC Specialist",
     description: "A smart microbiota-integrated flooring system to promote wellness while walking",
@@ -56,7 +56,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     {
       id: 3,
       eventName: "Smart City Challenges 2025",
-      logo: "/hackathon/vrain_logo.jpeg?height=200&width=200",
+      logo: "/hackathon/vrain_logo_back.jpeg?height=200&width=200",
       projectTitle: "Aura",
       role: "UX/UI & Frontend Developer",
       description: "AI-powered assistant for visually impaired people",
@@ -73,25 +73,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       //mediaUrl: "https://youtube.com",
     },
 
-{
-      id: 4,
-      eventName: "World’s Largest Hackathon by Bolt",
-      logo: "/hackathon/bolt.jpg?height=200&width=200",
-      projectTitle: "Aura",
-      role: "UX/UI & Frontend Developer",
-      description: "AI-powered assistant for visually impaired people",
-      date: "Jun 2025",
-      awards: ["Pending"],
-      fullStory:
-        "Aura is an innovative mobile application designed to empower visually impaired individuals by transforming their smartphones into intelligent personal assistants. Utilizing the device’s camera, advanced image recognition, and real-time voice feedback, Aura helps users independently navigate indoor and outdoor spaces, identify products in supermarkets (brand, properties, price, and more), and access detailed visual information about their surroundings. The app goes beyond navigation: it aims to bridge accessibility gaps by integrating artificial intelligence, open data, and voice interaction, offering a scalable platform for multiple smart city applications.",
-      technologies: ["Bolt", "Figma", "React Native", "TypeScript", "Speech-To-Text", "AWS", "Open Data APIs"],
-      team: ["Irene Medina García (UX/UI & Frontend)", "Vicente Rivas Monferrer (Backend)"],
-      challenges:
-            "Our main challenge was to achieve high-accuracy real-time image recognition in diverse environments, while ensuring seamless and accessible voice interaction for users with different levels of vision loss. We also prioritized user privacy and data security, implementing strict permission controls and processing sensitive data locally whenever possible.",
-      //githubUrl: "https://github.com",
-      //liveUrl: "https://example.com",
-      //mediaUrl: "https://youtube.com",
-    },
+
   ]
 
   const monthMap: { [key: string]: number } = {

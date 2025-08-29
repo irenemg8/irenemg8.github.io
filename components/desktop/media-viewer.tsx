@@ -1,327 +1,391 @@
 "use client"
 
-import { useState, useRef } from 'react'
-import { motion, PanInfo } from 'framer-motion'
-import { X, Image, Video, Download, ExternalLink } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion'
+import { X, Minus, Square, FileImage, FileText, Video, ExternalLink, Download, Maximize2, Minimize2 } from 'lucide-react'
+import Image from 'next/image'
 
-interface MediaItem {
+interface MediaFile {
   id: string
-  type: 'image' | 'video'
-  src: string
-  alt: string
-  title?: string
-  description?: string
+  name: string
+  type: 'image' | 'video' | 'pdf' | 'presentation' | 'document' | 'web'
+  url: string
+  thumbnail?: string
+}
+
+interface HackathonData {
+  id: string
+  eventName: string
+  projectTitle: string
+  mediaFiles?: MediaFile[]
+}
+
+interface DraggableMediaItem {
+  id: string
+  file: MediaFile
+  position: { x: number, y: number }
+  size: { width: number, height: number }
+  zIndex: number
 }
 
 interface MediaViewerProps {
-  media: MediaItem[]
-  title: string
+  hackathon: HackathonData
   onClose: () => void
-  initialPosition?: { x: number; y: number }
 }
 
-export function MediaViewer({ media, title, onClose, initialPosition = { x: 100, y: 100 } }: MediaViewerProps) {
-  const [position, setPosition] = useState(initialPosition)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isMinimized, setIsMinimized] = useState(false)
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0)
-  const [size, setSize] = useState({ width: 600, height: 450 })
+export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
+  const [mediaItems, setMediaItems] = useState<DraggableMediaItem[]>([])
+  const [draggedItem, setDraggedItem] = useState<string | null>(null)
+  const [maxZIndex, setMaxZIndex] = useState(1000)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // Initialize media items when hackathon changes
+    if (hackathon.mediaFiles) {
+      const initialItems = hackathon.mediaFiles.map((file, index) => ({
+        id: file.id,
+        file,
+        position: { 
+          x: 100 + (index * 50), 
+          y: 100 + (index * 50) 
+        },
+        size: getInitialSize(file.type),
+        zIndex: 1000 + index
+      }))
+      setMediaItems(initialItems)
+      setMaxZIndex(1000 + hackathon.mediaFiles.length)
+    }
+  }, [hackathon])
+
+  const getInitialSize = (type: string) => {
+    switch (type) {
+      case 'image':
+        return { width: 300, height: 200 }
+      case 'video':
+        return { width: 400, height: 225 }
+      case 'pdf':
+      case 'document':
+      case 'presentation':
+        return { width: 350, height: 300 }
+      case 'web':
+        return { width: 450, height: 350 }
+      default:
+        return { width: 300, height: 200 }
+    }
+  }
+
+  const getFileIcon = (type: string) => {
+    switch (type) {
+      case 'image':
+        return <FileImage className="w-6 h-6" />
+      case 'video':
+        return <Video className="w-6 h-6" />
+      case 'pdf':
+      case 'document':
+        return <FileText className="w-6 h-6" />
+      case 'web':
+        return <ExternalLink className="w-6 h-6" />
+      default:
+        return <FileText className="w-6 h-6" />
+    }
+  }
+
+  const handleDragEnd = (itemId: string, event: any, info: PanInfo) => {
+    setMediaItems(prev => prev.map(item => 
+      item.id === itemId 
+        ? { 
+            ...item, 
+            position: { 
+              x: Math.max(0, Math.min(window.innerWidth - item.size.width - 50, item.position.x + info.offset.x)),
+              y: Math.max(0, Math.min(window.innerHeight - item.size.height - 50, item.position.y + info.offset.y))
+            } 
+          }
+        : item
+    ))
+    setDraggedItem(null)
+  }
+
+  const handleItemClick = (itemId: string) => {
+    const newZIndex = maxZIndex + 1
+    setMaxZIndex(newZIndex)
+    setMediaItems(prev => prev.map(item => 
+      item.id === itemId ? { ...item, zIndex: newZIndex } : item
+    ))
+  }
+
+  const handleResize = (itemId: string, delta: { width: number, height: number }) => {
+    setMediaItems(prev => prev.map(item => 
+      item.id === itemId 
+        ? { 
+            ...item, 
+            size: { 
+              width: Math.max(200, Math.min(800, item.size.width + delta.width)),
+              height: Math.max(150, Math.min(600, item.size.height + delta.height))
+            } 
+          }
+        : item
+    ))
+  }
+
+  const handleCloseItem = (itemId: string) => {
+    setMediaItems(prev => prev.filter(item => item.id !== itemId))
+  }
+
+  const renderMediaContent = (item: DraggableMediaItem) => {
+    const { file } = item
+    
+    switch (file.type) {
+      case 'image':
+        return (
+          <div className="w-full h-full relative overflow-hidden rounded-b-lg">
+            <Image
+              src={file.url}
+              alt={file.name}
+              fill
+              className="object-contain bg-gray-100 dark:bg-gray-800"
+              sizes="(max-width: 800px) 100vw, 800px"
+            />
+          </div>
+        )
+      
+      case 'video':
+        return (
+          <div className="w-full h-full">
+            <video 
+              controls 
+              className="w-full h-full object-contain bg-black rounded-b-lg"
+              src={file.url}
+            >
+              Tu navegador no soporta el elemento de video.
+            </video>
+          </div>
+        )
+      
+      case 'pdf':
+      case 'document':
+      case 'presentation':
+        return (
+          <div className="w-full h-full">
+            <iframe
+              src={file.url}
+              className="w-full h-full rounded-b-lg"
+              title={file.name}
+            />
+          </div>
+        )
+      
+      case 'web':
+        return (
+          <div className="w-full h-full">
+            <iframe
+              src={file.url}
+              className="w-full h-full rounded-b-lg"
+              title={file.name}
+            />
+          </div>
+        )
+      
+      default:
+        return (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-b-lg">
+            <p className="text-gray-500">Tipo de archivo no soportado</p>
+          </div>
+        )
+    }
+  }
+
+  return (
+    <div 
+      ref={containerRef}
+      className="fixed inset-0 bg-black/20 z-50000"
+      style={{ zIndex: 50000 }}
+    >
+      {/* Background overlay */}
+      <div 
+        className="absolute inset-0 bg-transparent cursor-pointer"
+        onClick={onClose}
+      />
+      
+      {/* Floating close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-50001 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors"
+      >
+        <X className="w-5 h-5" />
+      </button>
+
+      {/* Header info */}
+      <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-900/95 rounded-lg px-4 py-2 z-50001">
+        <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">
+          {hackathon.projectTitle}
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {hackathon.eventName}
+        </p>
+      </div>
+
+      {/* Draggable media items */}
+      <AnimatePresence>
+        {mediaItems.map((item) => (
+          <MediaItem
+            key={item.id}
+            item={item}
+            onDragEnd={(event, info) => handleDragEnd(item.id, event, info)}
+            onClose={() => handleCloseItem(item.id)}
+            onResize={(delta) => handleResize(item.id, delta)}
+            onClick={() => handleItemClick(item.id)}
+            isDragged={draggedItem === item.id}
+            onDragStart={() => setDraggedItem(item.id)}
+          >
+            {renderMediaContent(item)}
+          </MediaItem>
+        ))}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+interface MediaItemProps {
+  item: DraggableMediaItem
+  children: React.ReactNode
+  onDragEnd: (event: any, info: PanInfo) => void
+  onClose: () => void
+  onResize: (delta: { width: number, height: number }) => void
+  onClick: () => void
+  isDragged: boolean
+  onDragStart: () => void
+}
+
+function MediaItem({
+  item,
+  children,
+  onDragEnd,
+  onClose,
+  onResize,
+  onClick,
+  isDragged,
+  onDragStart
+}: MediaItemProps) {
   const [isResizing, setIsResizing] = useState(false)
-  const viewerRef = useRef<HTMLDivElement>(null)
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 })
+  const dragControls = useDragControls()
 
-  const handleDragEnd = (event: any, info: PanInfo) => {
-    setPosition(prev => ({
-      x: prev.x + info.offset.x,
-      y: prev.y + info.offset.y
-    }))
-    setIsDragging(false)
-  }
-
-  const handlePrevious = () => {
-    setCurrentMediaIndex(prev => (prev > 0 ? prev - 1 : media.length - 1))
-  }
-
-  const handleNext = () => {
-    setCurrentMediaIndex(prev => (prev < media.length - 1 ? prev + 1 : 0))
-  }
-
-  {/*const handleDownload = (mediaItem: MediaItem) => {
-    const link = document.createElement('a')
-    link.href = mediaItem.src
-    link.download = mediaItem.alt || 'media-file'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }*/}
-
-  // Handle resize
-  const handleMouseDown = (e: React.MouseEvent, direction: string) => {
+  const handleResizeStart = (e: React.PointerEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsResizing(true)
+    setResizeStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: item.size.width,
+      height: item.size.height
+    })
     
-    const startX = e.pageX
-    const startY = e.pageY
-    const startWidth = size.width
-    const startHeight = size.height
-
-    const handleMouseMove = (e: MouseEvent) => {
-      let newWidth = startWidth
-      let newHeight = startHeight
-
-      if (direction.includes('e')) {
-        newWidth = startWidth + e.pageX - startX
-      }
-      if (direction.includes('w')) {
-        newWidth = startWidth - e.pageX + startX
-      }
-      if (direction.includes('s')) {
-        newHeight = startHeight + e.pageY - startY
-      }
-      if (direction.includes('n')) {
-        newHeight = startHeight - e.pageY + startY
-      }
-
-      setSize({
-        width: Math.max(400, Math.min(newWidth, window.innerWidth - 50)),
-        height: Math.max(300, Math.min(newHeight, window.innerHeight - 50))
-      })
+    const handleResizeMove = (e: PointerEvent) => {
+      const deltaX = e.clientX - resizeStart.x
+      const deltaY = e.clientY - resizeStart.y
+      onResize({ width: deltaX, height: deltaY })
     }
 
-    const handleMouseUp = () => {
+    const handleResizeEnd = () => {
       setIsResizing(false)
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
+      document.removeEventListener('pointermove', handleResizeMove)
+      document.removeEventListener('pointerup', handleResizeEnd)
     }
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    document.addEventListener('pointermove', handleResizeMove)
+    document.addEventListener('pointerup', handleResizeEnd)
   }
-
-  if (media.length === 0) return null
-
-  const currentMedia = media[currentMediaIndex]
 
   return (
     <motion.div
-      ref={viewerRef}
       drag
+      dragControls={dragControls}
+      dragListener={false}
       dragMomentum={false}
-      dragElastic={0.1}
-      onDragStart={() => setIsDragging(true)}
-      onDragEnd={handleDragEnd}
-      dragConstraints={{
-        left: -position.x,
-        right: window.innerWidth - position.x - size.width,
-        top: -position.y,
-        bottom: window.innerHeight - position.y - size.height
-      }}
-      initial={{ 
-        opacity: 0,
-        scale: 0.9
-      }}
+      onDragEnd={onDragEnd}
+      onDragStart={onDragStart}
+      initial={{ scale: 0.8, opacity: 0 }}
       animate={{ 
+        scale: 1, 
         opacity: 1,
-        scale: 1
+        x: item.position.x,
+        y: item.position.y
       }}
-      exit={{ 
-        opacity: 0,
-        scale: 0.9,
-        transition: { duration: 0.2 }
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+      className={`absolute bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-300 dark:border-gray-700 overflow-hidden ${
+        isDragged ? 'cursor-grabbing' : 'cursor-grab'
+      }`}
+      style={{
+        width: item.size.width,
+        height: item.size.height,
+        zIndex: item.zIndex,
+        touchAction: 'none'
       }}
-      transition={{ 
-        type: 'spring', 
-        stiffness: 300, 
-        damping: 30
-      }}
-      className={`fixed ${isDragging ? 'cursor-grabbing' : ''} select-none`}
-      style={{ 
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        width: isMinimized ? '300px' : `${size.width}px`,
-        height: isMinimized ? 'auto' : `${size.height}px`,
-        cursor: isResizing ? 'nwse-resize' : isDragging ? 'grabbing' : 'auto',
-        zIndex: 10001
-      }}
+      onClick={onClick}
     >
-      {/* Ventana estilo macOS */}
-      <div className="w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-300 dark:border-gray-700 overflow-hidden flex flex-col">
-        {/* Header de la ventana */}
-        <div className="flex items-center justify-between px-4 h-11 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border-b border-gray-300 dark:border-gray-700 cursor-move">
+      {/* Window Header */}
+      <div 
+        className="bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border-b border-gray-300 dark:border-gray-700 px-3 py-2 flex items-center justify-between select-none cursor-move"
+        onPointerDown={(e) => {
+          if (!isResizing) {
+            dragControls.start(e)
+          }
+        }}
+      >
           <div className="flex items-center space-x-2">
-            {/* Traffic lights */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onClose}
-              className="w-3 h-3 bg-gradient-to-b from-red-400 to-red-500 rounded-full flex items-center justify-center group hover:from-red-500 hover:to-red-600 transition-colors shadow-sm"
-            >
-              <X className="w-2 h-2 text-red-900 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsMinimized(!isMinimized)}
-              className="w-3 h-3 bg-gradient-to-b from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center group hover:from-yellow-500 hover:to-yellow-600 transition-colors shadow-sm"
-            >
-              <div className="w-1.5 h-0.5 bg-yellow-900 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-3 h-3 bg-gradient-to-b from-green-400 to-green-500 rounded-full flex items-center justify-center group hover:from-green-500 hover:to-green-600 transition-colors shadow-sm"
-            >
-              <div className="w-1 h-1 bg-green-900 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </motion.button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onClose()
+            }}
+            className="w-3 h-3 bg-red-500 rounded-full flex items-center justify-center group hover:bg-red-600 transition-colors"
+          >
+            <X className="w-2 h-2 text-red-800 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+          <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+          <div className="w-3 h-3 bg-green-500 rounded-full" />
           </div>
           
-          {/* Título y contador */}
-          <div className="flex items-center space-x-2 flex-1 justify-center">
-            {currentMedia.type === 'image' ? (
-              <Image className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-            ) : (
-              <Video className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-            )}
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {title} - {currentMediaIndex + 1}/{media.length}
+        <div className="flex-1 text-center">
+          <span className="text-xs font-medium text-gray-600 dark:text-gray-300 flex items-center justify-center gap-1">
+            {getFileIcon(item.file.type)}
+            {item.file.name}
             </span>
           </div>
-          
-          {/* Botón de descarga 
-          <div className="flex items-center space-x-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleDownload(currentMedia)}
-              className="p-1.5 hover:bg-gray-300/50 dark:hover:bg-gray-700/50 rounded transition-colors"
-              title="Descargar"
-            >
-              <Download className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
-            </motion.button>
-          </div>*/}
         </div>
 
-        {/* Contenido del media */}
-        {!isMinimized && (
-          <div className="flex-1 relative bg-black flex items-center justify-center">
-            {currentMedia.type === 'image' ? (
-              <img
-                src={currentMedia.src}
-                alt={currentMedia.alt}
-                className="max-w-full max-h-full object-contain"
-              />
-            ) : (
-              <video
-                src={currentMedia.src}
-                controls
-                className="max-w-full max-h-full object-contain"
-                autoPlay={false}
-              />
-            )}
-
-            {/* Controles de navegación si hay múltiples elementos */}
-            {media.length > 1 && (
-              <>
-                <button
-                  onClick={handlePrevious}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </>
-            )}
-
-            {/* Información del media */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-              <div className="text-white">
-                <h3 className="font-medium text-sm">{currentMedia.title || currentMedia.alt}</h3>
-                {currentMedia.description && (
-                  <p className="text-xs text-gray-300 mt-1">{currentMedia.description}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Thumbnails si hay múltiples elementos y no está minimizado */}
-        {!isMinimized && media.length > 1 && (
-          <div className="border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
-            <div className="flex space-x-2 overflow-x-auto">
-              {media.map((item, index) => (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentMediaIndex(index)}
-                  className={`flex-shrink-0 w-16 h-16 rounded border-2 transition-colors ${
-                    index === currentMediaIndex 
-                      ? 'border-blue-500' 
-                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                  }`}
-                >
-                  {item.type === 'image' ? (
-                    <img
-                      src={item.src}
-                      alt={item.alt}
-                      className="w-full h-full object-cover rounded"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-800 rounded flex items-center justify-center">
-                      <Video className="w-6 h-6 text-white" />
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Resize handles cuando no está minimizado */}
-        {!isMinimized && (
-          <>
-            <div 
-              className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'se')}
-            />
-            <div 
-              className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize"
-              onMouseDown={(e) => handleMouseDown(e, 's')}
-            />
-            <div 
-              className="absolute top-0 bottom-0 right-0 w-1 cursor-ew-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'e')}
-            />
-            <div 
-              className="absolute top-0 bottom-0 left-0 w-1 cursor-ew-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'w')}
-            />
-            <div 
-              className="absolute top-44 left-0 right-0 h-1 cursor-ns-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'n')}
-            />
-            <div 
-              className="absolute top-44 left-0 w-4 h-4 cursor-nwse-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'nw')}
-            />
-            <div 
-              className="absolute top-44 right-0 w-4 h-4 cursor-nesw-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'ne')}
-            />
-            <div 
-              className="absolute bottom-0 left-0 w-4 h-4 cursor-nesw-resize"
-              onMouseDown={(e) => handleMouseDown(e, 'sw')}
-            />
-          </>
-        )}
+      {/* Content */}
+      <div className="h-[calc(100%-40px)] relative">
+        {children}
+        
+        {/* Resize handle */}
+        <div
+          className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize opacity-50 hover:opacity-100 transition-opacity"
+          style={{
+            background: 'linear-gradient(-45deg, transparent 30%, #666 30%, #666 70%, transparent 70%)'
+          }}
+          onPointerDown={handleResizeStart}
+        />
       </div>
     </motion.div>
   )
+}
+
+// Helper function that might be used in MediaItem
+function getFileIcon(type: string) {
+  switch (type) {
+    case 'image':
+      return <FileImage className="w-3 h-3" />
+    case 'video':
+      return <Video className="w-3 h-3" />
+    case 'pdf':
+    case 'document':
+      return <FileText className="w-3 h-3" />
+    case 'web':
+      return <ExternalLink className="w-3 h-3" />
+    default:
+      return <FileText className="w-3 h-3" />
+  }
 }
