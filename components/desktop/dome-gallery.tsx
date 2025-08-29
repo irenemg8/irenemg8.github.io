@@ -58,6 +58,182 @@ const DEFAULT_IMAGES: ImageItem[] = [
   {
     src: "/pics/IMG_8541.jpg",
     alt: "Happy!",
+  },
+  {
+    src: "/pics/75E9EF74-DF03-41B9-9222-BF22638C34CE.JPEG",
+    alt: "Recuerdos especiales",
+  },
+  {
+    src: "/pics/922C4FBE-AD1B-405F-BFB6-0A9D42BFD2A1.JPEG",
+    alt: "Momentos únicos",
+  },
+  {
+    src: "/pics/IMG_0210.JPEG",
+    alt: "Aventuras",
+  },
+  {
+    src: "/pics/IMG_0472.JPEG",
+    alt: "Explorando",
+  },
+  {
+    src: "/pics/IMG_0482.JPEG",
+    alt: "Nuevos horizontes",
+  },
+  {
+    src: "/pics/IMG_0573.JPEG",
+    alt: "Descubrimientos",
+  },
+  {
+    src: "/pics/IMG_0596.JPEG",
+    alt: "Caminos por recorrer",
+  },
+  {
+    src: "/pics/IMG_0658.JPEG",
+    alt: "Paisajes únicos",
+  },
+  {
+    src: "/pics/IMG_0684.JPEG",
+    alt: "Momentos especiales",
+  },
+  {
+    src: "/pics/IMG_0692.JPEG",
+    alt: "Aventuras increíbles",
+  },
+  {
+    src: "/pics/IMG_0713.JPEG",
+    alt: "Días memorables",
+  },
+  {
+    src: "/pics/IMG_0800.JPEG",
+    alt: "Experiencias únicas",
+  },
+  {
+    src: "/pics/IMG_4488.JPEG",
+    alt: "Viajes increíbles",
+  },
+  {
+    src: "/pics/IMG_4668.JPEG",
+    alt: "Paisajes hermosos",
+  },
+  {
+    src: "/pics/IMG_4712.JPEG",
+    alt: "Lugares fantásticos",
+  },
+  {
+    src: "/pics/IMG_4774.JPEG",
+    alt: "Rincones especiales",
+  },
+  {
+    src: "/pics/IMG_5074.JPEG",
+    alt: "Momentos de calma",
+  },
+  {
+    src: "/pics/IMG_5373.JPEG",
+    alt: "Sonrisas y alegría",
+  },
+  {
+    src: "/pics/IMG_5378.JPEG",
+    alt: "Instantes perfectos",
+  },
+  {
+    src: "/pics/IMG_5384.JPEG",
+    alt: "Días perfectos",
+  },
+  {
+    src: "/pics/IMG_5533.JPEG",
+    alt: "Aventuras diarias",
+  },
+  {
+    src: "/pics/IMG_5573.JPEG",
+    alt: "Luz y sombras",
+  },
+  {
+    src: "/pics/IMG_6212.JPEG",
+    alt: "Momentos mágicos",
+  },
+  {
+    src: "/pics/IMG_8406.JPEG",
+    alt: "Experiencias únicas",
+  },
+  {
+    src: "/pics/B672F6B4-20FA-4B8E-AE0F-C9C4AE5674B6.JPEG",
+    alt: "Recuerdos preciosos",
+  },
+  {
+    src: "/pics/82KaYkp4rxDXzWEh.PNG",
+    alt: "Captura especial",
+  },
+  {
+    src: "/pics/3133e1b6-6190-46b5-a669-7b31e4e2bf5f.JPEG",
+    alt: "Momentos únicos",
+  },
+  {
+    src: "/pics/7A8D0D38-7E46-4BC1-B672-5C8E4D499873.JPEG",
+    alt: "Recuerdos preciados",
+  },
+  {
+    src: "/pics/9EE3F71D-569F-4CF1-B145-3976FFC02089.JPEG",
+    alt: "Instantes especiales",
+  },
+  {
+    src: "/pics/IMG_5781.PNG",
+    alt: "Momentos capturados",
+  },
+  {
+    src: "/pics/IMG_5856.JPEG",
+    alt: "Vivencias especiales",
+  },
+  {
+    src: "/pics/IMG_6128.JPEG",
+    alt: "Aventuras cotidianas",
+  },
+  {
+    src: "/pics/IMG_6208.JPEG",
+    alt: "Lugares únicos",
+  },
+  {
+    src: "/pics/IMG_6243.JPEG",
+    alt: "Recuerdos dorados",
+  },
+  {
+    src: "/pics/IMG_6351.JPEG",
+    alt: "Instantes de felicidad",
+  },
+  {
+    src: "/pics/IMG_6388.JPEG",
+    alt: "Paisajes inolvidables",
+  },
+  {
+    src: "/pics/IMG_6389.JPEG",
+    alt: "Momentos de paz",
+  },
+  {
+    src: "/pics/IMG_7110.JPEG",
+    alt: "Aventuras sin fin",
+  },
+  {
+    src: "/pics/IMG_7508.JPEG",
+    alt: "Caminos de ensueño",
+  },
+  {
+    src: "/pics/IMG_7656.JPEG",
+    alt: "Horizontes infinitos",
+  },
+  {
+    src: "/pics/IMG_7849.JPEG",
+    alt: "Experiencias memorables",
+  },
+  {
+    src: "/pics/IMG_8099.JPEG",
+    alt: "Días llenos de luz",
+  },
+  {
+    src: "/pics/IMG_8410.JPEG",
+    alt: "Rincones del mundo",
+  },
+  {
+    src: "/pics/IMG_8483.jpg",
+    alt: "Good vibes",
   }
 ];
 

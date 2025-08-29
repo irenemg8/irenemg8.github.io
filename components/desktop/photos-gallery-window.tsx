@@ -76,7 +76,7 @@ export function PhotosGalleryWindow({ isOpen, onClose }: PhotosGalleryWindowProp
             <DomeGallery 
               fit={0.5}
               minRadius={600}
-              segments={34}
+              segments={45}
               maxVerticalRotationDeg={0}
               dragDampening={2}
               grayscale={false}
