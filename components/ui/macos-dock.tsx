@@ -16,9 +16,10 @@ interface MacOSDockProps {
   onShowStickyNote?: () => void
   onShowFaceTime?: () => void
   onShowMessages?: () => void
+  onShowPhotos?: () => void
 }
 
-export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages }: MacOSDockProps) {
+export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, onShowPhotos }: MacOSDockProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
@@ -91,7 +92,9 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages }: 
       label: 'Fotos',
       action: () => {
         setActiveItem('photos')
-        console.log('Photos clicked')
+        if (onShowPhotos) {
+          onShowPhotos()
+        }
       }
     },
     {

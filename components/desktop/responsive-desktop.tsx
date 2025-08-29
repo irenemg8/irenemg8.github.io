@@ -18,6 +18,8 @@ import { FaceTimeWindow } from '@/components/desktop/facetime-window'
 import { GEFolderWindow } from '@/components/desktop/ge-folder-window'
 import { HackathonsFolderWindow } from '@/components/desktop/hackathons-folder-window'
 import { MessagesWindow } from '@/components/desktop/messages-window'
+import { PolaroidPhotos } from '@/components/desktop/polaroid-photos'
+import { PhotosGalleryWindow } from '@/components/desktop/photos-gallery-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -41,6 +43,8 @@ export function ResponsiveDesktop() {
   const [showGEFolder, setShowGEFolder] = useState(false)
   const [showHackathonsFolder, setShowHackathonsFolder] = useState(false)
   const [showMessages, setShowMessages] = useState(false)
+  const [showPolaroidPhotos, setShowPolaroidPhotos] = useState(false)
+  const [showPhotosGallery, setShowPhotosGallery] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -434,7 +438,8 @@ export function ResponsiveDesktop() {
           <MacOSDock 
             onShowStickyNote={showStickyNoteFromDock}
             onShowFaceTime={() => setShowFaceTime(true)}
-            onShowMessages={() => setShowMessages(true)} 
+            onShowMessages={() => setShowMessages(true)}
+            onShowPhotos={() => setShowPhotosGallery(true)}
           />
 
         </div>
@@ -512,6 +517,19 @@ export function ResponsiveDesktop() {
           onClose={() => setShowHackathonsFolder(false)}
         />
       )}
+      
+      {/* Polaroid Photos - Commented for future use */}
+      {/* {showPolaroidPhotos && isMounted && (
+        <PolaroidPhotos 
+          onClose={() => setShowPolaroidPhotos(false)}
+        />
+      )} */}
+      
+      {/* Photos Gallery Window */}
+      <PhotosGalleryWindow
+        isOpen={showPhotosGallery}
+        onClose={() => setShowPhotosGallery(false)}
+      />
     </>
   )
 }
