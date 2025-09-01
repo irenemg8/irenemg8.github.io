@@ -23,6 +23,9 @@ import { PhotosGalleryWindow } from '@/components/desktop/photos-gallery-window'
 import { CodeEditorWindow } from '@/components/desktop/code-editor-window'
 import { LaunchpadWindow } from '@/components/desktop/launchpad-window'
 import { TerminalWindow } from '@/components/desktop/terminal-window'
+import { CalculatorWindow } from '@/components/desktop/calculator-window'
+import { AppStoreWindow } from '@/components/desktop/appstore-window'
+import { SpotifyWindow } from '@/components/desktop/spotify-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -51,6 +54,9 @@ export function ResponsiveDesktop() {
   const [showCodeEditor, setShowCodeEditor] = useState(false)
   const [showLaunchpad, setShowLaunchpad] = useState(false)
   const [showTerminal, setShowTerminal] = useState(false)
+  const [showCalculator, setShowCalculator] = useState(false)
+  const [showAppStore, setShowAppStore] = useState(false)
+  const [showSpotify, setShowSpotify] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -561,6 +567,15 @@ export function ResponsiveDesktop() {
               case 'terminal':
                 setShowTerminal(true)
                 break
+              case 'calculator':
+                setShowCalculator(true)
+                break
+              case 'appstore':
+                setShowAppStore(true)
+                break
+              case 'spotify':
+                setShowSpotify(true)
+                break
               case 'messages':
                 setShowMessages(true)
                 break
@@ -589,6 +604,30 @@ export function ResponsiveDesktop() {
         <TerminalWindow
           isOpen={showTerminal}
           onClose={() => setShowTerminal(false)}
+        />
+      )}
+      
+      {/* Calculator Window */}
+      {isMounted && (
+        <CalculatorWindow
+          isOpen={showCalculator}
+          onClose={() => setShowCalculator(false)}
+        />
+      )}
+      
+      {/* App Store Window */}
+      {isMounted && (
+        <AppStoreWindow
+          isOpen={showAppStore}
+          onClose={() => setShowAppStore(false)}
+        />
+      )}
+      
+      {/* Spotify Window */}
+      {isMounted && (
+        <SpotifyWindow
+          isOpen={showSpotify}
+          onClose={() => setShowSpotify(false)}
         />
       )}
     </>

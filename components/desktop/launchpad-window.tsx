@@ -140,10 +140,40 @@ export function LaunchpadWindow({ isOpen, onClose, onOpenApp }: LaunchpadWindowP
     {
       id: 'terminal',
       name: 'Terminal',
-      icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiMwRDBEMEQiLz4KPHBhdGggZD0iTTEyIDEySDUyVjUySDEyVjEyWiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBkPSJNMTYgMjQvMjQgMzJMMTYgNDBWMjRaIiBmaWxsPSIjMDBGRjAwIi8+CjxyZWN0IHg9IjI4IiB5PSIzNiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjMiIGZpbGw9IiMwMEZGMDAiLz4KPC9zdmc+',
+      icon: '/Dock/terminal.png',
       category: 'development',
       action: () => {
         onOpenApp?.('terminal')
+        onClose()
+      }
+    },
+    {
+      id: 'calculator',
+      name: 'Calculator',
+      icon: '/Dock/calculadora.png',
+      category: 'utilities',
+      action: () => {
+        onOpenApp?.('calculator')
+        onClose()
+      }
+    },
+    {
+      id: 'appstore',
+      name: 'App Store',
+      icon: '/Dock/appstore.png',
+      category: 'system',
+      action: () => {
+        onOpenApp?.('appstore')
+        onClose()
+      }
+    },
+    {
+      id: 'spotify',
+      name: 'Spotify',
+      icon: '/Dock/spotify.png',
+      category: 'entertainment',
+      action: () => {
+        onOpenApp?.('spotify')
         onClose()
       }
     }
