@@ -70,6 +70,7 @@ export function ResponsiveDesktop() {
   const [showSpotify, setShowSpotify] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showConstructionAlert, setShowConstructionAlert] = useState(true)
+  const [showArtworksGallery, setShowArtworksGallery] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -419,9 +420,8 @@ export function ResponsiveDesktop() {
                   const button = document.querySelector('[data-press-library-trigger]') as HTMLButtonElement;
                   if (button) button.click();
                 } else if (project.id === 'artworks') {
-                  // Trigger the artworks modal directly
-                  const button = document.querySelector('[data-artworks-trigger]') as HTMLButtonElement;
-                  if (button) button.click();
+                  // Show artworks gallery directly
+                  setShowArtworksGallery(true);
                 } else if (project.id === 'work-experience') {
                   // Show work folder window
                   setShowWorkFolder(true);
@@ -512,8 +512,13 @@ export function ResponsiveDesktop() {
       {/* Hidden Press Library Modal component */}
       {isMounted && <PressLibraryModal />}
       
-      {/* Hidden Artworks Gallery component */}
-      {isMounted && <ArtworksGallery />}
+      {/* Artworks Gallery Modal */}
+      {isMounted && (
+        <ArtworksGallery 
+          isOpen={showArtworksGallery}
+          onClose={() => setShowArtworksGallery(false)}
+        />
+      )}
       
       {/* Hidden GitHub Safari Browser trigger */}
       {isMounted && (
