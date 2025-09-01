@@ -238,17 +238,7 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
         </button>
       )}
 
-      {/* Header info */}
-      <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-900/95 rounded-lg px-4 py-2 z-50001">
-        <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">
-          {project.title}
-        </h3>
-        {project.subtitle && (
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {project.subtitle}
-          </p>
-        )}
-      </div>
+
 
       {/* Draggable media items */}
       <AnimatePresence>
