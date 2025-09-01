@@ -6,7 +6,7 @@ import { X, MapPin, Calendar, Briefcase, Globe, Image } from 'lucide-react'
 
 interface MediaItem {
   id: string
-  type: 'image' | 'video'
+  type: 'image' | 'video' | 'audio'
   src: string
   alt: string
   title?: string

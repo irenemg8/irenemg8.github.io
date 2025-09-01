@@ -2,21 +2,21 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion'
-import { X, Minus, Square, FileImage, FileText, Video, ExternalLink, Download, Maximize2, Minimize2 } from 'lucide-react'
+import { X, Minus, Square, FileImage, FileText, Video, Music, ExternalLink, Download, Maximize2, Minimize2 } from 'lucide-react'
 import Image from 'next/image'
 
 interface MediaFile {
   id: string
   name: string
-  type: 'image' | 'video' | 'pdf' | 'presentation' | 'document' | 'web'
+  type: 'image' | 'video' | 'audio' | 'pdf' | 'presentation' | 'document' | 'web'
   url: string
   thumbnail?: string
 }
 
-interface HackathonData {
+interface ProjectData {
   id: string
-  eventName: string
-  projectTitle: string
+  title: string
+  subtitle?: string
   mediaFiles?: MediaFile[]
 }
 
@@ -29,20 +29,20 @@ interface DraggableMediaItem {
 }
 
 interface MediaViewerProps {
-  hackathon: HackathonData
+  project: ProjectData
   onClose: () => void
 }
 
-export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
+export function MediaViewer({ project, onClose }: MediaViewerProps) {
   const [mediaItems, setMediaItems] = useState<DraggableMediaItem[]>([])
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
   const [maxZIndex, setMaxZIndex] = useState(1000)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Initialize media items when hackathon changes
-    if (hackathon.mediaFiles) {
-      const initialItems = hackathon.mediaFiles.map((file, index) => ({
+    // Initialize media items when project changes
+    if (project.mediaFiles) {
+      const initialItems = project.mediaFiles.map((file, index) => ({
         id: file.id,
         file,
         position: { 
@@ -53,9 +53,9 @@ export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
         zIndex: 1000 + index
       }))
       setMediaItems(initialItems)
-      setMaxZIndex(1000 + hackathon.mediaFiles.length)
+      setMaxZIndex(1000 + project.mediaFiles.length)
     }
-  }, [hackathon])
+  }, [project])
 
   const getInitialSize = (type: string) => {
     switch (type) {
@@ -63,6 +63,8 @@ export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
         return { width: 300, height: 200 }
       case 'video':
         return { width: 400, height: 225 }
+      case 'audio':
+        return { width: 350, height: 120 }
       case 'pdf':
       case 'document':
       case 'presentation':
@@ -80,6 +82,8 @@ export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
         return <FileImage className="w-6 h-6" />
       case 'video':
         return <Video className="w-6 h-6" />
+      case 'audio':
+        return <Music className="w-6 h-6" />
       case 'pdf':
       case 'document':
         return <FileText className="w-6 h-6" />
@@ -161,6 +165,25 @@ export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
           </div>
         )
       
+      case 'audio':
+        return (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-b-lg p-4">
+            <div className="flex items-center justify-center w-16 h-16 bg-white/80 dark:bg-gray-800/80 rounded-full mb-4 shadow-lg">
+              <Music className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            </div>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 text-center">
+              {file.name}
+            </h3>
+            <audio 
+              controls 
+              className="w-full max-w-xs"
+              src={file.url}
+            >
+              Tu navegador no soporta el elemento de audio.
+            </audio>
+          </div>
+        )
+      
       case 'pdf':
       case 'document':
       case 'presentation':
@@ -217,11 +240,13 @@ export function MediaViewer({ hackathon, onClose }: MediaViewerProps) {
       {/* Header info */}
       <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-900/95 rounded-lg px-4 py-2 z-50001">
         <h3 className="font-bold text-lg text-gray-800 dark:text-gray-200">
-          {hackathon.projectTitle}
+          {project.title}
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {hackathon.eventName}
-        </p>
+        {project.subtitle && (
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {project.subtitle}
+          </p>
+        )}
       </div>
 
       {/* Draggable media items */}
@@ -380,6 +405,8 @@ function getFileIcon(type: string) {
       return <FileImage className="w-3 h-3" />
     case 'video':
       return <Video className="w-3 h-3" />
+    case 'audio':
+      return <Music className="w-3 h-3" />
     case 'pdf':
     case 'document':
       return <FileText className="w-3 h-3" />
