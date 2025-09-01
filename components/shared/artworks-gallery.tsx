@@ -139,7 +139,7 @@ export function ArtworksGallery({ isOpen, onClose }: ArtworksGalleryProps) {
               </div>
               
               {/* Dual Row Gallery Content */}
-              <div className="p-4 h-full overflow-hidden">
+              <div className="p-6 h-full overflow-hidden">
                 <div className="h-[calc(85vh-120px)] w-full">
                   <DualRowGallery
                     items={artworkItems}
