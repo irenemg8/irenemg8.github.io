@@ -46,6 +46,11 @@ export const metadata = {
   generator: 'Next.js + Framer Motion + Three.js',
   keywords: 'diseño ux ui, desarrollo frontend, portfolio interactivo, experiencia digital',
   authors: [{ name: 'Irene Medina García' }],
+  icons: {
+    icon: '/yo.ico',
+    shortcut: '/yo.ico',
+    apple: '/yo.ico',
+  },
 }
 
 export default function RootLayout({
