@@ -21,10 +21,12 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
   const [history, setHistory] = useState<string[]>([
     'Last login: ' + new Date().toLocaleString() + ' on console',
     'Welcome to Terminal! Type "help" for available commands.',
+    '📂 Contenido actual del Desktop:',
+    '📁 proyectos    📁 fotos    📁 documentos    📄 portfolio.txt',
     ''
   ])
   const [currentInput, setCurrentInput] = useState('')
-  const [currentPath, setCurrentPath] = useState('/Users/irene')
+  const [currentPath, setCurrentPath] = useState('/Users/irene/Desktop')
   const [commandHistory, setCommandHistory] = useState<string[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
   const terminalRef = useRef<HTMLDivElement>(null)
@@ -53,54 +55,103 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
                     content: 'Mi portfolio web - irenemg8.github.io\nDesarrollado con Next.js y React\n¡Gracias por visitarlo!',
                     size: 89
                   },
-                  'projects': {
-                    name: 'projects',
+                  'proyectos': {
+                    name: 'proyectos',
                     type: 'directory',
                     children: {
-                      'README.md': {
-                        name: 'README.md',
-                        type: 'file',
-                        content: '# Mis Proyectos\n\n- Portfolio Web\n- VS Code Editor\n- Terminal App\n- Launchpad',
-                        size: 78
+                      'web-portfolio': {
+                        name: 'web-portfolio',
+                        type: 'directory',
+                        children: {
+                          'README.md': {
+                            name: 'README.md',
+                            type: 'file',
+                            content: '# Portfolio Web\n\nPortfolio personal desarrollado con Next.js, React y TypeScript\n\n## Características:\n- Diseño macOS\n- Terminal interactiva\n- Editor de código\n- Reproductor Spotify',
+                            size: 180
+                          },
+                          'package.json': {
+                            name: 'package.json',
+                            type: 'file',
+                            content: '{\n  "name": "portfolio-irenemg8",\n  "version": "1.0.0",\n  "dependencies": {\n    "next": "^14.0.0",\n    "react": "^18.0.0"\n  }\n}',
+                            size: 140
+                          }
+                        }
+                      },
+                      'hackathons': {
+                        name: 'hackathons',
+                        type: 'directory',
+                        children: {
+                          'datathon-2024.md': {
+                            name: 'datathon-2024.md',
+                            type: 'file',
+                            content: '# Datathon 2024\n\nProyecto ganador del hackathon de datos\n\n## Tecnologías:\n- Python\n- Machine Learning\n- Data Visualization',
+                            size: 120
+                          }
+                        }
+                      },
+                      'ia-projects': {
+                        name: 'ia-projects',
+                        type: 'directory',
+                        children: {
+                          'neural-networks.py': {
+                            name: 'neural-networks.py',
+                            type: 'file',
+                            content: '# Redes Neuronales Básicas\nimport tensorflow as tf\n\n# Modelo simple de clasificación\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(128, activation="relu"),\n    tf.keras.layers.Dense(10, activation="softmax")\n])',
+                            size: 205
+                          }
+                        }
                       }
                     }
-                  }
-                }
-              },
-              Documents: {
-                name: 'Documents',
-                type: 'directory',
-                children: {
-                  'notes.txt': {
-                    name: 'notes.txt',
-                    type: 'file',
-                    content: 'Mis notas personales:\n- Aprender más React\n- Mejorar el portfolio\n- Estudiar nuevas tecnologías',
-                    size: 102
+                  },
+                  'fotos': {
+                    name: 'fotos',
+                    type: 'directory',
+                    children: {
+                      'perfil.jpg': { name: 'perfil.jpg', type: 'file', size: 2048 },
+                      'hackathon-team.jpg': { name: 'hackathon-team.jpg', type: 'file', size: 3072 },
+                      'graduation.jpg': { name: 'graduation.jpg', type: 'file', size: 2560 }
+                    }
+                  },
+                  'documentos': {
+                    name: 'documentos',
+                    type: 'directory',
+                    children: {
+                      'cv-irene-medina.pdf': {
+                        name: 'cv-irene-medina.pdf',
+                        type: 'file',
+                        content: 'Curriculum Vitae - Irene Medina García\nDesarrolladora Full Stack\nEspecialista en IA y Machine Learning',
+                        size: 1024
+                      },
+                      'notas.txt': {
+                        name: 'notas.txt',
+                        type: 'file',
+                        content: 'Ideas para el portfolio:\n- Agregar más animaciones\n- Mejorar la responsividad\n- Añadir modo oscuro/claro\n- Integrar más APIs',
+                        size: 142
+                      }
+                    }
                   }
                 }
               },
               Downloads: {
                 name: 'Downloads',
                 type: 'directory',
-                children: {}
+                children: {
+                  'codigo-fuente.zip': { name: 'codigo-fuente.zip', type: 'file', size: 8192 }
+                }
               }
             }
           }
         }
       },
-      Applications: {
-        name: 'Applications',
+      Aplicaciones: {
+        name: 'Aplicaciones',
         type: 'directory',
         children: {
           'Terminal.app': { name: 'Terminal.app', type: 'directory', children: {} },
+          'VSCode.app': { name: 'VSCode.app', type: 'directory', children: {} },
           'Safari.app': { name: 'Safari.app', type: 'directory', children: {} },
-          'VS Code.app': { name: 'VS Code.app', type: 'directory', children: {} }
+          'Spotify.app': { name: 'Spotify.app', type: 'directory', children: {} }
         }
-      },
-      tmp: {
-        name: 'tmp',
-        type: 'directory',
-        children: {}
       }
     }
   })
@@ -136,20 +187,19 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
     switch (cmd) {
       case 'help':
         output = `Comandos disponibles:
-  ls [path]      - Listar archivos y directorios
-  cd [path]      - Cambiar directorio
+  ls [path]      - Listar archivos y directorios con iconos
+  cd [path]      - Cambiar directorio y mostrar contenido
   pwd            - Mostrar directorio actual
   cat [file]     - Mostrar contenido de archivo
-  mkdir [name]   - Crear directorio
-  touch [name]   - Crear archivo vacío
-  rm [name]      - Eliminar archivo
   echo [text]    - Mostrar texto
   whoami         - Mostrar usuario actual
   date           - Mostrar fecha y hora
-  uname          - Información del sistema
   history        - Mostrar historial de comandos
   clear          - Limpiar terminal
-  exit           - Cerrar terminal`
+  exit           - Cerrar terminal
+  
+🎯 Tip: Los directorios se muestran con 📁 y los archivos con iconos específicos
+📂 Navega por proyectos, fotos y documentos con cd [carpeta]`
         break
 
       case 'ls':
@@ -173,10 +223,22 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
             output = ''
           } else {
             output = items.map(item => {
-              const color = item.type === 'directory' ? '\x1b[34m' : '\x1b[37m'
-              const reset = '\x1b[0m'
-              return `${color}${item.name}${reset}`
-            }).join('  ')
+              if (item.type === 'directory') {
+                return `📁 ${item.name}`
+              } else {
+                const ext = item.name.split('.').pop()
+                let icon = '📄'
+                if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') icon = '🖼️'
+                else if (ext === 'pdf') icon = '📋'
+                else if (ext === 'py') icon = '🐍'
+                else if (ext === 'js' || ext === 'ts' || ext === 'tsx') icon = '⚡'
+                else if (ext === 'md') icon = '📝'
+                else if (ext === 'json') icon = '🔧'
+                else if (ext === 'zip') icon = '📦'
+                else if (ext === 'txt') icon = '📄'
+                return `${icon} ${item.name}`
+              }
+            }).join('    ')
           }
         }
         break
@@ -186,7 +248,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
         break
 
       case 'cd':
-        const newPath = params[0] || '/Users/irene'
+        const newPath = params[0] || '/Users/irene/Desktop'
         let resolvedNewPath = ''
 
         if (newPath === '~' || newPath === '') {
@@ -217,6 +279,30 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
 
         if (pathExists) {
           setCurrentPath(resolvedNewPath || '/')
+          // Mostrar contenido del nuevo directorio automáticamente
+          const items = Object.values(checkDir.children || {})
+          if (items.length > 0) {
+            const listing = items.map(item => {
+              if (item.type === 'directory') {
+                return `📁 ${item.name}`
+              } else {
+                const ext = item.name.split('.').pop()
+                let icon = '📄'
+                if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') icon = '🖼️'
+                else if (ext === 'pdf') icon = '📋'
+                else if (ext === 'py') icon = '🐍'
+                else if (ext === 'js' || ext === 'ts' || ext === 'tsx') icon = '⚡'
+                else if (ext === 'md') icon = '📝'
+                else if (ext === 'json') icon = '🔧'
+                else if (ext === 'zip') icon = '📦'
+                else if (ext === 'txt') icon = '📄'
+                return `${icon} ${item.name}`
+              }
+            }).join('    ')
+            output = `📂 Contenido de ${resolvedNewPath || '/'}:\n${listing}`
+          } else {
+            output = `📂 Directorio vacío: ${resolvedNewPath || '/'}`
+          }
         } else {
           output = `cd: ${newPath}: No such file or directory`
         }

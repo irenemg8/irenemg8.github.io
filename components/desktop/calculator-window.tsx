@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 
 interface CalculatorWindowProps {
@@ -13,6 +13,9 @@ export function CalculatorWindow({ isOpen, onClose }: CalculatorWindowProps) {
   const [previousValue, setPreviousValue] = useState<number | null>(null)
   const [operation, setOperation] = useState<string | null>(null)
   const [waitingForOperand, setWaitingForOperand] = useState(false)
+  const [position, setPosition] = useState({ x: 50, y: 50 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
 
   const inputNumber = (num: string) => {
@@ -109,7 +112,7 @@ export function CalculatorWindow({ isOpen, onClose }: CalculatorWindowProps) {
     children: React.ReactNode
     variant?: 'default' | 'operator' | 'number' | 'special'
   }) => {
-    const baseStyle = "w-16 h-16 text-xl font-normal rounded-full transition-all duration-150 active:scale-95 flex items-center justify-center"
+    const baseStyle = "w-12 h-12 text-lg font-normal rounded-full transition-all duration-150 active:scale-95 flex items-center justify-center"
     
     const variants = {
       default: "bg-gray-600 hover:bg-gray-500 text-white",
@@ -128,13 +131,101 @@ export function CalculatorWindow({ isOpen, onClose }: CalculatorWindowProps) {
     )
   }
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true)
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    })
+  }
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+      }
+    }
+  }, [isDragging, dragStart])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return
+      
+      e.preventDefault()
+      
+      // Números
+      if (e.key >= '0' && e.key <= '9') {
+        inputNumber(e.key)
+      }
+      // Operadores
+      else if (e.key === '+') {
+        performOperation('+')
+      }
+      else if (e.key === '-') {
+        performOperation('−')
+      }
+      else if (e.key === '*') {
+        performOperation('×')
+      }
+      else if (e.key === '/') {
+        performOperation('÷')
+      }
+      else if (e.key === '=' || e.key === 'Enter') {
+        performOperation('=')
+      }
+      // Otras funciones
+      else if (e.key === '.' || e.key === ',') {
+        inputDecimal()
+      }
+      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+        clear()
+      }
+      else if (e.key === 'Backspace') {
+        if (display.length > 1) {
+          setDisplay(display.slice(0, -1))
+        } else {
+          setDisplay('0')
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, display])
+
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="w-80 h-[600px] bg-black rounded-2xl shadow-2xl overflow-hidden border border-gray-700 flex flex-col">
+    <div className="fixed inset-0 z-50 pointer-events-none">
+      <div 
+        className="w-72 h-[480px] bg-black rounded-2xl shadow-2xl overflow-hidden border border-gray-700 flex flex-col pointer-events-auto"
+        style={{
+          position: 'absolute',
+          left: `${position.x}px`,
+          top: `${position.y}px`
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center p-4 border-b border-gray-800 bg-black">
+        <div 
+          className="flex items-center p-3 border-b border-gray-800 bg-black cursor-move select-none"
+          onMouseDown={handleMouseDown}
+        >
           <div className="flex items-center space-x-3">
             <div className="flex space-x-2">
               <button
@@ -147,24 +238,24 @@ export function CalculatorWindow({ isOpen, onClose }: CalculatorWindowProps) {
             </div>
           </div>
           <div className="flex-1 flex justify-center">
-            <h2 className="text-lg font-medium text-white">Calculator</h2>
+            <h2 className="text-base font-medium text-white">Calculator</h2>
           </div>
           <div className="w-16"></div>
         </div>
 
         {/* Display */}
-        <div className="p-6 bg-black flex-1 flex items-end">
+        <div className="p-4 bg-black flex-1 flex items-end">
           <div className="text-right text-white w-full">
             {/* Display principal */}
-            <div className="text-6xl font-light tracking-wide leading-none mb-4">
+            <div className="text-4xl font-light tracking-wide leading-none mb-3">
               {display}
             </div>
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="p-6 bg-black">
-          <div className="grid grid-cols-4 gap-4 justify-items-center">
+        <div className="p-4 bg-black">
+          <div className="grid grid-cols-4 gap-3 justify-items-center">
             {/* Fila 1 */}
             <Button onClick={clear} variant="special">AC</Button>
             <Button onClick={toggleSign} variant="special">+/-</Button>
@@ -190,7 +281,7 @@ export function CalculatorWindow({ isOpen, onClose }: CalculatorWindowProps) {
             <Button onClick={() => performOperation('+')} variant="operator">+</Button>
 
             {/* Fila 5 */}
-            <Button onClick={() => inputNumber('0')} variant="number" className="col-span-2 w-36 justify-start pl-6">0</Button>
+            <Button onClick={() => inputNumber('0')} variant="number" className="col-span-2 w-28">0</Button>
             <Button onClick={inputDecimal} variant="number">.</Button>
             <Button onClick={() => performOperation('=')} variant="operator">=</Button>
           </div>
