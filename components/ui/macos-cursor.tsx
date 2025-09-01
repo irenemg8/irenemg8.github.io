@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useSettings } from '@/contexts/settings-context'
 
 export function MacOSCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isClicking, setIsClicking] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
+  const { settings } = useSettings()
 
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
@@ -44,10 +46,18 @@ export function MacOSCursor() {
           x: mousePosition.x - 6,
           y: mousePosition.y - 6,
         }}
-        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 500, 
+          damping: Math.max(15, Math.min(40, 15 + (settings.cursorSpeed - 1) * 3))
+        }}
       >
         <motion.div
-          className="w-3 h-3 bg-white rounded-full"
+          className="bg-white rounded-full"
+          style={{
+            width: `${12 * settings.cursorSize}px`,
+            height: `${12 * settings.cursorSize}px`,
+          }}
           animate={{
             scale: isClicking ? 0.8 : isHovering ? 1.5 : 1,
           }}
@@ -59,13 +69,21 @@ export function MacOSCursor() {
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-[99998]"
         style={{
-          x: mousePosition.x - 12,
-          y: mousePosition.y - 12,
+          x: mousePosition.x - (12 * settings.cursorSize),
+          y: mousePosition.y - (12 * settings.cursorSize),
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: Math.max(15, Math.min(35, 15 + (settings.cursorSpeed - 1) * 2.5))
+        }}
       >
         <motion.div
-          className="w-6 h-6 border border-white/30 rounded-full"
+          className="border border-white/30 rounded-full"
+          style={{
+            width: `${24 * settings.cursorSize}px`,
+            height: `${24 * settings.cursorSize}px`,
+          }}
           animate={{
             scale: isHovering ? 1.8 : 0,
             opacity: isHovering ? 1 : 0,

@@ -7,6 +7,7 @@ import { JetBrains_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
 import { SpotifyProvider } from "@/contexts/spotify-context"
+import { SettingsProvider } from "@/contexts/settings-context"
 
 // Primary display font - Variable
 const inter = Inter({ 
@@ -39,7 +40,7 @@ const jetBrainsMono = JetBrains_Mono({
 })
 
 export const metadata = {
-  title: "Irene MG | Diseñadora & Desarrolladora Frontend",
+  title: "Irene MG | UX/UI Designer & Frontend Dev",
   description:
     "Portafolio inmersivo de Irene Medina García - Diseñadora UX/UI y Desarrolladora Frontend especializada en experiencias digitales inolvidables",
   generator: 'Next.js + Framer Motion + Three.js',
@@ -56,11 +57,13 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} ${poppins.variable} ${spaceMono.variable} ${jetBrainsMono.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <LanguageProvider>
-            <SpotifyProvider>
-              {children}
-            </SpotifyProvider>
-          </LanguageProvider>
+          <SettingsProvider>
+            <LanguageProvider>
+              <SpotifyProvider>
+                {children}
+              </SpotifyProvider>
+            </LanguageProvider>
+          </SettingsProvider>
         </ThemeProvider>
       </body>
     </html>
