@@ -149,7 +149,7 @@ export function LaunchpadWindow({ isOpen, onClose, onOpenApp }: LaunchpadWindowP
     },
     {
       id: 'calculator',
-      name: 'Calculator',
+      name: 'Calculadora',
       icon: '/Dock/calculadora.png',
       category: 'utilities',
       action: () => {

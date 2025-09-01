@@ -453,9 +453,9 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl h-full max-h-[80vh] bg-black rounded-lg shadow-2xl overflow-hidden border border-gray-700">
-        {/* Barra de título */}
-        <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700">
+      <div className="w-full max-w-4xl h-full max-h-[80vh] bg-black rounded-lg shadow-2xl overflow-hidden border border-gray-700 flex flex-col">
+        {/* Barra de título fija */}
+        <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="flex space-x-2">
               <button
@@ -470,11 +470,10 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
           </div>
         </div>
 
-        {/* Terminal content */}
+        {/* Terminal content con scroll */}
         <div
           ref={terminalRef}
-          className="h-full p-4 font-mono text-sm text-green-400 bg-black overflow-y-auto"
-          style={{ minHeight: 'calc(100% - 40px)' }}
+          className="flex-1 p-4 font-mono text-sm text-green-400 bg-black overflow-y-auto"
         >
           {/* Historial */}
           <div className="whitespace-pre-wrap">
