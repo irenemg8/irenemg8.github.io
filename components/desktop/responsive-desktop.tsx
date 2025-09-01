@@ -27,6 +27,7 @@ import { CalculatorWindow } from '@/components/desktop/calculator-window'
 import { AppStoreWindow } from '@/components/desktop/appstore-window'
 import { SpotifyWindow } from '@/components/desktop/spotify-window'
 import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
+import { SettingsWindow } from '@/components/desktop/settings-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -67,6 +68,7 @@ export function ResponsiveDesktop() {
   const [showCalculator, setShowCalculator] = useState(false)
   const [showAppStore, setShowAppStore] = useState(false)
   const [showSpotify, setShowSpotify] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [showConstructionAlert, setShowConstructionAlert] = useState(true)
 
   const [isMounted, setIsMounted] = useState(false)
@@ -485,6 +487,7 @@ export function ResponsiveDesktop() {
             onShowPhotos={() => setShowPhotosGallery(true)}
             onShowCodeEditor={() => setShowCodeEditor(true)}
             onShowLaunchpad={() => setShowLaunchpad(true)}
+            onShowSettings={() => setShowSettings(true)}
           />
 
         </div>
@@ -664,6 +667,14 @@ export function ResponsiveDesktop() {
 
       {/* Spotify Mini Player */}
       {isMounted && <SpotifyMiniPlayer />}
+
+      {/* Settings Window */}
+      {isMounted && (
+        <SettingsWindow
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
     </>
   )
 }

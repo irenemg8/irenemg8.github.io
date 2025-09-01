@@ -19,9 +19,10 @@ interface MacOSDockProps {
   onShowPhotos?: () => void
   onShowCodeEditor?: () => void
   onShowLaunchpad?: () => void
+  onShowSettings?: () => void
 }
 
-export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, onShowPhotos, onShowCodeEditor, onShowLaunchpad }: MacOSDockProps) {
+export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, onShowPhotos, onShowCodeEditor, onShowLaunchpad, onShowSettings }: MacOSDockProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
@@ -118,7 +119,9 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, on
       label: 'Preferencias del Sistema',
       action: () => {
         setActiveItem('settings')
-        console.log('Settings clicked')
+        if (onShowSettings) {
+          onShowSettings()
+        }
       }
     },
     {
