@@ -251,12 +251,7 @@ export default saludar
             </div>
             <span className="text-gray-300 text-sm font-medium">Visual Studio Code</span>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+         
         </div>
 
         <div className="flex flex-1 overflow-hidden">

@@ -22,6 +22,7 @@ import { PolaroidPhotos } from '@/components/desktop/polaroid-photos'
 import { PhotosGalleryWindow } from '@/components/desktop/photos-gallery-window'
 import { CodeEditorWindow } from '@/components/desktop/code-editor-window'
 import { LaunchpadWindow } from '@/components/desktop/launchpad-window'
+import { TerminalWindow } from '@/components/desktop/terminal-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -49,6 +50,7 @@ export function ResponsiveDesktop() {
   const [showPhotosGallery, setShowPhotosGallery] = useState(false)
   const [showCodeEditor, setShowCodeEditor] = useState(false)
   const [showLaunchpad, setShowLaunchpad] = useState(false)
+  const [showTerminal, setShowTerminal] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -556,6 +558,9 @@ export function ResponsiveDesktop() {
               case 'vs':
                 setShowCodeEditor(true)
                 break
+              case 'terminal':
+                setShowTerminal(true)
+                break
               case 'messages':
                 setShowMessages(true)
                 break
@@ -576,6 +581,14 @@ export function ResponsiveDesktop() {
                 console.log(`Opening app: ${appId}`)
             }
           }}
+        />
+      )}
+      
+      {/* Terminal Window */}
+      {isMounted && (
+        <TerminalWindow
+          isOpen={showTerminal}
+          onClose={() => setShowTerminal(false)}
         />
       )}
     </>

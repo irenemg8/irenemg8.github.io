@@ -136,6 +136,16 @@ export function LaunchpadWindow({ isOpen, onClose, onOpenApp }: LaunchpadWindowP
         onOpenApp?.('vs')
         onClose()
       }
+    },
+    {
+      id: 'terminal',
+      name: 'Terminal',
+      icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTYiIGZpbGw9IiMwRDBEMEQiLz4KPHBhdGggZD0iTTEyIDEySDUyVjUySDEyVjEyWiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBkPSJNMTYgMjQvMjQgMzJMMTYgNDBWMjRaIiBmaWxsPSIjMDBGRjAwIi8+CjxyZWN0IHg9IjI4IiB5PSIzNiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjMiIGZpbGw9IiMwMEZGMDAiLz4KPC9zdmc+',
+      category: 'development',
+      action: () => {
+        onOpenApp?.('terminal')
+        onClose()
+      }
     }
     // Nota: No incluimos 'varios' (Launchpad) ni 'trash' (Papelera) en el launchpad
   ]
