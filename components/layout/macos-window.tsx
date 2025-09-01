@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/language-context'
 import { LanguageToggle } from '@/components/shared/language-toggle'
 import { ModeToggle } from '@/components/shared/mode-toggle'
 import { MacOSParticles } from '@/components/effects/macos-particles'
-import { Wifi, Battery } from 'lucide-react'
+import { Wifi, Battery, BatteryCharging, Smartphone } from 'lucide-react'
 
 interface MacOSWindowProps {
   children: React.ReactNode
@@ -16,6 +16,9 @@ export function MacOSWindow({ children }: MacOSWindowProps) {
   const { t } = useLanguage()
   const [currentTime, setCurrentTime] = useState('')
   const [currentDate, setCurrentDate] = useState('')
+  const [batteryLevel, setBatteryLevel] = useState<number>(100)
+  const [isCharging, setIsCharging] = useState<boolean>(false)
+  const [connectionType, setConnectionType] = useState<'wifi' | 'cellular' | 'unknown'>('unknown')
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -42,6 +45,72 @@ export function MacOSWindow({ children }: MacOSWindowProps) {
     updateDateTime()
     const interval = setInterval(updateDateTime, 1000)
     return () => clearInterval(interval)
+  }, [])
+
+  // Battery status detection
+  useEffect(() => {
+    const checkBatteryStatus = async () => {
+      if ('getBattery' in navigator) {
+        try {
+          const battery = await (navigator as any).getBattery()
+          
+          const updateBatteryInfo = () => {
+            setBatteryLevel(Math.round(battery.level * 100))
+            setIsCharging(battery.charging)
+          }
+
+          updateBatteryInfo()
+          
+          battery.addEventListener('chargingchange', updateBatteryInfo)
+          battery.addEventListener('levelchange', updateBatteryInfo)
+
+          return () => {
+            battery.removeEventListener('chargingchange', updateBatteryInfo)
+            battery.removeEventListener('levelchange', updateBatteryInfo)
+          }
+        } catch (error) {
+          console.log('Battery API not available')
+        }
+      }
+    }
+
+    checkBatteryStatus()
+  }, [])
+
+  // Network connection detection
+  useEffect(() => {
+    const updateConnectionInfo = () => {
+      if ('connection' in navigator) {
+        const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection
+        
+        if (connection) {
+          const effectiveType = connection.effectiveType
+          
+          // Detect if it's WiFi (ethernet/wifi) or cellular
+          if (effectiveType === '4g' || effectiveType === '3g' || effectiveType === '2g' || effectiveType === 'slow-2g') {
+            setConnectionType('cellular')
+          } else {
+            setConnectionType('wifi')
+          }
+        } else {
+          setConnectionType('wifi') // Default to wifi if unknown
+        }
+      } else {
+        setConnectionType('wifi') // Default to wifi if Network Information API not available
+      }
+    }
+
+    updateConnectionInfo()
+
+    if ('connection' in navigator) {
+      const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection
+      if (connection) {
+        connection.addEventListener('change', updateConnectionInfo)
+        return () => {
+          connection.removeEventListener('change', updateConnectionInfo)
+        }
+      }
+    }
   }, [])
 
   return (
@@ -73,7 +142,11 @@ export function MacOSWindow({ children }: MacOSWindowProps) {
         {/* Right side - Status indicators and time */}
         <div className="flex items-center space-x-4 text-gray-700 dark:text-gray-300">
           <div className="flex items-center space-x-2">
-            <Battery className="h-3.5 w-3.5" />
+            {isCharging ? (
+              <BatteryCharging className="h-3.5 w-3.5" />
+            ) : (
+              <Battery className="h-3.5 w-3.5" />
+            )}
             <Wifi className="h-3.5 w-3.5" />
           </div>
           <div className="text-xs macos-text font-medium">
