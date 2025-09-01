@@ -248,12 +248,12 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
         {
           id: 'centromat-radio-1',
           type: 'audio',
-          src: '/music/centromat-anuncio-1.mp3',
+          src: '/work/centromat(1).mp3',
           alt: 'Anuncio de radio Centromat - Versión 1',
-          title: 'Anuncio Principal',
+          title: 'Septiembre 2025',
           description: 'Anuncio radiofónico principal de 30 segundos'
         },
-        {
+        /*{
           id: 'centromat-radio-2',
           type: 'audio',
           src: '/music/centromat-anuncio-2.mp3',
@@ -268,7 +268,7 @@ export function WorkFolderWindow({ isOpen, onClose }: WorkFolderWindowProps) {
           alt: 'Jingle Centromat',
           title: 'Jingle Corporativo',
           description: 'Jingle musical de identificación de marca'
-        }
+        }*/
       ]
     }
   ]

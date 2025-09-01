@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion'
-import { X, Minus, Square, FileImage, FileText, Video, Music, ExternalLink, Download, Maximize2, Minimize2 } from 'lucide-react'
+import { X, Minus, Square, FileImage, FileText, Video, Music, ExternalLink, Download, Maximize2, Minimize2, Play, Pause } from 'lucide-react'
 import Image from 'next/image'
 
 interface MediaFile {
@@ -42,16 +42,31 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
   useEffect(() => {
     // Initialize media items when project changes
     if (project.mediaFiles) {
-      const initialItems = project.mediaFiles.map((file, index) => ({
-        id: file.id,
-        file,
-        position: { 
-          x: 100 + (index * 50), 
-          y: 100 + (index * 50) 
-        },
-        size: getInitialSize(file.type),
-        zIndex: 1000 + index
-      }))
+      const initialItems = project.mediaFiles.map((file, index) => {
+        let position;
+        
+        if (file.type === 'audio') {
+          // Posiciones más aleatorias para archivos de audio
+          position = {
+            x: Math.random() * 400 + 50, // Entre 50 y 450
+            y: Math.random() * 300 + 80  // Entre 80 y 380
+          }
+        } else {
+          // Posiciones secuenciales para otros tipos de archivos
+          position = {
+            x: 100 + (index * 50), 
+            y: 100 + (index * 50) 
+          }
+        }
+        
+        return {
+          id: file.id,
+          file,
+          position,
+          size: getInitialSize(file.type),
+          zIndex: 1000 + index
+        }
+      })
       setMediaItems(initialItems)
       setMaxZIndex(1000 + project.mediaFiles.length)
     }
@@ -166,23 +181,7 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
         )
       
       case 'audio':
-        return (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-b-lg p-4">
-            <div className="flex items-center justify-center w-16 h-16 bg-white/80 dark:bg-gray-800/80 rounded-full mb-4 shadow-lg">
-              <Music className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-            </div>
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 text-center">
-              {file.name}
-            </h3>
-            <audio 
-              controls 
-              className="w-full max-w-xs"
-              src={file.url}
-            >
-              Tu navegador no soporta el elemento de audio.
-            </audio>
-          </div>
-        )
+        return <AudioPlayerComponent file={file} />
       
       case 'pdf':
       case 'document':
@@ -229,13 +228,15 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
         onClick={onClose}
       />
       
-      {/* Floating close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-50001 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors"
-      >
-        <X className="w-5 h-5" />
-      </button>
+      {/* Floating close button - oculto si solo hay archivos de audio */}
+      {!project.mediaFiles?.every(file => file.type === 'audio') && (
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-50001 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      )}
 
       {/* Header info */}
       <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-900/95 rounded-lg px-4 py-2 z-50001">
@@ -395,6 +396,151 @@ function MediaItem({
         />
       </div>
     </motion.div>
+  )
+}
+
+// AudioPlayer Component with Spotify-like styling
+function AudioPlayerComponent({ file }: { file: MediaFile }) {
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [volume, setVolume] = useState(0.7)
+  const audioRef = useRef<HTMLAudioElement>(null)
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const handleTimeUpdate = () => setCurrentTime(audio.currentTime)
+    const handleDurationChange = () => setDuration(audio.duration)
+    const handleEnded = () => setIsPlaying(false)
+
+    audio.addEventListener('timeupdate', handleTimeUpdate)
+    audio.addEventListener('durationchange', handleDurationChange)
+    audio.addEventListener('ended', handleEnded)
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate)
+      audio.removeEventListener('durationchange', handleDurationChange)
+      audio.removeEventListener('ended', handleEnded)
+    }
+  }, [])
+
+  const togglePlayPause = () => {
+    if (!audioRef.current) return
+    
+    if (isPlaying) {
+      audioRef.current.pause()
+    } else {
+      audioRef.current.play()
+    }
+    setIsPlaying(!isPlaying)
+  }
+
+  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!audioRef.current) return
+    const newTime = (parseFloat(e.target.value) / 100) * duration
+    audioRef.current.currentTime = newTime
+    setCurrentTime(newTime)
+  }
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!audioRef.current) return
+    const newVolume = parseFloat(e.target.value) / 100
+    audioRef.current.volume = newVolume
+    setVolume(newVolume)
+  }
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60)
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0
+
+  return (
+    <div className="w-full h-full bg-black/95 backdrop-blur-sm border border-gray-800 rounded-b-lg overflow-hidden" style={{
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.1)'
+    }}>
+      <audio ref={audioRef} src={file.url} />
+      
+      <div className="relative flex items-center h-full p-3 space-x-3">
+        {/* Album/Audio cover */}
+        <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-400 rounded flex items-center justify-center flex-shrink-0 shadow-lg">
+          <Music className="w-6 h-6 text-white" />
+        </div>
+        
+        {/* Track info and controls */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-medium text-sm truncate">{file.name}</p>
+              <p className="text-gray-400 text-xs truncate">Centromat</p>
+            </div>
+            
+            {/* Play/Pause button */}
+            <button
+              onClick={togglePlayPause}
+              className="w-8 h-8 bg-green-500 hover:bg-green-400 rounded-full flex items-center justify-center ml-3 transition-colors"
+            >
+              {isPlaying ? (
+                <Pause className="w-4 h-4 text-black" />
+              ) : (
+                <Play className="w-4 h-4 text-black ml-0.5" />
+              )}
+            </button>
+          </div>
+          
+          {/* Progress bar */}
+          <div className="flex items-center space-x-2 text-xs">
+            <span className="text-gray-400 w-8">{formatTime(currentTime)}</span>
+            <div className="flex-1 relative">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={progress}
+                onChange={handleProgressChange}
+                className="w-full h-1 bg-gray-600 rounded appearance-none cursor-pointer progress-slider"
+                style={{
+                  background: `linear-gradient(to right, #1db954 0%, #1db954 ${progress}%, #404040 ${progress}%, #404040 100%)`
+                }}
+              />
+            </div>
+            <span className="text-gray-400 w-8">{formatTime(duration)}</span>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        .progress-slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #1db954;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .progress-slider::-webkit-slider-thumb:hover {
+          background: #1ed760;
+          transform: scale(1.1);
+        }
+        
+        .progress-slider::-moz-range-thumb {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: #1db954;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+      `}</style>
+    </div>
   )
 }
 
