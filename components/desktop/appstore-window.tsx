@@ -172,9 +172,9 @@ export function AppStoreWindow({ isOpen, onClose }: AppStoreWindowProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-6xl h-full max-h-[90vh] macos-glass rounded-3xl overflow-hidden shadow-2xl border border-white/20 dark:border-gray-700/20">
+      <div className="w-full max-w-6xl h-full max-h-[90vh] bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-700">
         {/* Header */}
-        <div className="flex items-center p-4 border-b border-white/10 dark:border-gray-700/30">
+        <div className="flex items-center p-4 border-b border-gray-700 bg-gray-800">
           <div className="flex items-center space-x-3">
             <div className="flex space-x-2">
               <button
@@ -187,13 +187,13 @@ export function AppStoreWindow({ isOpen, onClose }: AppStoreWindowProps) {
             </div>
           </div>
           <div className="flex-1 flex justify-center">
-            <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200">App Store</h2>
+            <h2 className="text-lg font-medium text-white">App Store</h2>
           </div>
           <div className="w-16"></div>
         </div>
 
         {/* Search */}
-        <div className="p-4 border-b border-white/10 dark:border-gray-700/30">
+        <div className="p-4 border-b border-gray-700 bg-gray-800">
           <div className="relative max-w-md mx-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 w-4 h-4" />
             <input
@@ -208,7 +208,7 @@ export function AppStoreWindow({ isOpen, onClose }: AppStoreWindowProps) {
 
         <div className="flex h-full max-h-[calc(90vh-120px)]">
           {/* Sidebar */}
-          <div className="w-48 p-4 border-r border-white/10 dark:border-gray-700/30 overflow-y-auto">
+          <div className="w-48 p-4 border-r border-gray-700 bg-gray-800 overflow-y-auto">
             <div className="space-y-1">
               {categories.map(category => {
                 const IconComponent = category.icon
@@ -219,7 +219,7 @@ export function AppStoreWindow({ isOpen, onClose }: AppStoreWindowProps) {
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                       selectedCategory === category.id
                         ? 'bg-blue-500 text-white'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-gray-700/30'
+                        : 'text-gray-300 hover:bg-gray-700/50'
                     }`}
                   >
                     <IconComponent className="w-4 h-4" />
