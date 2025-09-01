@@ -39,7 +39,7 @@ interface SpotifyContextType {
   showMiniPlayer: boolean
   
   // Audio ref
-  audioRef: React.RefObject<HTMLAudioElement>
+  audioRef: React.RefObject<HTMLAudioElement | null>
 }
 
 const SpotifyContext = createContext<SpotifyContextType | undefined>(undefined)
@@ -54,7 +54,7 @@ const allSongs: Song[] = [
     album: 'Reality',
     duration: 214,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Reality-Lost-Frequencies-Lyrics-Vietsub.mp3',
     liked: true
   },
   {
@@ -64,7 +64,7 @@ const allSongs: Song[] = [
     album: 'Kiss',
     duration: 193,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Carly-Rae-Jepsen-Call-Me-Maybe-Lyrics.mp3.webm',
     liked: false
   },
   {
@@ -74,7 +74,7 @@ const allSongs: Song[] = [
     album: 'Out of the Blue',
     duration: 302,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Electric-Light-Orchestra-Mr-Blue-Sky-Lyrics.mp3',
     liked: true
   },
   {
@@ -84,7 +84,7 @@ const allSongs: Song[] = [
     album: 'Onka\'s Big Moka',
     duration: 234,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Toploader-Dancing-in-the-Moonlight-Lyrics.mp3',
     liked: false
   },
   {
@@ -94,7 +94,7 @@ const allSongs: Song[] = [
     album: 'Sugar',
     duration: 235,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Robin-Schulz-Sugar-Lyrics-feat-Francesco-Yates.mp3',
     liked: true
   },
 
@@ -106,7 +106,7 @@ const allSongs: Song[] = [
     album: 'After Hours',
     duration: 200,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--The-Weeknd-Blinding-Lights-Lyrics.mp3',
     liked: true
   },
   {
@@ -116,7 +116,7 @@ const allSongs: Song[] = [
     album: 'Future Nostalgia',
     duration: 203,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Dua-Lipa-Levitating-Feat-DaBaby.mp3',
     liked: false
   },
   {
@@ -126,7 +126,7 @@ const allSongs: Song[] = [
     album: 'SOUR',
     duration: 178,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Olivia-Rodrigo-good-4-u-Lyrics.mp3',
     liked: true
   },
   {
@@ -136,7 +136,7 @@ const allSongs: Song[] = [
     album: 'Harry\'s House',
     duration: 167,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Harry-Styles-As-It-Was-Lyrics.mp3',
     liked: true
   },
   {
@@ -241,12 +241,12 @@ const allSongs: Song[] = [
   },
   {
     id: '20',
-    title: 'Perfect',
+    title: 'Shape of You',
     artist: 'Ed Sheeran',
     album: '÷ (Divide)',
-    duration: 263,
+    duration: 233,
     cover: '/placeholder.svg',
-    audioUrl: undefined, // Usar generador de audio
+    audioUrl: '/music/ssvid.net--Ed-Sheeran-Shape-of-You-Lyrics.mp3',
     liked: true
   }
 ]
@@ -269,43 +269,72 @@ export function SpotifyProvider({ children }: SpotifyProviderProps) {
   // Mini player visibility logic
   const showMiniPlayer = currentSong !== null && !isSpotifyOpen
 
-  // Audio effects usando generador
+  // Sistema de reproducción híbrido (archivos reales + generador sintético)
   useEffect(() => {
-    const audioGen = getAudioGenerator()
-    
     if (!currentSong) {
+      // Detener cualquier reproducción
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      }
+      const audioGen = getAudioGenerator()
       audioGen.stop()
       return
     }
 
-    // Simular progreso
     if (isPlaying) {
-      audioGen.play(currentSong.id, volume)
-      
-      const interval = setInterval(() => {
-        setCurrentTime(prev => {
-          if (prev >= currentSong.duration) {
-            nextSong()
-            return 0
-          }
-          return prev + 1
-        })
-      }, 1000)
+      if (currentSong.audioUrl) {
+        // Usar archivo real
+        if (audioRef.current) {
+          audioRef.current.src = currentSong.audioUrl
+          audioRef.current.volume = volume
+          audioRef.current.play().catch(err => {
+            console.log('Error reproduciendo audio:', err)
+            // Fallback al generador sintético si falla
+            const audioGen = getAudioGenerator()
+            audioGen.play(currentSong.id, volume)
+          })
+        }
+      } else {
+        // Usar generador sintético como fallback
+        const audioGen = getAudioGenerator()
+        audioGen.play(currentSong.id, volume)
+        
+        // Simular progreso para canciones sintéticas
+        const interval = setInterval(() => {
+          setCurrentTime(prev => {
+            if (prev >= currentSong.duration) {
+              nextSong()
+              return 0
+            }
+            return prev + 1
+          })
+        }, 1000)
 
-      return () => {
-        clearInterval(interval)
+        return () => {
+          clearInterval(interval)
+        }
       }
     } else {
+      // Pausar reproducción
+      if (audioRef.current) {
+        audioRef.current.pause()
+      }
+      const audioGen = getAudioGenerator()
       audioGen.stop()
     }
 
     return () => {
+      const audioGen = getAudioGenerator()
       audioGen.stop()
     }
   }, [currentSong, isPlaying])
 
-  // Control volume
+  // Control volume para ambos sistemas
   useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume
+    }
     const audioGen = getAudioGenerator()
     audioGen.setVolume(volume)
   }, [volume])
@@ -314,6 +343,42 @@ export function SpotifyProvider({ children }: SpotifyProviderProps) {
   useEffect(() => {
     setCurrentTime(0)
   }, [currentSong])
+
+  // Configurar eventos del elemento audio HTML5
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const handleTimeUpdate = () => {
+      if (currentSong?.audioUrl) {
+        setCurrentTime(Math.floor(audio.currentTime))
+      }
+    }
+
+    const handleEnded = () => {
+      nextSong()
+    }
+
+    const handleLoadedMetadata = () => {
+      if (currentSong && audio.duration) {
+        // Actualizar duración si está disponible en los metadatos
+        const duration = Math.floor(audio.duration)
+        if (duration !== currentSong.duration) {
+          console.log(`Duración real: ${duration}s para ${currentSong.title}`)
+        }
+      }
+    }
+
+    audio.addEventListener('timeupdate', handleTimeUpdate)
+    audio.addEventListener('ended', handleEnded)
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate)
+      audio.removeEventListener('ended', handleEnded)
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+    }
+  }, [currentSong?.audioUrl])
 
   const togglePlayPause = () => {
     if (!currentSong) {
@@ -344,7 +409,15 @@ export function SpotifyProvider({ children }: SpotifyProviderProps) {
 
   const setCurrentTimeManual = (time: number) => {
     setCurrentTime(time)
-    // En un reproductor real, aquí se ajustaría el tiempo del audio
+    
+    // Ajustar tiempo tanto en archivos reales como sintéticos
+    if (currentSong?.audioUrl && audioRef.current) {
+      // Para archivos reales, ajustar la posición del audio
+      audioRef.current.currentTime = time
+    } else {
+      // Para canciones sintéticas, solo actualizar el estado
+      // (el generador sintético no soporta seek)
+    }
   }
 
   const toggleShuffle = () => {
@@ -381,6 +454,12 @@ export function SpotifyProvider({ children }: SpotifyProviderProps) {
 
   return (
     <SpotifyContext.Provider value={value}>
+      {/* Elemento audio HTML5 oculto para reproducir archivos reales */}
+      <audio 
+        ref={audioRef} 
+        preload="metadata"
+        style={{ display: 'none' }}
+      />
       {children}
     </SpotifyContext.Provider>
   )

@@ -30,6 +30,15 @@ import { SpotifyWindow } from '@/components/desktop/spotify-window'
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 import { AnimatePresence } from 'framer-motion'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface OpenWindow {
   id: string
@@ -57,6 +66,7 @@ export function ResponsiveDesktop() {
   const [showCalculator, setShowCalculator] = useState(false)
   const [showAppStore, setShowAppStore] = useState(false)
   const [showSpotify, setShowSpotify] = useState(false)
+  const [showConstructionAlert, setShowConstructionAlert] = useState(true)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -355,6 +365,26 @@ export function ResponsiveDesktop() {
 
   return (
     <>
+      {/* Alerta de construcción */}
+      <AlertDialog open={showConstructionAlert} onOpenChange={setShowConstructionAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>🚧 Sitio Web en Construcción</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta página web sigue en construcción. Perdón por las molestias.
+              <br />
+              <br />
+              Estoy trabajando para ofrecerte la mejor experiencia posible. ¡Gracias por tu paciencia!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowConstructionAlert(false)}>
+              Continuar explorando
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <MacOSCursor />
       <MacOSWindow>
         <div className="relative h-full overflow-hidden">
