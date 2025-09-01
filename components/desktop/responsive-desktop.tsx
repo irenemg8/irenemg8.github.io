@@ -26,6 +26,7 @@ import { TerminalWindow } from '@/components/desktop/terminal-window'
 import { CalculatorWindow } from '@/components/desktop/calculator-window'
 import { AppStoreWindow } from '@/components/desktop/appstore-window'
 import { SpotifyWindow } from '@/components/desktop/spotify-window'
+import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -660,6 +661,9 @@ export function ResponsiveDesktop() {
           onClose={() => setShowSpotify(false)}
         />
       )}
+
+      {/* Spotify Mini Player */}
+      {isMounted && <SpotifyMiniPlayer />}
     </>
   )
 }
