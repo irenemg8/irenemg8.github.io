@@ -17,9 +17,11 @@ interface MacOSDockProps {
   onShowFaceTime?: () => void
   onShowMessages?: () => void
   onShowPhotos?: () => void
+  onShowCodeEditor?: () => void
+  onShowLaunchpad?: () => void
 }
 
-export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, onShowPhotos }: MacOSDockProps) {
+export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, onShowPhotos, onShowCodeEditor, onShowLaunchpad }: MacOSDockProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const [visibleItems, setVisibleItems] = useState<DockItem[]>([])
   const [screenSize, setScreenSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('xl')
@@ -145,6 +147,30 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, on
       }
     },
     {
+      id: 'vs',
+      name: 'Visual Studio Code',
+      image: '/Dock/vs.png',
+      label: 'VS Code',
+      action: () => {
+        setActiveItem('vs')
+        if (onShowCodeEditor) {
+          onShowCodeEditor()
+        }
+      }
+    },
+    {
+      id: 'varios',
+      name: 'Launchpad',
+      image: '/Dock/varios.png',
+      label: 'Launchpad',
+      action: () => {
+        setActiveItem('varios')
+        if (onShowLaunchpad) {
+          onShowLaunchpad()
+        }
+      }
+    },
+    {
       id: 'trash',
       name: 'Trash',
       image: '/bin.png',
@@ -179,19 +205,21 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, on
   // Actualizar iconos visibles según el tamaño de pantalla
   useEffect(() => {
     let itemsToShow: DockItem[] = []
+    const variosItem = allDockItems.find(item => item.id === 'varios')!
+    const trashItem = allDockItems.find(item => item.id === 'trash')!
     
     switch (screenSize) {
       case 'sm':
-        // Móvil: iconos más importantes + papelera (5 iconos)
-        itemsToShow = [...allDockItems.slice(0, 4), allDockItems[allDockItems.length - 1]]
+        // Móvil: iconos más importantes + varios (siempre) + papelera (6 iconos)
+        itemsToShow = [...allDockItems.slice(0, 4), variosItem, trashItem]
         break
       case 'md':
-        // Tablet: iconos principales + papelera (7 iconos)
-        itemsToShow = [...allDockItems.slice(0, 6), allDockItems[allDockItems.length - 1]]
+        // Tablet: iconos principales + varios + papelera (8 iconos)
+        itemsToShow = [...allDockItems.slice(0, 6), variosItem, trashItem]
         break
       case 'lg':
-        // Desktop pequeño: mayoría de iconos + papelera (9 iconos)
-        itemsToShow = [...allDockItems.slice(0, 8), allDockItems[allDockItems.length - 1]]
+        // Desktop pequeño: mayoría de iconos + varios + papelera (10 iconos)
+        itemsToShow = [...allDockItems.slice(0, 8), variosItem, trashItem]
         break
       case 'xl':
         // Desktop grande: todos los iconos
@@ -209,8 +237,8 @@ export function MacOSDock({ onShowStickyNote, onShowFaceTime, onShowMessages, on
         <div className="flex items-center space-x-2">
           {visibleItems.map((item, index) => (
             <div key={item.id} className="flex items-center">
-              {/* Separador antes de la papelera */}
-              {item.id === 'trash' && (
+              {/* Separador antes de vs (nuevos iconos) */}
+              {item.id === 'vs' && (
                 <div className="w-px h-10 bg-white/20 dark:bg-gray-600/30 mx-2" />
               )}
               <button

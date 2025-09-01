@@ -20,6 +20,8 @@ import { HackathonsFolderWindow } from '@/components/desktop/hackathons-folder-w
 import { MessagesWindow } from '@/components/desktop/messages-window'
 import { PolaroidPhotos } from '@/components/desktop/polaroid-photos'
 import { PhotosGalleryWindow } from '@/components/desktop/photos-gallery-window'
+import { CodeEditorWindow } from '@/components/desktop/code-editor-window'
+import { LaunchpadWindow } from '@/components/desktop/launchpad-window'
 
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
@@ -45,6 +47,8 @@ export function ResponsiveDesktop() {
   const [showMessages, setShowMessages] = useState(false)
   const [showPolaroidPhotos, setShowPolaroidPhotos] = useState(false)
   const [showPhotosGallery, setShowPhotosGallery] = useState(false)
+  const [showCodeEditor, setShowCodeEditor] = useState(false)
+  const [showLaunchpad, setShowLaunchpad] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -440,6 +444,8 @@ export function ResponsiveDesktop() {
             onShowFaceTime={() => setShowFaceTime(true)}
             onShowMessages={() => setShowMessages(true)}
             onShowPhotos={() => setShowPhotosGallery(true)}
+            onShowCodeEditor={() => setShowCodeEditor(true)}
+            onShowLaunchpad={() => setShowLaunchpad(true)}
           />
 
         </div>
@@ -530,6 +536,48 @@ export function ResponsiveDesktop() {
         isOpen={showPhotosGallery}
         onClose={() => setShowPhotosGallery(false)}
       />
+      
+      {/* Code Editor Window */}
+      {isMounted && (
+        <CodeEditorWindow
+          isOpen={showCodeEditor}
+          onClose={() => setShowCodeEditor(false)}
+        />
+      )}
+      
+      {/* Launchpad Window */}
+      {isMounted && (
+        <LaunchpadWindow
+          isOpen={showLaunchpad}
+          onClose={() => setShowLaunchpad(false)}
+          onOpenApp={(appId) => {
+            // Handle opening apps from launchpad
+            switch (appId) {
+              case 'vs':
+                setShowCodeEditor(true)
+                break
+              case 'messages':
+                setShowMessages(true)
+                break
+              case 'facetime':
+                setShowFaceTime(true)
+                break
+              case 'photos':
+                setShowPhotosGallery(true)
+                break
+              case 'notes':
+                showStickyNoteFromDock()
+                break
+              case 'calendar':
+                const trigger = document.querySelector('[data-calendar-trigger]') as HTMLElement
+                if (trigger) trigger.click()
+                break
+              default:
+                console.log(`Opening app: ${appId}`)
+            }
+          }}
+        />
+      )}
     </>
   )
 }
