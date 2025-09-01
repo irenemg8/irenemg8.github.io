@@ -6,6 +6,7 @@ import { Space_Mono } from "next/font/google"
 import { JetBrains_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
+import { SpotifyProvider } from "@/contexts/spotify-context"
 
 // Primary display font - Variable
 const inter = Inter({ 
@@ -56,7 +57,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${poppins.variable} ${spaceMono.variable} ${jetBrainsMono.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
-            {children}
+            <SpotifyProvider>
+              {children}
+            </SpotifyProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

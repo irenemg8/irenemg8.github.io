@@ -311,7 +311,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
 
   const getPrompt = () => {
     const shortPath = currentPath.replace('/Users/irene', '~')
-    return `irene@macbook ${shortPath} % `
+    return `irene@desktop ${shortPath} % `
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

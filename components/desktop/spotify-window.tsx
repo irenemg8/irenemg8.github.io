@@ -1,19 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { X, Play, Pause, SkipBack, SkipForward, Volume2, Repeat, Shuffle, Heart, Search, Home, Library, Plus, Download } from 'lucide-react'
-
-interface Song {
-  id: string
-  title: string
-  artist: string
-  album: string
-  duration: number
-  cover: string
-  audioUrl?: string
-  liked?: boolean
-}
+import { useState, useEffect } from 'react'
+import { X, Play, Pause, SkipBack, SkipForward, Volume2, Repeat, Shuffle, Heart, Search, Home, Library } from 'lucide-react'
+import { useSpotify, allSongs, type Song } from '@/contexts/spotify-context'
 
 interface Playlist {
   id: string
@@ -30,64 +19,32 @@ interface SpotifyWindowProps {
 }
 
 export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
-  const [currentSong, setCurrentSong] = useState<Song | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [volume, setVolume] = useState(0.7)
-  const [isShuffled, setIsShuffled] = useState(false)
-  const [repeatMode, setRepeatMode] = useState<'off' | 'all' | 'one'>('off')
+  const {
+    currentSong,
+    isPlaying,
+    currentTime,
+    volume,
+    isShuffled,
+    repeatMode,
+    setCurrentSong,
+    togglePlayPause,
+    previousSong,
+    nextSong,
+    setVolume,
+    setCurrentTime,
+    toggleShuffle,
+    toggleRepeat,
+    setIsSpotifyOpen
+  } = useSpotify()
+
   const [selectedView, setSelectedView] = useState('home')
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const audioRef = useRef<HTMLAudioElement>(null)
 
-  // Demo songs
-  const demoSongs: Song[] = [
-    {
-      id: '1',
-      title: 'Bohemian Rhapsody',
-      artist: 'Queen',
-      album: 'A Night at the Opera',
-      duration: 355,
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkZEIDAwMCIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNGRkZGRkYiPl88L3RleHQ+Cjwvc3ZnPgo=',
-      liked: true
-    },
-    {
-      id: '2',
-      title: 'Billie Jean',
-      artist: 'Michael Jackson',
-      album: 'Thriller',
-      duration: 295,
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkYwMDAwIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRkZGRiI+TWo8L3RleHQ+Cjwvc3ZnPgo=',
-      liked: false
-    },
-    {
-      id: '3',
-      title: 'Hotel California',
-      artist: 'Eagles',
-      album: 'Hotel California',
-      duration: 391,
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkY4QzAwIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRkZGRiI+RWE8L3RleHQ+Cjwvc3ZnPgo=',
-      liked: true
-    },
-    {
-      id: '4',
-      title: 'Sweet Child O\' Mine',
-      artist: 'Guns N\' Roses',
-      album: 'Appetite for Destruction',
-      duration: 356,
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRkZGRiI+R248L3RleHQ+Cjwvc3ZnPgo=',
-      liked: false
-    },
-    {
-      id: '5',
-      title: 'Imagine',
-      artist: 'John Lennon',
-      album: 'Imagine',
-      duration: 183,
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkZGRkZGIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzAwMDAwMCI+Sks8L3RleHQ+Cjwvc3ZnPgo='
-    }
-  ]
+  // Update Spotify open state
+  useEffect(() => {
+    setIsSpotifyOpen(isOpen)
+  }, [isOpen, setIsSpotifyOpen])
 
   // Demo playlists
   const playlists: Playlist[] = [
@@ -95,24 +52,24 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
       id: 'liked',
       name: 'Canciones que te gustan',
       description: 'Tus canciones favoritas',
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50MCkiLz4KPHA8cGF0aCBkPSJNMTAwIDUwQzgwIDUwIDY1IDY1IDY1IDg1QzY1IDEwNSA4MCAxMjAgMTAwIDEyMEMxMjAgMTIwIDEzNSAxMDUgMTM1IDg1QzEzNSA2NSAxMjAgNTAgMTAwIDUwWiIgZmlsbD0iI0ZGRkZGRiIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjIwMCIgeTI9IjIwMCI+CjxzdG9wIHN0b3AtY29sb3I9IiMxREI5NTQiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjFEQTVBIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+',
-      songs: demoSongs.filter(song => song.liked),
+      cover: '/placeholder.svg',
+      songs: allSongs.filter(song => song.liked),
       createdBy: 'Tú'
     },
     {
-      id: 'rock-classics',
-      name: 'Rock Clásicos',
-      description: '50 canciones • Rock de los 70s y 80s',
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkY0NTAwIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjY0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRkZGRiI+🎸PC90ZXh0Pgo8L3N2Zz4K',
-      songs: demoSongs,
+      id: 'dance-hits',
+      name: 'Dance Hits',
+      description: '8 canciones • Los mejores éxitos de baile',
+      cover: '/placeholder.svg',
+      songs: allSongs,
       createdBy: 'Spotify'
     },
     {
       id: 'chill-vibes',
       name: 'Chill Vibes',
-      description: '25 canciones • Música relajante',
-      cover: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjODc3RkY3Ii8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjY0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0ZGRkZGRiI+🌙PC90ZXh0Pgo8L3N2Zz4K',
-      songs: demoSongs.slice(0, 3),
+      description: '5 canciones • Música relajante',
+      cover: '/placeholder.svg',
+      songs: allSongs.slice(0, 5),
       createdBy: 'Spotify'
     }
   ]
@@ -124,63 +81,18 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  // Play/pause toggle
-  const togglePlayPause = () => {
-    if (!currentSong) {
-      setCurrentSong(demoSongs[0])
-      setIsPlaying(true)
-    } else {
-      setIsPlaying(!isPlaying)
-    }
-  }
-
-  // Previous song
-  const previousSong = () => {
-    if (!currentSong) return
-    const currentIndex = demoSongs.findIndex(song => song.id === currentSong.id)
-    const previousIndex = currentIndex > 0 ? currentIndex - 1 : demoSongs.length - 1
-    setCurrentSong(demoSongs[previousIndex])
-  }
-
-  // Next song
-  const nextSong = () => {
-    if (!currentSong) return
-    const currentIndex = demoSongs.findIndex(song => song.id === currentSong.id)
-    const nextIndex = currentIndex < demoSongs.length - 1 ? currentIndex + 1 : 0
-    setCurrentSong(demoSongs[nextIndex])
-  }
-
   // Like/unlike song
   const toggleLike = (songId: string) => {
-    const songIndex = demoSongs.findIndex(song => song.id === songId)
+    const songIndex = allSongs.findIndex(song => song.id === songId)
     if (songIndex !== -1) {
-      demoSongs[songIndex].liked = !demoSongs[songIndex].liked
-      // Force re-render
-      setCurrentSong(currentSong ? { ...currentSong } : null)
+      allSongs[songIndex].liked = !allSongs[songIndex].liked
     }
   }
 
-  // Progress simulation
-  useEffect(() => {
-    if (isPlaying && currentSong) {
-      const interval = setInterval(() => {
-        setCurrentTime(prev => {
-          if (prev >= currentSong.duration) {
-            nextSong()
-            return 0
-          }
-          return prev + 1
-        })
-      }, 1000)
-
-      return () => clearInterval(interval)
-    }
-  }, [isPlaying, currentSong])
-
-  // Reset time when song changes
-  useEffect(() => {
-    setCurrentTime(0)
-  }, [currentSong])
+  const handleClose = () => {
+    setIsSpotifyOpen(false)
+    onClose()
+  }
 
   const renderContent = () => {
     if (selectedPlaylist) {
@@ -251,7 +163,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
     }
 
     if (selectedView === 'search') {
-      const filteredSongs = demoSongs.filter(song => 
+      const filteredSongs = allSongs.filter(song => 
         searchQuery === '' || 
         song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         song.artist.toLowerCase().includes(searchQuery.toLowerCase())
@@ -272,24 +184,33 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
 
           {searchQuery ? (
             <div>
-              <h2 className="text-2xl font-bold text-white mb-6">Resultados</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">Resultados para "{searchQuery}"</h2>
               <div className="space-y-2">
-                {filteredSongs.map((song, index) => (
+                {filteredSongs.map((song) => (
                   <div
                     key={song.id}
                     onClick={() => setCurrentSong(song)}
-                    className="flex items-center space-x-4 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition-colors"
+                    className="flex items-center space-x-4 p-3 rounded-lg hover:bg-white/10 cursor-pointer transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/10"
                   >
-                    <div className="w-12 h-12 rounded overflow-hidden">
-                      <img src={song.cover} alt={song.title} className="w-full h-full object-cover" />
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded overflow-hidden">
+                        <img src={song.cover} alt={song.title} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Play className="w-4 h-4 text-white" />
+                      </div>
                     </div>
                     <div className="flex-1">
                       <p className="text-white font-medium">{song.title}</p>
                       <p className="text-gray-400 text-sm">{song.artist}</p>
                     </div>
+                    <span className="text-gray-400 text-sm">{formatTime(song.duration)}</span>
                   </div>
                 ))}
               </div>
+              {filteredSongs.length === 0 && (
+                <p className="text-gray-400 text-center py-8">No se encontraron resultados</p>
+              )}
             </div>
           ) : (
             <div className="text-center">
@@ -311,7 +232,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
             <div
               key={playlist.id}
               onClick={() => setSelectedPlaylist(playlist)}
-              className="flex items-center bg-white/10 rounded-lg overflow-hidden hover:bg-white/20 cursor-pointer transition-colors group"
+              className="flex items-center bg-white/10 rounded-lg overflow-hidden hover:bg-white/20 cursor-pointer transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/20"
             >
               <div className="w-16 h-16 flex-shrink-0">
                 <img src={playlist.cover} alt={playlist.name} className="w-full h-full object-cover" />
@@ -332,13 +253,13 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
             <div
               key={playlist.id}
               onClick={() => setSelectedPlaylist(playlist)}
-              className="bg-gray-800/50 p-4 rounded-lg hover:bg-gray-800/70 cursor-pointer transition-colors group"
+              className="bg-gray-800/50 p-4 rounded-lg hover:bg-gray-800/70 cursor-pointer transition-all duration-300 group hover:scale-105 hover:shadow-xl hover:shadow-green-500/20"
             >
               <div className="relative mb-4">
                 <div className="w-full aspect-square rounded-lg overflow-hidden shadow-lg">
                   <img src={playlist.cover} alt={playlist.name} className="w-full h-full object-cover" />
                 </div>
-                <button className="absolute bottom-2 right-2 w-12 h-12 bg-green-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 shadow-lg">
+                <button className="absolute bottom-2 right-2 w-12 h-12 bg-green-400 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 shadow-lg hover:bg-green-300 hover:scale-110 hover:shadow-green-400/50">
                   <Play className="w-5 h-5 text-black" />
                 </button>
               </div>
@@ -361,7 +282,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
           <div className="flex items-center space-x-3">
             <div className="flex space-x-2">
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="w-3 h-3 bg-red-500 hover:bg-red-600 rounded-full transition-colors"
               />
               <div className="w-3 h-3 bg-yellow-400 rounded-full" />
@@ -454,7 +375,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
             <div className="flex flex-col items-center space-y-2 flex-1">
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => setIsShuffled(!isShuffled)}
+                  onClick={toggleShuffle}
                   className={`p-2 rounded-full transition-colors ${
                     isShuffled ? 'text-green-400' : 'text-gray-400 hover:text-white'
                   }`}
@@ -478,7 +399,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
                   <SkipForward className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => setRepeatMode(repeatMode === 'off' ? 'all' : repeatMode === 'all' ? 'one' : 'off')}
+                  onClick={toggleRepeat}
                   className={`p-2 rounded-full transition-colors ${
                     repeatMode !== 'off' ? 'text-green-400' : 'text-gray-400 hover:text-white'
                   }`}
@@ -490,9 +411,18 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
               {/* Progress bar */}
               <div className="flex items-center space-x-2 w-full max-w-md">
                 <span className="text-xs text-gray-400 w-8">{formatTime(currentTime)}</span>
-                <div className="flex-1 bg-gray-600 h-1 rounded-full overflow-hidden">
+                <div className="flex-1 bg-gray-600 h-1 rounded-full overflow-hidden cursor-pointer group relative">
+                  <input
+                    type="range"
+                    min="0"
+                    max={currentSong?.duration || 0}
+                    value={currentTime}
+                    onChange={(e) => setCurrentTime(parseFloat(e.target.value))}
+                    className="absolute opacity-0 w-full h-4 cursor-pointer"
+                    style={{ marginTop: '-6px' }}
+                  />
                   <div
-                    className="bg-white h-full transition-all duration-1000"
+                    className="bg-white h-full transition-all duration-150 group-hover:bg-green-400"
                     style={{ width: currentSong ? `${(currentTime / currentSong.duration) * 100}%` : '0%' }}
                   />
                 </div>
@@ -505,9 +435,19 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
             {/* Volume */}
             <div className="flex items-center space-x-2 flex-1 justify-end">
               <Volume2 className="w-4 h-4 text-gray-400" />
-              <div className="w-20 bg-gray-600 h-1 rounded-full overflow-hidden">
+              <div className="w-20 bg-gray-600 h-1 rounded-full overflow-hidden cursor-pointer group relative">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => setVolume(parseFloat(e.target.value))}
+                  className="absolute opacity-0 w-20 h-4 cursor-pointer"
+                  style={{ marginTop: '-6px' }}
+                />
                 <div
-                  className="bg-white h-full"
+                  className="bg-white h-full transition-all duration-150 group-hover:bg-green-400"
                   style={{ width: `${volume * 100}%` }}
                 />
               </div>

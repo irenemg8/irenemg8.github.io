@@ -8,6 +8,7 @@ import { NavigationMenu } from '@/components/layout/navigation-menu'
 import { DesktopProjects } from '@/components/sections/desktop-projects'
 import { DesktopAbout } from '@/components/sections/desktop-about'
 import { DesktopFooter } from '@/components/layout/desktop-footer'
+import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
 
 export function DesktopLayout() {
   return (
@@ -36,6 +37,7 @@ export function DesktopLayout() {
       </div>
     </MacOSWindow>
     <MacOSDock />
+    <SpotifyMiniPlayer />
     </>
   )
 }
