@@ -139,7 +139,7 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                     checked={settings.darkMode}
                     onChange={(e) => updateSetting('darkMode', e.target.checked)}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                 </label>
               </div>
 
@@ -155,7 +155,7 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                     checked={settings.autoLogin}
                     onChange={(e) => updateSetting('autoLogin', e.target.checked)}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>
@@ -184,7 +184,7 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                   onChange={(e) => updateSetting('cursorSize', parseFloat(e.target.value))}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 slider"
                   style={{
-                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((settings.cursorSize - 0.5) / 2.5) * 100}%, #d1d5db ${((settings.cursorSize - 0.5) / 2.5) * 100}%, #d1d5db 100%)`
+                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${((settings.cursorSize - 0.5) / 2.5) * 100}%, #d1d5db ${((settings.cursorSize - 0.5) / 2.5) * 100}%, #d1d5db 100%)`
                   }}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -194,39 +194,24 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Velocidad del puntero: {settings.cursorSpeed}
                 </label>
-                <div className="relative">
-                  <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={settings.cursorSpeed}
-                    onChange={(e) => updateSetting('cursorSpeed', parseInt(e.target.value))}
-                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 range-slider"
-                    style={{
-                      background: `linear-gradient(to right, #10b981 0%, #10b981 ${(settings.cursorSpeed / 10) * 100}%, #e5e7eb ${(settings.cursorSpeed / 10) * 100}%, #e5e7eb 100%)`
-                    }}
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2 px-1">
-                    <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Lento</span>
-                    <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Normal</span>
-                    <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Rápido</span>
-                  </div>
-                  {/* Indicador visual */}
-                  <div className="flex justify-between mt-1 px-1">
-                    {Array.from({length: 10}, (_, i) => (
-                      <div 
-                        key={i}
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          i + 1 <= settings.cursorSpeed 
-                            ? 'bg-emerald-500' 
-                            : 'bg-gray-300 dark:bg-gray-600'
-                        }`}
-                      />
-                    ))}
-                  </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={settings.cursorSpeed}
+                  onChange={(e) => updateSetting('cursorSpeed', parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 slider"
+                  style={{
+                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${((settings.cursorSpeed - 1) / 9) * 100}%, #d1d5db ${((settings.cursorSpeed - 1) / 9) * 100}%, #d1d5db 100%)`
+                  }}
+                />
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <span>Lento</span>
+                  <span>Normal</span>
+                  <span>Rápido</span>
                 </div>
               </div>
 
@@ -269,7 +254,7 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                   onChange={(e) => updateSetting('volume', parseInt(e.target.value))}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                   style={{
-                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${settings.volume}%, #d1d5db ${settings.volume}%, #d1d5db 100%)`
+                    background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${settings.volume}%, #d1d5db ${settings.volume}%, #d1d5db 100%)`
                   }}
                 />
                 <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1 px-1">
@@ -283,12 +268,12 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                   <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-4 text-base">Dispositivos de salida</h3>
                   <div className="space-y-3">
                     <label className="flex items-center group cursor-pointer">
-                      <input type="radio" name="output" className="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500" defaultChecked />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600">Altavoces internos</span>
+                      <input type="radio" name="output" className="mr-3 w-4 h-4 text-primary focus:ring-primary/20" defaultChecked />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">Altavoces internos</span>
                     </label>
                     <label className="flex items-center group cursor-pointer">
-                      <input type="radio" name="output" className="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600">Auriculares</span>
+                      <input type="radio" name="output" className="mr-3 w-4 h-4 text-primary focus:ring-primary/20" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">Auriculares</span>
                     </label>
                   </div>
                 </div>
@@ -297,12 +282,12 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                   <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-4 text-base">Dispositivos de entrada</h3>
                   <div className="space-y-3">
                     <label className="flex items-center group cursor-pointer">
-                      <input type="radio" name="input" className="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500" defaultChecked />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600">Micrófono interno</span>
+                      <input type="radio" name="input" className="mr-3 w-4 h-4 text-primary focus:ring-primary/20" defaultChecked />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">Micrófono interno</span>
                     </label>
                     <label className="flex items-center group cursor-pointer">
-                      <input type="radio" name="input" className="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600">Micrófono externo</span>
+                      <input type="radio" name="input" className="mr-3 w-4 h-4 text-primary focus:ring-primary/20" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">Micrófono externo</span>
                     </label>
                   </div>
                 </div>
@@ -332,12 +317,12 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                     checked={settings.notifications}
                     onChange={(e) => updateSetting('notifications', e.target.checked)}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
                 </label>
               </div>
 
-              {settings.notifications && (
-                <div className="ml-4 space-y-3 border-l-2 border-blue-200 pl-4">
+                              {settings.notifications && (
+                <div className="ml-4 space-y-3 border-l-2 border-primary/30 pl-4">
                   <label className="flex items-center">
                     <input 
                       type="checkbox" 
@@ -445,7 +430,7 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                         <div className="text-sm text-gray-500 dark:text-gray-400">Solo configuraciones de usuario</div>
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-blue-600 dark:text-blue-400">Solo preferencias</span>
+                    <span className="text-sm font-medium text-primary">Solo preferencias</span>
                   </div>
                 </div>
               </div>
@@ -547,13 +532,13 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
                         whileTap={{ scale: 0.98 }}
                         className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                           selectedCategory === category.id
-                            ? 'bg-blue-500 dark:bg-blue-600 text-white shadow-lg'
+                            ? 'bg-primary text-primary-foreground shadow-lg'
                             : 'hover:bg-white dark:hover:bg-gray-700/70 text-gray-700 dark:text-gray-300 shadow-sm hover:shadow-md'
                         }`}
                       >
                         <IconComponent className={`w-5 h-5 ${
                           selectedCategory === category.id 
-                            ? 'text-white' 
+                            ? 'text-primary-foreground' 
                             : category.color
                         }`} />
                         <span className="text-[13px] font-medium tracking-tight">{category.name}</span>
