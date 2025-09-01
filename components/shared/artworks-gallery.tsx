@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
-import Masonry from '@/components/shared/Masonry'
+import { DualRowGallery } from '@/components/shared/dual-row-gallery'
 
 interface ArtworksGalleryProps {
   isOpen: boolean
@@ -12,89 +12,80 @@ interface ArtworksGalleryProps {
 
 export function ArtworksGallery({ isOpen, onClose }: ArtworksGalleryProps) {
 
-  // Artworks items - collage artístico sin orden por ID, tamaños optimizados sin scroll
+  // Artworks items - organizados en 2 filas equilibradas
   const artworkItems = [
-    // Fila 1: Composición horizontal grande-pequeña-mediana (aumentado)
+    // Fila superior (alineada al bottom)
     {
       id: "forest1",
       img: "/art/forest.png",
       url: "https://example.com/forest",
-      height: 280, // Cuadrado grande aumentado
+      height: 280,
       width: 280,
     },
     {
       id: "urbancity",
       img: "/art/urbancity.png", 
       url: "https://example.com/urbancity",
-      height: 210, // Mediano horizontal aumentado
+      height: 210,
       width: 240,
     },
     {
       id: "champinon",
       img: "/art/champinon.png",
       url: "https://example.com/champinon",
-      height: 220, // Casi cuadrado aumentado
+      height: 220,
       width: 230,
-    },
-    
-    // Fila 2: Mezcla vertical-cuadrados-horizontal (aumentado)
-    {
-      id: "doll",
-      img: "/art/doll.png", 
-      url: "https://example.com/doll",
-      height: 380, // Vertical destacado aumentado
-      width: 210,
     },
     {
       id: "luna",
       img: "/art/luna.png",
       url: "https://example.com/luna",
-      height: 260, // Cuadrado mediano aumentado
+      height: 260,
       width: 260,
     },
     {
       id: "nemo",
       img: "/art/nemo.png",
       url: "https://example.com/nemo", 
-      height: 235, // Cuadrado pequeño aumentado
+      height: 235,
       width: 250,
+    },
+    
+    // Fila inferior (alineada al top)
+    {
+      id: "doll",
+      img: "/art/doll.png", 
+      url: "https://example.com/doll",
+      height: 380,
+      width: 210,
     },
     {
       id: "mario",
       img: "/art/mario.png",
       url: "https://example.com/mario", 
-      height: 220, // Cuadrado pequeño aumentado
+      height: 220,
       width: 235,
     },
-    
-    // Fila 3: Composición final variada (aumentado)
     {
       id: "icon",
       img: "/art/icon.png",
       url: "https://example.com/icon",
-      height: 320, // Vertical mediano aumentado
+      height: 320,
       width: 260,
     },
     {
       id: "pulpo",
       img: "/art/pulpo.png",
       url: "https://example.com/pulpo",
-      height: 265, // Cuadrado aumentado
+      height: 265,
       width: 265,
     },
     {
       id: "forest2",
       img: "/art/forest2.png",
       url: "https://example.com/forest2",
-      height: 190, // Horizontal pequeño aumentado
-      width: 235,
-    },
-    {
-      id: "forest3",
-      img: "/art/forest3.png",
-      url: "https://example.com/forest3", 
-      height: 175, // Horizontal pequeño aumentado
-      width: 240,
+      height: 190,
+      width: 230,
     }
   ]
 
@@ -147,19 +138,15 @@ export function ArtworksGallery({ isOpen, onClose }: ArtworksGalleryProps) {
                 </div>
               </div>
               
-              {/* Masonry Content */}
+              {/* Dual Row Gallery Content */}
               <div className="p-4 h-full overflow-hidden">
-                <div className="h-[calc(85vh-120px)] w-full flex justify-center items-center">
-                  <Masonry
+                <div className="h-[calc(85vh-120px)] w-full">
+                  <DualRowGallery
                     items={artworkItems}
-                    ease="back.out(1.7)"
                     duration={0.4}
                     stagger={0.12}
-                    animateFrom="center"
                     scaleOnHover={true}
                     hoverScale={0.98}
-                    blurToFocus={false}
-                    colorShiftOnHover={false}
                   />
                 </div>
               </div>
