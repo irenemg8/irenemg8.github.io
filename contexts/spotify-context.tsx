@@ -53,7 +53,7 @@ const allSongs: Song[] = [
     artist: 'Lost Frequencies',
     album: 'Reality',
     duration: 214,
-    cover: '/placeholder.svg',
+    cover: '/music/reality.jpeg',
     audioUrl: '/music/ssvid.net--Reality-Lost-Frequencies-Lyrics-Vietsub.mp3',
     liked: true
   },
@@ -63,7 +63,7 @@ const allSongs: Song[] = [
     artist: 'Carly Rae Jepsen',
     album: 'Kiss',
     duration: 193,
-    cover: '/placeholder.svg',
+    cover: '/music/callmemaybe.jpeg',
     audioUrl: '/music/ssvid.net--Carly-Rae-Jepsen-Call-Me-Maybe-Lyrics.mp3.webm',
     liked: false
   },
@@ -73,7 +73,7 @@ const allSongs: Song[] = [
     artist: 'Electric Light Orchestra',
     album: 'Out of the Blue',
     duration: 302,
-    cover: '/placeholder.svg',
+    cover: '/music/mrbluesky.jpeg',
     audioUrl: '/music/ssvid.net--Electric-Light-Orchestra-Mr-Blue-Sky-Lyrics.mp3',
     liked: true
   },
@@ -83,7 +83,7 @@ const allSongs: Song[] = [
     artist: 'Toploader',
     album: 'Onka\'s Big Moka',
     duration: 234,
-    cover: '/placeholder.svg',
+    cover: '/music/dancinginthemoonlight.jpeg',
     audioUrl: '/music/ssvid.net--Toploader-Dancing-in-the-Moonlight-Lyrics.mp3',
     liked: false
   },
@@ -93,7 +93,7 @@ const allSongs: Song[] = [
     artist: 'Robin Schulz',
     album: 'Sugar',
     duration: 235,
-    cover: '/placeholder.svg',
+    cover: '/music/sugar.jpeg',
     audioUrl: '/music/ssvid.net--Robin-Schulz-Sugar-Lyrics-feat-Francesco-Yates.mp3',
     liked: true
   },
@@ -105,7 +105,7 @@ const allSongs: Song[] = [
     artist: 'The Weeknd',
     album: 'After Hours',
     duration: 200,
-    cover: '/placeholder.svg',
+    cover: '/music/blindinglights.jpeg',
     audioUrl: '/music/ssvid.net--The-Weeknd-Blinding-Lights-Lyrics.mp3',
     liked: true
   },
@@ -115,7 +115,7 @@ const allSongs: Song[] = [
     artist: 'Dua Lipa',
     album: 'Future Nostalgia',
     duration: 203,
-    cover: '/placeholder.svg',
+    cover: '/music/levitating.jpeg',
     audioUrl: '/music/ssvid.net--Dua-Lipa-Levitating-Feat-DaBaby.mp3',
     liked: false
   },
@@ -125,7 +125,7 @@ const allSongs: Song[] = [
     artist: 'Olivia Rodrigo',
     album: 'SOUR',
     duration: 178,
-    cover: '/placeholder.svg',
+    cover: '/music/good4u.jpeg',
     audioUrl: '/music/ssvid.net--Olivia-Rodrigo-good-4-u-Lyrics.mp3',
     liked: true
   },
@@ -135,7 +135,7 @@ const allSongs: Song[] = [
     artist: 'Harry Styles',
     album: 'Harry\'s House',
     duration: 167,
-    cover: '/placeholder.svg',
+    cover: '/music/asitwas.jpeg',
     audioUrl: '/music/ssvid.net--Harry-Styles-As-It-Was-Lyrics.mp3',
     liked: true
   },

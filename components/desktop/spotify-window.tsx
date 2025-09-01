@@ -52,7 +52,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
       id: 'liked',
       name: 'Canciones que te gustan',
       description: 'Tus canciones favoritas',
-      cover: '/placeholder.svg',
+      cover: '/music/reality.jpeg',
       songs: allSongs.filter(song => song.liked),
       createdBy: 'Tú'
     },
@@ -60,7 +60,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
       id: 'dance-hits',
       name: 'Dance Hits',
       description: '8 canciones • Los mejores éxitos de baile',
-      cover: '/placeholder.svg',
+      cover: '/music/levitating.jpeg',
       songs: allSongs,
       createdBy: 'Spotify'
     },
@@ -68,7 +68,7 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
       id: 'chill-vibes',
       name: 'Chill Vibes',
       description: '5 canciones • Música relajante',
-      cover: '/placeholder.svg',
+      cover: '/music/blindinglights.jpeg',
       songs: allSongs.slice(0, 5),
       createdBy: 'Spotify'
     }
