@@ -139,7 +139,7 @@ const allSongs: Song[] = [
     audioUrl: '/music/ssvid.net--Harry-Styles-As-It-Was-Lyrics.mp3',
     liked: true
   },
-  {
+  /*{
     id: '10',
     title: 'Stay',
     artist: 'The Kid LAROI, Justin Bieber',
@@ -248,15 +248,21 @@ const allSongs: Song[] = [
     cover: '/placeholder.svg',
     audioUrl: '/music/ssvid.net--Ed-Sheeran-Shape-of-You-Lyrics.mp3',
     liked: true
-  }
+  }*/
 ]
+
+// Función para obtener una canción aleatoria
+const getRandomSong = (): Song => {
+  const randomIndex = Math.floor(Math.random() * allSongs.length)
+  return allSongs[randomIndex]
+}
 
 interface SpotifyProviderProps {
   children: ReactNode
 }
 
 export function SpotifyProvider({ children }: SpotifyProviderProps) {
-  const [currentSong, setCurrentSong] = useState<Song | null>(null)
+  const [currentSong, setCurrentSong] = useState<Song | null>(getRandomSong())
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [volume, setVolumeState] = useState(0.7)
