@@ -117,6 +117,20 @@ export default saludar
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const [terminalVisible, setTerminalVisible] = useState(false)
   const [terminalContent, setTerminalContent] = useState('$ Bienvenido a la terminal integrada!\n$ Escribe tus comandos aquí...\n')
+  const [searchVisible, setSearchVisible] = useState(false)
+  const [gitVisible, setGitVisible] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [searchResults, setSearchResults] = useState<{file: File, matches: number}[]>([])
+  const [activeSidebar, setActiveSidebar] = useState<'files' | 'search' | 'git'>('files')
+  const [commitMessage, setCommitMessage] = useState('')
+  const [isCommitting, setIsCommitting] = useState(false)
+  const [commitSuccess, setCommitSuccess] = useState(false)
+  const [hasChanges, setHasChanges] = useState(true)
+  const [commitHistory, setCommitHistory] = useState<{id: string, message: string, time: string, author: string}[]>([
+    { id: 'a1b2c3d', message: 'Initial commit: Add portfolio structure', time: '2 horas ago', author: 'Irene' },
+    { id: 'e4f5g6h', message: 'Update terminal functionality', time: '1 hora ago', author: 'Irene' },
+    { id: 'i7j8k9l', message: 'Add VS Code editor component', time: '30 min ago', author: 'Irene' }
+  ])
 
   const editorOptions = {
     minimap: { enabled: true },
@@ -207,6 +221,52 @@ export default saludar
     }
   }
 
+  const searchInFiles = (term: string) => {
+    if (!term.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    const results = files.map(file => {
+      const matches = (file.content.toLowerCase().match(new RegExp(term.toLowerCase(), 'g')) || []).length
+      return { file, matches }
+    }).filter(result => result.matches > 0)
+
+    setSearchResults(results)
+  }
+
+  const handleCommit = async () => {
+    if (!commitMessage.trim() || !hasChanges) return
+
+    setIsCommitting(true)
+    
+    // Simular proceso de commit con delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    // Crear nuevo commit
+    const newCommit = {
+      id: Math.random().toString(36).substr(2, 7),
+      message: commitMessage.trim(),
+      time: 'ahora mismo',
+      author: 'Irene'
+    }
+    
+    // Agregar al historial
+    setCommitHistory(prev => [newCommit, ...prev])
+    
+    // Limpiar formulario y mostrar éxito
+    setCommitMessage('')
+    setHasChanges(false)
+    setIsCommitting(false)
+    setCommitSuccess(true)
+    
+    // Simular que aparecen nuevos cambios después de un rato
+    setTimeout(() => {
+      setHasChanges(true)
+      setCommitSuccess(false)
+    }, 3000)
+  }
+
   const executeTerminalCommand = (command: string) => {
     let output = ''
     
@@ -262,15 +322,42 @@ export default saludar
           {/* Barra lateral de actividades */}
           <div className="w-12 bg-gray-900 border-r border-gray-700 flex flex-col items-center py-2 space-y-4">
             <button
-              onClick={() => setSidebarVisible(!sidebarVisible)}
-              className="p-2 text-gray-400 hover:text-white rounded transition-colors"
+              onClick={() => {
+                setSidebarVisible(true)
+                setActiveSidebar('files')
+              }}
+              className={`p-2 rounded transition-colors ${
+                activeSidebar === 'files' && sidebarVisible 
+                  ? 'text-white bg-gray-700' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
             >
               <Folder className="w-5 h-5" />
             </button>
-            <button className="p-2 text-gray-400 hover:text-white rounded transition-colors">
+            <button
+              onClick={() => {
+                setSidebarVisible(true)
+                setActiveSidebar('search')
+              }}
+              className={`p-2 rounded transition-colors ${
+                activeSidebar === 'search' && sidebarVisible 
+                  ? 'text-white bg-gray-700' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
               <Search className="w-5 h-5" />
             </button>
-            <button className="p-2 text-gray-400 hover:text-white rounded transition-colors">
+            <button
+              onClick={() => {
+                setSidebarVisible(true)
+                setActiveSidebar('git')
+              }}
+              className={`p-2 rounded transition-colors ${
+                activeSidebar === 'git' && sidebarVisible 
+                  ? 'text-white bg-gray-700' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
               <GitBranch className="w-5 h-5" />
             </button>
             <button
@@ -281,43 +368,195 @@ export default saludar
             </button>
           </div>
 
-          {/* Explorador de archivos */}
+          {/* Panel lateral */}
           {sidebarVisible && (
             <div className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
-              <div className="p-3 border-b border-gray-700">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-gray-300 text-sm font-medium">EXPLORADOR</h3>
-                  <button
-                    onClick={createNewFile}
-                    className="text-gray-400 hover:text-white text-xs"
-                    title="Nuevo archivo"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div className="flex-1 p-2">
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2 text-gray-300 text-xs font-medium mb-2">
-                    <FolderOpen className="w-4 h-4" />
-                    <span>PROYECTO</span>
+              {activeSidebar === 'files' && (
+                <>
+                  <div className="p-3 border-b border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-gray-300 text-sm font-medium">EXPLORADOR</h3>
+                      <button
+                        onClick={createNewFile}
+                        className="text-gray-400 hover:text-white text-xs"
+                        title="Nuevo archivo"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                  {files.map(file => (
-                    <button
-                      key={file.id}
-                      onClick={() => handleFileSelect(file.id)}
-                      className={`w-full flex items-center space-x-2 px-2 py-1 text-left text-sm rounded transition-colors ${
-                        activeFile === file.id 
-                          ? 'bg-gray-700 text-white' 
-                          : 'text-gray-400 hover:text-white hover:bg-gray-750'
-                      }`}
-                    >
-                      <FileText className="w-4 h-4" />
-                      <span>{file.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  <div className="flex-1 p-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2 text-gray-300 text-xs font-medium mb-2">
+                        <FolderOpen className="w-4 h-4" />
+                        <span>PROYECTO</span>
+                      </div>
+                      {files.map(file => (
+                        <button
+                          key={file.id}
+                          onClick={() => handleFileSelect(file.id)}
+                          className={`w-full flex items-center space-x-2 px-2 py-1 text-left text-sm rounded transition-colors ${
+                            activeFile === file.id 
+                              ? 'bg-gray-700 text-white' 
+                              : 'text-gray-400 hover:text-white hover:bg-gray-750'
+                          }`}
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>{file.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeSidebar === 'search' && (
+                <>
+                  <div className="p-3 border-b border-gray-700">
+                    <h3 className="text-gray-300 text-sm font-medium">BUSCAR</h3>
+                  </div>
+                  <div className="p-3">
+                    <input
+                      type="text"
+                      placeholder="Buscar en archivos..."
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value)
+                        searchInFiles(e.target.value)
+                      }}
+                      className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="flex-1 p-2 overflow-y-auto">
+                    {searchResults.length > 0 ? (
+                      <div className="space-y-2">
+                        <div className="text-xs text-gray-400 mb-2">
+                          {searchResults.length} archivo(s) encontrado(s)
+                        </div>
+                        {searchResults.map(result => (
+                          <button
+                            key={result.file.id}
+                            onClick={() => handleFileSelect(result.file.id)}
+                            className="w-full flex items-center justify-between px-2 py-1 text-left text-sm rounded transition-colors text-gray-400 hover:text-white hover:bg-gray-700"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <FileText className="w-4 h-4" />
+                              <span>{result.file.name}</span>
+                            </div>
+                            <span className="text-xs bg-gray-600 px-1 rounded">{result.matches}</span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : searchTerm ? (
+                      <div className="text-sm text-gray-400">Sin resultados</div>
+                    ) : (
+                      <div className="text-sm text-gray-400">Escribe para buscar</div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {activeSidebar === 'git' && (
+                <>
+                  <div className="p-3 border-b border-gray-700">
+                    <h3 className="text-gray-300 text-sm font-medium">CONTROL DE CÓDIGO</h3>
+                  </div>
+                  <div className="flex-1 p-2 overflow-y-auto">
+                    <div className="space-y-4">
+                      {/* Sección de cambios */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-xs text-gray-400">CAMBIOS</div>
+                          {hasChanges && (
+                            <div className="text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                              {files.length}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {commitSuccess ? (
+                          <div className="flex items-center space-x-2 text-sm text-green-400 mb-3">
+                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span>✅ Commit realizado correctamente</span>
+                          </div>
+                        ) : hasChanges ? (
+                          <div className="space-y-1 mb-3">
+                            {files.map(file => (
+                              <div key={file.id} className="flex items-center space-x-2 text-sm">
+                                <div className="w-1 h-1 bg-yellow-500 rounded-full"></div>
+                                <FileText className="w-4 h-4 text-gray-400" />
+                                <span className="text-gray-300">{file.name}</span>
+                                <span className="text-xs text-yellow-500 ml-auto">M</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-400 mb-3">
+                            Sin cambios pendientes
+                          </div>
+                        )}
+                        
+                        {/* Formulario de commit */}
+                        <div className="space-y-2">
+                          <input
+                            type="text"
+                            placeholder="Mensaje del commit..."
+                            value={commitMessage}
+                            onChange={(e) => setCommitMessage(e.target.value)}
+                            disabled={!hasChanges || isCommitting}
+                            className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                          />
+                          <button 
+                            onClick={handleCommit}
+                            disabled={!commitMessage.trim() || !hasChanges || isCommitting}
+                            className={`w-full text-white text-sm py-1 px-3 rounded transition-colors flex items-center justify-center space-x-2 ${
+                              isCommitting 
+                                ? 'bg-yellow-600 cursor-not-allowed' 
+                                : commitSuccess 
+                                  ? 'bg-green-600' 
+                                  : !commitMessage.trim() || !hasChanges 
+                                    ? 'bg-gray-600 cursor-not-allowed' 
+                                    : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
+                          >
+                            {isCommitting ? (
+                              <>
+                                <div className="animate-spin rounded-full h-3 w-3 border border-white border-t-transparent"></div>
+                                <span>Commiting...</span>
+                              </>
+                            ) : commitSuccess ? (
+                              <>
+                                <span>✅ Completado</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>✓ Commit</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Historial de commits */}
+                      <div className="border-t border-gray-700 pt-3">
+                        <div className="text-xs text-gray-400 mb-2">HISTORIAL</div>
+                        <div className="space-y-2">
+                          {commitHistory.slice(0, 5).map(commit => (
+                            <div key={commit.id} className="bg-gray-750 rounded p-2 text-xs">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-blue-400 font-mono">{commit.id}</span>
+                                <span className="text-gray-400">{commit.time}</span>
+                              </div>
+                              <div className="text-gray-300 text-sm">{commit.message}</div>
+                              <div className="text-gray-400 text-xs mt-1">por {commit.author}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

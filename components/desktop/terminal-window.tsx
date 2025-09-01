@@ -452,8 +452,29 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl h-full max-h-[80vh] bg-black rounded-lg shadow-2xl overflow-hidden border border-gray-700 flex flex-col">
+    <>
+      <style jsx>{`
+        .scrollbar-terminal::-webkit-scrollbar {
+          width: 12px;
+        }
+        .scrollbar-terminal::-webkit-scrollbar-track {
+          background: #1a202c;
+          border-radius: 6px;
+        }
+        .scrollbar-terminal::-webkit-scrollbar-thumb {
+          background: #4a5568;
+          border-radius: 6px;
+          border: 2px solid #1a202c;
+        }
+        .scrollbar-terminal::-webkit-scrollbar-thumb:hover {
+          background: #718096;
+        }
+        .scrollbar-terminal::-webkit-scrollbar-thumb:active {
+          background: #a0aec0;
+        }
+      `}</style>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-4xl h-full max-h-[80vh] bg-black rounded-lg shadow-2xl overflow-hidden border border-gray-700 flex flex-col">
         {/* Barra de título fija */}
         <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700 flex-shrink-0">
           <div className="flex items-center space-x-3">
@@ -473,7 +494,11 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
         {/* Terminal content con scroll */}
         <div
           ref={terminalRef}
-          className="flex-1 p-4 font-mono text-sm text-green-400 bg-black overflow-y-auto"
+          className="flex-1 p-4 font-mono text-sm text-green-400 bg-black overflow-y-auto scrollbar-terminal"
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#4a5568 #1a202c'
+          }}
         >
           {/* Historial */}
           <div className="whitespace-pre-wrap">
@@ -498,7 +523,8 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
             />
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
