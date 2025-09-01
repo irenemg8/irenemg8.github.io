@@ -288,7 +288,6 @@ export function SpotifyWindow({ isOpen, onClose }: SpotifyWindowProps) {
               <div className="w-3 h-3 bg-yellow-400 rounded-full" />
               <div className="w-3 h-3 bg-green-400 rounded-full" />
             </div>
-            <div className="text-2xl font-bold text-green-400">Spotify</div>
           </div>
         </div>
 
