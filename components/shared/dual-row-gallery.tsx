@@ -52,14 +52,14 @@ export function DualRowGallery({
               delay: index * stagger,
               ease: [0.23, 1, 0.320, 1]
             }}
-            className="cursor-pointer"
+            className=""
             style={{
               width: `${item.width * 0.6}px`,
               height: `${item.height * 0.6}px`,
             }}
             onMouseEnter={() => setHoveredId(item.id)}
             onMouseLeave={() => setHoveredId(null)}
-            onClick={() => item.url && window.open(item.url, '_blank', 'noopener')}
+
             whileHover={scaleOnHover ? { 
               scale: hoverScale,
               y: -5,
@@ -96,14 +96,14 @@ export function DualRowGallery({
               delay: (midPoint + index) * stagger,
               ease: [0.23, 1, 0.320, 1]
             }}
-            className="cursor-pointer"
+            className=""
             style={{
               width: `${item.width * 0.6}px`,
               height: `${item.height * 0.6}px`,
             }}
             onMouseEnter={() => setHoveredId(item.id)}
             onMouseLeave={() => setHoveredId(null)}
-            onClick={() => item.url && window.open(item.url, '_blank', 'noopener')}
+
             whileHover={scaleOnHover ? { 
               scale: hoverScale,
               y: 5,
