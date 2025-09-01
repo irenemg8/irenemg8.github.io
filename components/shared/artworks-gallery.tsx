@@ -14,94 +14,87 @@ export function ArtworksGallery({ isOpen, onClose }: ArtworksGalleryProps) {
 
   // Artworks items - collage artístico sin orden por ID, tamaños optimizados sin scroll
   const artworkItems = [
-    // Fila 1: Composición horizontal grande-pequeña-mediana
+    // Fila 1: Composición horizontal grande-pequeña-mediana (aumentado)
     {
       id: "forest1",
       img: "/art/forest.png",
       url: "https://example.com/forest",
-      height: 240, // Cuadrado grande como anchor
-      width: 240,
-    },
-    {
-      id: "forest-gif",
-      img: "/art/forest.gif",
-      url: "https://example.com/forest-gif", 
-      height: 140, // Pequeño horizontal
-      width: 210,
+      height: 280, // Cuadrado grande aumentado
+      width: 280,
     },
     {
       id: "urbancity",
       img: "/art/urbancity.png", 
       url: "https://example.com/urbancity",
-      height: 180, // Mediano horizontal
-      width: 210,
+      height: 210, // Mediano horizontal aumentado
+      width: 240,
     },
     {
       id: "champinon",
       img: "/art/champinon.png",
       url: "https://example.com/champinon",
-      height: 190, // Casi cuadrado
-      width: 200,
+      height: 220, // Casi cuadrado aumentado
+      width: 230,
     },
     
-    // Fila 2: Mezcla vertical-cuadrados-horizontal
+    // Fila 2: Mezcla vertical-cuadrados-horizontal (aumentado)
     {
       id: "doll",
       img: "/art/doll.png", 
       url: "https://example.com/doll",
-      height: 340, // Vertical destacado
-      width: 180,
+      height: 380, // Vertical destacado aumentado
+      width: 210,
     },
     {
       id: "luna",
       img: "/art/luna.png",
       url: "https://example.com/luna",
-      height: 220, // Cuadrado mediano
-      width: 220,
+      height: 260, // Cuadrado mediano aumentado
+      width: 260,
     },
     {
       id: "nemo",
       img: "/art/nemo.png",
       url: "https://example.com/nemo", 
-      height: 200, // Cuadrado pequeño
-      width: 215,
+      height: 235, // Cuadrado pequeño aumentado
+      width: 250,
     },
     {
       id: "mario",
       img: "/art/mario.png",
       url: "https://example.com/mario", 
-      height: 190, // Cuadrado pequeño
-      width: 205,
+      height: 220, // Cuadrado pequeño aumentado
+      width: 235,
     },
     
-    // Fila 3: Composición final variada
+    // Fila 3: Composición final variada (aumentado)
     {
       id: "icon",
       img: "/art/icon.png",
       url: "https://example.com/icon",
-      height: 280, // Vertical mediano
-      width: 220,
+      height: 320, // Vertical mediano aumentado
+      width: 260,
     },
     {
       id: "pulpo",
       img: "/art/pulpo.png",
       url: "https://example.com/pulpo",
-      height: 230, // Cuadrado
-      width: 230,
+      height: 265, // Cuadrado aumentado
+      width: 265,
     },
     {
       id: "forest2",
       img: "/art/forest2.png",
       url: "https://example.com/forest2",
-      height: 160, // Horizontal pequeño
-      width: 200,
+      height: 190, // Horizontal pequeño aumentado
+      width: 235,
     },
     {
       id: "forest3",
       img: "/art/forest3.png",
       url: "https://example.com/forest3", 
-      height: 150, // Horizontal pequeño
-      width: 205,
+      height: 175, // Horizontal pequeño aumentado
+      width: 240,
     }
   ]
 
@@ -127,7 +120,7 @@ export function ArtworksGallery({ isOpen, onClose }: ArtworksGalleryProps) {
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="relative w-full max-w-7xl h-full max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="relative w-full max-w-6xl h-full max-h-[85vh] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
               {/* macOS Header */}
               <div className="sticky top-0 z-10 flex items-center h-11 px-4 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border-b border-gray-300 dark:border-gray-700">
                 {/* Traffic Light Buttons */}
@@ -156,7 +149,7 @@ export function ArtworksGallery({ isOpen, onClose }: ArtworksGalleryProps) {
               
               {/* Masonry Content */}
               <div className="p-4 h-full overflow-hidden">
-                <div className="h-[calc(90vh-120px)] w-full flex justify-center items-center">
+                <div className="h-[calc(85vh-120px)] w-full flex justify-center items-center">
                   <Masonry
                     items={artworkItems}
                     ease="back.out(1.7)"

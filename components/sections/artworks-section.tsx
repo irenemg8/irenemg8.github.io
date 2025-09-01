@@ -9,60 +9,68 @@ interface ArtworksSectionProps {
 }
 
 export function ArtworksSection({ title = "Arte Digital" }: ArtworksSectionProps) {
-  // Artworks items para el masonry
+  // Artworks items para masonry - proporciones naturales sin recorte
   const artworkItems = [
     {
-      id: "1",
+      id: "urbancity",
       img: "/art/urbancity.png",
-      /*url: "https://example.com/urbancity",*/
-      height: 600,
+      url: "https://example.com/urbancity",
+      width: 400,
+      height: 300,
     },
     {
-      id: "2", 
+      id: "nemo", 
       img: "/art/nemo.png",
-      /*url: "https://example.com/urbancity",*/
+      url: "https://example.com/nemo",
+      width: 350,
+      height: 350,
+    },
+    {
+      id: "doll",
+      img: "/art/doll.png", 
+      url: "https://example.com/doll",
+      width: 300,
       height: 400,
     },
     {
-      id: "3",
-      img: "/art/doll.png", 
-      /*url: "https://example.com/urbancity",*/
-      height: 700,
-    },
-    {
-      id: "4",
+      id: "luna",
       img: "/art/luna.png",
-      /*url: "https://example.com/urbancity",*/
-      height: 500,
+      url: "https://example.com/luna",
+      width: 380,
+      height: 380,
     },
     {
-      id: "5",
+      id: "mario",
       img: "/art/mario.png",
-      /*url: "https://example.com/urbancity",*/
-      height: 450,
+      url: "https://example.com/mario",
+      width: 320,
+      height: 320,
     },
     {
-      id: "6", 
+      id: "pulpo", 
       img: "/art/pulpo.png",
-      /*url: "https://example.com/urbancity",*/
-      height: 550,
+      url: "https://example.com/pulpo",
+      width: 360,
+      height: 280,
     },
     {
-      id: "7",
+      id: "champinon",
       img: "/art/champinon.png",
-      /*url: "https://example.com/urbancity",*/
-      height: 650,
+      url: "https://example.com/champinon",
+      width: 340,
+      height: 340,
     },
     {
-      id: "8",
+      id: "forest",
       img: "/art/forest.gif",
-      /*url: "https://example.com/urbancity",*/
-      height: 800,
+      url: "https://example.com/forest",
+      width: 280,
+      height: 350,
     }
   ]
 
   return (
-    <div id="artworks" className="py-20 relative overflow-hidden">
+    <div id="artworks" className="py-12 relative overflow-hidden">
       {/* Background decorativo */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-pink-50/30 to-orange-50/50 dark:from-purple-900/20 dark:via-pink-900/10 dark:to-orange-900/20" />
       
@@ -72,7 +80,7 @@ export function ArtworksSection({ title = "Arte Digital" }: ArtworksSectionProps
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 font-pecita bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
             {title}
@@ -83,23 +91,23 @@ export function ArtworksSection({ title = "Arte Digital" }: ArtworksSectionProps
           </p>
         </motion.div>
 
-        {/* Masonry Gallery */}
+        {/* Masonry Gallery - React-bits style */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="h-[800px] w-full"
+          className="h-[600px] w-full"
         >
           <Masonry
             items={artworkItems}
             ease="power3.out"
             duration={0.6}
-            stagger={0.05}
+            stagger={0.08}
             animateFrom="bottom"
             scaleOnHover={true}
-            hoverScale={0.95}
-            blurToFocus={true}
+            hoverScale={0.96}
+            blurToFocus={false}
             colorShiftOnHover={false}
           />
         </motion.div>
