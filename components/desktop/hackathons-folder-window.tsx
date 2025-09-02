@@ -80,6 +80,12 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
           type: 'web',
           url: 'https://y37yne.axshare.com/?id=paqflt&p=registro'
         },
+        {
+          id: 'emobility-diploma',
+          name: 'Diploma',
+          type: 'image',
+          url: '/hackathon/diploma_onklub.jpeg'
+        },
       ]
     },
     {
@@ -180,17 +186,35 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
           url: '/hackathon/Memoria Técnica Aura.pdf'
         },
         {
-          id: 'aura-logo',
-          name: 'Logo VRAIN',
+          id: 'aura-diploma',
+          name: 'Diploma 2º Premio',
           type: 'image',
-          url: '/hackathon/vrain_logo.jpeg'
+          url: '/hackathon/aura/8A78D552-3BCC-41F4-BA26-DD248DD24681.jpeg'
         },
         {
-          id: 'aura-logo-back',
-          name: 'Logo VRAIN (trasera)',
+          id: 'aura-premio',
+          name: 'Premio 2º Posición',
           type: 'image',
-          url: '/hackathon/vrain_logo_back.png'
-        }
+          url: '/hackathon/aura/DA656DA8-C5D7-4416-B2C0-9AEF26A79E1F.jpg'
+        },
+        {
+          id: 'aura-equipo',
+          name: 'Equipo',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7565.jpg'
+        },
+        {
+          id: 'aura-entrega',
+          name: 'Entrega de premios',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7563.jpeg'
+        },
+        {
+          id: 'aura-ganadores',
+          name: 'Ganadores',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7564.jpg'
+        },
       ]
     },
 
@@ -350,7 +374,7 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
       <AnimatePresence>
         {showMediaViewer && mediaViewerContent && (
           <MediaViewer
-            hackathon={mediaViewerContent}
+            project={mediaViewerContent}
             onClose={handleCloseMediaViewer}
           />
         )}

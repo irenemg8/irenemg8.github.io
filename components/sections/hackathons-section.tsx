@@ -13,7 +13,8 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     {
       id: 1,
       eventName: "eMobility",
-      logo: "/hackathon/IMG_7130.jpeg?height=200&width=200",
+      logo: "/hackathon/IMG_7130.jpeg",
+      userPhoto: "/hackathon/IMG_7130_back.png",
       projectTitle: "EcoSpot",
       role: "Software developer",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
@@ -32,7 +33,8 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
      {
     id: 2,
     eventName: "Safor Salut Hackathon – 3rd Edition",
-    logo: "/hackathon/IMG_7131_back.png?height=200&width=200",
+    logo: "/hackathon/IMG_7131.png",
+    userPhoto: "/hackathon/IMG_7131_back.png",
     projectTitle: "URBANVIVE",
     role: "UX/UI/UC Specialist",
     description: "A smart microbiota-integrated flooring system to promote wellness while walking",
@@ -56,7 +58,8 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     {
       id: 3,
       eventName: "Smart City Challenges 2025",
-      logo: "/hackathon/vrain_logo_back.jpeg?height=200&width=200",
+      logo: "/hackathon/vrain_logo.jpeg",
+      userPhoto: "/hackathon/vrain_logo_back.png",
       projectTitle: "Aura",
       role: "UX/UI & Frontend Developer",
       description: "AI-powered assistant for visually impaired people",

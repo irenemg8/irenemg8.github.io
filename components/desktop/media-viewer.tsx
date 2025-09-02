@@ -229,7 +229,7 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
       />
       
       {/* Floating close button - oculto si solo hay archivos de audio */}
-      {!project.mediaFiles?.every(file => file.type === 'audio') && (
+      {(!project.mediaFiles || !project.mediaFiles.every(file => file.type === 'audio')) && (
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-50001 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg transition-colors"
