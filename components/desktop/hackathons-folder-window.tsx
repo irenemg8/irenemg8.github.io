@@ -11,6 +11,7 @@ interface HackathonData {
   id: string
   eventName: string
   logo: string
+  title: string
   projectTitle: string
   role: string
   description: string
@@ -53,12 +54,13 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
 
   // Datos de hackathons con archivos multimedia
   const hackathons: HackathonData[] = [
-    {
-      id: 'emobility',
-      eventName: 'eMobility',
-      logo: '/hackathon/IMG_7130.jpeg',
-      projectTitle: 'EcoSpot',
-      role: 'Software developer',
+         {
+       id: 'emobility',
+       eventName: 'eMobility',
+       logo: '/hackathon/IMG_7130.jpeg',
+       title: 'EcoSpot',
+       projectTitle: 'EcoSpot',
+       role: 'Software developer',
       description: 'Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.',
       date: 'Sept 2023',
       awards: ['Semifinalists'],
@@ -88,12 +90,13 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
         },
       ]
     },
-    {
-      id: 'urbanvive',
-      eventName: 'CSG 2025',
-      logo: '/hackathon/IMG_7131.png',
-      projectTitle: 'URBANVIVE',
-      role: 'UX/UI/UC Specialist',
+         {
+       id: 'urbanvive',
+       eventName: 'CSG 2025',
+       logo: '/hackathon/IMG_7131.png',
+       title: 'URBANVIVE',
+       projectTitle: 'URBANVIVE',
+       role: 'UX/UI/UC Specialist',
       description: 'A smart microbiota-integrated flooring system to promote wellness while walking',
       date: 'May 2025',
       awards: ['1st Place – Overall Winner'],
@@ -159,12 +162,13 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
         }
       ]
     },
-    {
-      id: 'aura',
-      eventName: 'VRAIN',
-      logo: '/hackathon/vrain_logo_back.png',
-      projectTitle: 'Aura',
-      role: 'UX/UI & Frontend Developer', 
+         {
+       id: 'aura',
+       eventName: 'VRAIN',
+       logo: '/hackathon/vrain_logo_back.png',
+       title: 'Aura',
+       projectTitle: 'Aura',
+       role: 'UX/UI & Frontend Developer', 
       description: 'AI-powered assistant for visually impaired people',
       date: 'Jun 2025',
       awards: ['Pending'],
@@ -172,50 +176,62 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
       technologies: ['Figma', 'React Native', 'TypeScript', 'Speech-To-Text', 'AWS', 'Open Data APIs'],
       team: ['Irene Medina García (UX/UI & Frontend)', 'Vicente Rivas Monferrer (Backend)', 'Ada González (Frontend)', 'Raúl Fortea (Backend)'],
       challenges: 'Nuestro principal desafío fue lograr un reconocimiento de imágenes en tiempo real de alta precisión.',
-      mediaFiles: [
-        {
-          id: 'aura-demo',
-          name: 'Demo de Aura',
-          type: 'video',
-          url: '/hackathon/Aura-Demo.mp4'
-        },
-        {
-          id: 'aura-pdf',
-          name: 'Memoria Técnica Aura',
-          type: 'pdf',
-          url: '/hackathon/Memoria Técnica Aura.pdf'
-        },
-        {
-          id: 'aura-diploma',
-          name: 'Diploma 2º Premio',
-          type: 'image',
-          url: '/hackathon/aura/8A78D552-3BCC-41F4-BA26-DD248DD24681.jpeg'
-        },
-        {
-          id: 'aura-premio',
-          name: 'Premio 2º Posición',
-          type: 'image',
-          url: '/hackathon/aura/DA656DA8-C5D7-4416-B2C0-9AEF26A79E1F.jpg'
-        },
-        {
-          id: 'aura-equipo',
-          name: 'Equipo',
-          type: 'image',
-          url: '/hackathon/aura/IMG_7565.jpg'
-        },
-        {
-          id: 'aura-entrega',
-          name: 'Entrega de premios',
-          type: 'image',
-          url: '/hackathon/aura/IMG_7563.jpeg'
-        },
-        {
-          id: 'aura-ganadores',
-          name: 'Ganadores',
-          type: 'image',
-          url: '/hackathon/aura/IMG_7564.jpg'
-        },
-      ]
+             mediaFiles: [
+         {
+           id: 'aura-demo',
+           name: 'Demo de Aura',
+           type: 'video',
+           url: '/hackathon/aura/Aura-Demo.mp4'
+         },
+         {
+           id: 'aura-pdf',
+           name: 'Memoria Técnica Aura',
+           type: 'pdf',
+           url: '/hackathon/Memoria Técnica Aura.pdf'
+         },
+         {
+           id: 'aura-diploma',
+           name: 'Diploma 2º Premio',
+           type: 'image',
+           url: '/hackathon/aura/8A78D552-3BCC-41F4-BA26-DD248DD24681.JPEG'
+         },
+         {
+           id: 'aura-premio',
+           name: 'Premio 2º Posición',
+           type: 'image',
+           url: '/hackathon/aura/DA656DA8-C5D7-4416-B2C0-9AEF26A79E1F.jpg'
+         },
+         {
+           id: 'aura-equipo',
+           name: 'Equipo',
+           type: 'image',
+           url: '/hackathon/aura/IMG_7565.JPG'
+         },
+         {
+           id: 'aura-entrega',
+           name: 'Entrega de premios',
+           type: 'image',
+           url: '/hackathon/aura/IMG_7563.JPEG'
+         },
+         {
+           id: 'aura-ganadores',
+           name: 'Ganadores',
+           type: 'image',
+           url: '/hackathon/aura/IMG_7564.JPG'
+         },
+         {
+           id: 'aura-team-extra',
+           name: 'Equipo (foto extra)',
+           type: 'image',
+           url: '/hackathon/aura/IMG_7567.JPG'
+         },
+         {
+           id: 'aura-event',
+           name: 'Evento VRAIN',
+           type: 'image',
+           url: '/hackathon/aura/IMG_7569.JPG'
+         }
+       ]
     },
 
   ]
