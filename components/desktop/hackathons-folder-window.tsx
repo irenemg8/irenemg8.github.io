@@ -65,14 +65,14 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
        userPhoto: '/hackathon/profile-onklub.png',
        title: 'EcoSpot',
        projectTitle: 'EcoSpot',
-       role: 'Software developer',
-      description: 'Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.',
+       role: 'Software Dev',
+      description: 'Participé en el Hackathon eMobility de Valencia, diseñando una aplicación móvil para estaciones de carga de vehículos eléctricos. El objetivo era promover soluciones de movilidad inteligentes, intuitivas y sostenibles.',
       date: 'Sept 2023',
-      awards: ['Semifinalists'],
-      fullStory: 'During the 2-day hackathon, I worked on a team that developed an app to locate, reserve, and review EV charging points in real time. I focused on front-end design and UX, creating a simple, intuitive interface. We applied agile methods to deliver a working MVP and presented it to industry leaders.',
-      technologies: ['Axure', 'Figma', 'Android'],
+      awards: ['Semifinalistas'],
+      fullStory: 'Durante el hackathon de dos días, trabajé en un equipo que desarrolló una aplicación para localizar, reservar y revisar puntos de carga de vehículos eléctricos en tiempo real. Me centré en el diseño front-end y la experiencia de usuario (UX), creando una interfaz sencilla e intuitiva. Aplicamos métodos ágiles para desarrollar un MVP funcional y lo presentamos a los líderes del sector.',
+      technologies: ['Axure', 'Android', 'Canva'],
       team: ['Irene Medina García', 'Vicente Rivas Monferrer', 'Teresa López Garrido', 'Raúl Real González'],
-      challenges: 'One of the main challenges was developing a functional MVP in less than 36 hours, which required rapid decision-making and tight coordination. Additionally, the lack of real-time charging station data forced us to simulate responses, complicating backend integration. Designing a user experience that worked for different types of EV users demanded continuous iteration and validation. Finally, working within a multidisciplinary team meant aligning technical, design, and business perspectives under constant time pressure.',
+      challenges: 'Uno de los principales desafíos fue desarrollar un MVP funcional en menos de 36 horas, lo que requirió una rápida toma de decisiones y una estrecha coordinación. Además, la falta de datos de estaciones de carga en tiempo real nos obligó a simular respuestas, lo que complicó la integración del backend. Diseñar una experiencia de usuario que funcionara para diferentes tipos de usuarios de vehículos eléctricos exigió iteración y validación continuas. Finalmente, trabajar en un equipo multidisciplinario implicó alinear las perspectivas técnicas, de diseño y de negocio bajo una presión de tiempo constante.',
       /*mediaUrl: '/hackathon/emobility.pdf',*/
       mediaFiles: [
         {
@@ -116,17 +116,17 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
        userPhoto: '/hackathon/profile-urbanvive.png',
        title: 'URBANVIVE',
        projectTitle: 'URBANVIVE',
-       role: 'UX/UI Specialist',
-      description: 'A smart microbiota-integrated flooring system to promote wellness while walking',
+       role: 'Especialista UX/UI',
+      description: 'Un sistema de suelo inteligente con microbiota integrada para promover el bienestar al caminar.',
       date: 'May 2025',
-      awards: ['1st Place – Overall Winner'],
-      fullStory: 'UrbanVive es una solución innovadora de health-tech diseñada durante la 3ª edición del Hackathon Safor Salut en Gandía.',
-      technologies: ['Figma', 'Arduino', 'Biosensors'],
+      awards: ['1º Premio'],
+      fullStory: 'UrbanVive es una solución innovadora de health-tech diseñada durante la 3ª edición del Hackathon Safor Salut en Gandía. El proyecto se centra en crear un sistema de suelo inteligente con microbiota integrada que interactúa con el cuerpo a través del contacto físico, promoviendo el bienestar al caminar.',
+      technologies: ['Figma', 'Arduino', 'Biosensores'],
       team: [
-        'Irene Medina García (UX/UI Specialist)',
-        'Pablo Rebollo De Miguel (Hardware Developer)',
-        'Nuria Casañ (Biomedical Intern)',
-        'Juan Chucuri (Biological Researcher)'
+        'Irene Medina García (Diseñadora UX/UI)',
+        'Pablo Rebollo De Miguel (Hardware Dev)',
+        'Nuria Casañ (Especialista Biomédica)',
+        'Juan Chucuri (Investigador Biológico)'
       ],
       challenges: 'El principal desafío fue traducir la investigación compleja de microbiota en un producto tangible centrado en el usuario.',
       /*liveUrl: 'https://www.canva.com/design/DAGmUaMmc1Q/qEBb7fra-d-sfrh8tSUNvQ/view?utm_content=DAGmUaMmc1Q&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h917ff62e5e',
@@ -179,10 +179,10 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
        userPhoto: '/hackathon/profile-aura.png',
        title: 'Aura',
        projectTitle: 'Aura',
-       role: 'UX/UI & Frontend Developer', 
-      description: 'AI-powered assistant for visually impaired people',
+       role: 'Diseñadora UX/UI & Frontend Dev', 
+      description: 'Asistente impulsado por IA para personas invidentes.',
       date: 'Jun 2025',
-      awards: ['Pending'],
+      awards: ['2º Premio'],
       fullStory: 'Aura es una aplicación móvil innovadora diseñada para empoderar a personas con discapacidad visual.',
       technologies: ['Figma', 'React Native', 'TypeScript', 'Speech-To-Text', 'AWS', 'Open Data APIs'],
       team: ['Irene Medina García (UX/UI & Frontend)', 'Vicente Rivas Monferrer (Backend)', 'Ada González (Frontend)', 'Raúl Fortea (Backend)'],
@@ -502,10 +502,14 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
                         <h4 className="font-semibold text-sm text-gray-700 mb-2">
                           👥 Equipo:
                         </h4>
-                        <p className="text-xs text-gray-600">
-                          {stickyNoteContent.team.slice(0, 2).join(', ')}
-                          {stickyNoteContent.team.length > 2 && ` +${stickyNoteContent.team.length - 2} más`}
-                        </p>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          {stickyNoteContent.team.map((member: string, idx: number) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="mr-2 text-yellow-600">•</span>
+                              <span>{member}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
 

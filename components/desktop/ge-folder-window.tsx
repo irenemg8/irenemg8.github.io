@@ -70,7 +70,7 @@ export function GEFolderWindow({ isOpen, onClose }: GEFolderWindowProps) {
         'Diseño de interfaces',
       ],
       skills: ['Trello','React','TS', 'Figma'],
-      avatarUrl: '/placeholder-user.png', // Aquí pondrás tu foto del equipo Zyndra
+      avatarUrl: '/profile-ge1.png', // Foto del equipo Zyndra
       iconUrl: '/work/zyndra.png', // Para la ProfileCard (miniatura)
       iconUrlDark: '/work/zyndra.png',  // Para el sticky note (mismo logo)
       website: 'https://zyndra.com'

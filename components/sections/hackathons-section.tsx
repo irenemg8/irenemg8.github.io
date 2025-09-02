@@ -24,7 +24,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       role: "Software Dev",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
       date: "Sept 2023",
-      awards: ["Semifinalists"],
+      awards: ["Semifinalist"],
       fullStory:
         "During the 2-day hackathon, I worked on a team that developed an app to locate, reserve, and review EV charging points in real time. I focused on front-end design and UX, creating a simple, intuitive interface. We applied agile methods to deliver a working MVP and presented it to industry leaders.",
       technologies: ["Axure", "Figma", "Android"],
@@ -242,10 +242,14 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
                         <h4 className="font-semibold text-sm text-gray-700 mb-2">
                           👥 Equipo:
                         </h4>
-                        <p className="text-xs text-gray-600">
-                          {stickyNoteContent.team.slice(0, 2).join(', ')}
-                          {stickyNoteContent.team.length > 2 && ` +${stickyNoteContent.team.length - 2} más`}
-                        </p>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          {stickyNoteContent.team.map((member: string, idx: number) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="mr-2 text-yellow-600">•</span>
+                              <span>{member}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
 
