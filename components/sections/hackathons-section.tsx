@@ -1,7 +1,9 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { useState } from 'react'
+import { motion, AnimatePresence } from "framer-motion"
 import { HackathonCard } from "@/components/shared/hackathon-card"
+import { StickyNote } from "@/components/desktop/sticky-note"
 
 interface HackathonsSectionProps {
   openModal: (type: "hackathon", content: any) => void
@@ -9,14 +11,17 @@ interface HackathonsSectionProps {
 }
 
 export function HackathonsSection({ openModal, title = "Hackathons" }: HackathonsSectionProps) {
+  const [showStickyNote, setShowStickyNote] = useState(false)
+  const [stickyNoteContent, setStickyNoteContent] = useState<any>(null)
+  
   const hackathons = [
     {
       id: 1,
       eventName: "eMobility",
       logo: "/hackathon/IMG_7130.jpeg",
-      userPhoto: "/hackathon/IMG_7130_back.png",
+      userPhoto: "/hackathon/profile-onklub.png",
       projectTitle: "EcoSpot",
-      role: "Software developer",
+      role: "Software Dev",
       description: "Participated in the eMobility Hackathon in Valencia, designing a mobile app for electric vehicle charging stations. The goal was to promote smart, user-friendly, and sustainable mobility solutions.",
       date: "Sept 2023",
       awards: ["Semifinalists"],
@@ -36,7 +41,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     logo: "/hackathon/IMG_7131.png",
     userPhoto: "/hackathon/IMG_7131_back.png",
     projectTitle: "URBANVIVE",
-    role: "UX/UI/UC Specialist",
+    role: "UX/UI Specialist",
     description: "A smart microbiota-integrated flooring system to promote wellness while walking",
     date: "May 2025",
     awards: ["1st Place – Overall Winner"],
@@ -44,7 +49,7 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       "UrbanVive is an innovative health-tech solution designed during the 3rd edition of the Safor Salut Hackathon in Gandía. The project focuses on creating a responsive floor system embedded with beneficial microbiota that interact with the human body through physical contact, promoting well-being as users walk across it. Beyond physical health, the system also incorporates sensory feedback and ambient interaction to encourage mindful walking and stress relief. As the UX/UI Specialist, I was responsible for the entire user journey design, ensuring accessibility, clarity, and emotional engagement across the experience. Our project stood out for combining biotechnology, urban design, and digital interactivity in a cohesive, impactful prototype.",
     technologies: ["Figma", "Arduino", "Biosensors"],
     team: [
-      "Irene Medina García (UX/UI/UC Specialist)",
+      "Irene Medina García (UX/UI Specialist)",
       "Pablo Rebollo De Miguel (Hardware Developer)",
       "Nuria Casañ (Biomedical Intern)",
       "Juan Chucuri (Biological Researcher)"
@@ -59,12 +64,12 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
       id: 3,
       eventName: "Smart City Challenges 2025",
       logo: "/hackathon/vrain_logo.jpeg",
-      userPhoto: "/hackathon/vrain_logo_back.png",
+      userPhoto: "/hackathon/Irene-medina-CSG25.jpg",
       projectTitle: "Aura",
-      role: "UX/UI & Frontend Developer",
+      role: "Diseñadora UX/UI & Frontend Dev",
       description: "AI-powered assistant for visually impaired people",
       date: "Jun 2025",
-      awards: ["Pending"],
+      awards: ["2nd Place"],
       fullStory:
         "Aura is an innovative mobile application designed to empower visually impaired individuals by transforming their smartphones into intelligent personal assistants. Utilizing the device's camera, advanced image recognition, and real-time voice feedback, Aura helps users independently navigate indoor and outdoor spaces, identify products in supermarkets (brand, properties, price, and more), and access detailed visual information about their surroundings. The app goes beyond navigation: it aims to bridge accessibility gaps by integrating artificial intelligence, open data, and voice interaction, offering a scalable platform for multiple smart city applications.",
       technologies: ["Figma", "React Native", "TypeScript", "Speech-To-Text", "AWS", "Open Data APIs"],
@@ -108,6 +113,16 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
     return dateB.getTime() - dateA.getTime(); // De más reciente a más antiguo
   });
 
+  const handleHackathonClick = (hackathon: any) => {
+    setStickyNoteContent(hackathon)
+    setShowStickyNote(true)
+  }
+
+  const handleCloseSticky = () => {
+    setShowStickyNote(false)
+    setStickyNoteContent(null)
+  }
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -141,9 +156,140 @@ export function HackathonsSection({ openModal, title = "Hackathons" }: Hackathon
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {sortedHackathons.map((hackathon) => (
-          <HackathonCard key={hackathon.id} hackathon={hackathon} onClick={() => openModal("hackathon", hackathon)} />
+          <HackathonCard key={hackathon.id} hackathon={hackathon} onClick={() => handleHackathonClick(hackathon)} />
         ))}
       </motion.div>
+      
+      {/* Sticky Note para información del hackathon */}
+      <AnimatePresence>
+        {showStickyNote && stickyNoteContent && (
+          <div style={{ 
+            position: 'fixed', 
+            left: 0, 
+            top: 0, 
+            width: '100%', 
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 50000 
+          }}>
+            <div style={{ pointerEvents: 'auto' }}>
+              <StickyNote
+                onDelete={handleCloseSticky}
+                onDragToTrash={handleCloseSticky}
+                initialPosition={{ 
+                  x: 400,
+                  y: 100
+                }}
+                customContent={
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 mb-4">
+                      <img 
+                        src={stickyNoteContent.logo || "/placeholder.svg"} 
+                        className="w-14 h-14 object-cover rounded-lg"
+                        alt={stickyNoteContent.eventName}
+                      />
+                      <div>
+                        <h3 className="font-bold text-lg text-gray-800">
+                          {stickyNoteContent.projectTitle}
+                        </h3>
+                        <p className="text-sm text-gray-600">{stickyNoteContent.role}</p>
+                        <p className="text-xs text-gray-500">{stickyNoteContent.date}</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-gray-700 mb-3">
+                        {stickyNoteContent.description}
+                      </p>
+                    </div>
+
+                    {stickyNoteContent.awards && stickyNoteContent.awards.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                          🏆 Premios:
+                        </h4>
+                        <ul className="text-xs space-y-1">
+                          {stickyNoteContent.awards.map((award: string, idx: number) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="mr-2 text-yellow-600">•</span>
+                              <span className="text-gray-600">{award}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {stickyNoteContent.technologies && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                          💻 Tecnologías:
+                        </h4>
+                        <div className="flex flex-wrap gap-1">
+                          {stickyNoteContent.technologies.map((tech: string) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-1 bg-yellow-200/50 text-xs rounded-full text-gray-700"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {stickyNoteContent.team && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                          👥 Equipo:
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          {stickyNoteContent.team.slice(0, 2).join(', ')}
+                          {stickyNoteContent.team.length > 2 && ` +${stickyNoteContent.team.length - 2} más`}
+                        </p>
+                      </div>
+                    )}
+
+                    {(stickyNoteContent.liveUrl || stickyNoteContent.githubUrl || stickyNoteContent.mediaUrl) && (
+                      <div className="pt-2 border-t border-gray-300 space-y-1">
+                        {stickyNoteContent.liveUrl && (
+                          <a
+                            href={stickyNoteContent.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            🔗 Ver proyecto
+                          </a>
+                        )}
+                        {stickyNoteContent.githubUrl && (
+                          <a
+                            href={stickyNoteContent.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            📁 Repositorio
+                          </a>
+                        )}
+                        {stickyNoteContent.mediaUrl && (
+                          <a
+                            href={stickyNoteContent.mediaUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            📄 Más información
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                }
+              />
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

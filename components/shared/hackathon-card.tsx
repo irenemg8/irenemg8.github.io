@@ -35,27 +35,33 @@ export function HackathonCard({ hackathon, onClick }: HackathonCardProps) {
         className="overflow-hidden h-full cursor-pointer hover:shadow-md transition-all duration-300 rounded-2xl border border-border/50 flex flex-col"
         onClick={onClick}
       >
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-48 overflow-hidden bg-gray-100">
           {/* Logo del evento como fondo */}
-          <Image
-            src={hackathon.logo || "/placeholder.svg"}
-            alt={hackathon.eventName}
-            fill
-            className="object-cover opacity-20 transition-transform duration-500 hover:scale-105"
-          />
-          {/* Foto de la usuaria superpuesta */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg">
+          <div className="absolute inset-0">
+            <Image
+              src={hackathon.logo || "/placeholder.svg"}
+              alt={hackathon.eventName}
+              fill
+              className="object-cover opacity-20 transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+          
+          {/* Foto de la usuaria superpuesta - PRINCIPAL */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
+            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-white">
               <Image
                 src={hackathon.userPhoto || "/placeholder-user.png"}
                 alt={`Irene en ${hackathon.eventName}`}
-                fill
-                className="object-cover"
+                width={96}
+                height={96}
+                className="object-cover w-full h-full"
+                priority
               />
             </div>
           </div>
+          
           {/* Nombre del evento en esquina superior */}
-          <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1">
+          <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1" style={{ zIndex: 10 }}>
             <p className="text-white text-sm font-medium">{hackathon.eventName}</p>
           </div>
         </div>

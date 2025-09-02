@@ -5,12 +5,14 @@ import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion
 import { X, Minus, Square } from 'lucide-react'
 import { useLanguage } from '@/contexts/language-context'
 import { MediaViewer } from './media-viewer'
+import { StickyNote } from './sticky-note'
 import ProfileCard from './ProfileCard'
 
 interface HackathonData {
   id: string
   eventName: string
   logo: string
+  userPhoto: string
   title: string
   projectTitle: string
   role: string
@@ -45,6 +47,8 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
   const [selectedHackathon, setSelectedHackathon] = useState<HackathonData | null>(null)
   const [showMediaViewer, setShowMediaViewer] = useState(false)
   const [mediaViewerContent, setMediaViewerContent] = useState<HackathonData | null>(null)
+  const [showStickyNote, setShowStickyNote] = useState(false)
+  const [stickyNoteContent, setStickyNoteContent] = useState<HackathonData | null>(null)
   const [size, setSize] = useState({ width: 900, height: 480 })
   const [isResizing, setIsResizing] = useState(false)
   const [position, setPosition] = useState({ x: 100, y: 50 })
@@ -58,6 +62,7 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
        id: 'emobility',
        eventName: 'eMobility',
        logo: '/hackathon/IMG_7130.jpeg',
+       userPhoto: '/hackathon/profile-onklub.png',
        title: 'EcoSpot',
        projectTitle: 'EcoSpot',
        role: 'Software developer',
@@ -68,7 +73,7 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
       technologies: ['Axure', 'Figma', 'Android'],
       team: ['Irene Medina García', 'Vicente Rivas Monferrer', 'Teresa López Garrido', 'Raúl Real González'],
       challenges: 'One of the main challenges was developing a functional MVP in less than 36 hours, which required rapid decision-making and tight coordination. Additionally, the lack of real-time charging station data forced us to simulate responses, complicating backend integration. Designing a user experience that worked for different types of EV users demanded continuous iteration and validation. Finally, working within a multidisciplinary team meant aligning technical, design, and business perspectives under constant time pressure.',
-      mediaUrl: '/hackathon/emobility.pdf',
+      /*mediaUrl: '/hackathon/emobility.pdf',*/
       mediaFiles: [
         {
           id: 'emobility-pdf',
@@ -108,23 +113,24 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
        id: 'urbanvive',
        eventName: 'CSG 2025',
        logo: '/hackathon/IMG_7131.png',
+       userPhoto: '/hackathon/profile-urbanvive.png',
        title: 'URBANVIVE',
        projectTitle: 'URBANVIVE',
-       role: 'UX/UI/UC Specialist',
+       role: 'UX/UI Specialist',
       description: 'A smart microbiota-integrated flooring system to promote wellness while walking',
       date: 'May 2025',
       awards: ['1st Place – Overall Winner'],
       fullStory: 'UrbanVive es una solución innovadora de health-tech diseñada durante la 3ª edición del Hackathon Safor Salut en Gandía.',
       technologies: ['Figma', 'Arduino', 'Biosensors'],
       team: [
-        'Irene Medina García (UX/UI/UC Specialist)',
+        'Irene Medina García (UX/UI Specialist)',
         'Pablo Rebollo De Miguel (Hardware Developer)',
         'Nuria Casañ (Biomedical Intern)',
         'Juan Chucuri (Biological Researcher)'
       ],
       challenges: 'El principal desafío fue traducir la investigación compleja de microbiota en un producto tangible centrado en el usuario.',
-      liveUrl: 'https://www.canva.com/design/DAGmUaMmc1Q/qEBb7fra-d-sfrh8tSUNvQ/view?utm_content=DAGmUaMmc1Q&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h917ff62e5e',
-      mediaUrl: 'https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/amp/',
+      /*liveUrl: 'https://www.canva.com/design/DAGmUaMmc1Q/qEBb7fra-d-sfrh8tSUNvQ/view?utm_content=DAGmUaMmc1Q&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h917ff62e5e',
+      mediaUrl: 'https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/amp/',*/
       mediaFiles: [
         {
           id: 'urbanvive-pdf',
@@ -169,7 +175,8 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
          {
        id: 'aura',
        eventName: 'VRAIN',
-       logo: '/hackathon/vrain_logo_back.png',
+       logo: '/hackathon/vrain_logo.jpeg',
+       userPhoto: '/hackathon/profile-aura.png',
        title: 'Aura',
        projectTitle: 'Aura',
        role: 'UX/UI & Frontend Developer', 
@@ -241,6 +248,14 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
   ]
 
   const handleHackathonClick = (hackathon: HackathonData) => {
+    // Mostrar tanto la sticky note como el media viewer
+    setStickyNoteContent(hackathon)
+    setShowStickyNote(true)
+    setMediaViewerContent(hackathon)
+    setShowMediaViewer(true)
+  }
+
+  const handleMediaViewerClick = (hackathon: HackathonData) => {
     setMediaViewerContent(hackathon)
     setShowMediaViewer(true)
   }
@@ -248,6 +263,11 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
   const handleCloseMediaViewer = () => {
     setShowMediaViewer(false)
     setMediaViewerContent(null)
+  }
+
+  const handleCloseSticky = () => {
+    setShowStickyNote(false)
+    setStickyNoteContent(null)
   }
 
   const handleDragEnd = (event: any, info: PanInfo) => {
@@ -360,9 +380,9 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
                       handle={hackathon.eventName}
                       status="Active"
                       contactText="+"
-                      avatarUrl={hackathon.logo}
+                      avatarUrl={hackathon.userPhoto}
                       iconUrl={hackathon.logo}
-                      miniAvatarUrl={hackathon.logo}
+                      miniAvatarUrl={hackathon.userPhoto}
                       showUserInfo={true}
                       enableTilt={true}
                       enableMobileTilt={false}
@@ -397,6 +417,135 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
             project={mediaViewerContent}
             onClose={handleCloseMediaViewer}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Sticky Note para información del hackathon */}
+      <AnimatePresence>
+        {showStickyNote && stickyNoteContent && (
+          <div style={{ 
+            position: 'fixed', 
+            left: 0, 
+            top: 0, 
+            width: '100%', 
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 50000 
+          }}>
+            <div style={{ pointerEvents: 'auto' }}>
+              <StickyNote
+                onDelete={handleCloseSticky}
+                onDragToTrash={handleCloseSticky}
+                initialPosition={{ 
+                  x: 400,
+                  y: 100
+                }}
+                customContent={
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 mb-4">
+                      <img 
+                        src={stickyNoteContent.logo || "/placeholder.svg"} 
+                        className="w-14 h-14 object-cover rounded-lg"
+                        alt={stickyNoteContent.eventName}
+                      />
+                      <div>
+                        <h3 className="font-bold text-lg text-gray-800">
+                          {stickyNoteContent.projectTitle}
+                        </h3>
+                        <p className="text-sm text-gray-600">{stickyNoteContent.role}</p>
+                        <p className="text-xs text-gray-500">{stickyNoteContent.date}</p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-gray-700 mb-3">
+                        {stickyNoteContent.description}
+                      </p>
+                    </div>
+
+                    {stickyNoteContent.awards && stickyNoteContent.awards.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                          🏆 Premios:
+                        </h4>
+                        <ul className="text-xs space-y-1">
+                          {stickyNoteContent.awards.map((award: string, idx: number) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="mr-2 text-yellow-600">•</span>
+                              <span className="text-gray-600">{award}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {stickyNoteContent.technologies && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                          💻 Tecnologías:
+                        </h4>
+                        <div className="flex flex-wrap gap-1">
+                          {stickyNoteContent.technologies.map((tech: string) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-1 bg-yellow-200/50 text-xs rounded-full text-gray-700"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {stickyNoteContent.team && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                          👥 Equipo:
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          {stickyNoteContent.team.slice(0, 2).join(', ')}
+                          {stickyNoteContent.team.length > 2 && ` +${stickyNoteContent.team.length - 2} más`}
+                        </p>
+                      </div>
+                    )}
+
+                    {(stickyNoteContent.liveUrl || stickyNoteContent.githubUrl || stickyNoteContent.mediaUrl) && (
+                      <div className="pt-2 border-t border-gray-300 space-y-1">
+                        {stickyNoteContent.liveUrl && (
+                          <a
+                            href={stickyNoteContent.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            🔗 Ver proyecto
+                          </a>
+                        )}
+                        {stickyNoteContent.githubUrl && (
+                          <a
+                            href={stickyNoteContent.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            📁 Repositorio
+                          </a>
+                        )}
+                        {stickyNoteContent.mediaUrl && (
+                          <button
+                            onClick={() => handleMediaViewerClick(stickyNoteContent)}
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer"
+                          >
+                            📄 Ver archivos multimedia
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                }
+              />
+            </div>
+          </div>
         )}
       </AnimatePresence>
     </>
