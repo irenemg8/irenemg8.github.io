@@ -83,11 +83,25 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
           url: 'https://y37yne.axshare.com/?id=paqflt&p=registro'
         },
         {
+          id: 'emobility-presentación',
+          name: 'Presentación',
+          type: 'image',
+          url: '/hackathon/presentacion_onklub.jpeg'
+        },
+        {
+          id: 'emobility-pase',
+          name: 'Acreditación',
+          type: 'image',
+          url: '/hackathon/pase_onklub.jpeg'
+        },
+        
+        {
           id: 'emobility-diploma',
           name: 'Diploma',
           type: 'image',
           url: '/hackathon/diploma_onklub.jpeg'
         },
+
       ]
     },
          {
@@ -118,24 +132,7 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
           type: 'pdf',
           url: '/hackathon/UrbanVive.pdf'
         },
-        {
-          id: 'urbanvive-presentation',
-          name: 'Presentación UrbanVive',
-          type: 'web',
-          url: 'https://www.canva.com/design/DAGmUaMmc1Q/qEBb7fra-d-sfrh8tSUNvQ/view?utm_content=DAGmUaMmc1Q&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h917ff62e5e'
-        },
-        {
-          id: 'urbanvive-photo',
-          name: 'Logo UrbanVive',
-          type: 'image', 
-          url: '/hackathon/IMG_7131.png'
-        },
-        {
-          id: 'urbanvive-photo-back',
-          name: 'Logo UrbanVive (trasera)',
-          type: 'image', 
-          url: '/hackathon/IMG_7131_back.png'
-        },
+        
         {
           id: 'urbanvive-web',
           name: 'Artículo web',
@@ -159,7 +156,14 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
           name: 'App Screenshot 3', 
           type: 'image',
           url: '/urbanvive_app/Urbanviveapp3.png'
-        }
+        },
+        {
+          id: 'urbanvive-diploma',
+          name: 'Diploma', 
+          type: 'image',
+          url: 'urbanvive_app/Irene-medina-CSG25.jpg'
+        },
+
       ]
     },
          {
