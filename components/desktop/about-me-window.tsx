@@ -25,6 +25,14 @@ interface PolaroidPhotoProps {
   onClose?: () => void
 }
 
+interface VideoPolaroidPhotoProps {
+  src: string
+  alt: string
+  title: string
+  initialPosition: { x: number; y: number }
+  onClose?: () => void
+}
+
 function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", onClose }: StickyNoteProps) {
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
@@ -246,19 +254,139 @@ function AboutPolaroidPhoto({ src, alt, title, initialPosition, onClose }: Polar
   )
 }
 
+function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: VideoPolaroidPhotoProps) {
+  const [position, setPosition] = useState(initialPosition)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    if (typeof window === 'undefined' || !isMounted) return
+    
+    const newPosition = {
+      x: Math.max(10, Math.min(window.innerWidth - 210, position.x + info.offset.x)),
+      y: Math.max(10, Math.min(window.innerHeight - 290, position.y + info.offset.y))
+    }
+    
+    setPosition(newPosition)
+    setIsDragging(false)
+  }
+
+  if (!isVisible || !isMounted) return null
+
+  return (
+    <motion.div
+      drag
+      dragMomentum={false}
+      dragElastic={0.1}
+      dragConstraints={isMounted ? {
+        left: 20,
+        right: window.innerWidth - 210,
+        top: 20,
+        bottom: window.innerHeight - 280,
+      } : {
+        left: 20,
+        right: 1000,
+        top: 20,
+        bottom: 600,
+      }}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={handleDragEnd}
+      animate={{ 
+        x: position.x, 
+        y: position.y,
+        rotate: isDragging ? 2 : (Math.random() - 0.5) * 10,
+        scale: isDragging ? 1.05 : 1,
+        zIndex: isDragging ? 60000 : 56000
+      }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 30 
+      }}
+      className={`absolute select-none pointer-events-auto ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+    >
+      <div className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative">
+        {/* Traffic lights para polaroid */}
+        <div className="absolute top-2 left-2 flex space-x-1 z-10">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsVisible(false)
+              if (onClose) onClose()
+            }}
+            className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
+          />
+          <div className="w-3 h-3 rounded-full bg-yellow-400" />
+          <div className="w-3 h-3 rounded-full bg-green-500" />
+        </div>
+
+        {/* Video */}
+        <div className="p-3 pb-0 pt-6">
+          <div className="w-48 h-48 relative overflow-hidden bg-gray-100">
+            <video
+              src={src}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              disablePictureInPicture
+              controlsList="nodownload nofullscreen noremoteplayback"
+              style={{ pointerEvents: 'none' }}
+            />
+          </div>
+        </div>
+        
+        {/* Título */}
+        <div className="p-3 pt-2">
+          <p 
+            className="text-center text-gray-800 text-lg tracking-wide"
+            style={{ 
+              fontFamily: 'Pecita, cursive',
+              fontWeight: 'normal'
+            }}
+          >
+            {title}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
   const [showStickyNotes, setShowStickyNotes] = useState(false)
   const [showPolaroids, setShowPolaroids] = useState(false)
+  
+  // Estados individuales para cada sticky note
+  const [showEducationNote, setShowEducationNote] = useState(true)
+  const [showHobbiesNote, setShowHobbiesNote] = useState(true)
+  const [showAchievementsNote, setShowAchievementsNote] = useState(true)
 
   useEffect(() => {
     if (isOpen) {
       // Mostrar sticky notes inmediatamente
       setShowStickyNotes(true)
+      setShowEducationNote(true)
+      setShowHobbiesNote(true)
+      setShowAchievementsNote(true)
       // Mostrar polaroids con delay
       setTimeout(() => setShowPolaroids(true), 300)
     } else {
       setShowStickyNotes(false)
       setShowPolaroids(false)
+      setShowEducationNote(false)
+      setShowHobbiesNote(false)
+      setShowAchievementsNote(false)
     }
   }, [isOpen])
 
@@ -282,12 +410,13 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
         {showStickyNotes && (
           <>
             {/* Educación Combinada */}
-            <AboutStickyNote
-              title="🎓 Educación"
-              initialPosition={{ x: 100, y: 100 }}
-              color="#FEF3C7"
-              onClose={() => {}}
-              content={
+            {showEducationNote && (
+              <AboutStickyNote
+                title="🎓 Educación"
+                initialPosition={{ x: 100, y: 100 }}
+                color="#FEF3C7"
+                onClose={() => setShowEducationNote(false)}
+                content={
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Image
@@ -319,15 +448,17 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                   </div>
                 </div>
               }
-            />
+              />
+            )}
 
             {/* Curiosidades y Hobbies */}
-            <AboutStickyNote
-              title="🌟 Curiosidades & Hobbies"
-              initialPosition={{ x: 200, y: 350 }}
-              color="#FEF3C7"
-              onClose={() => {}}
-              content={
+            {showHobbiesNote && (
+              <AboutStickyNote
+                title="🌟 Curiosidades & Hobbies"
+                initialPosition={{ x: 200, y: 350 }}
+                color="#FEF3C7"
+                onClose={() => setShowHobbiesNote(false)}
+                content={
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <span>🧘‍♀️</span>
@@ -347,15 +478,17 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                   </div>
                 </div>
               }
-            />
+              />
+            )}
 
             {/* URBANVIVE logros */}
-            <AboutStickyNote
-              title="🏆 Logros"
-              initialPosition={{ x: 500, y: 300 }}
-              color="#FEF3C7"
-              onClose={() => {}}
-              content={
+            {showAchievementsNote && (
+              <AboutStickyNote
+                title="🏆 Logros"
+                initialPosition={{ x: 500, y: 300 }}
+                color="#FEF3C7"
+                onClose={() => setShowAchievementsNote(false)}
+                content={
                 <div className="space-y-2">
                   <div>
                     <p className="font-semibold text-gray-800">🥇 Premios</p>
@@ -371,7 +504,8 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                   </div>
                 </div>
               }
-            />
+              />
+            )}
           </>
         )}
 
@@ -397,6 +531,20 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
               alt="Templo chino en Guangzhou"
               title="Guangzhou 🏯"
               initialPosition={{ x: 350, y: 400 }}
+            />
+
+            <AboutVideoPolaroidPhoto
+              src="/pics/coches.MP4"
+              alt="Coches en movimiento"
+              title="Velocidad pura 🏎️"
+              initialPosition={{ x: 600, y: 250 }}
+            />
+
+            <AboutPolaroidPhoto
+              src="/pics/IMG_7508.JPEG"
+              alt="Playa de Gandía"
+              title="Playa de Gandía 🏖️"
+              initialPosition={{ x: 750, y: 350 }}
             />
           </>
         )}
