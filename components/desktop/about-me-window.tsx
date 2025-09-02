@@ -80,7 +80,7 @@ function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", o
         y: position.y,
         rotate: isDragging ? 2 : -1,
         scale: isDragging ? 1.05 : 1,
-        zIndex: isDragging ? 60000 : 55000
+        zIndex: isDragging ? 9999 : 9990
       }}
       initial={{ opacity: 0, scale: 0.8, rotate: -1 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -104,7 +104,7 @@ function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", o
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-yellow-300/30">
+        <div className="flex items-center justify-between p-4 border-b border-yellow-300/30 relative z-10">
           <h3 className="text-sm font-semibold text-gray-800 macos-text-semibold">
             {title}
           </h3>
@@ -116,7 +116,8 @@ function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", o
               setIsVisible(false)
               if (onClose) onClose()
             }}
-            className="w-4 h-4 rounded-full bg-red-400 hover:bg-red-500 transition-colors"
+            className="w-4 h-4 rounded-full bg-red-400 hover:bg-red-500 transition-colors relative z-20 cursor-pointer"
+            style={{ pointerEvents: 'auto' }}
           />
         </div>
 
@@ -127,7 +128,7 @@ function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", o
 
         {/* Paper texture */}
         <div 
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-10 -z-10"
           style={{
             backgroundImage: `
               repeating-linear-gradient(
@@ -136,7 +137,8 @@ function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", o
                 transparent 20px,
                 rgba(0,0,0,0.1) 21px
               )
-            `
+            `,
+            pointerEvents: 'none'
           }}
         />
       </div>
