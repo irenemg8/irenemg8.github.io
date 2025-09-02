@@ -116,8 +116,11 @@ function AboutStickyNote({ title, content, initialPosition, color = "#FEF3C7", o
               setIsVisible(false)
               if (onClose) onClose()
             }}
-            className="w-4 h-4 rounded-full bg-red-400 hover:bg-red-500 transition-colors relative z-20 cursor-pointer"
-            style={{ pointerEvents: 'auto' }}
+            className="w-4 h-4 rounded-full bg-red-400 hover:bg-red-500 transition-colors cursor-pointer relative"
+            style={{ 
+              pointerEvents: 'auto',
+              zIndex: 99999
+            }}
           />
         </div>
 
@@ -382,7 +385,6 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
             }}
           >
             <video
-              src={src}
               className="w-full h-full object-cover"
               autoPlay
               muted
@@ -390,7 +392,10 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               playsInline
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
-              preload="auto"
+              preload="metadata"
+              onLoadStart={() => console.log('Video loading:', src)}
+              onError={(e) => console.error('Video error:', src, e)}
+              onLoadedData={() => console.log('Video loaded:', src)}
               style={{ 
                 pointerEvents: 'none',
                 imageRendering: 'auto',
@@ -405,7 +410,11 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
                 objectFit: 'cover',
                 objectPosition: 'center',
               } as any}
-            />
+            >
+              <source src={src} type="video/mp4" />
+              <source src={src.replace('.mp4', '.webm')} type="video/webm" />
+              <p className="text-gray-500 text-xs">Tu navegador no soporta videos HTML5.</p>
+            </video>
           </div>
         </div>
         
@@ -597,7 +606,7 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
             />
 
             <AboutVideoPolaroidPhoto
-              src="/pics/coches.MP4"
+              src="/pics/coches.mp4"
               alt="Coches en movimiento"
               title="Velocidad a tope 🏎️"
               initialPosition={{ x: 600, y: 250 }}
