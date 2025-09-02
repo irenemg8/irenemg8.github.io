@@ -32,6 +32,7 @@ import { SettingsWindow } from '@/components/desktop/settings-window'
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 import { AnimatePresence } from 'framer-motion'
+import { AboutMeWindow } from '@/components/desktop/about-me-window'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -71,6 +72,7 @@ export function ResponsiveDesktop() {
   const [showSettings, setShowSettings] = useState(false)
   const [showConstructionAlert, setShowConstructionAlert] = useState(true)
   const [showArtworksGallery, setShowArtworksGallery] = useState(false)
+  const [showAboutMe, setShowAboutMe] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -446,7 +448,7 @@ export function ResponsiveDesktop() {
             id="about-me"
             name="About Me"
             initialPosition={positions.aboutMe}
-            onOpen={() => openWindow('about-me', 'About Me', aboutContent)}
+            onOpen={() => setShowAboutMe(true)}
             size="md"
             type="folder"
           />
@@ -680,6 +682,12 @@ export function ResponsiveDesktop() {
           onClose={() => setShowSettings(false)}
         />
       )}
+
+      {/* About Me Window */}
+      <AboutMeWindow 
+        isOpen={showAboutMe} 
+        onClose={() => setShowAboutMe(false)}
+      />
     </>
   )
 }
