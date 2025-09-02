@@ -429,3 +429,39 @@
   border: 2px solid rgba(59, 130, 246, 0.6) !important;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
 }
+
+/* Anti-aliasing optimizations for polaroid images and videos */
+.polaroid-image-container {
+  image-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.polaroid-image-container img,
+.polaroid-image-container video {
+  image-rendering: auto;
+  -webkit-image-smoothing: true;
+  image-smoothing: true;
+  filter: blur(0);
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Global image optimization */
+img {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Force hardware acceleration for better rendering */
+.hw-accelerated {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+}

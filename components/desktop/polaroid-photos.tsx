@@ -200,16 +200,46 @@ export function PolaroidPhotos({ onClose }: PolaroidPhotosProps) {
             }`}
           >
             {/* Polaroid Container */}
-            <div className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative">
+            <div 
+              className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative"
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'translate3d(0, 0, 0)',
+                WebkitTransform: 'translate3d(0, 0, 0)',
+                willChange: 'transform',
+              }}
+            >
               {/* Foto */}
               <div className="p-3 pb-0">
-                <div className="w-48 h-48 relative overflow-hidden bg-gray-100">
+                <div 
+                  className="w-48 h-48 relative overflow-hidden bg-gray-100" 
+                  style={{ 
+                    imageRendering: 'auto',
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                    backfaceVisibility: 'hidden',
+                    transform: 'translate3d(0, 0, 0)',
+                  }}
+                >
                   <Image
                     src={photo.src}
                     alt={photo.alt}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{
+                      imageRendering: 'auto',
+                      WebkitImageSmoothing: true,
+                      imageSmoothing: true,
+                      filter: 'blur(0)',
+                      backfaceVisibility: 'hidden',
+                      transform: 'translate3d(0, 0, 0)',
+                      WebkitTransform: 'translate3d(0, 0, 0)',
+                      willChange: 'transform',
+                    } as any}
+                    quality={100}
+                    sizes="192px"
+                    priority={false}
+                    unoptimized={false}
                     onError={(e) => {
                       // Si la imagen no se puede cargar, usar placeholder local
                       console.log(`Error cargando imagen: ${photo.src}`)

@@ -202,7 +202,15 @@ function AboutPolaroidPhoto({ src, alt, title, initialPosition, onClose }: Polar
       }}
       className={`absolute select-none pointer-events-auto ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
     >
-      <div className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative">
+      <div 
+        className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative" 
+        style={{
+          backfaceVisibility: 'hidden',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          willChange: 'transform',
+        }}
+      >
         {/* Traffic lights para polaroid */}
         <div className="absolute top-2 left-2 flex space-x-1 z-10">
           <motion.button
@@ -221,13 +229,35 @@ function AboutPolaroidPhoto({ src, alt, title, initialPosition, onClose }: Polar
 
         {/* Foto */}
         <div className="p-3 pb-0 pt-6">
-          <div className="w-48 h-48 relative overflow-hidden bg-gray-100">
+          <div 
+            className="w-48 h-48 relative overflow-hidden bg-gray-100" 
+            style={{ 
+              imageRendering: 'auto',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale',
+              backfaceVisibility: 'hidden',
+              transform: 'translate3d(0, 0, 0)',
+            }}
+          >
             <Image
               src={src}
               alt={alt}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{
+                imageRendering: 'auto',
+                WebkitImageSmoothing: true,
+                imageSmoothing: true,
+                filter: 'blur(0)',
+                backfaceVisibility: 'hidden',
+                transform: 'translate3d(0, 0, 0)',
+                WebkitTransform: 'translate3d(0, 0, 0)',
+                willChange: 'transform',
+              } as any}
+              quality={100}
+              sizes="192px"
+              priority={false}
+              unoptimized={false}
               onError={(e) => {
                 console.log(`Error cargando imagen: ${src}`)
                 const target = e.target as HTMLImageElement
@@ -312,7 +342,15 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
       }}
       className={`absolute select-none pointer-events-auto ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
     >
-      <div className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative">
+      <div 
+        className="bg-white shadow-2xl transform transition-shadow duration-300 hover:shadow-3xl relative" 
+        style={{
+          backfaceVisibility: 'hidden',
+          transform: 'translate3d(0, 0, 0)',
+          WebkitTransform: 'translate3d(0, 0, 0)',
+          willChange: 'transform',
+        }}
+      >
         {/* Traffic lights para polaroid */}
         <div className="absolute top-2 left-2 flex space-x-1 z-10">
           <motion.button
@@ -331,7 +369,16 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
 
         {/* Video */}
         <div className="p-3 pb-0 pt-6">
-          <div className="w-48 h-48 relative overflow-hidden bg-gray-100">
+          <div 
+            className="w-48 h-48 relative overflow-hidden bg-gray-100" 
+            style={{ 
+              imageRendering: 'auto',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale',
+              backfaceVisibility: 'hidden',
+              transform: 'translate3d(0, 0, 0)',
+            }}
+          >
             <video
               src={src}
               className="w-full h-full object-cover"
@@ -341,7 +388,17 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               playsInline
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
-              style={{ pointerEvents: 'none' }}
+              style={{ 
+                pointerEvents: 'none',
+                imageRendering: 'auto',
+                WebkitImageSmoothing: true,
+                imageSmoothing: true,
+                filter: 'blur(0)',
+                backfaceVisibility: 'hidden',
+                transform: 'translate3d(0, 0, 0)',
+                WebkitTransform: 'translate3d(0, 0, 0)',
+                willChange: 'transform',
+              } as any}
             />
           </div>
         </div>
@@ -536,7 +593,7 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
             <AboutVideoPolaroidPhoto
               src="/pics/coches.MP4"
               alt="Coches en movimiento"
-              title="Velocidad pura 🏎️"
+              title="Velocidad a tope 🏎️"
               initialPosition={{ x: 600, y: 250 }}
             />
 
