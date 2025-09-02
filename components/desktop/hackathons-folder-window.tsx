@@ -382,7 +382,7 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
                       contactText="+"
                       avatarUrl={hackathon.userPhoto}
                       iconUrl={hackathon.logo}
-                      miniAvatarUrl={hackathon.userPhoto}
+                      miniAvatarUrl={hackathon.logo}
                       showUserInfo={true}
                       enableTilt={true}
                       enableMobileTilt={false}
