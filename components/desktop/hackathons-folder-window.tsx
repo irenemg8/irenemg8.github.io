@@ -153,15 +153,15 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
         },
         {
           id: 'urbanvive-app2', 
-          name: 'App Screenshot 2',
+          name: 'Equipo',
           type: 'image',
-          url: '/urbanvive_app/Urbanviveapp2.png'
+          url: '/urbanvive_app/equipo.jpeg'
         },
         {
           id: 'urbanvive-app3',
-          name: 'App Screenshot 3', 
+          name: 'Todos los ganadores', 
           type: 'image',
-          url: '/urbanvive_app/Urbanviveapp3.png'
+          url: '/urbanvive_app/todos.jpeg'
         },
         {
           id: 'urbanvive-diploma',
