@@ -370,7 +370,7 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
         {/* Video */}
         <div className="p-3 pb-0 pt-6">
           <div 
-            className="w-48 h-48 relative overflow-hidden bg-gray-100" 
+            className="w-48 h-48 relative overflow-hidden bg-gray-100 polaroid-image-container" 
             style={{ 
               imageRendering: 'auto',
               WebkitFontSmoothing: 'antialiased',
@@ -388,16 +388,20 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               playsInline
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
+              preload="auto"
               style={{ 
                 pointerEvents: 'none',
                 imageRendering: 'auto',
                 WebkitImageSmoothing: true,
                 imageSmoothing: true,
-                filter: 'blur(0)',
+                filter: 'blur(0) contrast(1.02) saturate(1.01)',
                 backfaceVisibility: 'hidden',
                 transform: 'translate3d(0, 0, 0)',
                 WebkitTransform: 'translate3d(0, 0, 0)',
                 willChange: 'transform',
+                WebkitVideoDecodedFrameCount: 'auto',
+                objectFit: 'cover',
+                objectPosition: 'center',
               } as any}
             />
           </div>

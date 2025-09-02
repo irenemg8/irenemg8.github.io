@@ -465,3 +465,36 @@ img {
   -webkit-transform: translate3d(0, 0, 0);
   will-change: transform;
 }
+
+/* Video anti-aliasing optimizations */
+video {
+  image-rendering: auto;
+  -webkit-image-smoothing: true;
+  image-smoothing: true;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+  /* Mejora la calidad de video */
+  filter: blur(0) contrast(1.02) saturate(1.01);
+  /* Optimización para navegadores webkit */
+  -webkit-video-playable-inline: true;
+}
+
+/* Específico para videos en polaroids */
+.polaroid-image-container video {
+  /* Forzar renderizado de alta calidad */
+  image-rendering: auto;
+  -webkit-image-smoothing: true;
+  image-smoothing: true;
+  /* Anti-aliasing agresivo */
+  filter: blur(0) contrast(1.02) saturate(1.01) brightness(1.01);
+  /* Aceleración de hardware */
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+  /* Optimización de objeto */
+  object-fit: cover;
+  object-position: center;
+}
