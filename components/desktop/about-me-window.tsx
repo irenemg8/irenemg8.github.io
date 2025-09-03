@@ -392,10 +392,23 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               playsInline
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
-              preload="metadata"
-              onLoadStart={() => console.log('Video loading:', src)}
-              onError={(e) => console.error('Video error:', src, e)}
-              onLoadedData={() => console.log('Video loaded:', src)}
+              preload="auto"
+              onLoadStart={() => {
+                console.log('🎬 [Video] Iniciando carga:', src)
+              }}
+              onError={(e) => {
+                console.error('❌ [Video] Error cargando:', src, e)
+                console.error('Error details:', (e.target as HTMLVideoElement)?.error)
+              }}
+              onLoadedData={() => {
+                console.log('✅ [Video] Video cargado correctamente:', src)
+              }}
+              onCanPlay={() => {
+                console.log('▶️ [Video] Video listo para reproducir:', src)
+              }}
+              onPlay={() => {
+                console.log('🎥 [Video] Video reproduciendo:', src)
+              }}
               style={{ 
                 pointerEvents: 'none',
                 imageRendering: 'auto',
@@ -406,14 +419,15 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
                 transform: 'translate3d(0, 0, 0)',
                 WebkitTransform: 'translate3d(0, 0, 0)',
                 willChange: 'transform',
-                WebkitVideoDecodedFrameCount: 'auto',
                 objectFit: 'cover',
                 objectPosition: 'center',
               } as any}
             >
               <source src={src} type="video/mp4" />
-              <source src={src.replace('.mp4', '.webm')} type="video/webm" />
-              <p className="text-gray-500 text-xs">Tu navegador no soporta videos HTML5.</p>
+              <p className="text-gray-500 text-xs p-4 text-center">
+                🎬 Cargando video de coches...<br/>
+                Si no se reproduce, verifica que tu navegador soporte videos HTML5.
+              </p>
             </video>
           </div>
         </div>
