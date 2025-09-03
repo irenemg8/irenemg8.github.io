@@ -392,22 +392,24 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               playsInline
               disablePictureInPicture
               controlsList="nodownload nofullscreen noremoteplayback"
-              preload="auto"
+              preload="metadata"
+              crossOrigin="anonymous"
               onLoadStart={() => {
-                console.log('🎬 [Video] Iniciando carga:', src)
+                console.log('Video loading:', src)
               }}
               onError={(e) => {
-                console.error('❌ [Video] Error cargando:', src, e)
-                console.error('Error details:', (e.target as HTMLVideoElement)?.error)
+                console.error('Video error:', src, e)
+                const video = e.target as HTMLVideoElement
+                if (video?.error) {
+                  console.error('Error code:', video.error.code)
+                  console.error('Error message:', video.error.message)
+                }
               }}
               onLoadedData={() => {
                 console.log('✅ [Video] Video cargado correctamente:', src)
               }}
               onCanPlay={() => {
                 console.log('▶️ [Video] Video listo para reproducir:', src)
-              }}
-              onPlay={() => {
-                console.log('🎥 [Video] Video reproduciendo:', src)
               }}
               style={{ 
                 pointerEvents: 'none',
@@ -424,10 +426,14 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               } as any}
             >
               <source src={src} type="video/mp4" />
-              <p className="text-gray-500 text-xs p-4 text-center">
-                🎬 Cargando video de coches...<br/>
-                Si no se reproduce, verifica que tu navegador soporte videos HTML5.
-              </p>
+              <source src={src.replace('.mp4', '.webm')} type="video/webm" />
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500 text-xs p-4 text-center">
+                  🎬 Cargando video de coches...<br/>
+                  Si no se reproduce, es posible que GitHub Pages<br/>
+                  tenga restricciones con archivos de video.
+                </p>
+              </div>
             </video>
           </div>
         </div>
