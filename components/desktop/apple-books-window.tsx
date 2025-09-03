@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
-import { X, Minus, Square, Search, Book, ExternalLink, Github, ChevronLeft, ChevronRight, Calendar, User, Code, Lightbulb, Target, Play, Award, Globe, Heart, Eye, TrendingUp } from 'lucide-react'
+import { X, Minus, Square, Search, Book, ExternalLink, Github, ChevronLeft, ChevronRight, Calendar, User, Code, Lightbulb, Target, Play, Award, Globe } from 'lucide-react'
 
 interface ProjectData {
   id: number
@@ -28,11 +28,7 @@ interface Page {
   content: React.ReactNode
 }
 
-interface BookStats {
-  likes: number
-  views: number
-  isLiked: boolean
-}
+
 
 interface AppleBooksWindowProps {
   isOpen: boolean
@@ -43,68 +39,12 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
   const [selectedBook, setSelectedBook] = useState<ProjectData | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
-  const [size, setSize] = useState({ width: 950, height: 550 })
+  const [size, setSize] = useState({ width: 1050, height: 600 })
   const [position, setPosition] = useState({ x: 50, y: 40 })
   const [isMaximized, setIsMaximized] = useState(false)
   const [isFlipping, setIsFlipping] = useState(false)
-  const [bookStats, setBookStats] = useState<Record<number, BookStats>>({})
   const windowRef = useRef<HTMLDivElement>(null)
   const dragControls = useDragControls()
-
-  // Cargar estadísticas desde localStorage al inicializar
-  useEffect(() => {
-    const savedStats = localStorage.getItem('apple-books-stats')
-    if (savedStats) {
-      try {
-        setBookStats(JSON.parse(savedStats))
-      } catch (error) {
-        console.error('Error loading book stats:', error)
-      }
-    }
-  }, [])
-
-  // Guardar estadísticas en localStorage cuando cambien
-  useEffect(() => {
-    if (Object.keys(bookStats).length > 0) {
-      localStorage.setItem('apple-books-stats', JSON.stringify(bookStats))
-    }
-  }, [bookStats])
-
-  // Función para dar like a un libro
-  const toggleLike = (projectId: number) => {
-    setBookStats(prev => {
-      const currentStats = prev[projectId] || { likes: 0, views: 0, isLiked: false }
-      const newStats = {
-        ...currentStats,
-        isLiked: !currentStats.isLiked,
-        likes: currentStats.isLiked ? Math.max(0, currentStats.likes - 1) : currentStats.likes + 1
-      }
-      return {
-        ...prev,
-        [projectId]: newStats
-      }
-    })
-  }
-
-  // Función para registrar una vista
-  const addView = (projectId: number) => {
-    setBookStats(prev => {
-      const currentStats = prev[projectId] || { likes: 0, views: 0, isLiked: false }
-      const newStats = {
-        ...currentStats,
-        views: currentStats.views + 1
-      }
-      return {
-        ...prev,
-        [projectId]: newStats
-      }
-    })
-  }
-
-  // Obtener estadísticas de un libro
-  const getBookStats = (projectId: number): BookStats => {
-    return bookStats[projectId] || { likes: 0, views: 0, isLiked: false }
-  }
 
   // Función para crear las páginas de un proyecto
   const createProjectPages = (project: ProjectData): Page[] => [
@@ -239,7 +179,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda */}
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-8 pb-24 border-r border-gray-200 dark:border-gray-700 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-6 border-r border-gray-200 dark:border-gray-700">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -298,7 +238,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 pb-24 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -307,40 +247,25 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 </h3>
               </div>
 
-              {/* Descripción dividida en párrafos más visuales */}
-              <div className="flex-1 space-y-6 overflow-y-auto">
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {project.fullDescription.substring(0, 200)}...
+              {/* Descripción concisa */}
+              <div className="flex-1 space-y-4">
+                <div className="bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Descripción</h4>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+                    {project.fullDescription.substring(0, 280)}...
                   </p>
                 </div>
 
-                {/* Destacados visuales */}
-                <div className="grid grid-cols-1 gap-4">
-                  {project.tags.slice(0, 3).map((tag, index) => (
-                    <div key={tag} className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg">
-                      <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                        {index === 0 && <Code className="w-4 h-4 text-purple-600" />}
-                        {index === 1 && <Lightbulb className="w-4 h-4 text-purple-600" />}
-                        {index === 2 && <Award className="w-4 h-4 text-purple-600" />}
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-900 dark:text-gray-100">{tag}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Estadísticas visuales */}
-                <div className="mt-8 p-4 bg-gradient-to-r from-purple-50 to-lilac-50 dark:from-purple-900/20 dark:to-lilac-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                {/* Stack principal */}
+                <div className="bg-gradient-to-r from-purple-50 to-lilac-50 dark:from-purple-900/20 dark:to-lilac-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
                   <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-3">
-                    Tecnologías Principales
+                    Stack Principal
                   </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.slice(0, 6).map((tech) => (
-                      <span key={tech} className="px-3 py-1 bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200 rounded-full text-xs font-medium">
-                        {tech}
-                      </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {project.techStack.slice(0, 4).map((tech) => (
+                      <div key={tech} className="bg-white dark:bg-gray-800 px-3 py-2 rounded-lg text-center">
+                        <span className="text-xs font-medium text-purple-700 dark:text-purple-200">{tech}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -357,7 +282,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Tecnologías principales */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-800 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-800 ">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -368,29 +293,29 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-lilac-500 rounded-full"></div>
               </div>
 
-              {/* Grid de tecnologías principales */}
-              <div className="flex-1 overflow-y-auto scrollbar-thin">
-                <div className="grid grid-cols-1 gap-4">
-                  {project.techStack.slice(0, 6).map((tech, index) => (
+              {/* Grid de tecnologías principales - Sin scroll */}
+              <div className="flex-1 space-y-3">
+                <div className="grid grid-cols-1 gap-3">
+                  {project.techStack.slice(0, 4).map((tech, index) => (
                     <motion.div
                       key={tech}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-purple-200 dark:border-purple-800 hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-purple-200 dark:border-purple-800"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-lilac-100 dark:from-purple-900/30 dark:to-lilac-900/30 rounded-lg flex items-center justify-center">
-                          <Code className="w-5 h-5 text-purple-600" />
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-lilac-100 dark:from-purple-900/30 dark:to-lilac-900/30 rounded-lg flex items-center justify-center">
+                          <Code className="w-4 h-4 text-purple-600" />
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm">
                             {tech}
                           </h3>
-                          <div className="w-full bg-purple-100 dark:bg-purple-900/30 rounded-full h-1.5 mt-2">
+                          <div className="w-full bg-purple-100 dark:bg-purple-900/30 rounded-full h-1 mt-1">
                             <div 
-                              className="bg-gradient-to-r from-purple-500 to-lilac-500 h-1.5 rounded-full" 
-                              style={{ width: `${85 + (index * 2)}%` }}
+                              className="bg-gradient-to-r from-purple-500 to-lilac-500 h-1 rounded-full" 
+                              style={{ width: `${85 + (index * 3)}%` }}
                             ></div>
                           </div>
                         </div>
@@ -399,15 +324,15 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                   ))}
                 </div>
 
-                {/* Categorías adicionales */}
-                <div className="mt-8 p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-purple-200 dark:border-purple-800">
-                  <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-3 flex items-center">
+                {/* Categorías compactas */}
+                <div className="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2 text-sm flex items-center">
                     <Award className="w-4 h-4 mr-2" />
                     Categorías
                   </h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1">
                     {project.tags.slice(0, 4).map((tag) => (
-                      <span key={tag} className="px-3 py-1 bg-purple-500 text-white rounded-full text-xs font-medium">
+                      <span key={tag} className="px-2 py-1 bg-purple-500 text-white rounded-full text-xs">
                         {tag}
                       </span>
                     ))}
@@ -418,7 +343,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Aspectos técnicos y detalles */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 pb-24 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -429,71 +354,42 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 <div className="w-16 h-1 bg-gradient-to-r from-lilac-500 to-purple-500 rounded-full"></div>
               </div>
 
-              {/* Aspectos técnicos destacados */}
-              <div className="flex-1 space-y-6 overflow-y-auto scrollbar-thin">
-                {/* Arquitectura */}
-                <div className="bg-gradient-to-r from-lilac-50 to-purple-50 dark:from-lilac-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-lilac-200 dark:border-lilac-800">
-                  <h4 className="font-semibold text-lilac-900 dark:text-lilac-100 mb-4 flex items-center">
-                    <div className="w-6 h-6 bg-lilac-100 dark:bg-lilac-900/50 rounded-full flex items-center justify-center mr-2">
-                      🏗️
-                    </div>
-                    Arquitectura
-                  </h4>
-                  <div className="space-y-3">
-                    {project.techStack.slice(0, 3).map((tech) => (
-                      <div key={tech} className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-lilac-500 rounded-full flex-shrink-0" />
-                        <span className="text-lilac-800 dark:text-lilac-200 text-sm">{tech}</span>
+              {/* Stack tecnológico compacto */}
+              <div className="flex-1 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {project.techStack.slice(0, 6).map((tech, index) => (
+                    <motion.div
+                      key={tech}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-purple-200 dark:border-purple-800 text-center"
+                    >
+                      <div className="w-6 h-6 bg-gradient-to-br from-purple-100 to-lilac-100 dark:from-purple-900/30 dark:to-lilac-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <Code className="w-3 h-3 text-purple-600" />
                       </div>
-                    ))}
-                  </div>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 text-xs">
+                        {tech}
+                      </h3>
+                    </motion.div>
+                  ))}
                 </div>
 
-                {/* Funcionalidades */}
-                <div className="bg-gradient-to-r from-purple-50 to-lilac-50 dark:from-purple-900/20 dark:to-lilac-900/20 p-6 rounded-lg border border-purple-200 dark:border-purple-800">
-                  <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-4 flex items-center">
-                    <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mr-2">
-                      ⚡
-                    </div>
-                    Características Clave
+                {/* Características técnicas */}
+                <div className="bg-gradient-to-r from-purple-50 to-lilac-50 dark:from-purple-900/20 dark:to-lilac-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-3 text-sm flex items-center">
+                    <Award className="w-4 h-4 mr-2" />
+                    Características
                   </h4>
-                  <div className="grid grid-cols-1 gap-3">
-                    {['Interfaz Responsiva', 'Optimización SEO', 'Rendimiento Alto', 'Accesibilidad'].map((feature) => (
-                      <div key={feature} className="flex items-center space-x-3 p-2 bg-white/50 dark:bg-gray-800/50 rounded">
-                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Responsiva', 'Optimizada', 'Accesible', 'Moderna'].map((feature) => (
+                      <div key={feature} className="flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded text-xs">
+                        <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
                           <span className="text-white text-xs">✓</span>
                         </div>
-                        <span className="text-purple-800 dark:text-purple-200 text-sm font-medium">{feature}</span>
+                        <span className="text-purple-800 dark:text-purple-200 font-medium">{feature}</span>
                       </div>
                     ))}
-                  </div>
-                </div>
-
-                {/* Estadísticas de tecnologías */}
-                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                    Distribución Tecnológica
-                  </h4>
-                  <div className="space-y-3">
-                    {project.techStack.slice(0, 4).map((tech, index) => {
-                      const percentage = [40, 25, 20, 15][index] || 10
-                      return (
-                        <div key={tech} className="flex items-center space-x-3">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 w-20">
-                            {tech}
-                          </span>
-                          <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div 
-                              className="bg-gradient-to-r from-purple-500 to-lilac-500 h-2 rounded-full transition-all duration-500" 
-                              style={{ width: `${percentage}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {percentage}%
-                          </span>
-                        </div>
-                      )
-                    })}
                   </div>
                 </div>
               </div>
@@ -509,7 +405,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Desafíos */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 p-8 border-r border-orange-200 dark:border-orange-700 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 p-8 border-r border-orange-200 dark:border-orange-700 ">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -537,25 +433,25 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 </div>
               </div>
 
-              {/* Obstáculos específicos */}
-              <div className="flex-1 space-y-4 overflow-y-auto scrollbar-thin">
-                <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg mb-4">
-                  Obstáculos Enfrentados
+              {/* Obstáculos principales */}
+              <div className="flex-1 space-y-3">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-3">
+                  Obstáculos Principales
                 </h4>
                 
-                {['Complejidad Técnica', 'Limitaciones de Tiempo', 'Integración de Sistemas', 'Optimización'].map((challenge, index) => (
-                  <div key={challenge} className="bg-white/70 dark:bg-gray-800/70 p-4 rounded-lg border border-orange-200 dark:border-orange-700">
+                {['Complejidad Técnica', 'Limitaciones de Tiempo', 'Integración', 'Optimización'].map((challenge, index) => (
+                  <div key={challenge} className="bg-white/70 dark:bg-gray-800/70 p-3 rounded-lg border border-orange-200 dark:border-orange-700">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full flex items-center justify-center text-sm font-bold text-orange-700 dark:text-orange-300">
+                      <div className="w-6 h-6 bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full flex items-center justify-center text-xs font-bold text-orange-700 dark:text-orange-300">
                         {index + 1}
                       </div>
-                      <div>
-                        <h5 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
+                      <div className="flex-1">
+                        <h5 className="font-medium text-gray-900 dark:text-gray-100 text-sm">
                           {challenge}
                         </h5>
-                        <div className="w-full bg-orange-100 dark:bg-orange-900/30 rounded-full h-1.5 mt-2">
+                        <div className="w-full bg-orange-100 dark:bg-orange-900/30 rounded-full h-1 mt-1">
                           <div 
-                            className="bg-gradient-to-r from-orange-500 to-red-500 h-1.5 rounded-full" 
+                            className="bg-gradient-to-r from-orange-500 to-red-500 h-1 rounded-full" 
                             style={{ width: `${[85, 70, 90, 75][index]}%` }}
                           ></div>
                         </div>
@@ -563,12 +459,22 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                     </div>
                   </div>
                 ))}
+
+                {/* Desafío principal resumido */}
+                <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-orange-200 dark:border-orange-700 mt-4">
+                  <h5 className="font-semibold text-orange-900 dark:text-orange-100 mb-2 text-sm">
+                    Desafío Principal
+                  </h5>
+                  <p className="text-gray-700 dark:text-gray-300 text-xs leading-relaxed">
+                    {project.challenges.substring(0, 120)}...
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Página derecha - Soluciones */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 pb-24 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-6">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -597,33 +503,33 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 </div>
               </div>
 
-              {/* Resultados */}
-              <div className="flex-1 space-y-4 overflow-y-auto scrollbar-thin">
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700">
-                  <h4 className="font-semibold text-green-900 dark:text-green-100 mb-4 flex items-center">
-                    <span className="w-6 h-6 mr-2">🎉</span>
-                    Resultados Alcanzados
+              {/* Resultados compactos */}
+              <div className="flex-1 space-y-4">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700">
+                  <h4 className="font-semibold text-green-900 dark:text-green-100 mb-3 text-sm flex items-center">
+                    <span className="w-5 h-5 mr-2">🎉</span>
+                    Resultados
                   </h4>
-                  <div className="space-y-3">
-                    {['100% Funcionalidad', 'Objetivos Cumplidos', 'Calidad Asegurada', 'Cliente Satisfecho'].map((result) => (
-                      <div key={result} className="flex items-center justify-between p-3 bg-white/50 dark:bg-gray-800/50 rounded">
-                        <span className="text-green-800 dark:text-green-200 text-sm font-medium">{result}</span>
-                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Funcional', 'Optimizado', 'Calidad', 'Entregado'].map((result) => (
+                      <div key={result} className="flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded text-xs">
+                        <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
                           <span className="text-white text-xs">✓</span>
                         </div>
+                        <span className="text-green-800 dark:text-green-200 font-medium">{result}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Lecciones aprendidas */}
+                {/* Lecciones compactas */}
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h5 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center">
-                    <span className="w-5 h-5 mr-2">💡</span>
-                    Lecciones Aprendidas
+                  <h5 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 text-sm flex items-center">
+                    <span className="w-4 h-4 mr-2">💡</span>
+                    Lecciones Clave
                   </h5>
-                  <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-                    La planificación iterativa y el testing continuo fueron clave para superar los desafíos técnicos y entregar un producto de alta calidad.
+                  <p className="text-gray-700 dark:text-gray-300 text-xs leading-relaxed">
+                    Planificación iterativa y testing continuo para superar desafíos técnicos.
                   </p>
                 </div>
               </div>
@@ -634,15 +540,104 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
     },
     {
       id: 4,
+      type: 'overview',
+      title: 'Descripción Completa',
+      content: (
+        <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
+          {/* Página izquierda - Descripción detallada */}
+          <div className="w-1/2 h-full bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/10 dark:to-blue-900/10 p-6 border-r border-indigo-200 dark:border-indigo-700">
+            <div className="h-full flex flex-col">
+              {/* Header */}
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                  <Target className="w-6 h-6 mr-2 text-indigo-600" />
+                  Descripción Completa
+                </h2>
+                <div className="w-16 h-1 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full"></div>
+              </div>
+
+              {/* Descripción completa */}
+              <div className="flex-1 space-y-4">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-indigo-200 dark:border-indigo-700">
+                  <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-3 text-sm">
+                    Descripción Detallada
+                  </h4>
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+                    {project.fullDescription}
+                  </p>
+                </div>
+
+                {/* Mi rol específico */}
+                <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-700">
+                  <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2 text-sm flex items-center">
+                    <User className="w-4 h-4 mr-2" />
+                    Mi Contribución
+                  </h4>
+                  <p className="text-indigo-700 dark:text-indigo-200 text-sm">
+                    {project.role}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Página derecha - Contexto y objetivos */}
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6">
+            <div className="h-full flex flex-col">
+              {/* Header */}
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                  <Award className="w-6 h-6 mr-2 text-blue-600" />
+                  Contexto
+                </h3>
+                <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+              </div>
+
+              {/* Información contextual */}
+              <div className="flex-1 space-y-4">
+                {/* Período del proyecto */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+                  <div className="flex items-center mb-2">
+                    <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                    <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm">Período de Desarrollo</span>
+                  </div>
+                  <p className="text-blue-700 dark:text-blue-200 font-medium">{project.date}</p>
+                </div>
+
+                {/* Objetivos principales */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-sm flex items-center">
+                    <Target className="w-4 h-4 mr-2 text-blue-600" />
+                    Objetivos Alcanzados
+                  </h4>
+                  <div className="space-y-2">
+                    {['Funcionalidad Completa', 'Diseño Responsive', 'Optimización', 'Testing'].map((obj) => (
+                      <div key={obj} className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                        <span className="text-gray-700 dark:text-gray-300 text-sm">{obj}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 5,
       type: 'links',
       title: 'Enlaces y Demo',
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Enlaces principales */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-700 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-6 border-r border-purple-200 dark:border-purple-700">
             <div className="h-full flex flex-col">
               {/* Header */}
-              <div className="mb-8">
+              <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
                   <ExternalLink className="w-6 h-6 mr-2 text-purple-600" />
                   Enlaces
@@ -651,7 +646,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Enlaces disponibles */}
-              <div className="flex-1 space-y-4 overflow-y-auto scrollbar-thin">
+              <div className="flex-1 space-y-3">
                 {project.githubUrl !== '/under-construction' && (
                   <motion.a
                     href={project.githubUrl}
@@ -761,7 +756,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Vista previa y información adicional */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 pb-24 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -773,9 +768,9 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Preview del proyecto */}
-              <div className="flex-1 space-y-6 overflow-y-auto scrollbar-thin">
-                {/* Captura de pantalla o imagen */}
-                <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+              <div className="flex-1 space-y-4">
+                {/* Vista previa del proyecto */}
+                <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
                   <img
                     src={project.image}
                     alt={`${project.title} preview`}
@@ -788,8 +783,8 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                         fallback.innerHTML = `
                           <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-lilac-500">
                             <div class="text-center text-white">
-                              <div class="text-4xl mb-2">🚀</div>
-                              <p class="font-semibold">Vista previa del proyecto</p>
+                              <div class="text-3xl mb-2">🚀</div>
+                              <p class="font-semibold text-sm">Vista previa</p>
                             </div>
                           </div>
                         `
@@ -798,59 +793,20 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                   />
                 </div>
 
-                {/* Información del proyecto */}
-                <div className="bg-gradient-to-r from-lilac-50 to-purple-50 dark:from-lilac-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-lilac-200 dark:border-lilac-800">
-                  <h4 className="font-semibold text-lilac-900 dark:text-lilac-100 mb-4">
+                {/* Información compacta */}
+                <div className="bg-gradient-to-r from-lilac-50 to-purple-50 dark:from-lilac-900/20 dark:to-purple-900/20 p-4 rounded-lg border border-lilac-200 dark:border-lilac-800">
+                  <h4 className="font-semibold text-lilac-900 dark:text-lilac-100 mb-3 text-sm">
                     Información del Proyecto
                   </h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Estado</span>
-                      <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
-                        Completado
-                      </span>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-3 h-3 text-lilac-600" />
+                      <span className="text-gray-700 dark:text-gray-300">{project.date}</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Fecha</span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{project.date}</span>
+                    <div className="flex items-center space-x-2">
+                      <Code className="w-3 h-3 text-purple-600" />
+                      <span className="text-gray-700 dark:text-gray-300">{project.techStack.length} techs</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Tecnologías</span>
-                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{project.techStack.length}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Estadísticas rápidas */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
-                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Code className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {project.techStack.length}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">Tecnologías</div>
-                  </div>
-
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
-                    <div className="w-8 h-8 bg-lilac-100 dark:bg-lilac-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Award className="w-4 h-4 text-lilac-600" />
-                    </div>
-                    <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {project.tags.length}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">Características</div>
-                  </div>
-                </div>
-
-                {/* Mensaje final */}
-                <div className="text-center mt-8">
-                  <p className="text-purple-600 dark:text-purple-400 text-sm font-medium">
-                    ¡Gracias por explorar este proyecto!
-                  </p>
-                  <div className="mt-2 flex justify-center">
-                    <div className="w-12 h-1 bg-gradient-to-r from-purple-500 to-lilac-500 rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -1127,9 +1083,9 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
     project.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
-  // Navegar entre páginas
+  // Navegar entre páginas (ahora 6 páginas en total)
   const nextPage = () => {
-    if (selectedBook && currentPage < 4 && !isFlipping) {
+    if (selectedBook && currentPage < 5 && !isFlipping) {
       setIsFlipping(true)
       setTimeout(() => {
         setCurrentPage(currentPage + 1)
@@ -1153,7 +1109,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
     if (Math.abs(info.offset.x) > 100 && selectedBook && !isFlipping) {
       if (info.offset.x > 0 && currentPage > 0) {
         prevPage()
-      } else if (info.offset.x < 0 && currentPage < 4) {
+      } else if (info.offset.x < 0 && currentPage < 5) {
         nextPage()
       }
     }
@@ -1162,7 +1118,6 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
   const selectBook = (project: ProjectData) => {
     setSelectedBook(project)
     setCurrentPage(0)
-    addView(project.id) // Registrar visualización
   }
 
   const handleMinimize = () => {
@@ -1171,7 +1126,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
 
   const handleMaximize = () => {
     if (isMaximized) {
-      setSize({ width: 950, height: 550 })
+      setSize({ width: 1050, height: 550 })
       setPosition({ x: 50, y: 40 })
     } else {
       if (typeof window !== 'undefined') {
@@ -1250,34 +1205,10 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 </span>
               </div>
 
-            {/* Page Counter and Stats or Search */}
+            {/* Page Counter or Search */}
             {selectedBook ? (
-              <div className="flex items-center space-x-4">
-                {/* Estadísticas del libro actual */}
-                <div className="flex items-center space-x-3">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => toggleLike(selectedBook.id)}
-                    className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-all ${
-                      getBookStats(selectedBook.id).isLiked 
-                        ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' 
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20'
-                    }`}
-                  >
-                    <Heart className={`w-3 h-3 ${getBookStats(selectedBook.id).isLiked ? 'fill-current' : ''}`} />
-                    <span>{getBookStats(selectedBook.id).likes}</span>
-                  </motion.button>
-
-                  <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
-                    <Eye className="w-3 h-3" />
-                    <span>{getBookStats(selectedBook.id).views}</span>
-                  </div>
-                </div>
-
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {currentPage + 1} / {currentPages.length}
-                </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {currentPage + 1} / {currentPages.length}
               </div>
             ) : (
               <div className="relative">
@@ -1300,7 +1231,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
              
               {/* Lista scrollable de proyectos - Con altura calculada dinámicamente */}
               <div 
-                className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500"
+                className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent"
                 style={{ 
                   maxHeight: 'calc(100vh - 200px)', // Ajusta según la altura del header y controles
                   height: 'auto'
@@ -1341,33 +1272,8 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                           <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
                             {project.description}
                           </p>
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center space-x-3">
-                              {/* Botón de like */}
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  toggleLike(project.id)
-                                }}
-                                className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-all ${
-                                  getBookStats(project.id).isLiked 
-                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' 
-                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20'
-                                }`}
-                              >
-                                <Heart className={`w-3 h-3 ${getBookStats(project.id).isLiked ? 'fill-current' : ''}`} />
-                                <span>{getBookStats(project.id).likes}</span>
-                              </motion.button>
-
-                              {/* Contador de visualizaciones */}
-                              <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
-                                <Eye className="w-3 h-3" />
-                                <span>{getBookStats(project.id).views}</span>
-                              </div>
-                            </div>
-
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500 dark:text-gray-500">{project.date}</span>
                             <div className="flex flex-wrap gap-1">
                               {project.tags.slice(0, 2).map((tag) => (
                                 <span
@@ -1429,7 +1335,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                         dragElastic={0.2}
                         onDragEnd={handleDragEnd}
                       >
-                        <div className="h-full w-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent hover:scrollbar-thumb-purple-400 dark:hover:scrollbar-thumb-purple-500 pb-20">
+                        <div className="h-full w-full">
                           {currentPages[currentPage]?.content}
                         </div>
                       </motion.div>
@@ -1533,50 +1439,11 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                       Selecciona un proyecto de la lista para explorar su contenido en formato libro interactivo. 
                       Cada libro contiene páginas visuales con información completa del desarrollo.
                     </p>
-                    {/*<div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800 mb-6">
+                    <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
                       <p className="text-sm text-purple-800 dark:text-purple-200 flex items-center justify-center">
                         <span className="mr-2">📓</span>
-                        {filteredProjects.length} proyectos en formato libro
+                        {filteredProjects.length} libros de proyectos disponibles
                       </p>
-                    </div>*/}
-
-                    {/* Panel de estadísticas generales */}
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-gradient-to-br from-purple-100 to-lilac-100 dark:from-purple-900/30 dark:to-lilac-900/30 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <Heart className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                            {Object.values(bookStats).reduce((total, stats) => total + stats.likes, 0)}
-                          </div>
-                          <div className="text-xs text-purple-700 dark:text-purple-300">Total Likes</div>
-                        </div>
-                      </div>
-
-                      <div className="bg-gradient-to-br from-lilac-100 to-purple-100 dark:from-lilac-900/30 dark:to-purple-900/30 p-4 rounded-lg border border-lilac-200 dark:border-lilac-700">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-lilac-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <Eye className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="text-2xl font-bold text-lilac-900 dark:text-lilac-100">
-                            {Object.values(bookStats).reduce((total, stats) => total + stats.views, 0)}
-                          </div>
-                          <div className="text-xs text-lilac-700 dark:text-lilac-300">Total Views</div>
-                        </div>
-                      </div>
-
-                      <div className="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 p-4 rounded-lg border border-indigo-200 dark:border-indigo-700">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <TrendingUp className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="text-2xl font-bold text-indigo-900 dark:text-indigo-100">
-                            {Object.values(bookStats).filter(stats => stats.likes > 0).length}
-                          </div>
-                          <div className="text-xs text-indigo-700 dark:text-indigo-300">Books Liked</div>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
