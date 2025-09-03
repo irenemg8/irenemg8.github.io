@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
-import { X, Minus, Square, Search, Book, ExternalLink, Github, ChevronLeft, ChevronRight, Calendar, User, Code, Lightbulb, Target, Play, Award, Globe } from 'lucide-react'
+import { X, Minus, Square, Search, Book, ExternalLink, Github, ChevronLeft, ChevronRight, Calendar, User, Code, Lightbulb, Target, Play, Award, Globe, Heart, Eye, TrendingUp } from 'lucide-react'
 
 interface ProjectData {
   id: number
@@ -28,6 +28,12 @@ interface Page {
   content: React.ReactNode
 }
 
+interface BookStats {
+  likes: number
+  views: number
+  isLiked: boolean
+}
+
 interface AppleBooksWindowProps {
   isOpen: boolean
   onClose: () => void
@@ -37,12 +43,68 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
   const [selectedBook, setSelectedBook] = useState<ProjectData | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
-  const [size, setSize] = useState({ width: 1200, height: 800 })
-  const [position, setPosition] = useState({ x: 50, y: 30 })
+  const [size, setSize] = useState({ width: 950, height: 550 })
+  const [position, setPosition] = useState({ x: 50, y: 40 })
   const [isMaximized, setIsMaximized] = useState(false)
   const [isFlipping, setIsFlipping] = useState(false)
+  const [bookStats, setBookStats] = useState<Record<number, BookStats>>({})
   const windowRef = useRef<HTMLDivElement>(null)
   const dragControls = useDragControls()
+
+  // Cargar estadísticas desde localStorage al inicializar
+  useEffect(() => {
+    const savedStats = localStorage.getItem('apple-books-stats')
+    if (savedStats) {
+      try {
+        setBookStats(JSON.parse(savedStats))
+      } catch (error) {
+        console.error('Error loading book stats:', error)
+      }
+    }
+  }, [])
+
+  // Guardar estadísticas en localStorage cuando cambien
+  useEffect(() => {
+    if (Object.keys(bookStats).length > 0) {
+      localStorage.setItem('apple-books-stats', JSON.stringify(bookStats))
+    }
+  }, [bookStats])
+
+  // Función para dar like a un libro
+  const toggleLike = (projectId: number) => {
+    setBookStats(prev => {
+      const currentStats = prev[projectId] || { likes: 0, views: 0, isLiked: false }
+      const newStats = {
+        ...currentStats,
+        isLiked: !currentStats.isLiked,
+        likes: currentStats.isLiked ? Math.max(0, currentStats.likes - 1) : currentStats.likes + 1
+      }
+      return {
+        ...prev,
+        [projectId]: newStats
+      }
+    })
+  }
+
+  // Función para registrar una vista
+  const addView = (projectId: number) => {
+    setBookStats(prev => {
+      const currentStats = prev[projectId] || { likes: 0, views: 0, isLiked: false }
+      const newStats = {
+        ...currentStats,
+        views: currentStats.views + 1
+      }
+      return {
+        ...prev,
+        [projectId]: newStats
+      }
+    })
+  }
+
+  // Obtener estadísticas de un libro
+  const getBookStats = (projectId: number): BookStats => {
+    return bookStats[projectId] || { likes: 0, views: 0, isLiked: false }
+  }
 
   // Función para crear las páginas de un proyecto
   const createProjectPages = (project: ProjectData): Page[] => [
@@ -65,7 +127,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               {/* Header */}
               <div className="text-right">
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center ml-auto mb-4">
-                  <span className="text-xl">{project.priority ? '⭐' : '💎'}</span>
+                  <span className="text-xl">{project.priority ? '⭐' : '📓'}</span>
                 </div>
                 <span className="text-sm opacity-75">{project.date}</span>
               </div>
@@ -177,7 +239,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda */}
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-8 border-r border-gray-200 dark:border-gray-700">
+          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-8 border-r border-gray-200 dark:border-gray-700 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -236,7 +298,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -295,7 +357,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Tecnologías principales */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-800">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-800 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -307,7 +369,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Grid de tecnologías principales */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto scrollbar-thin">
                 <div className="grid grid-cols-1 gap-4">
                   {project.techStack.slice(0, 6).map((tech, index) => (
                     <motion.div
@@ -356,7 +418,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Aspectos técnicos y detalles */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -368,7 +430,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Aspectos técnicos destacados */}
-              <div className="flex-1 space-y-6 overflow-y-auto">
+              <div className="flex-1 space-y-6 overflow-y-auto scrollbar-thin">
                 {/* Arquitectura */}
                 <div className="bg-gradient-to-r from-lilac-50 to-purple-50 dark:from-lilac-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-lilac-200 dark:border-lilac-800">
                   <h4 className="font-semibold text-lilac-900 dark:text-lilac-100 mb-4 flex items-center">
@@ -447,7 +509,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Desafíos */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 p-8 border-r border-orange-200 dark:border-orange-700">
+          <div className="w-1/2 h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 p-8 border-r border-orange-200 dark:border-orange-700 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -476,7 +538,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Obstáculos específicos */}
-              <div className="flex-1 space-y-4 overflow-y-auto">
+              <div className="flex-1 space-y-4 overflow-y-auto scrollbar-thin">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg mb-4">
                   Obstáculos Enfrentados
                 </h4>
@@ -506,7 +568,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Soluciones */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -536,7 +598,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Resultados */}
-              <div className="flex-1 space-y-4 overflow-y-auto">
+              <div className="flex-1 space-y-4 overflow-y-auto scrollbar-thin">
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-200 dark:border-green-700">
                   <h4 className="font-semibold text-green-900 dark:text-green-100 mb-4 flex items-center">
                     <span className="w-6 h-6 mr-2">🎉</span>
@@ -577,7 +639,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Enlaces principales */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-700">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-700 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -589,7 +651,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Enlaces disponibles */}
-              <div className="flex-1 space-y-4 overflow-y-auto">
+              <div className="flex-1 space-y-4 overflow-y-auto scrollbar-thin">
                 {project.githubUrl !== '/under-construction' && (
                   <motion.a
                     href={project.githubUrl}
@@ -699,7 +761,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Vista previa y información adicional */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -711,7 +773,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
               </div>
 
               {/* Preview del proyecto */}
-              <div className="flex-1 space-y-6 overflow-y-auto">
+              <div className="flex-1 space-y-6 overflow-y-auto scrollbar-thin">
                 {/* Captura de pantalla o imagen */}
                 <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
                   <img
@@ -1089,6 +1151,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
   const selectBook = (project: ProjectData) => {
     setSelectedBook(project)
     setCurrentPage(0)
+    addView(project.id) // Registrar visualización
   }
 
   const handleMinimize = () => {
@@ -1097,12 +1160,12 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
 
   const handleMaximize = () => {
     if (isMaximized) {
-      setSize({ width: 1200, height: 800 })
-      setPosition({ x: 50, y: 30 })
+      setSize({ width: 950, height: 550 })
+      setPosition({ x: 50, y: 40 })
     } else {
       if (typeof window !== 'undefined') {
-        setSize({ width: window.innerWidth - 40, height: window.innerHeight - 40 })
-        setPosition({ x: 20, y: 20 })
+        setSize({ width: window.innerWidth - 80, height: window.innerHeight - 80 })
+        setPosition({ x: 40, y: 40 })
       }
     }
     setIsMaximized(!isMaximized)
@@ -1176,10 +1239,34 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 </span>
               </div>
 
-            {/* Page Counter or Search */}
+            {/* Page Counter and Stats or Search */}
             {selectedBook ? (
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {currentPage + 1} / {currentPages.length}
+              <div className="flex items-center space-x-4">
+                {/* Estadísticas del libro actual */}
+                <div className="flex items-center space-x-3">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => toggleLike(selectedBook.id)}
+                    className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-all ${
+                      getBookStats(selectedBook.id).isLiked 
+                        ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' 
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20'
+                    }`}
+                  >
+                    <Heart className={`w-3 h-3 ${getBookStats(selectedBook.id).isLiked ? 'fill-current' : ''}`} />
+                    <span>{getBookStats(selectedBook.id).likes}</span>
+                  </motion.button>
+
+                  <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                    <Eye className="w-3 h-3" />
+                    <span>{getBookStats(selectedBook.id).views}</span>
+                  </div>
+                </div>
+
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {currentPage + 1} / {currentPages.length}
+                </div>
               </div>
             ) : (
               <div className="relative">
@@ -1199,24 +1286,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           <div className="flex flex-1 overflow-hidden">
             {/* Left Sidebar - Lista de Libros */}
             <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
-              {/* Header fijo */}
-              <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-                  <Book className="w-5 h-5 mr-2 text-purple-600" />
-                  Biblioteca de Proyectos
-                </h3>
-                <div className="mt-3 relative">
-                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Buscar proyectos..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
+             
               {/* Lista scrollable de proyectos - Con altura calculada dinámicamente */}
               <div 
                 className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500"
@@ -1260,8 +1330,33 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                           <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
                             {project.description}
                           </p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-gray-500 dark:text-gray-500">{project.date}</span>
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center space-x-3">
+                              {/* Botón de like */}
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  toggleLike(project.id)
+                                }}
+                                className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs transition-all ${
+                                  getBookStats(project.id).isLiked 
+                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' 
+                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20'
+                                }`}
+                              >
+                                <Heart className={`w-3 h-3 ${getBookStats(project.id).isLiked ? 'fill-current' : ''}`} />
+                                <span>{getBookStats(project.id).likes}</span>
+                              </motion.button>
+
+                              {/* Contador de visualizaciones */}
+                              <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+                                <Eye className="w-3 h-3" />
+                                <span>{getBookStats(project.id).views}</span>
+                              </div>
+                            </div>
+
                             <div className="flex flex-wrap gap-1">
                               {project.tags.slice(0, 2).map((tag) => (
                                 <span
@@ -1319,7 +1414,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                           transformStyle: "preserve-3d"
                         }}
                       >
-                        <div className="h-full w-full overflow-y-auto">
+                        <div className="h-full w-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent hover:scrollbar-thumb-purple-400 dark:hover:scrollbar-thumb-purple-500">
                           {currentPages[currentPage]?.content}
                         </div>
                       </motion.div>
@@ -1407,11 +1502,50 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                       Selecciona un proyecto de la lista para explorar su contenido en formato libro interactivo. 
                       Cada libro contiene páginas visuales con información completa del desarrollo.
                     </p>
-                    <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                    {/*<div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800 mb-6">
                       <p className="text-sm text-purple-800 dark:text-purple-200 flex items-center justify-center">
-                        <span className="mr-2">📚</span>
+                        <span className="mr-2">📓</span>
                         {filteredProjects.length} proyectos en formato libro
                       </p>
+                    </div>*/}
+
+                    {/* Panel de estadísticas generales */}
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="bg-gradient-to-br from-purple-100 to-lilac-100 dark:from-purple-900/30 dark:to-lilac-900/30 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <Heart className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                            {Object.values(bookStats).reduce((total, stats) => total + stats.likes, 0)}
+                          </div>
+                          <div className="text-xs text-purple-700 dark:text-purple-300">Total Likes</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-lilac-100 to-purple-100 dark:from-lilac-900/30 dark:to-purple-900/30 p-4 rounded-lg border border-lilac-200 dark:border-lilac-700">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-lilac-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <Eye className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="text-2xl font-bold text-lilac-900 dark:text-lilac-100">
+                            {Object.values(bookStats).reduce((total, stats) => total + stats.views, 0)}
+                          </div>
+                          <div className="text-xs text-lilac-700 dark:text-lilac-300">Total Views</div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 p-4 rounded-lg border border-indigo-200 dark:border-indigo-700">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <TrendingUp className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="text-2xl font-bold text-indigo-900 dark:text-indigo-100">
+                            {Object.values(bookStats).filter(stats => stats.likes > 0).length}
+                          </div>
+                          <div className="text-xs text-indigo-700 dark:text-indigo-300">Books Liked</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

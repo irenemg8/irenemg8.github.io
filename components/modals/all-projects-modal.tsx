@@ -131,7 +131,7 @@ export function AllProjectsModal({ isOpen, onClose }: AllProjectsModalProps) {
             </Button>
           </div>
 
-          {/* Search */}
+          {/* Search 
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -143,7 +143,7 @@ export function AllProjectsModal({ isOpen, onClose }: AllProjectsModalProps) {
                 className="pl-10"
               />
             </div>
-          </div>
+          </div>*/}
 
           {/* Projects Grid */}
           <div className="p-6 overflow-y-auto max-h-[60vh]">

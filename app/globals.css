@@ -530,6 +530,23 @@ video {
   background-color: rgba(75, 85, 99, 0.8);
 }
 
+/* Purple scrollbar styles */
+.scrollbar-thumb-purple-300::-webkit-scrollbar-thumb {
+  background-color: rgb(196, 181, 253);
+}
+
+.scrollbar-thumb-purple-400::-webkit-scrollbar-thumb {
+  background-color: rgb(167, 139, 250);
+}
+
+.dark .scrollbar-thumb-purple-600::-webkit-scrollbar-thumb {
+  background-color: rgb(124, 58, 237);
+}
+
+.dark .scrollbar-thumb-purple-500::-webkit-scrollbar-thumb {
+  background-color: rgb(139, 92, 246);
+}
+
 .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
   background-color: rgb(209, 213, 219);
 }
