@@ -239,7 +239,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda */}
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-8 border-r border-gray-200 dark:border-gray-700 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-8 pb-24 border-r border-gray-200 dark:border-gray-700 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -298,7 +298,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 pb-24 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -418,7 +418,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Aspectos técnicos y detalles */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 pb-24 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -568,7 +568,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Soluciones */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 pb-24 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -761,7 +761,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Vista previa y información adicional */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 overflow-y-auto scrollbar-thin">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-8 pb-24 overflow-y-auto scrollbar-thin">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-8">
@@ -1148,6 +1148,17 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
     }
   }
 
+  // Manejar drag para cambiar páginas
+  const handleDragEnd = (event: any, info: any) => {
+    if (Math.abs(info.offset.x) > 100 && selectedBook && !isFlipping) {
+      if (info.offset.x > 0 && currentPage > 0) {
+        prevPage()
+      } else if (info.offset.x < 0 && currentPage < 4) {
+        nextPage()
+      }
+    }
+  }
+
   const selectBook = (project: ProjectData) => {
     setSelectedBook(project)
     setCurrentPage(0)
@@ -1408,35 +1419,39 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                           ease: "easeInOut",
                           transformOrigin: "center center"
                         }}
-                        className="h-full w-full"
+                        className="h-full w-full cursor-grab active:cursor-grabbing"
                         style={{ 
                           perspective: "1000px",
                           transformStyle: "preserve-3d"
                         }}
+                        drag="x"
+                        dragConstraints={{ left: -200, right: 200 }}
+                        dragElastic={0.2}
+                        onDragEnd={handleDragEnd}
                       >
-                        <div className="h-full w-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent hover:scrollbar-thumb-purple-400 dark:hover:scrollbar-thumb-purple-500">
+                        <div className="h-full w-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent hover:scrollbar-thumb-purple-400 dark:hover:scrollbar-thumb-purple-500 pb-20">
                           {currentPages[currentPage]?.content}
                         </div>
                       </motion.div>
                     </div>
 
                     {/* Navigation Buttons */}
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 z-10">
+                    <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-4 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm px-6 py-3 rounded-full border border-gray-200 dark:border-gray-700 shadow-lg">
                       <motion.button
                         onClick={prevPage}
                         disabled={currentPage === 0 || isFlipping}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center transition-all ${
+                        className={`w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 border border-purple-200 dark:border-purple-600 flex items-center justify-center transition-all ${
                           currentPage === 0 || isFlipping 
                             ? 'opacity-50 cursor-not-allowed' 
-                            : 'hover:shadow-xl hover:bg-white dark:hover:bg-gray-800'
+                            : 'hover:bg-purple-200 dark:hover:bg-purple-700'
                         }`}
                       >
-                        <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <ChevronLeft className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       </motion.button>
 
-                      <div className="flex space-x-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm px-3 py-2 rounded-full border border-gray-200 dark:border-gray-700">
+                      <div className="flex space-x-1">
                         {currentPages.map((_, index) => (
                           <button
                             key={index}
@@ -1463,23 +1478,39 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                         disabled={currentPage === currentPages.length - 1 || isFlipping}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center transition-all ${
+                        className={`w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 border border-purple-200 dark:border-purple-600 flex items-center justify-center transition-all ${
                           currentPage === currentPages.length - 1 || isFlipping
                             ? 'opacity-50 cursor-not-allowed' 
-                            : 'hover:shadow-xl hover:bg-white dark:hover:bg-gray-800'
+                            : 'hover:bg-purple-200 dark:hover:bg-purple-700'
                         }`}
                       >
-                        <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       </motion.button>
                     </div>
 
-                    {/* Close book button */}
+                    {/* Close book button 
                     <button
                       onClick={() => setSelectedBook(null)}
                       className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-white dark:hover:bg-gray-800 transition-all z-10"
                     >
                       <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
+                    </button>*/}
+
+                    {/* Drag hint 
+                    <div className="absolute top-4 left-4 bg-purple-100/90 dark:bg-purple-900/90 backdrop-blur-sm px-3 py-2 rounded-full border border-purple-200 dark:border-purple-700 z-10">
+                      <p className="text-xs text-purple-700 dark:text-purple-300 flex items-center">
+                        <span className="mr-1">🖱️</span>
+                        Arrastra horizontalmente para cambiar páginas
+                      </p>
+                    </div>*/}
+
+                    {/* Scroll hint para contenido largo 
+                    <div className="absolute top-4 right-16 bg-lilac-100/90 dark:bg-lilac-900/90 backdrop-blur-sm px-3 py-2 rounded-full border border-lilac-200 dark:border-lilac-700 z-10">
+                      <p className="text-xs text-lilac-700 dark:text-lilac-300 flex items-center">
+                        <span className="mr-1">↕️</span>
+                        Scroll para ver todo el contenido
+                      </p>
+                    </div>*/}
                   </div>
                 </>
               ) : (

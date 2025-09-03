@@ -566,3 +566,21 @@ video {
 .scrollbar-track-transparent::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Drag cursor styles for flipbook */
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grab:active,
+.active\:cursor-grabbing:active {
+  cursor: grabbing;
+}
+
+/* Prevent text selection during drag */
+.drag-area {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}

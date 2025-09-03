@@ -65,7 +65,7 @@ export function CalendarModal() {
       date: date,
       title: "Vuelvo a clase 📚",
       type: "event" as const,
-      description: "¡Nuevo curso académico! Tiempo de aprender cosas nuevas 🎓"
+      description: "¡Nuevo curso académico! Hora de aprender cosas nuevas 🎓"
     }
   }
 
