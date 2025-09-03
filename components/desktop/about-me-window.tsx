@@ -584,7 +584,7 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                 <div className="space-y-2">
                   <div>
                     <p className="font-semibold text-gray-800">🥇 Premios</p>
-                    <p className="text-gray-700">Finalista en varios Hackathones</p>
+                    <p className="text-gray-700">Finalista de varios Hackathones</p>
                   </div>
                   <div className="mt-3">
                     <p className="font-semibold text-gray-800">🌍 UPV en China</p>
