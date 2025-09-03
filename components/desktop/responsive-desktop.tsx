@@ -33,6 +33,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
 import { AnimatePresence } from 'framer-motion'
 import { AboutMeWindow } from '@/components/desktop/about-me-window'
+import { AppleBooksWindow } from '@/components/desktop/apple-books-window'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -73,6 +74,7 @@ export function ResponsiveDesktop() {
   const [showConstructionAlert, setShowConstructionAlert] = useState(true)
   const [showArtworksGallery, setShowArtworksGallery] = useState(false)
   const [showAboutMe, setShowAboutMe] = useState(false)
+  const [showAppleBooks, setShowAppleBooks] = useState(false)
 
   const [isMounted, setIsMounted] = useState(false)
   
@@ -433,6 +435,9 @@ export function ResponsiveDesktop() {
                 } else if (project.id === 'hackathons') {
                   // Show Hackathons folder window
                   setShowHackathonsFolder(true);
+                } else if (project.id === 'projects') {
+                  // Show Apple Books window for projects
+                  setShowAppleBooks(true);
                 } else {
                   openWindow(project.id, project.name, projectContent(project.name))
                 }
@@ -687,6 +692,12 @@ export function ResponsiveDesktop() {
       <AboutMeWindow 
         isOpen={showAboutMe} 
         onClose={() => setShowAboutMe(false)}
+      />
+
+      {/* Apple Books Window for Projects */}
+      <AppleBooksWindow
+        isOpen={showAppleBooks}
+        onClose={() => setShowAppleBooks(false)}
       />
     </>
   )
