@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getProjectMetadata, getAllProjectSlugs } from '@/lib/projects-metadata'
-import { ResponsiveDesktop } from '@/components/desktop/responsive-desktop'
+import { ProjectPageLayout } from '@/components/layout/project-page-layout'
 
 export const dynamic = 'force-static'
 
@@ -90,11 +90,10 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     notFound()
   }
 
-  // Por ahora, renderizamos el escritorio completo
-  // En el futuro podrías crear una vista específica del proyecto
+  // Renderizamos la página específica del proyecto
   return (
     <div>
-      <ResponsiveDesktop />
+      <ProjectPageLayout project={project} />
       
       {/* Datos estructurados JSON-LD para mejor SEO */}
       <script

@@ -39,7 +39,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
   const [selectedBook, setSelectedBook] = useState<ProjectData | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
-  const [size, setSize] = useState({ width: 1050, height: 600 })
+  const [size, setSize] = useState({ width: 1050, height: 630 })
   const [position, setPosition] = useState({ x: 50, y: 40 })
   const [isMaximized, setIsMaximized] = useState(false)
   const [isFlipping, setIsFlipping] = useState(false)
@@ -55,7 +55,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Portada del libro */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-500 via-lilac-500 to-lavender-600 relative overflow-hidden rounded-l-lg shadow-2xl">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-500 via-lilac-500 to-lavender-600 relative overflow-y-auto rounded-l-lg shadow-2xl scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent">
             <div className="absolute inset-0 bg-black/10"></div>
             
             {/* Decoración de fondo */}
@@ -108,7 +108,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Vista previa del contenido */}
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 relative rounded-r-lg shadow-inner">
+          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 relative rounded-r-lg shadow-inner overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             <div className="p-8 pb-16 h-full flex flex-col">
               {/* Mini preview de la imagen */}
               <div className="aspect-video bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-lg mb-6">
@@ -179,7 +179,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda */}
-          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-6 pb-16 border-r border-gray-200 dark:border-gray-700">
+          <div className="w-1/2 h-full bg-gray-50 dark:bg-gray-800 p-6 pb-16 border-r border-gray-200 dark:border-gray-700 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -238,7 +238,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -282,7 +282,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Tecnologías principales */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-800 ">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-8 border-r border-purple-200 dark:border-purple-800 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -343,7 +343,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Aspectos técnicos y detalles */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -405,7 +405,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Desafíos */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 p-6 pb-16 border-r border-orange-200 dark:border-orange-700">
+          <div className="w-1/2 h-full bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/10 dark:to-red-900/10 p-6 pb-16 border-r border-orange-200 dark:border-orange-700 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-300 dark:scrollbar-thumb-orange-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -474,7 +474,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Soluciones */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-6 pb-16">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-6 pb-16 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -545,7 +545,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Descripción detallada */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/10 dark:to-blue-900/10 p-6 pb-16 border-r border-indigo-200 dark:border-indigo-700">
+          <div className="w-1/2 h-full bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/10 dark:to-blue-900/10 p-6 pb-16 border-r border-indigo-200 dark:border-indigo-700 overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-300 dark:scrollbar-thumb-indigo-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -582,7 +582,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Contexto y objetivos */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -634,7 +634,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
       content: (
         <div className="relative w-full h-full bg-white dark:bg-gray-900 flex">
           {/* Página izquierda - Enlaces principales */}
-          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-6 pb-16 border-r border-purple-200 dark:border-purple-700">
+          <div className="w-1/2 h-full bg-gradient-to-br from-purple-50 to-lilac-50 dark:from-purple-900/10 dark:to-lilac-900/10 p-6 pb-16 border-r border-purple-200 dark:border-purple-700 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -756,7 +756,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
           </div>
 
           {/* Página derecha - Vista previa y información adicional */}
-          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16">
+          <div className="w-1/2 h-full bg-white dark:bg-gray-900 p-6 pb-16 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="mb-6">
@@ -1126,7 +1126,7 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
 
   const handleMaximize = () => {
     if (isMaximized) {
-      setSize({ width: 1050, height: 600 })
+      setSize({ width: 1050, height: 630 })
       setPosition({ x: 50, y: 40 })
     } else {
       if (typeof window !== 'undefined') {
@@ -1229,11 +1229,11 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
             {/* Left Sidebar - Lista de Libros */}
             <div className="w-80 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
              
-              {/* Lista scrollable de proyectos - Con altura calculada dinámicamente */}
+              {/* Lista scrollable de proyectos - Con altura fija */}
               <div 
                 className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-300 dark:scrollbar-thumb-purple-600 scrollbar-track-transparent"
                 style={{ 
-                  maxHeight: 'calc(100vh - 200px)', // Ajusta según la altura del header y controles
+                  maxHeight: '580px', // Altura fija para evitar cortes
                   height: 'auto'
                 }}
               >
@@ -1273,7 +1273,6 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                             {project.description}
                           </p>
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-gray-500 dark:text-gray-500">{project.date}</span>
                             <div className="flex flex-wrap gap-1">
                               {project.tags.slice(0, 2).map((tag) => (
                                 <span
@@ -1306,12 +1305,12 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
             <div className="flex-1 flex flex-col min-h-0">
               {selectedBook ? (
                 <>
-                  {/* Área del libro - Altura calculada dinámicamente */}
+                  {/* Área del libro - Altura fija */}
                   <div 
                     className="flex-1 relative overflow-hidden"
                     style={{ 
-                      height: 'calc(100vh - 120px)', // Ajusta según el header de la ventana
-                      minHeight: '500px' // Altura mínima garantizada
+                      height: '580px', // Altura fija para evitar cortes
+                      minHeight: '580px' // Altura fija garantizada
                     }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
@@ -1424,8 +1423,8 @@ export function AppleBooksWindow({ isOpen, onClose }: AppleBooksWindowProps) {
                 <div 
                   className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 p-8"
                   style={{ 
-                    height: 'calc(100vh - 120px)', 
-                    minHeight: '400px'
+                    height: '580px', 
+                    minHeight: '580px'
                   }}
                 >
                   <div className="text-center max-w-md">
