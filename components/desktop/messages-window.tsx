@@ -208,7 +208,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
         id: '4',
         name: 'José Luis',
         avatar: '🎯',
-        lastMessage: 'Did the kids finish their homework?',
+        lastMessage: 'Wow, se le ve mucho trabajo 😅',
         lastMessageTime: 'ayer',
         unread: false,
         topic: 'figma',
@@ -246,7 +246,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm5',
             sender: 'José Luis',
-            content: 'Did the kids finish their homework? Ah perdón, mensaje equivocado 😅',
+            content: 'Wow, se le ve mucho trabajo 😅',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 44),
             isUser: false,
             avatar: '🎯'
@@ -255,16 +255,16 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
       },
       {
         id: '5',
-        name: 'Dawn Ramirez',
+        name: 'Carmen',
         avatar: '🌍',
-        lastMessage: 'OK to visit tonight? I have some things I need the grandkids\' help with. 😅',
+        lastMessage: 'A ver si algún día me llevas contigo 😅',
         lastMessageTime: 'ayer',
         unread: false,
         topic: 'travel',
         messages: [
           {
             id: 'm1',
-            sender: 'Dawn Ramirez',
+            sender: 'Carmen',
             content: '¿Cuál ha sido tu viaje favorito hasta ahora?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 72),
             isUser: false,
@@ -279,8 +279,8 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           },
           {
             id: 'm3',
-            sender: 'Dawn Ramirez',
-            content: '¡Qué envidia! ¿A dónde planeas viajar el próximo año?',
+            sender: 'Carmen',
+            content: '¡Qué envidia! ¿Y a dónde planeas viajar el próximo año?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 70),
             isUser: false,
             avatar: '🌍'
@@ -288,14 +288,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm4',
             sender: 'Tú',
-            content: 'Estoy pensando en Islandia o Nueva Zelanda, lugares con naturaleza impresionante',
+            content: 'Estoy pensando en algún lugar más genuino como Italia o Portugal',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 69),
             isUser: true
           },
           {
             id: 'm5',
-            sender: 'Dawn Ramirez',
-            content: 'OK to visit tonight? I have some things I need the grandkids\' help with. 😅',
+            sender: 'Carmen',
+            content: 'A ver si algún día me llevas contigo 😅',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 68),
             isUser: false,
             avatar: '🌍'
@@ -305,65 +305,73 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
       {
         id: '6',
         name: 'Foodie Friends',
-        avatar: '🍕',
-        lastMessage: 'Incredible. I\'ll have to try making it myself.',
+        avatar: '👨‍🍳',
+        lastMessage: 'Sí, te recomiendo que lo intentes, es muy divertido y fácil!',
         lastMessageTime: 'ayer',
         unread: false,
         topic: 'food',
         messages: [
           {
             id: 'm1',
-            sender: 'Foodie Friends',
-            content: '¿Cuáles son tus comidas favoritas?',
+            sender: 'Juan',
+            content: 'Ey, ¿qué os parece juntarnos el jueves a comer algo? ¿cuáles son vuestras comidas favoritas?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 96),
             isUser: false,
-            avatar: '🍕'
+            avatar: '🍙'
           },
           {
             id: 'm2',
             sender: 'Tú',
-            content: 'Amo la pasta italiana, el sushi japonés y los tacos mexicanos!',
+            content: 'Ayy, amo la pasta y el sushi 🍝🍣',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 95),
             isUser: true
           },
           {
             id: 'm3',
-            sender: 'Foodie Friends',
-            content: '¡Excelentes elecciones! ¿Has probado hacer sushi en casa?',
+            sender: 'Sergio',
+            content: 'Yo soy más de una buena hamburguesa 🍔',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 94),
             isUser: false,
-            avatar: '🍕'
+            avatar: '🍔'
           },
           {
             id: 'm4',
+            sender: 'Juan',
+            content: '¡Excelentes elecciones! Por cierto Irene, ¿has probado hacer sushi en casa?',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 94),
+            isUser: false,
+            avatar: '🍙'
+          },
+          {
+            id: 'm5',
             sender: 'Tú',
-            content: 'Sí! Es un proceso divertido pero requiere mucha práctica para el arroz perfecto',
+            content: 'No, pero es algo que tengo pendiente!',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 93),
             isUser: true
           },
           {
-            id: 'm5',
-            sender: 'Foodie Friends',
-            content: 'Incredible. I\'ll have to try making it myself.',
+            id: 'm6',
+            sender: 'Juan',
+            content: 'Sí, te recomiendo que lo intentes, es muy divertido y fácil!',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 92),
             isUser: false,
-            avatar: '🍕'
+            avatar: '🍙'
           }
         ]
       },
       {
         id: '7',
-        name: 'Antonio Manriquez',
+        name: 'Antonio',
         avatar: '💻',
-        lastMessage: '🎮🎮🎮',
+        lastMessage: 'Ya me pondrás al día con todo lo que sabes jajaja 😅',
         lastMessageTime: 'ayer',
         unread: false,
         topic: 'tech',
         messages: [
           {
             id: 'm1',
-            sender: 'Antonio Manriquez',
-            content: '¿Qué tecnologías estás aprendiendo ahora?',
+            sender: 'Antonio',
+            content: 'Hola Irene, ¿qué tecnología estás aprendiendo ahora?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 120),
             isUser: false,
             avatar: '💻'
@@ -371,14 +379,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm2',
             sender: 'Tú',
-            content: 'Estoy profundizando en React, Next.js y Three.js para proyectos web 3D',
+            content: 'Hola Antonio, estoy profundizando en React, Next.js y Three.js para proyectos web 3D',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 119),
             isUser: true
           },
           {
             id: 'm3',
-            sender: 'Antonio Manriquez',
-            content: '¡Genial combo! Three.js es perfecto para portfolios interactivos',
+            sender: 'Antonio',
+            content: '¡Genial combo! Three.js es perfecto para tus trabajos interactivos',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 118),
             isUser: false,
             avatar: '💻'
@@ -392,8 +400,8 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           },
           {
             id: 'm5',
-            sender: 'Antonio Manriquez',
-            content: '🎮🎮🎮',
+            sender: 'Antonio',
+            content: 'Ya me pondrás al día con todo lo que sabes jajaja 😅',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 116),
             isUser: false,
             avatar: '💻'
@@ -402,16 +410,16 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
       },
       {
         id: '8',
-        name: 'Po-Chun Yeh',
+        name: 'Elena',
         avatar: '📸',
-        lastMessage: 'Wow, looks beautiful. ☀️ Here\'s a photo of the beach!',
+        lastMessage: '¿Te parece bien si quedamos un día para hacer fotos?',
         lastMessageTime: 'ayer',
         unread: false,
         topic: 'photography',
         messages: [
           {
             id: 'm1',
-            sender: 'Po-Chun Yeh',
+            sender: 'Elena',
             content: '¿Te gusta la fotografía?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 144),
             isUser: false,
@@ -426,7 +434,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           },
           {
             id: 'm3',
-            sender: 'Po-Chun Yeh',
+            sender: 'Elena',
             content: '¿Qué cámara usas?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 142),
             isUser: false,
@@ -435,14 +443,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm4',
             sender: 'Tú',
-            content: 'Principalmente mi iPhone, pero estoy pensando en comprar una mirrorless',
+            content: 'Actualmente uso mi iPhone, hace poco que tengo mi cámara y aún estoy aprendiendo a usarla',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 141),
             isUser: true
           },
           {
             id: 'm5',
-            sender: 'Po-Chun Yeh',
-            content: 'Wow, looks beautiful. ☀️ Here\'s a photo of the beach!',
+            sender: 'Elena',
+            content: '¿Te parece bien si quedamos un día para hacer fotos?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 140),
             isUser: false,
             avatar: '📸'
@@ -451,16 +459,16 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
       },
       {
         id: '9',
-        name: 'Herland Antezana',
+        name: 'Valentín',
         avatar: '🎵',
-        lastMessage: 'Yes, that sounds good! See you then.',
+        lastMessage: 'Wow, eso suena interesante! Vayamos a un concierto juntos',
         lastMessageTime: 'ayer',
         unread: false,
         topic: 'music',
         messages: [
           {
             id: 'm1',
-            sender: 'Herland Antezana',
+            sender: 'Valentín',
             content: '¿Qué tipo de música te gusta?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 168),
             isUser: false,
@@ -469,14 +477,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm2',
             sender: 'Tú',
-            content: 'Me gusta de todo! Desde indie pop hasta música clásica',
+            content: 'Me gusta de todo! Desde pop, rock, hasta música clásica',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 167),
             isUser: true
           },
           {
             id: 'm3',
-            sender: 'Herland Antezana',
-            content: '¿Tocas algún instrumento?',
+            sender: 'Valentín',
+            content: '¿Y tocas algún instrumento?',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 166),
             isUser: false,
             avatar: '🎵'
@@ -484,14 +492,14 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
           {
             id: 'm4',
             sender: 'Tú',
-            content: 'Estoy aprendiendo a tocar el ukulele, es muy relajante',
+            content: 'Toco el clarinete y el piano, pero últimamente soy más de escuchar a otros músicos tocar',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 165),
             isUser: true
           },
           {
             id: 'm5',
-            sender: 'Herland Antezana',
-            content: 'Yes, that sounds good! See you then.',
+            sender: 'Valentín',
+            content: 'Wow, eso suena interesante! Vayamos a un concierto juntos',
             timestamp: new Date(Date.now() - 1000 * 60 * 60 * 164),
             isUser: false,
             avatar: '🎵'
