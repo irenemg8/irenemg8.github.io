@@ -46,6 +46,50 @@ export const metadata = {
   generator: 'Next.js + Framer Motion + Three.js',
   keywords: 'diseño ux ui, desarrollo frontend, portfolio interactivo, experiencia digital',
   authors: [{ name: 'Irene Medina García' }],
+  creator: 'Irene Medina García',
+  publisher: 'Irene Medina García',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://irenemg8.github.io'),
+  alternates: {
+    canonical: 'https://irenemg8.github.io',
+  },
+  openGraph: {
+    title: 'Irene MG | UX/UI Designer & Frontend Dev',
+    description: 'Portafolio inmersivo de Irene Medina García - Diseñadora UX/UI y Desarrolladora Frontend especializada en experiencias digitales inolvidables',
+    url: 'https://irenemg8.github.io',
+    siteName: 'Irene Medina García Portfolio',
+    images: [
+      {
+        url: 'https://irenemg8.github.io/social-previews/irenemg8.png',
+        width: 1200,
+        height: 630,
+        alt: 'Irene Medina García - UX/UI Designer & Frontend Developer',
+      },
+    ],
+    locale: 'es_ES',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Irene MG | UX/UI Designer & Frontend Dev',
+    description: 'Portafolio inmersivo de Irene Medina García - Diseñadora UX/UI y Desarrolladora Frontend especializada en experiencias digitales inolvidables',
+    images: ['https://irenemg8.github.io/social-previews/irenemg8.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: '/yo.ico',
     shortcut: '/yo.ico',
