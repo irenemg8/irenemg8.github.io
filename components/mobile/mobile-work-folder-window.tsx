@@ -10,7 +10,6 @@ import { MobileWindow } from './mobile-window'
 import { WorkNote } from '../desktop/work-note'
 import { WebsiteWindow } from '../desktop/website-window'
 import { SimpleWebWindow } from '../desktop/simple-web-window'
-import { MediaViewer } from '../desktop/media-viewer'
 
 interface MediaItem {
   id: string
@@ -47,9 +46,8 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
   const [selectedWork, setSelectedWork] = useState<WorkExperience | null>(null)
   const [openNotes, setOpenNotes] = useState<WorkExperience[]>([])
   const [openWebsites, setOpenWebsites] = useState<{ work: WorkExperience, url: string }[]>([])
-  const [openMediaViewers, setOpenMediaViewers] = useState<{ work: WorkExperience, media: MediaItem[] }[]>([])
 
-  // Datos de experiencia laboral optimizados para móvil
+  // Datos de experiencia laboral sincronizados con desktop
   const workExperiences: WorkExperience[] = [
     {
       id: 'upv-ta',
@@ -86,40 +84,178 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
       skills: ['Figma', 'Python', 'Data Analysis', 'UX/UI', 'Automatización'],
       icon: '/work/talpa.png',
       website: 'https://talpatunneling.webs.upv.es/',
+      media: [
+       /* {
+          id: 'talpa-1',
+          type: 'image',
+          src: '/work/talpa-project.png',
+          alt: 'Proyecto Talpa Dashboard',
+          title: 'Dashboard de Control',
+          description: 'Interfaz principal del sistema de automatización'
+        },
+        {
+          id: 'talpa-2',
+          type: 'image',
+          src: '/work/talpa-ui.png',
+          alt: 'UI Design Talpa',
+          title: 'Diseño UI/UX',
+          description: 'Wireframes y prototipos del sistema'
+        }*/
+      ]
     },
     {
-      id: 'upv-researcher',
-      company: 'Universidad Politécnica de Valencia',
-      position: 'Investigadora',
-      type: 'Tiempo parcial',
-      date: 'Sept 2024 - Mar 2025',
-      location: 'Gandía, España',
-      description: 'Investigación en aplicación de tecnologías de realidad virtual para la educación, trabajando con tecnologías inmersivas y desarrollo de aplicaciones educativas.',
+      id: 'gomarco',
+      company: 'GOMARCO',
+      position: 'Scrum Master & Programadora',
+      type: 'Contrato de prácticas',
+      date: 'Abr 2025 - Jul 2025',
+      location: 'Yecla (Murcia)',
+      description: 'Gestión ágil de proyectos y desarrollo de software en entorno industrial.',
       responsibilities: [
-        'Desarrollo de aplicaciones VR educativas',
-        'Investigación en tecnologías inmersivas',
-        'Análisis de métricas de engagement',
-        'Publicación de resultados académicos'
+        'Gestión ágil del departamento de informática',
+        'Automatización de procesos internos',
+        'Desarrollo de aplicaciones de escritorio',
+        'Desarrollo de IAs locales',
+        'Diseño de interfaces de usuario',
+        'Diseño del tablero de Trello',
       ],
-      skills: ['Unity 3D', 'C#', 'Realidad Virtual', 'Investigación', 'Publicaciones académicas'],
-      icon: '/work/upv.png'
+      skills: ['Scrum', 'Trello', 'C#', 'Automatización', 'Python'],
+      icon: '/work/gomarco.png'
     },
     {
-      id: 'freelance-dev',
-      company: 'Desarrollo Freelance',
-      position: 'Desarrolladora Full-Stack',
-      type: 'Freelance',
-      date: 'Jun 2024 - Actualidad',
-      location: 'Remoto',
-      description: 'Desarrollo de aplicaciones web y móviles para clientes diversos, especializada en React, Next.js y desarrollo mobile.',
+      id: 'profesora',
+      company: 'Profesora Particular',
+      position: 'Profesora de programación',
+      type: 'Autónomo',
+      date: 'Sept 2023 - Feb 2025',
+      location: 'Gandía (Comunidad Valenciana)',
+      description: 'Ayudo a estudiantes a fortalecer sus conocimientos de programación y diseño en C++, JS, Python y desarrollo web.',
       responsibilities: [
-        'Desarrollo de aplicaciones web responsive',
-        'Creación de APIs y bases de datos',
-        'Diseño UX/UI de interfaces',
-        'Gestión completa de proyectos'
+        'Diseño de clases personalizadas según nivel del alumno',
+        'Enseñanza de C++, JS, Python y desarrollo web',
+        'Combinación de teoría y práctica',
+        'Organización de clases y material de apoyo',
       ],
-      skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'MongoDB', 'Figma'],
-      icon: '/work/freelance.png'
+      skills: ['C++', 'JS', 'Python', 'HTML/CSS', 'SQL'],
+      icon: '/work/particulares.png'
+    },
+    {
+      id: 'centromat-web',
+      company: 'Centromat - Web',
+      position: 'Diseñadora y desarrolladora web',
+      type: 'Autónomo',
+      date: 'Jun 2025 - Jul 2025',
+      location: 'En remoto',
+      description: 'Diseño y desarrollo de la página web enfocado a las nuevas necesidades de la empresa.',
+      responsibilities: [
+        'Diseño de wireframes y prototipos UI',
+        'Desarrollo de la página web',
+        'Desarrollo de sitio web responsive y accesible',
+        'Mejora del SEO de la página web',
+        'Optimización del rendimiento de la página web',
+      ],
+      skills: ['Figma', 'UX/UI', 'React', 'TS'],
+      icon: '/work/centromat.png',
+      website: 'https://centromat.info/',
+      media: [
+       /* {
+          id: 'centromat-1',
+          type: 'image',
+          src: '/work/centromat-home.png',
+          alt: 'Página principal Centromat',
+          title: 'Diseño Homepage',
+          description: 'Página de inicio del sitio web responsivo'
+        },
+        {
+          id: 'centromat-2',
+          type: 'image',
+          src: '/work/centromat-wireframes.png',
+          alt: 'Wireframes Centromat',
+          title: 'Wireframes y Prototipos',
+          description: 'Proceso de diseño y arquitectura de información'
+        }*/
+      ]
+    },
+    {
+      id: 'centromat-trello',
+      company: 'Centromat - Scrum',
+      position: 'Scrum Master',
+      type: 'Autónomo',
+      date: 'May 2025',
+      location: 'En remoto',
+      description: 'Implementación de la metodología Scrum en la empresa junto a la creación de un tablero de Trello para la gestión de proyectos.',
+      responsibilities: [
+        'Formación a los trabajadores de la empresa en la metodología Scrum',
+        'Creación de un tablero de Trello para la gestión de proyectos',
+        'Gestión de proyecto con metodología Scrum',
+        'Mejora del rendimiento de los proyectos',
+        'Análisis de datos y optimización de rendimiento de los trabajadores',
+      ],
+      skills: ['Scrum', 'Trello'],
+      icon: '/work/centromat.png',
+      website: 'https://centromat.info/',
+      media: [
+       /* {
+          id: 'centromat-1',
+          type: 'image',
+          src: '/work/centromat-home.png',
+          alt: 'Página principal Centromat',
+          title: 'Diseño Homepage',
+          description: 'Página de inicio del sitio web responsivo'
+        },
+        {
+          id: 'centromat-2',
+          type: 'image',
+          src: '/work/centromat-wireframes.png',
+          alt: 'Wireframes Centromat',
+          title: 'Wireframes y Prototipos',
+          description: 'Proceso de diseño y arquitectura de información'
+        }*/
+      ]
+    },
+    {
+      id: 'centromat-radio',
+      company: 'Centromat - Radio',
+      position: 'Creadora de anuncios de radio',
+      type: 'Autónomo',
+      date: 'Jul 2023 - Sept 2023',
+      location: 'En remoto',
+      description: 'Desarrollo creativo y producción de anuncios radiofónicos para la empresa, desde la conceptualización hasta la producción final.',
+      responsibilities: [
+        'Desarrollo de conceptos creativos para anuncios',
+        'Escritura de guiones publicitarios',
+        'Producción y edición de audio',
+        'Coordinación con programas de radio locales',
+        'Optimización de mensajes para diferentes audiencias'
+      ],
+      skills: ['Creatividad', 'Guión', 'Edición de audio', 'Marketing', 'Comunicación'],
+      icon: '/work/centromat.png',
+      media: [
+        {
+          id: 'centromat-radio-1',
+          type: 'audio',
+          src: '/work/centromat(1).mp3',
+          alt: 'Anuncio de radio Centromat - Versión 1',
+          title: 'Septiembre 2025',
+          description: 'Anuncio radiofónico principal de 30 segundos'
+        },
+        /*{
+          id: 'centromat-radio-2',
+          type: 'audio',
+          src: '/music/centromat-anuncio-2.mp3',
+          alt: 'Anuncio de radio Centromat - Versión 2',
+          title: 'Anuncio Promocional',
+          description: 'Versión promocional del anuncio de 20 segundos'
+        },
+        {
+          id: 'centromat-radio-3',
+          type: 'audio',
+          src: '/music/centromat-jingle.mp3',
+          alt: 'Jingle Centromat',
+          title: 'Jingle Corporativo',
+          description: 'Jingle musical de identificación de marca'
+        }*/
+      ]
     }
   ]
 
@@ -132,12 +268,6 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
     }
   }
 
-  const handleMediaClick = (work: WorkExperience) => {
-    if (work.media && work.media.length > 0) {
-      const newMediaViewer = { work, media: work.media }
-      setOpenMediaViewers(prev => [...prev, newMediaViewer])
-    }
-  }
 
   const closeNote = (workId: string) => {
     setOpenNotes(prev => prev.filter(w => w.id !== workId))
@@ -147,9 +277,6 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
     setOpenWebsites(prev => prev.filter(w => w.work.id !== workId))
   }
 
-  const closeMediaViewer = (workId: string) => {
-    setOpenMediaViewers(prev => prev.filter(w => w.work.id !== workId))
-  }
 
   const getFileIcon = (work: WorkExperience) => {
     if (work.media && work.media.length > 0) {
@@ -277,7 +404,6 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
         {openNotes.map((work) => (
           <WorkNote
             key={work.id}
-            isOpen={true}
             onClose={() => closeNote(work.id)}
             work={work}
           />
@@ -286,20 +412,9 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
         {openWebsites.map((item, index) => (
           <SimpleWebWindow
             key={`${item.work.id}-${index}`}
-            isOpen={true}
             onClose={() => closeWebsite(item.work.id)}
             url={item.url}
             title={item.work.company}
-          />
-        ))}
-        
-        {openMediaViewers.map((item, index) => (
-          <MediaViewer
-            key={`${item.work.id}-media-${index}`}
-            isOpen={true}
-            onClose={() => closeMediaViewer(item.work.id)}
-            mediaItems={item.media}
-            title={`${item.work.company} - Archivos multimedia`}
           />
         ))}
       </AnimatePresence>
