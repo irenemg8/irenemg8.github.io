@@ -9,7 +9,6 @@ export function MobileDock() {
       id: 'messages',
       name: 'Mensajes',
       image: '/Dock/Messages.png',
-      gradient: 'from-green-500 to-green-700',
       onTap: () => {
         // Trigger messages window
         console.log('Messages app tapped')
@@ -19,7 +18,6 @@ export function MobileDock() {
       id: 'safari',
       name: 'Safari',
       image: '/Dock/Safari.png',
-      gradient: 'from-blue-500 to-blue-700',
       onTap: () => {
         // Trigger safari browser
         const button = document.querySelector('[data-github-safari-trigger]') as HTMLButtonElement;
@@ -30,7 +28,6 @@ export function MobileDock() {
       id: 'spotify',
       name: 'Spotify',
       image: '/Dock/spotify.png',
-      gradient: 'from-green-400 to-green-600',
       onTap: () => {
         console.log('Spotify app tapped')
       }
@@ -39,7 +36,6 @@ export function MobileDock() {
       id: 'mail',
       name: 'Mail',
       image: '/Dock/Mail.png',
-      gradient: 'from-blue-500 to-blue-700',
       onTap: () => {
         window.location.href = 'mailto:irenebati4@gmail.com'
       }
@@ -71,7 +67,6 @@ export function MobileDock() {
               <MobileApp
                 name={app.name}
                 image={app.image}
-                gradient={app.gradient}
                 onTap={app.onTap}
                 delay={0.6 + index * 0.1}
               />

@@ -34,7 +34,6 @@ interface MobileApp {
   name: string
   icon?: string
   image?: string
-  gradient: string
   onTap: () => void
 }
 
@@ -125,49 +124,42 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'projects',
       name: 'Proyectos',
       image: '/folder.png',
-      gradient: 'from-blue-400 to-blue-600',
       onTap: () => setShowAppleBooks(true)
     },
     {
       id: 'work-experience',
       name: 'Experiencia',
       image: '/folder.png',
-      gradient: 'from-green-400 to-green-600',
       onTap: () => setShowWorkFolder(true)
     },
     {
       id: 'about-me',
       name: 'Sobre Mí',
       image: '/folder.png',
-      gradient: 'from-purple-400 to-purple-600',
       onTap: () => setShowAboutMe(true)
     },
     {
       id: 'artworks',
       name: 'Arte',
       image: '/folder.png',
-      gradient: 'from-pink-400 to-pink-600',
       onTap: () => setShowArtworksGallery(true)
     },
     {
       id: 'ge',
       name: 'GE',
       image: '/folder.png',
-      gradient: 'from-yellow-400 to-orange-500',
       onTap: () => setShowGEFolder(true)
     },
     {
       id: 'hackathons',
       name: 'Hackathons',
       image: '/folder.png',
-      gradient: 'from-red-400 to-red-600',
       onTap: () => setShowHackathonsFolder(true)
     },
     {
       id: 'press',
       name: 'Prensa',
       image: '/folder.png',
-      gradient: 'from-indigo-400 to-indigo-600',
       onTap: () => {
         const button = document.querySelector('[data-press-library-trigger]') as HTMLButtonElement;
         if (button) button.click();
@@ -177,7 +169,6 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'world-map',
       name: 'Mundo',
       image: '/mundo.png',
-      gradient: 'from-cyan-400 to-cyan-600',
       onTap: () => {
         const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
         if (button) button.click();
@@ -187,91 +178,78 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'resume',
       name: 'CV',
       image: '/document.png',
-      gradient: 'from-gray-400 to-gray-600',
       onTap: () => window.open('/irene-medina-garcia-cv.pdf', '_blank')
     },
     {
       id: 'safari',
       name: 'Safari',
       image: '/Dock/Safari.png',
-      gradient: 'from-blue-500 to-blue-700',
       onTap: () => setShowGitHubBrowser(true)
     },
     {
       id: 'messages',
       name: 'Mensajes',
       image: '/Dock/Messages.png',
-      gradient: 'from-green-500 to-green-700',
       onTap: () => setShowMessages(true)
     },
     {
       id: 'photos',
       name: 'Fotos',
       image: '/Dock/Photos.png',
-      gradient: 'from-yellow-400 to-yellow-600',
       onTap: () => setShowPhotosGallery(true)
     },
     {
       id: 'facetime',
       name: 'FaceTime',
       image: '/Dock/FaceTime.png',
-      gradient: 'from-green-400 to-green-600',
       onTap: () => setShowFaceTime(true)
     },
     {
       id: 'code',
       name: 'VS Code',
       image: '/Dock/vs.png',
-      gradient: 'from-blue-600 to-blue-800',
       onTap: () => setShowCodeEditor(true)
     },
     {
       id: 'terminal',
       name: 'Terminal',
       image: '/Dock/terminal.png',
-      gradient: 'from-gray-700 to-black',
       onTap: () => setShowTerminal(true)
     },
     {
       id: 'calculator',
       name: 'Calculadora',
       image: '/Dock/calculadora.png',
-      gradient: 'from-gray-500 to-gray-700',
       onTap: () => setShowCalculator(true)
     },
     {
       id: 'appstore',
       name: 'App Store',
       image: '/Dock/appstore.png',
-      gradient: 'from-blue-400 to-blue-600',
       onTap: () => setShowAppStore(true)
     },
     {
       id: 'spotify',
       name: 'Spotify',
       image: '/Dock/spotify.png',
-      gradient: 'from-green-400 to-green-600',
       onTap: () => setShowSpotify(true)
     },
     {
       id: 'settings',
       name: 'Ajustes',
       image: '/Dock/SystemPreferences.png',
-      gradient: 'from-gray-400 to-gray-600',
       onTap: () => setShowSettings(true)
     },
     {
       id: 'mail',
       name: 'Mail',
       image: '/Dock/Mail.png',
-      gradient: 'from-blue-500 to-blue-700',
       onTap: () => window.location.href = 'mailto:irenebati4@gmail.com'
     },
     {
       id: 'maps',
       name: 'Mapas',
       image: '/Dock/Maps.png',
-      gradient: 'from-green-500 to-teal-500',
       onTap: () => {
         const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
         if (button) button.click();
@@ -281,14 +259,12 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'notes',
       name: 'Notas',
       image: '/Dock/Notes.png',
-      gradient: 'from-yellow-400 to-yellow-500',
       onTap: () => console.log('Notes app')
     },
     {
       id: 'calendar',
       name: 'Calendario',
       image: '/Dock/Calendar.png',
-      gradient: 'from-red-500 to-red-600',
       onTap: () => {
         const trigger = document.querySelector('[data-calendar-trigger]') as HTMLElement
         if (trigger) trigger.click()
@@ -298,7 +274,6 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'finder',
       name: 'Finder',
       image: '/Dock/finder.png',
-      gradient: 'from-blue-400 to-blue-500',
       onTap: () => console.log('Finder app')
     }
   ]
@@ -382,15 +357,14 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
               className="w-full flex-shrink-0 px-2 sm:px-4"
               style={{ width: `${100 / pages.length}%` }}
             >
-              {/* App Grid - Responsive grid */}
-              <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-8 max-w-lg sm:max-w-2xl lg:max-w-4xl mx-auto">
+              {/* App Grid - Responsive grid with better spacing for larger icons */}
+              <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10 max-w-lg sm:max-w-2xl lg:max-w-4xl mx-auto">
                 {pageApps.map((app, index) => (
                   <MobileApp
                     key={app.id}
                     name={app.name}
                     image={app.image}
                     icon={app.icon}
-                    gradient={app.gradient}
                     onTap={app.onTap}
                     delay={index * 0.05}
                   />

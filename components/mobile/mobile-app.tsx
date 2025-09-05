@@ -8,12 +8,11 @@ interface MobileAppProps {
   name: string
   icon?: string // emoji as fallback
   image?: string // path to image
-  gradient: string
   onTap: () => void
   delay?: number
 }
 
-export function MobileApp({ name, icon, image, gradient, onTap, delay = 0 }: MobileAppProps) {
+export function MobileApp({ name, icon, image, onTap, delay = 0 }: MobileAppProps) {
   const [isPressed, setIsPressed] = useState(false)
 
   return (
@@ -38,41 +37,33 @@ export function MobileApp({ name, icon, image, gradient, onTap, delay = 0 }: Mob
         }}
         onTapCancel={() => setIsPressed(false)}
         className={`
-          relative w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 
-          rounded-2xl sm:rounded-2xl md:rounded-3xl shadow-lg overflow-hidden
-          bg-gradient-to-br ${gradient}
-          border border-white/20
+          relative w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 lg:w-24 lg:h-24 
+          rounded-2xl sm:rounded-2xl md:rounded-3xl overflow-hidden
           transition-all duration-200 ease-out
           ${isPressed ? 'brightness-90' : 'brightness-100'}
         `}
         style={{
           boxShadow: isPressed 
-            ? '0 2px 8px rgba(0, 0, 0, 0.2)' 
-            : '0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)'
+            ? '0 2px 8px rgba(0, 0, 0, 0.1)' 
+            : '0 2px 6px rgba(0, 0, 0, 0.1)'
         }}
       >
-        {/* Icon Container */}
-        <div className="absolute inset-0 flex items-center justify-center p-2">
+        {/* Icon Container - Maximum size */}
+        <div className="absolute inset-0 flex items-center justify-center p-1">
           {image ? (
             <Image
               src={image}
               alt={name}
-              width={48}
-              height={48}
-              className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 object-contain filter drop-shadow-sm"
+              width={64}
+              height={64}
+              className="w-full h-full object-contain filter drop-shadow-sm"
             />
           ) : (
-            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl filter drop-shadow-sm">
+            <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl filter drop-shadow-sm">
               {icon}
             </span>
           )}
         </div>
-
-        {/* Gloss Effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-transparent rounded-2xl sm:rounded-2xl md:rounded-3xl" />
-        
-        {/* Shine Effect */}
-        <div className="absolute -top-full -left-full w-full h-full bg-gradient-to-br from-white/0 via-white/20 to-white/0 transform rotate-45" />
       </motion.button>
 
       {/* App Name */}
