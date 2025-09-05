@@ -3,6 +3,8 @@
 import { MacOSWindow } from '@/components/layout/macos-window'
 import { MacOSCursor } from '@/components/ui/macos-cursor'
 import { MacOSDock } from '@/components/ui/macos-dock'
+import { MobileHomeScreen } from '@/components/mobile/mobile-home-screen'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 import { StickyNote } from '@/components/desktop/sticky-note'
 
@@ -52,6 +54,7 @@ interface OpenWindow {
 
 export function ResponsiveDesktop() {
   const { t } = useLanguage()
+  const isMobile = useIsMobile()
   const [openWindows, setOpenWindows] = useState<OpenWindow[]>([])
   const [resetKey, setResetKey] = useState(0)
   const [showStickyNote, setShowStickyNote] = useState(true)
@@ -371,6 +374,36 @@ export function ResponsiveDesktop() {
 
 
 
+  // If mobile, return the mobile layout
+  if (isMobile) {
+    return (
+      <>
+        {/* Construction Alert for mobile too */}
+        <AlertDialog open={showConstructionAlert} onOpenChange={setShowConstructionAlert}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>🚧 Sitio Web en Construcción</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta página web sigue en construcción. Perdón por las molestias.
+                <br />
+                <br />
+                Estoy trabajando para ofrecerte la mejor experiencia posible. ¡Gracias por tu paciencia!
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => setShowConstructionAlert(false)}>
+                Continuar explorando
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <MobileHomeScreen />
+      </>
+    )
+  }
+
+  // Desktop layout
   return (
     <>
       {/* Alerta de construcción */}
