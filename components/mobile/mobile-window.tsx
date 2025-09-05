@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { X, Minus, ChevronDown } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-mobile'
 
 interface MobileWindowProps {
@@ -29,7 +29,7 @@ export function MobileWindow({
   customGradient = "from-slate-100 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900"
 }: MobileWindowProps) {
   const isMobile = useIsMobile()
-  const [isMinimized, setIsMinimized] = useState(false)
+  // Removed minimize functionality
   const constraintsRef = useRef(null)
 
   // Función para manejar el cierre por gesto
@@ -40,10 +40,7 @@ export function MobileWindow({
     if (info.velocity.y > 500 || info.offset.y > 200) {
       onClose()
     }
-    // Swipe up to minimize (solo si no es fullscreen)
-    else if (info.velocity.y < -500 || info.offset.y < -150) {
-      setIsMinimized(!isMinimized)
-    }
+    // Removed swipe to minimize functionality
   }
 
   // Feedback háptico
@@ -53,23 +50,13 @@ export function MobileWindow({
     }
   }
 
-  // Manejar botones del header
-  const handleMinimize = () => {
-    hapticFeedback()
-    setIsMinimized(!isMinimized)
-  }
-
+  // Manejar cierre
   const handleClose = () => {
     hapticFeedback()
     onClose()
   }
 
-  // Reset minimize state when window opens
-  useEffect(() => {
-    if (isOpen) {
-      setIsMinimized(false)
-    }
-  }, [isOpen])
+  // Removed minimize effect
 
   // Desktop fallback - usar el comportamiento anterior
   if (!isMobile) {
@@ -130,10 +117,7 @@ export function MobileWindow({
           <motion.div
             ref={constraintsRef}
             initial={{ y: "100%" }}
-            animate={{ 
-              y: isMinimized ? "90%" : 0,
-              scale: isMinimized ? 0.95 : 1
-            }}
+            animate={{ y: 0 }}
             exit={{ y: "100%" }}
             drag={allowSwipeToClose ? "y" : false}
             dragConstraints={{ top: 0, bottom: 300 }}
@@ -156,8 +140,8 @@ export function MobileWindow({
               ${className}
             `}
             style={{ 
-              maxHeight: isMinimized ? '60px' : maxHeight,
-              minHeight: isMinimized ? '60px' : '50vh'
+              maxHeight: maxHeight,
+              minHeight: '50vh'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -185,55 +169,29 @@ export function MobileWindow({
                 </h2>
                 
                 <div className="flex items-center space-x-2">
-                  {/* Minimize button */}
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={handleMinimize}
-                    className="w-8 h-8 rounded-full bg-yellow-500/80 hover:bg-yellow-500 flex items-center justify-center text-white transition-colors"
-                  >
-                    {isMinimized ? <ChevronDown className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
-                  </motion.button>
-                  
-                  {/* Close button */}
+                  {/* Close button - más pequeño y sin X */}
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleClose}
-                    className="w-8 h-8 rounded-full bg-red-500/80 hover:bg-red-500 flex items-center justify-center text-white transition-colors"
+                    className="w-6 h-6 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"
                   >
-                    <X className="w-4 h-4" />
                   </motion.button>
                 </div>
               </div>
             )}
 
             {/* Content */}
-            {!isMinimized && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex-1 overflow-auto p-4 pb-6"
-                style={{ 
-                  maxHeight: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)'
-                }}
-              >
-                {children}
-              </motion.div>
-            )}
-
-            {/* Minimized preview */}
-            {isMinimized && showHeader && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="px-6 pb-3 cursor-pointer"
-                onClick={handleMinimize}
-              >
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                  Toca para expandir
-                </p>
-              </motion.div>
-            )}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex-1 overflow-auto p-4 pb-6"
+              style={{ 
+                maxHeight: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)'
+              }}
+            >
+              {children}
+            </motion.div>
           </motion.div>
         </motion.div>
       )}

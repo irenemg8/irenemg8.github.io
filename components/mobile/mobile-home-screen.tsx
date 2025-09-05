@@ -9,13 +9,19 @@ import { Battery, BatteryCharging, Wifi, Signal } from 'lucide-react'
 
 // Import existing window components
 import { WorldGlobe } from '@/components/shared/world-globe'
-import { PressLibraryModal } from '@/components/shared/press-library-modal'
-import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
+
+// Import new mobile window components
 import { MobileWorkFolderWindow } from './mobile-work-folder-window'
+import { MobileGEFolderWindow } from './mobile-ge-folder-window'
+import { MobileHackathonsFolderWindow } from './mobile-hackathons-folder-window'
+import { MobileAboutMeWindow } from './mobile-about-me-window'
+import { MobileProjectsWindow } from './mobile-projects-window'
+import { MobileArtworksWindow } from './mobile-artworks-window'
+import { MobilePressWindow } from './mobile-press-window'
+
+// Import remaining components
 import { FaceTimeWindow } from '@/components/desktop/facetime-window'
-import { GEFolderWindow } from '@/components/desktop/ge-folder-window'
-import { HackathonsFolderWindow } from '@/components/desktop/hackathons-folder-window'
 import { MobileMessagesWindow } from './mobile-messages-window'
 import { PhotosGalleryWindow } from '@/components/desktop/photos-gallery-window'
 import { MobileCodeEditorWindow } from './mobile-code-editor-window'
@@ -27,8 +33,6 @@ import { SpotifyWindow } from '@/components/desktop/spotify-window'
 import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
 import { MobileSettingsWindow } from './mobile-settings-window'
 import { MobileControlCenter } from './mobile-control-center'
-import { AboutMeWindow } from '@/components/desktop/about-me-window'
-import { AppleBooksWindow } from '@/components/desktop/apple-books-window'
 
 interface MobileApp {
   id: string
@@ -50,10 +54,17 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
   const [isMounted, setIsMounted] = useState(false)
 
   // Window states
+  // New mobile window states
   const [showWorkFolder, setShowWorkFolder] = useState(false)
-  const [showFaceTime, setShowFaceTime] = useState(false)
   const [showGEFolder, setShowGEFolder] = useState(false)
-  const [showHackathonsFolder, setShowHackathonsFolder] = useState(false)
+  const [showHackathons, setShowHackathons] = useState(false)
+  const [showAboutMe, setShowAboutMe] = useState(false)
+  const [showProjects, setShowProjects] = useState(false)
+  const [showArtworks, setShowArtworks] = useState(false)
+  const [showPress, setShowPress] = useState(false)
+  
+  // Other window states
+  const [showFaceTime, setShowFaceTime] = useState(false)
   const [showMessages, setShowMessages] = useState(false)
   const [showPhotosGallery, setShowPhotosGallery] = useState(false)
   const [showCodeEditor, setShowCodeEditor] = useState(false)
@@ -63,9 +74,6 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
   const [showAppStore, setShowAppStore] = useState(false)
   const [showSpotify, setShowSpotify] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
-  const [showArtworksGallery, setShowArtworksGallery] = useState(false)
-  const [showAboutMe, setShowAboutMe] = useState(false)
-  const [showAppleBooks, setShowAppleBooks] = useState(false)
   const [showGitHubBrowser, setShowGitHubBrowser] = useState(false)
   const [showControlCenter, setShowControlCenter] = useState(false)
 
@@ -212,7 +220,7 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'projects',
       name: 'Proyectos',
       image: '/folder.png',
-      onTap: () => setShowAppleBooks(true)
+      onTap: () => setShowProjects(true)
     },
     {
       id: 'work-experience',
@@ -230,7 +238,7 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'artworks',
       name: 'Arte',
       image: '/folder.png',
-      onTap: () => setShowArtworksGallery(true)
+      onTap: () => setShowArtworks(true)
     },
     {
       id: 'ge',
@@ -242,16 +250,13 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       id: 'hackathons',
       name: 'Hackathons',
       image: '/folder.png',
-      onTap: () => setShowHackathonsFolder(true)
+      onTap: () => setShowHackathons(true)
     },
     {
       id: 'press',
       name: 'Prensa',
       image: '/folder.png',
-      onTap: () => {
-        const button = document.querySelector('[data-press-library-trigger]') as HTMLButtonElement;
-        if (button) button.click();
-      }
+      onTap: () => setShowPress(true)
     },
     {
       id: 'world-map',
@@ -433,15 +438,37 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
 
       {/* Hidden components for modals and triggers */}
       {isMounted && <WorldGlobe />}
-      {isMounted && <PressLibraryModal />}
 
       {/* All Windows */}
       {isMounted && (
         <>
-          <ArtworksGallery 
-            isOpen={showArtworksGallery}
-            onClose={() => setShowArtworksGallery(false)}
+          {/* New Mobile Windows */}
+          <MobileArtworksWindow 
+            isOpen={showArtworks}
+            onClose={() => setShowArtworks(false)}
           />
+          <MobileGEFolderWindow
+            isOpen={showGEFolder}
+            onClose={() => setShowGEFolder(false)}
+          />
+          <MobileHackathonsFolderWindow
+            isOpen={showHackathons}
+            onClose={() => setShowHackathons(false)}
+          />
+          <MobileAboutMeWindow
+            isOpen={showAboutMe}
+            onClose={() => setShowAboutMe(false)}
+          />
+          <MobileProjectsWindow
+            isOpen={showProjects}
+            onClose={() => setShowProjects(false)}
+          />
+          <MobilePressWindow
+            isOpen={showPress}
+            onClose={() => setShowPress(false)}
+          />
+          
+          {/* Other Windows */}
           <GitHubSafariBrowser
             isOpen={showGitHubBrowser}
             onClose={() => setShowGitHubBrowser(false)}
@@ -456,14 +483,6 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
           <MobileMessagesWindow
             isOpen={showMessages}
             onClose={() => setShowMessages(false)}
-          />
-          <GEFolderWindow
-            isOpen={showGEFolder}
-            onClose={() => setShowGEFolder(false)}
-          />
-          <HackathonsFolderWindow
-            isOpen={showHackathonsFolder}
-            onClose={() => setShowHackathonsFolder(false)}
           />
           <PhotosGalleryWindow
             isOpen={showPhotosGallery}
@@ -527,14 +546,6 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
           <MobileSettingsWindow
             isOpen={showSettings}
             onClose={() => setShowSettings(false)}
-          />
-          <AboutMeWindow 
-            isOpen={showAboutMe} 
-            onClose={() => setShowAboutMe(false)}
-          />
-          <AppleBooksWindow
-            isOpen={showAppleBooks}
-            onClose={() => setShowAppleBooks(false)}
           />
           
           {/* Mobile Control Center */}
