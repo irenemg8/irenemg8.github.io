@@ -272,8 +272,8 @@ export function SpotifyProvider({ children }: SpotifyProviderProps) {
   
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  // Mini player visibility logic
-  const showMiniPlayer = currentSong !== null && !isSpotifyOpen
+  // Mini player visibility logic - SIEMPRE VISIBLE
+  const showMiniPlayer = true
 
   // Sistema de reproducción híbrido (archivos reales + generador sintético)
   useEffect(() => {
