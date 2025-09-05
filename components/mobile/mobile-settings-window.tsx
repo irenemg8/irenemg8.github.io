@@ -260,7 +260,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
           />
           <div>
             <h3 className="text-lg font-semibold">Irene's Portfolio</h3>
-            <p className="text-blue-100">Diseñadora UX/UI &nbsp;·&nbsp; Frontend Dev</p>
+            <p className="text-blue-100">Diseño UX/UI &nbsp;·&nbsp; Frontend Dev</p>
             <p className="text-sm text-blue-200 mt-1">Scrum Master</p>
 
           </div>
