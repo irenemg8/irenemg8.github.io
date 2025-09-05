@@ -953,7 +953,7 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
                   </button>
                   <button
                     onClick={requestCameraPermission}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                   >
                     Permitir acceso
                   </button>
@@ -963,7 +963,7 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
                     <p className="text-gray-500 text-xs mb-2">¿Problemas con la cámara en localhost?</p>
                     <button
                       onClick={activateSimulator}
-                      className="text-blue-400 hover:text-blue-300 text-sm underline transition-colors"
+                      className="text-purple-400 hover:text-purple-300 text-sm underline transition-colors"
                     >
                       Usar simulador de videollamada
                     </button>
@@ -1010,7 +1010,7 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
                           setHasPermission(null)
                           setErrorMessage('')
                         }}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                       >
                         Intentar de nuevo
                       </button>
@@ -1050,7 +1050,7 @@ export function FaceTimeWindow({ onClose }: FaceTimeWindowProps) {
                   {!stream && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
                       <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
                         <div className="text-gray-400">Iniciando cámara...</div>
                       </div>
                     </div>
