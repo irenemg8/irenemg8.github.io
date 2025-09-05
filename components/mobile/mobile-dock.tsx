@@ -3,34 +3,31 @@
 import { motion } from 'framer-motion'
 import { MobileApp } from './mobile-app'
 
-export function MobileDock() {
+interface DockAppProps {
+    onShowMessages: () => void
+    onShowGitHubBrowser: () => void
+    onShowSpotify: () => void
+  }
+
+export function MobileDock({ onShowMessages, onShowGitHubBrowser, onShowSpotify }: DockAppProps) {
   const dockApps = [
     {
       id: 'messages',
       name: 'Mensajes',
       image: '/Dock/Messages.png',
-      onTap: () => {
-        // Trigger messages window
-        console.log('Messages app tapped')
-      }
+      onTap: onShowMessages
     },
     {
       id: 'safari',
       name: 'Safari',
       image: '/Dock/Safari.png',
-      onTap: () => {
-        // Trigger safari browser
-        const button = document.querySelector('[data-github-safari-trigger]') as HTMLButtonElement;
-        if (button) button.click();
-      }
+      onTap: onShowGitHubBrowser
     },
     {
       id: 'spotify',
       name: 'Spotify',
       image: '/Dock/spotify.png',
-      onTap: () => {
-        console.log('Spotify app tapped')
-      }
+      onTap: onShowSpotify
     },
     {
       id: 'mail',
@@ -65,7 +62,7 @@ export function MobileDock() {
           {dockApps.map((app, index) => (
             <div key={app.id} className="flex-shrink-0">
               <MobileApp
-                name={app.name}
+                name=""
                 image={app.image}
                 onTap={app.onTap}
                 delay={0.6 + index * 0.1}

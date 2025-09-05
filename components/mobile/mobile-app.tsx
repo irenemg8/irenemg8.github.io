@@ -44,8 +44,8 @@ export function MobileApp({ name, icon, image, onTap, delay = 0 }: MobileAppProp
         `}
         style={{
           boxShadow: isPressed 
-            ? '0 2px 8px rgba(0, 0, 0, 0.1)' 
-            : '0 2px 6px rgba(0, 0, 0, 0.1)'
+            ? 'none' 
+            : 'none'
         }}
       >
         {/* Icon Container - Maximum size */}

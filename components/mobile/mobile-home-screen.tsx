@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from 'react'
-import { motion, PanInfo } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { MobileApp } from './mobile-app'
 import { MobileDock } from './mobile-dock'
 import { useLanguage } from '@/contexts/language-context'
@@ -44,7 +44,6 @@ interface MobileHomeScreenProps {
 export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
   const { t } = useLanguage()
   const [currentTime, setCurrentTime] = useState('')
-  const [currentPage, setCurrentPage] = useState(0)
   const [batteryLevel, setBatteryLevel] = useState<number>(100)
   const [isCharging, setIsCharging] = useState<boolean>(false)
   const [isMounted, setIsMounted] = useState(false)
@@ -118,8 +117,11 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
     checkBatteryStatus()
   }, [])
 
-  // Apps configuration using your real images
-  const apps: MobileApp[] = [
+  // Apps that are in the dock - these will be excluded from the main grid
+  const dockAppIds = ['messages', 'safari', 'spotify', 'mail']
+  
+  // All apps configuration using your real images
+  const allApps: MobileApp[] = [
     {
       id: 'projects',
       name: 'Proyectos',
@@ -181,30 +183,6 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       onTap: () => window.open('/irene-medina-garcia-cv.pdf', '_blank')
     },
     {
-      id: 'safari',
-      name: 'Safari',
-      image: '/Dock/Safari.png',
-      onTap: () => setShowGitHubBrowser(true)
-    },
-    {
-      id: 'messages',
-      name: 'Mensajes',
-      image: '/Dock/Messages.png',
-      onTap: () => setShowMessages(true)
-    },
-    {
-      id: 'photos',
-      name: 'Fotos',
-      image: '/Dock/Photos.png',
-      onTap: () => setShowPhotosGallery(true)
-    },
-    {
-      id: 'facetime',
-      name: 'FaceTime',
-      image: '/Dock/FaceTime.png',
-      onTap: () => setShowFaceTime(true)
-    },
-    {
       id: 'code',
       name: 'VS Code',
       image: '/Dock/vs.png',
@@ -229,22 +207,10 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       onTap: () => setShowAppStore(true)
     },
     {
-      id: 'spotify',
-      name: 'Spotify',
-      image: '/Dock/spotify.png',
-      onTap: () => setShowSpotify(true)
-    },
-    {
       id: 'settings',
       name: 'Ajustes',
       image: '/Dock/SystemPreferences.png',
       onTap: () => setShowSettings(true)
-    },
-    {
-      id: 'mail',
-      name: 'Mail',
-      image: '/Dock/Mail.png',
-      onTap: () => window.location.href = 'mailto:irenebati4@gmail.com'
     },
     {
       id: 'maps',
@@ -275,50 +241,25 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
       name: 'Finder',
       image: '/Dock/finder.png',
       onTap: () => console.log('Finder app')
+    },
+    {
+      id: 'photos',
+      name: 'Fotos',
+      image: '/Dock/Photos.png',
+      onTap: () => setShowPhotosGallery(true)
+    },
+    {
+      id: 'facetime',
+      name: 'FaceTime',
+      image: '/Dock/FaceTime.png',
+      onTap: () => setShowFaceTime(true)
     }
   ]
 
-  // Apps per page state
-  const [appsPerPage, setAppsPerPage] = useState(20)
-  
-  // Update apps per page based on screen size
-  useEffect(() => {
-    const updateAppsPerPage = () => {
-      const width = window.innerWidth
-      if (width >= 1024) setAppsPerPage(30) // lg: 6 cols x 5 rows
-      else if (width >= 768) setAppsPerPage(25) // md: 5 cols x 5 rows  
-      else setAppsPerPage(20) // sm: 4 cols x 5 rows
-    }
-    
-    updateAppsPerPage()
-    window.addEventListener('resize', updateAppsPerPage)
-    return () => window.removeEventListener('resize', updateAppsPerPage)
-  }, [])
+  // Filter out apps that are in the dock to avoid duplicates
+  const apps = allApps.filter(app => !dockAppIds.includes(app.id))
 
-  // Reset current page if out of bounds when apps per page changes
-  useEffect(() => {
-    const totalPages = Math.ceil(apps.length / appsPerPage)
-    if (currentPage >= totalPages) {
-      setCurrentPage(Math.max(0, totalPages - 1))
-    }
-  }, [appsPerPage, apps.length, currentPage])
-
-  // Split apps into pages
-  const pages = []
-  for (let i = 0; i < apps.length; i += appsPerPage) {
-    pages.push(apps.slice(i, i + appsPerPage))
-  }
-
-  const handlePageSwipe = (event: any, info: PanInfo) => {
-    const threshold = 50
-    if (Math.abs(info.offset.x) > threshold) {
-      if (info.offset.x > 0 && currentPage > 0) {
-        setCurrentPage(currentPage - 1)
-      } else if (info.offset.x < 0 && currentPage < pages.length - 1) {
-        setCurrentPage(currentPage + 1)
-      }
-    }
-  }
+  // All apps in a single page - no pagination needed
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900 relative overflow-hidden ${className}`}>
@@ -339,61 +280,36 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
         </div>
       </div>
 
-      {/* App Grid Container */}
+      {/* App Grid Container - Single page, no scrolling */}
       <div className="flex-1 px-4 sm:px-6 py-6 sm:py-8 pb-32">
         <motion.div
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handlePageSwipe}
-          animate={{ x: -currentPage * 100 + '%' }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="flex"
-          style={{ width: `${pages.length * 100}%` }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+          className="w-full"
         >
-          {pages.map((pageApps, pageIndex) => (
-            <div
-              key={pageIndex}
-              className="w-full flex-shrink-0 px-2 sm:px-4"
-              style={{ width: `${100 / pages.length}%` }}
-            >
-              {/* App Grid - Responsive grid with better spacing for larger icons */}
-              <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10 max-w-lg sm:max-w-2xl lg:max-w-4xl mx-auto">
-                {pageApps.map((app, index) => (
-                  <MobileApp
-                    key={app.id}
-                    name={app.name}
-                    image={app.image}
-                    icon={app.icon}
-                    onTap={app.onTap}
-                    delay={index * 0.05}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Page Dots */}
-        {pages.length > 1 && (
-          <div className="flex justify-center space-x-2 mt-8">
-            {pages.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentPage(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentPage 
-                    ? 'bg-white dark:bg-gray-300' 
-                    : 'bg-gray-400 dark:bg-gray-600'
-                }`}
+          {/* App Grid - Single screen with all apps */}
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10 max-w-lg sm:max-w-2xl lg:max-w-4xl mx-auto">
+            {apps.map((app, index) => (
+              <MobileApp
+                key={app.id}
+                name={app.name}
+                image={app.image}
+                icon={app.icon}
+                onTap={app.onTap}
+                delay={index * 0.05}
               />
             ))}
           </div>
-        )}
+        </motion.div>
       </div>
 
       {/* Mobile Dock */}
-      <MobileDock />
+      <MobileDock 
+        onShowMessages={() => setShowMessages(true)}
+        onShowGitHubBrowser={() => setShowGitHubBrowser(true)}
+        onShowSpotify={() => setShowSpotify(true)}
+      />
 
       {/* Hidden components for modals and triggers */}
       {isMounted && <WorldGlobe />}
