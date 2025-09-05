@@ -36,15 +36,6 @@ import { useLanguage } from '@/contexts/language-context'
 import { AnimatePresence } from 'framer-motion'
 import { AboutMeWindow } from '@/components/desktop/about-me-window'
 import { AppleBooksWindow } from '@/components/desktop/apple-books-window'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 
 interface OpenWindow {
   id: string
@@ -74,7 +65,6 @@ export function ResponsiveDesktop() {
   const [showAppStore, setShowAppStore] = useState(false)
   const [showSpotify, setShowSpotify] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
-  const [showConstructionAlert, setShowConstructionAlert] = useState(true)
   const [showArtworksGallery, setShowArtworksGallery] = useState(false)
   const [showAboutMe, setShowAboutMe] = useState(false)
   const [showAppleBooks, setShowAppleBooks] = useState(false)
@@ -378,25 +368,6 @@ export function ResponsiveDesktop() {
   if (isMobile) {
     return (
       <>
-        {/* Construction Alert for mobile too */}
-        <AlertDialog open={showConstructionAlert} onOpenChange={setShowConstructionAlert}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>🚧 Sitio Web en Construcción</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta página web sigue en construcción. Perdón por las molestias.
-                <br />
-                <br />
-                Estoy trabajando para ofrecerte la mejor experiencia posible. ¡Gracias por tu paciencia!
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogAction onClick={() => setShowConstructionAlert(false)}>
-                Continuar explorando
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
 
         <MobileHomeScreen />
       </>
@@ -406,25 +377,6 @@ export function ResponsiveDesktop() {
   // Desktop layout
   return (
     <>
-      {/* Alerta de construcción */}
-      <AlertDialog open={showConstructionAlert} onOpenChange={setShowConstructionAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>🚧 Sitio Web en Construcción</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta página web sigue en construcción. Perdón por las molestias.
-              <br />
-              <br />
-              Estoy trabajando para ofrecerte la mejor experiencia posible. ¡Gracias por tu paciencia!
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setShowConstructionAlert(false)}>
-              Continuar explorando
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <MacOSCursor />
       <MacOSWindow>

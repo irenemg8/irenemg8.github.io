@@ -135,6 +135,78 @@ export function MobileHackathonsFolderWindow({ isOpen, onClose }: MobileHackatho
           url: 'https://cienciagandia.webs.upv.es/ca/2025/05/tercera-edicio-campus-salud-gandia/amp/'
         }
       ]
+    },
+    {
+      id: 'aura',
+      eventName: 'Smart City Challenges 2025',
+      logo: '/hackathon/vrain_logo.jpeg',
+      userPhoto: '/hackathon/Irene-medina-CSG25.jpg',
+      title: 'Aura',
+      projectTitle: 'Aura',
+      role: 'Diseñadora UX/UI & Frontend Dev',
+      description: 'Asistente impulsado por IA para personas invidentes.',
+      date: 'Jun 2025',
+      awards: ['2º Premio'],
+      fullStory: 'Aura es una aplicación móvil innovadora diseñada para empoderar a personas con discapacidad visual transformando sus smartphones en asistentes personales inteligentes. Utilizando la cámara del dispositivo, reconocimiento de imágenes avanzado y retroalimentación de voz en tiempo real, Aura ayuda a los usuarios a navegar de forma independiente por espacios interiores y exteriores, identificar productos en supermercados (marca, propiedades, precio y más) y acceder a información visual detallada de su entorno.',
+      technologies: ['Figma', 'React Native', 'TypeScript', 'Speech-To-Text', 'AWS', 'Open Data APIs'],
+      team: ['Irene Medina García (UX/UI & Frontend)', 'Vicente Rivas Monferrer (Backend)', 'Ada González (Frontend)', 'Raúl Fortea (Backend)'],
+      challenges: 'Nuestro principal desafío fue lograr un reconocimiento de imágenes en tiempo real de alta precisión en entornos diversos, mientras aseguramos una interacción de voz fluida y accesible para usuarios con diferentes niveles de pérdida visual. También priorizamos la privacidad del usuario y la seguridad de datos.',
+      mediaFiles: [
+        {
+          id: 'aura-demo',
+          name: 'Demo de Aura',
+          type: 'video',
+          url: '/hackathon/aura/Aura-Demo.mp4'
+        },
+        {
+          id: 'aura-pdf',
+          name: 'Memoria Técnica Aura',
+          type: 'pdf',
+          url: '/hackathon/Memoria Técnica Aura.pdf'
+        },
+        {
+          id: 'aura-diploma',
+          name: 'Diploma 2º Premio',
+          type: 'image',
+          url: '/hackathon/aura/8A78D552-3BCC-41F4-BA26-DD248DD24681.JPEG'
+        },
+        {
+          id: 'aura-premio',
+          name: 'Premio 2º Posición',
+          type: 'image',
+          url: '/hackathon/aura/DA656DA8-C5D7-4416-B2C0-9AEF26A79E1F.jpg'
+        },
+        {
+          id: 'aura-equipo',
+          name: 'Equipo',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7565.JPG'
+        },
+        {
+          id: 'aura-entrega',
+          name: 'Entrega de premios',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7563.JPEG'
+        },
+        {
+          id: 'aura-ganadores',
+          name: 'Ganadores',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7564.JPG'
+        },
+        {
+          id: 'aura-team-extra',
+          name: 'Equipo (foto extra)',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7567.JPG'
+        },
+        {
+          id: 'aura-event',
+          name: 'Evento VRAIN',
+          type: 'image',
+          url: '/hackathon/aura/IMG_7569.JPG'
+        }
+      ]
     }
   ]
 
@@ -307,19 +379,10 @@ export function MobileHackathonsFolderWindow({ isOpen, onClose }: MobileHackatho
 
       {/* Media Viewer */}
       <AnimatePresence>
-        {showMediaViewer && mediaViewerContent && mediaViewerContent.mediaFiles && (
+        {showMediaViewer && mediaViewerContent && (
           <MediaViewer
-            isOpen={showMediaViewer}
+            project={mediaViewerContent}
             onClose={handleCloseMediaViewer}
-            mediaItems={mediaViewerContent.mediaFiles.map(file => ({
-              id: file.id,
-              type: file.type === 'image' ? 'image' : file.type === 'video' ? 'video' : 'image',
-              src: file.url,
-              alt: file.name,
-              title: file.name,
-              description: `Archivo de ${mediaViewerContent.title}`
-            }))}
-            title={`${mediaViewerContent.title} - Archivos multimedia`}
           />
         )}
       </AnimatePresence>
