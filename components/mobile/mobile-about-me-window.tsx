@@ -148,7 +148,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
         <div className="flex items-center gap-3 mb-2">
           <User className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Sobre Mí
+            ¿Quién soy?
           </h3>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -167,7 +167,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
             onClick={() => handleCategoryClick(key)}
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-white/50 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center">
                 {data.icon}
               </div>
               <h4 className="font-semibold text-gray-800 dark:text-gray-200">
@@ -204,8 +204,44 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
                   className="object-cover"
                 />
               ) : (
-                <div className="relative w-full h-full bg-gray-200 flex items-center justify-center">
-                  <div className="text-4xl">🎥</div>
+                <div className="relative w-full h-full bg-gray-100">
+                  <video
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    disablePictureInPicture
+                    controlsList="nodownload nofullscreen noremoteplayback"
+                    preload="metadata"
+                    crossOrigin="anonymous"
+                    onError={(e) => {
+                      console.error('Video error en móvil:', photo.src, e)
+                      const video = e.target as HTMLVideoElement
+                      if (video?.error) {
+                        console.error('Error code:', video.error.code)
+                        console.error('Error message:', video.error.message)
+                      }
+                    }}
+                    onLoadedData={() => {
+                      console.log('✅ [Mobile Video] Video cargado correctamente:', photo.src)
+                    }}
+                    style={{ 
+                      pointerEvents: 'none',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                  >
+                    <source src={photo.src} type="video/mp4" />
+                    <source src={photo.src.replace('.mp4', '.webm')} type="video/webm" />
+                    {/* Fallback en caso de que no cargue el video */}
+                    <div className="flex flex-col items-center justify-center h-full bg-gray-200 text-gray-500 p-2">
+                      <div className="text-4xl mb-2">🎥</div>
+                      <div className="text-xs text-center">
+                        Video no disponible
+                      </div>
+                    </div>
+                  </video>
                   <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 text-xs">
                     Video
                   </div>
@@ -223,7 +259,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
         </div>
       </div>
 
-      {/* Quick stats */}
+      {/* Quick stats 
       <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 mt-6">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
@@ -245,7 +281,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
             <div className="text-xs text-gray-600 dark:text-gray-400">Fotos</div>
           </div>
         </div>
-      </div>
+      </div>*/}
     </div>
   )
 
@@ -367,8 +403,41 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
                   />
                 </div>
               ) : (
-                <div className="aspect-square bg-gray-100 flex items-center justify-center">
-                  <div className="text-6xl">🎥</div>
+                <div className="aspect-square bg-gray-100 relative">
+                  <video
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    disablePictureInPicture
+                    controls={false}
+                    preload="metadata"
+                    crossOrigin="anonymous"
+                    onError={(e) => {
+                      console.error('Video error en modal móvil:', selectedPhoto.src, e)
+                    }}
+                    onLoadedData={() => {
+                      console.log('✅ [Mobile Modal Video] Video cargado correctamente:', selectedPhoto.src)
+                    }}
+                    style={{ 
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                  >
+                    <source src={selectedPhoto.src} type="video/mp4" />
+                    <source src={selectedPhoto.src.replace('.mp4', '.webm')} type="video/webm" />
+                    {/* Fallback */}
+                    <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                      <div className="text-6xl mb-2">🎥</div>
+                      <div className="text-sm">Video no disponible</div>
+                    </div>
+                  </video>
+                  
+                  {/* Indicador de video */}
+                  <div className="absolute top-3 right-3 bg-black/50 rounded-full p-1">
+                    <div className="text-white text-sm">▶️</div>
+                  </div>
                 </div>
               )}
               
