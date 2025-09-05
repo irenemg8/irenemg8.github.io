@@ -294,10 +294,10 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
       {/* Header info */}
       <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 mb-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-          Experiencia Profesional
+          ¿Dónde he trabajado?
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Toca cualquier archivo para ver los detalles de la experiencia laboral
+          Toca cualquier archivo para ver los detalles de qué he hecho en cada trabajo que he tenido.
         </p>
       </div>
 
@@ -316,7 +316,7 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
                 <img 
                   src={work.icon} 
                   alt={work.company}
-                  className="w-10 h-10 rounded-lg object-contain bg-white p-1"
+                  className="w-10 h-10 rounded-lg object-cover bg-white p-1"
                 />
               ) : (
                 <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
@@ -361,7 +361,7 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
         ))}
       </div>
 
-      {/* Quick stats */}
+      {/* Quick stats 
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 mt-6">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
@@ -383,7 +383,7 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
             <div className="text-xs text-gray-600 dark:text-gray-400">Proyectos</div>
           </div>
         </div>
-      </div>
+      </div>*/}
     </div>
   )
 

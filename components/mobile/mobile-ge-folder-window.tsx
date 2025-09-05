@@ -87,9 +87,9 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
       {/* Header info */}
       <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <Users className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+          <Users className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Generación Espontánea (GE)
+            Mis equipos de GE
           </h3>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -113,7 +113,7 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
                 <img 
                   src={team.iconUrl} 
                   alt={team.handle}
-                  className="w-full h-full rounded-xl object-contain bg-white/50 p-2"
+                  className="w-full h-full rounded-xl object-contain bg-black/50 p-2"
                 />
               </div>
               
@@ -147,7 +147,7 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
                       key={index}
                       className={`px-2 py-1 rounded-md text-xs ${
                         team.id === 'talpa' 
-                          ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
+                          ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
                           : 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
                       }`}
                     >
@@ -166,7 +166,7 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
         ))}
       </div>
 
-      {/* Quick info */}
+      {/* Quick info 
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 mt-6">
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
@@ -182,7 +182,7 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
             <div className="text-xs text-gray-600 dark:text-gray-400">Proyectos activos</div>
           </div>
         </div>
-      </div>
+      </div>*/}
     </div>
   )
 
@@ -191,7 +191,7 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
       <MobileWindow
         isOpen={isOpen}
         onClose={onClose}
-        title="Generación Espontánea (GE)"
+        title="Generación Espontánea"
         maxHeight="90vh"
         customGradient="from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-900/20 dark:to-purple-900/20"
       >
@@ -271,12 +271,12 @@ export function MobileGEFolderWindow({ isOpen, onClose }: MobileGEFolderWindowPr
                     </div>
 
                     {selectedTeam.website && (
-                      <div className="pt-2 border-t border-gray-300">
+                      <div className="pt-2 border-t border-purple-300">
                         <a
                           href={selectedTeam.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                          className="text-xs text-purple-600 hover:underline flex items-center gap-1"
                         >
                           🔗 Visitar sitio web
                         </a>
