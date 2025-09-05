@@ -260,7 +260,7 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
         onClose={onClose}
         title="Galería de Arte"
         maxHeight="90vh"
-        customGradient="from-pink-50 via-purple-50 to-indigo-50 dark:from-gray-900 dark:via-pink-900/20 dark:to-purple-900/20"
+        customGradient="from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"
       >
         {mobileContent}
       </MobileWindow>
