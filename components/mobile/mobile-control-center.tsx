@@ -134,7 +134,7 @@ export function MobileControlCenter({ isOpen, onClose }: MobileControlCenterProp
           await (screen.orientation as any).unlock()
           setIsRotationLocked(false)
         } else {
-          await screen.orientation.lock('portrait')
+          await (screen.orientation as any).lock('portrait')
           setIsRotationLocked(true)
         }
       }

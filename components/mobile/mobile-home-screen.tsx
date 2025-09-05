@@ -12,20 +12,20 @@ import { WorldGlobe } from '@/components/shared/world-globe'
 import { PressLibraryModal } from '@/components/shared/press-library-modal'
 import { ArtworksGallery } from '@/components/shared/artworks-gallery'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
-import { WorkFolderWindow } from '@/components/desktop/work-folder-window'
+import { MobileWorkFolderWindow } from './mobile-work-folder-window'
 import { FaceTimeWindow } from '@/components/desktop/facetime-window'
 import { GEFolderWindow } from '@/components/desktop/ge-folder-window'
 import { HackathonsFolderWindow } from '@/components/desktop/hackathons-folder-window'
-import { MessagesWindow } from '@/components/desktop/messages-window'
+import { MobileMessagesWindow } from './mobile-messages-window'
 import { PhotosGalleryWindow } from '@/components/desktop/photos-gallery-window'
-import { CodeEditorWindow } from '@/components/desktop/code-editor-window'
+import { MobileCodeEditorWindow } from './mobile-code-editor-window'
 import { LaunchpadWindow } from '@/components/desktop/launchpad-window'
 import { TerminalWindow } from '@/components/desktop/terminal-window'
 import { CalculatorWindow } from '@/components/desktop/calculator-window'
 import { AppStoreWindow } from '@/components/desktop/appstore-window'
 import { SpotifyWindow } from '@/components/desktop/spotify-window'
 import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
-import { SettingsWindow } from '@/components/desktop/settings-window'
+import { MobileSettingsWindow } from './mobile-settings-window'
 import { MobileControlCenter } from './mobile-control-center'
 import { AboutMeWindow } from '@/components/desktop/about-me-window'
 import { AppleBooksWindow } from '@/components/desktop/apple-books-window'
@@ -446,16 +446,17 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
             isOpen={showGitHubBrowser}
             onClose={() => setShowGitHubBrowser(false)}
           />
-          <WorkFolderWindow
+          <MobileWorkFolderWindow
             isOpen={showWorkFolder}
             onClose={() => setShowWorkFolder(false)}
           />
           {showFaceTime && (
             <FaceTimeWindow onClose={() => setShowFaceTime(false)} />
           )}
-          {showMessages && (
-            <MessagesWindow onClose={() => setShowMessages(false)} />
-          )}
+          <MobileMessagesWindow
+            isOpen={showMessages}
+            onClose={() => setShowMessages(false)}
+          />
           <GEFolderWindow
             isOpen={showGEFolder}
             onClose={() => setShowGEFolder(false)}
@@ -468,7 +469,7 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
             isOpen={showPhotosGallery}
             onClose={() => setShowPhotosGallery(false)}
           />
-          <CodeEditorWindow
+          <MobileCodeEditorWindow
             isOpen={showCodeEditor}
             onClose={() => setShowCodeEditor(false)}
           />
@@ -523,7 +524,7 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
             onClose={() => setShowSpotify(false)}
           />
           <SpotifyMiniPlayer />
-          <SettingsWindow
+          <MobileSettingsWindow
             isOpen={showSettings}
             onClose={() => setShowSettings(false)}
           />
