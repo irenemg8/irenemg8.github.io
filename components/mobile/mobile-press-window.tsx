@@ -218,9 +218,9 @@ export function MobilePressWindow({ isOpen, onClose }: MobilePressWindowProps) {
       {/* Header info */}
       <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <Newspaper className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <Newspaper className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Biblioteca de Prensa
+            Artículos donde he aparecido
           </h3>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -281,10 +281,10 @@ export function MobilePressWindow({ isOpen, onClose }: MobilePressWindowProps) {
                   
                   <motion.button
                     onClick={(e) => handleExternalLink(article.source, e)}
-                    className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors"
+                    className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-800/50 transition-colors"
                     whileTap={{ scale: 0.9 }}
                   >
-                    <ExternalLink className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <ExternalLink className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   </motion.button>
                 </div>
                 
@@ -314,7 +314,7 @@ export function MobilePressWindow({ isOpen, onClose }: MobilePressWindowProps) {
         </div>
       )}
 
-      {/* Quick stats */}
+      {/* Quick stats 
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 mt-6">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
@@ -336,7 +336,7 @@ export function MobilePressWindow({ isOpen, onClose }: MobilePressWindowProps) {
             <div className="text-xs text-gray-600 dark:text-gray-400">Recientes</div>
           </div>
         </div>
-      </div>
+      </div>*/}
     </div>
   )
 
@@ -420,7 +420,7 @@ export function MobilePressWindow({ isOpen, onClose }: MobilePressWindowProps) {
                         href={selectedArticle.source}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                        className="text-xs text-purple-700 hover:underline flex items-center gap-1"
                       >
                         <BookOpen className="w-3 h-3" />
                         Leer artículo completo
