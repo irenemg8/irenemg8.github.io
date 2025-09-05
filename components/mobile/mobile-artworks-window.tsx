@@ -208,7 +208,7 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
         ))}
       </div>
 
-      {/* Quick stats */}
+      {/* Quick stats
       <div className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-xl p-4 mt-6">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
@@ -230,9 +230,9 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
             <div className="text-xs text-gray-600 dark:text-gray-400">Año</div>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      {/* Categories list */}
+      {/* Categories list 
       <div className="mt-4">
         <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
           <Sparkles className="w-4 h-4" />
@@ -249,7 +249,7 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
             </span>
           ))}
         </div>
-      </div>
+      </div>*/}
     </div>
   )
 

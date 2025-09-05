@@ -228,7 +228,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
           label: 'Almacenamiento',
           icon: <HardDrive className="w-4 h-4" />,
           subtitle: '128 GB disponibles',
-          control: <ChevronRight className="w-4 h-4 text-gray-400" />
+          /*control: <ChevronRight className="w-4 h-4 text-gray-400" />*/
         },
         {
           label: 'Actualizaciones',
@@ -254,14 +254,15 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-6 text-white">
         <div className="flex items-center space-x-4">
           <img 
-            src="/profile-ge1.png" 
+            src="/yo.png" 
             alt="Profile"
             className="w-16 h-16 rounded-full border-3 border-white/20"
           />
           <div>
-            <h3 className="text-lg font-semibold">Irene Medina García</h3>
-            <p className="text-blue-100">Desarrolladora Full-Stack</p>
-            <p className="text-sm text-blue-200 mt-1">irenebati4@gmail.com</p>
+            <h3 className="text-lg font-semibold">Irene's Portfolio</h3>
+            <p className="text-blue-100">Diseñadora UX/UI &nbsp;·&nbsp; Frontend Dev</p>
+            <p className="text-sm text-blue-200 mt-1">Scrum Master</p>
+
           </div>
         </div>
       </div>
@@ -278,7 +279,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
           {/* Group header */}
           <div className="px-4 py-3 bg-gray-50/70 dark:bg-gray-700/70 border-b border-gray-200/50 dark:border-gray-600/50">
             <div className="flex items-center space-x-3">
-              <div className="text-blue-600 dark:text-blue-400">
+              <div className="text-purple-600 dark:text-purple-400">
                 {group.icon}
               </div>
               <h4 className="font-medium text-gray-800 dark:text-gray-200">
@@ -298,7 +299,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
                 className="px-4 py-4 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <div className="text-gray-500 dark:text-gray-400 flex-shrink-0">
+                  <div className="text-purple-500 dark:text-purple-400 flex-shrink-0">
                     {item.icon}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -322,7 +323,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
         </motion.div>
       ))}
 
-      {/* Footer info */}
+      {/* Footer info 
       <div className="bg-gray-50/50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Portfolio v2.1.0 - Desarrollado con Next.js y Tailwind CSS
@@ -330,7 +331,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
         <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
           © 2024 Irene Medina García
         </p>
-      </div>
+      </div>*/}
     </div>
   )
 
