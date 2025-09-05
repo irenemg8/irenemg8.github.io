@@ -3,6 +3,7 @@
 import { motion, PanInfo } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '@/contexts/language-context'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 interface StickyNoteProps {
   onDelete?: () => void
@@ -13,6 +14,7 @@ interface StickyNoteProps {
 
 export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60, y: 40 }, customContent }: StickyNoteProps) {
   const { t } = useLanguage()
+  const isMobile = useIsMobile()
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
@@ -34,8 +36,10 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
   const handleDragEnd = (event: any, info: PanInfo) => {
     if (typeof window === 'undefined' || !isMounted) return
     
+    // Ancho de sticky note más amplio en móvil: 320px en móvil vs 240px en desktop
+    const stickyWidth = isMobile ? 320 : 250
     const newPosition = {
-      x: Math.max(20, Math.min(window.innerWidth - 250, position.x + info.offset.x)),
+      x: Math.max(20, Math.min(window.innerWidth - stickyWidth, position.x + info.offset.x)),
       y: Math.max(20, Math.min(window.innerHeight - 200, position.y + info.offset.y))
     }
     
@@ -75,7 +79,7 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
       dragElastic={0.1}
       dragConstraints={isMounted ? {
         left: 20,
-        right: window.innerWidth - 250,
+        right: window.innerWidth - (isMobile ? 320 : 250),
         top: 20,
         bottom: window.innerHeight - 200,
       } : {
@@ -104,7 +108,7 @@ export function StickyNote({ onDelete, onDragToTrash, initialPosition = { x: 60,
     >
       {/* Sticky Note */}
       <div 
-        className="w-60 min-h-fit relative"
+        className={`${isMobile ? 'w-80' : 'w-60'} min-h-fit relative`}
         style={{
           background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
           boxShadow: `

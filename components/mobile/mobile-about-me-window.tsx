@@ -74,49 +74,49 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
     }
   }
 
-  // Fotos y videos
+  // Fotos y videos - mismas que las polaroid del desktop
   const photos: PhotoItem[] = [
     {
-      id: 'gandis',
-      src: '/gandis.JPG',
-      alt: 'Gandis',
-      title: 'Gandis',
+      id: 'pierogi',
+      src: '/pics/IMG_8457.jpg',
+      alt: 'Mi primer pierogi en Varsovia',
+      title: 'Mi primer pierogi 🥟',
       type: 'image'
     },
     {
-      id: 'ciberseguridad',
-      src: '/ciberseguridad.jpg',
-      alt: 'Ciberseguridad',
-      title: 'Evento Ciberseguridad',
+      id: 'guerreros',
+      src: '/pics/IMG_4488.JPEG',
+      alt: 'Guerreros de terracota',
+      title: 'Guerreros de Xian 🏺',
       type: 'image'
     },
     {
-      id: 'china1',
-      src: '/china1.JPG',
-      alt: 'China Trip 1',
-      title: 'China 1',
+      id: 'guangzhou',
+      src: '/pics/IMG_8294.jpg',
+      alt: 'Templo chino en Guangzhou',
+      title: 'Guangzhou 🏯',
       type: 'image'
     },
     {
-      id: 'china2',
-      src: '/china2.JPG',
-      alt: 'China Trip 2',
-      title: 'China 2',
-      type: 'image'
-    },
-    {
-      id: 'china3',
-      src: '/china3.JPG',
-      alt: 'China Trip 3',
-      title: 'China 3',
-      type: 'image'
-    },
-    {
-      id: 'yoga',
-      src: '/yoga.mov',
-      alt: 'Yoga Practice',
-      title: 'Yoga Aéreo',
+      id: 'coches',
+      src: '/pics/coches.mp4',
+      alt: 'Coches en movimiento',
+      title: 'Velocidad a tope 🏎️',
       type: 'video'
+    },
+    {
+      id: 'gandia',
+      src: '/pics/IMG_7508.JPEG',
+      alt: 'Playa de Gandía',
+      title: 'Playa de Gandía 🏖️',
+      type: 'image'
+    },
+    {
+      id: 'mercadillo',
+      src: '/pics/IMG_7788.jpg',
+      alt: 'Mercadillo griego',
+      title: 'Mercadillo griego 🇬🇷',
+      type: 'image'
     }
   ]
 

@@ -10,6 +10,7 @@ import { Battery, BatteryCharging, Wifi, Signal } from 'lucide-react'
 // Import existing window components
 import { WorldGlobe } from '@/components/shared/world-globe'
 import { GitHubSafariBrowser } from '@/components/shared/github-safari-browser'
+import { CalendarModal } from '@/components/shared/calendar-modal'
 
 // Import new mobile window components
 import { MobileWorkFolderWindow } from './mobile-work-folder-window'
@@ -29,8 +30,7 @@ import { LaunchpadWindow } from '@/components/desktop/launchpad-window'
 import { TerminalWindow } from '@/components/desktop/terminal-window'
 import { CalculatorWindow } from '@/components/desktop/calculator-window'
 import { AppStoreWindow } from '@/components/desktop/appstore-window'
-import { SpotifyWindow } from '@/components/desktop/spotify-window'
-import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
+import { MobileSpotifyWindow } from './mobile-spotify-window'
 import { MobileSettingsWindow } from './mobile-settings-window'
 import { MobileControlCenter } from './mobile-control-center'
 
@@ -538,11 +538,10 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
             isOpen={showAppStore}
             onClose={() => setShowAppStore(false)}
           />
-          <SpotifyWindow
+          <MobileSpotifyWindow
             isOpen={showSpotify}
             onClose={() => setShowSpotify(false)}
           />
-          <SpotifyMiniPlayer />
           <MobileSettingsWindow
             isOpen={showSettings}
             onClose={() => setShowSettings(false)}
@@ -553,6 +552,9 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
             isOpen={showControlCenter}
             onClose={() => setShowControlCenter(false)}
           />
+          
+          {/* Calendar Modal */}
+          {isMounted && <CalendarModal />}
         </>
       )}
     </div>

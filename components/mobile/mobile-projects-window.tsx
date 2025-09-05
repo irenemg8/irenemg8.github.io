@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FolderOpen, Calendar, Code, ExternalLink, Github, Star, Target, Lightbulb, Award } from 'lucide-react'
+import { FolderOpen, Calendar, Code, ExternalLink, Github, Target, Lightbulb, Award } from 'lucide-react'
 import Image from 'next/image'
 import { useLanguage } from '@/contexts/language-context'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -141,14 +141,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               
-              {/* Priority star */}
-              {project.priority && (
-                <div className="absolute top-2 right-2">
-                  <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                    <Star className="w-4 h-4 text-yellow-800 fill-yellow-800" />
-                  </div>
-                </div>
-              )}
+              {/* Priority badge removido */}
             </div>
             
             <div className="p-4">
@@ -288,9 +281,8 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
                         <FolderOpen className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
+                        <h3 className="font-bold text-lg text-gray-800">
                           {selectedProject.title}
-                          {selectedProject.priority && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
                         </h3>
                         <p className="text-sm text-gray-600">{selectedProject.date}</p>
                       </div>

@@ -169,25 +169,27 @@ export function MobileWindow({
                 </h2>
                 
                 <div className="flex items-center space-x-2">
-                  {/* Close button - más pequeño y sin X */}
+                  {/* Close button - aún más pequeño y sin X */}
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleClose}
-                    className="w-6 h-6 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"
+                    className="w-4 h-4 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"
                   >
                   </motion.button>
                 </div>
               </div>
             )}
 
-            {/* Content */}
+            {/* Content - optimizado para scroll suave */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex-1 overflow-auto p-4 pb-6"
+              className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-6"
               style={{ 
-                maxHeight: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)'
+                maxHeight: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)',
+                WebkitOverflowScrolling: 'touch',
+                scrollBehavior: 'smooth'
               }}
             >
               {children}
