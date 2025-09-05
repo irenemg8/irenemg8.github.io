@@ -274,7 +274,7 @@ export function MobileMessagesWindow({ isOpen, onClose }: MobileMessagesWindowPr
       onClose={onClose}
       title="Mensajes"
       showHeader={false} // El chat tiene su propio header
-      maxHeight="95vh"
+      maxHeight="90vh"
       customGradient="from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
       className="pb-0" // Remove bottom padding for chat
     >

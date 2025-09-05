@@ -24,7 +24,7 @@ export function withMobileWindow<T extends WindowProps>(
 ) {
   const {
     title = "Ventana",
-    maxHeight = "85vh",
+    maxHeight = "95vh",
     customGradient = "from-slate-100 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900",
     showHeader = true,
     allowSwipeToClose = true

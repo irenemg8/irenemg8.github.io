@@ -25,12 +25,24 @@ export function MobileWindow({
   className = "",
   showHeader = true,
   allowSwipeToClose = true,
-  maxHeight = "85vh",
+  maxHeight = "95vh",
   customGradient = "from-slate-100 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900"
 }: MobileWindowProps) {
   const isMobile = useIsMobile()
   // Removed minimize functionality
   const constraintsRef = useRef(null)
+
+  // Prevenir scroll del body cuando la modal está abierta
+  useEffect(() => {
+    if (isOpen && isMobile) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'none'
+      return () => {
+        document.body.style.overflow = ''
+        document.body.style.touchAction = ''
+      }
+    }
+  }, [isOpen, isMobile])
 
   // Función para manejar el cierre por gesto
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -113,16 +125,16 @@ export function MobileWindow({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
           onClick={handleClose}
+          onTouchMove={(e) => {
+            // Prevenir scroll del fondo cuando se toca el backdrop
+            e.preventDefault()
+          }}
         >
           <motion.div
             ref={constraintsRef}
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            drag={allowSwipeToClose ? "y" : false}
-            dragConstraints={{ top: 0, bottom: 300 }}
-            dragElastic={0.1}
-            onDragEnd={handleDragEnd}
             transition={{ 
               type: "spring", 
               damping: 30, 
@@ -137,63 +149,93 @@ export function MobileWindow({
               shadow-2xl 
               border-t border-white/30 dark:border-gray-700/30
               overflow-hidden
+              flex flex-col
               ${className}
             `}
             style={{ 
               maxHeight: maxHeight,
-              minHeight: '50vh'
+              minHeight: '60vh',
+              height: 'auto'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Swipe handle indicator */}
-            {allowSwipeToClose && (
-              <div className="flex justify-center pt-3 pb-2">
-                <motion.div 
-                  className="w-12 h-1.5 bg-gray-400/60 dark:bg-gray-500/60 rounded-full cursor-grab"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                />
-              </div>
-            )}
-
-            {/* Header */}
-            {showHeader && (
-              <div className={`
-                flex items-center justify-between px-6 py-3
-                ${allowSwipeToClose ? 'pt-1' : 'pt-4'}
-                bg-white/30 dark:bg-gray-800/30 
-                border-b border-white/20 dark:border-gray-700/20
-              `}>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 truncate flex-1 mr-4">
-                  {title}
-                </h2>
-                
-                <div className="flex items-center space-x-2">
-                  {/* Close button - aún más pequeño y sin X */}
-                  <motion.button
+            {/* Header draggable area - solo esta parte puede hacer swipe-to-close */}
+            <motion.div
+              drag={allowSwipeToClose ? "y" : false}
+              dragConstraints={{ top: 0, bottom: 300 }}
+              dragElastic={0.1}
+              onDragEnd={handleDragEnd}
+              className="flex-shrink-0"
+            >
+              {/* Swipe handle indicator */}
+              {allowSwipeToClose && (
+                <div className="flex justify-center pt-3 pb-2">
+                  <motion.div 
+                    className="w-12 h-1.5 bg-gray-400/60 dark:bg-gray-500/60 rounded-full cursor-grab"
+                    whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={handleClose}
-                    className="w-4 h-4 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"
-                  >
-                  </motion.button>
+                  />
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Content - optimizado para scroll suave */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-6"
+              {/* Header */}
+              {showHeader && (
+                <div className={`
+                  flex items-center justify-between px-6 py-3
+                  ${allowSwipeToClose ? 'pt-1' : 'pt-4'}
+                  bg-white/30 dark:bg-gray-800/30 
+                  border-b border-white/20 dark:border-gray-700/20
+                `}>
+                  <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 truncate flex-1 mr-4">
+                    {title}
+                  </h2>
+                  
+                  <div className="flex items-center space-x-2">
+                    {/* Close button - aún más pequeño y sin X */}
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      onClick={handleClose}
+                      className="w-4 h-4 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"
+                    >
+                    </motion.button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Content - scroll natural optimizado */}
+            <div 
+              className="flex-1 overflow-y-auto overflow-x-hidden relative"
               style={{ 
-                maxHeight: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)',
+                height: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)',
+                maxHeight: 'none',
                 WebkitOverflowScrolling: 'touch',
-                scrollBehavior: 'smooth'
+                scrollBehavior: 'smooth',
+                touchAction: 'pan-y',
+                overflowAnchor: 'none',
+                scrollbarWidth: 'thin'
+              }}
+              onTouchStart={(e) => {
+                // Solo prevenir propagación, no interferir con scroll natural
+                e.stopPropagation()
+              }}
+              onTouchMove={(e) => {
+                // Permitir scroll natural, solo prevenir propagación al parent
+                e.stopPropagation()
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation()
               }}
             >
-              {children}
-            </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="p-4 pb-8 min-h-full"
+              >
+                {children}
+              </motion.div>
+            </div>
           </motion.div>
         </motion.div>
       )}
