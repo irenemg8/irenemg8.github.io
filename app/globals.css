@@ -150,6 +150,28 @@
 
 /* Estilo para truncar texto en múltiples líneas */
 
+/* Estilos específicos para ocultar scroll en ventanas móviles */
+.mobile-hidden-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  background: transparent;
+}
+
+.mobile-hidden-scroll::-webkit-scrollbar-track {
+  display: none;
+  background: transparent;
+}
+
+.mobile-hidden-scroll::-webkit-scrollbar-thumb {
+  display: none;
+  background: transparent;
+}
+
+.mobile-hidden-scroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 /* Estilos para sliders con tema lavender personalizado */
 .slider-lavender::-webkit-slider-thumb {
   appearance: none;

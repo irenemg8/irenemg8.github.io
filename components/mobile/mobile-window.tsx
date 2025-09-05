@@ -203,9 +203,9 @@ export function MobileWindow({
               )}
             </motion.div>
 
-            {/* Content - scroll natural optimizado */}
+            {/* Content - scroll natural sin barras visibles */}
             <div 
-              className="flex-1 overflow-y-auto overflow-x-hidden relative"
+              className="flex-1 overflow-y-auto overflow-x-hidden relative mobile-hidden-scroll"
               style={{ 
                 height: showHeader ? 'calc(100% - 80px)' : 'calc(100% - 20px)',
                 maxHeight: 'none',
@@ -213,7 +213,8 @@ export function MobileWindow({
                 scrollBehavior: 'smooth',
                 touchAction: 'pan-y',
                 overflowAnchor: 'none',
-                scrollbarWidth: 'thin'
+                scrollbarWidth: 'none', // Firefox
+                msOverflowStyle: 'none', // IE 10+
               }}
               onTouchStart={(e) => {
                 // Solo prevenir propagación, no interferir con scroll natural
