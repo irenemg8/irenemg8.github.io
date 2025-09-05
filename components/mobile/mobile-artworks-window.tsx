@@ -161,11 +161,11 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
         <div className="flex items-center gap-3 mb-2">
           <Palette className="w-6 h-6 text-pink-600 dark:text-pink-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Galería de Arte
+            Explora mis obras
           </h3>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Explora mi colección de obras de arte digital
+          Estas obras digitales han sido creadas con mi pasión por el diseño y la creatividad digital.
         </p>
       </div>
 
@@ -176,17 +176,17 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
             key={artwork.id}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="relative aspect-square rounded-xl overflow-hidden cursor-pointer shadow-md bg-white"
+            className="relative aspect-square rounded-xl overflow-hidden cursor-pointer shadow-md bg-transparent"
             onClick={() => handleArtworkClick(artwork)}
           >
             <Image
               src={artwork.img}
               alt={artwork.title}
               fill
-              className="object-cover"
+              className="object-contain"
             />
             
-            {/* Overlay with title */}
+            {/* Overlay with title 
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
               <div className="absolute bottom-0 left-0 right-0 p-3">
                 <h4 className="text-white font-medium text-sm mb-1">
@@ -196,14 +196,14 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
                   {artwork.technique}
                 </p>
               </div>
-            </div>
+            </div>*/}
 
-            {/* Category badge */}
+            {/* Category badge 
             <div className="absolute top-2 left-2">
               <span className="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700">
                 {artwork.category}
               </span>
-            </div>
+            </div>*/}
           </motion.div>
         ))}
       </div>
@@ -279,7 +279,7 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="relative max-w-sm w-full bg-white rounded-2xl overflow-hidden shadow-2xl"
+              className="relative max-w-sm w-full transparent rounded-2xl overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Artwork image */}
@@ -288,11 +288,11 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
                   src={selectedArtwork.img}
                   alt={selectedArtwork.title}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               
-              {/* Artwork details */}
+              {/* Artwork details 
               <div className="p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div>
@@ -329,7 +329,7 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
                     Cerrar
                   </button>
                 </div>
-              </div>
+              </div>*/}
             </motion.div>
           </motion.div>
         )}
