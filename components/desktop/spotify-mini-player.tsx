@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useSpotify } from '@/contexts/spotify-context'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export function SpotifyMiniPlayer() {
   const {
@@ -20,6 +21,7 @@ export function SpotifyMiniPlayer() {
   const [isDragging, setIsDragging] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const miniPlayerRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
 
   // Mostrar el reproductor automáticamente cuando hay una nueva canción
   useEffect(() => {
@@ -27,6 +29,11 @@ export function SpotifyMiniPlayer() {
       setIsVisible(true)
     }
   }, [currentSong, isVisible])
+
+  // No mostrar en pantallas móviles
+  if (isMobile) {
+    return null
+  }
 
   // Debug: Crear un mini player visible forzadamente para testing
   const debugMode = false // Cambiar a true para debugging

@@ -26,6 +26,7 @@ import { AppStoreWindow } from '@/components/desktop/appstore-window'
 import { SpotifyWindow } from '@/components/desktop/spotify-window'
 import { SpotifyMiniPlayer } from '@/components/desktop/spotify-mini-player'
 import { SettingsWindow } from '@/components/desktop/settings-window'
+import { MobileControlCenter } from './mobile-control-center'
 import { AboutMeWindow } from '@/components/desktop/about-me-window'
 import { AppleBooksWindow } from '@/components/desktop/apple-books-window'
 
@@ -66,6 +67,7 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
   const [showAboutMe, setShowAboutMe] = useState(false)
   const [showAppleBooks, setShowAppleBooks] = useState(false)
   const [showGitHubBrowser, setShowGitHubBrowser] = useState(false)
+  const [showControlCenter, setShowControlCenter] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
@@ -85,6 +87,90 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
     const interval = setInterval(updateDateTime, 1000)
     
     return () => clearInterval(interval)
+  }, [])
+
+  // Control Center gesture detection (mejorado)
+  useEffect(() => {
+    let startY = 0
+    let startTime = 0
+    let isTracking = false
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      // Ampliar el área de activación a los primeros 100px para que sea más fácil
+      if (e.touches[0].clientY <= 100) {
+        startY = e.touches[0].clientY
+        startTime = Date.now()
+        isTracking = true
+      }
+    }
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isTracking || startY === 0) return
+      
+      const currentY = e.touches[0].clientY
+      const deltaY = currentY - startY
+      const deltaTime = Date.now() - startTime
+      
+      // Condiciones más flexibles: 80px de deslizamiento en 800ms
+      if (deltaY > 80 && deltaTime < 800 && startY <= 100) {
+        setShowControlCenter(true)
+        isTracking = false
+        startY = 0
+      }
+    }
+    
+    const handleTouchEnd = () => {
+      startY = 0
+      startTime = 0
+      isTracking = false
+    }
+
+    // También detectar gestos en desktop con mouse para testing
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.clientY <= 100) {
+        startY = e.clientY
+        startTime = Date.now()
+        isTracking = true
+      }
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isTracking || startY === 0) return
+      
+      const currentY = e.clientY
+      const deltaY = currentY - startY
+      const deltaTime = Date.now() - startTime
+      
+      if (deltaY > 80 && deltaTime < 800 && startY <= 100) {
+        setShowControlCenter(true)
+        isTracking = false
+        startY = 0
+      }
+    }
+
+    const handleMouseUp = () => {
+      startY = 0
+      startTime = 0
+      isTracking = false
+    }
+    
+    // Event listeners para touch y mouse
+    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchmove', handleTouchMove, { passive: true })
+    document.addEventListener('touchend', handleTouchEnd, { passive: true })
+    
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
   }, [])
 
   // Battery status detection
@@ -263,11 +349,45 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-800 dark:to-gray-900 relative overflow-hidden ${className}`}>
-      {/* iOS Status Bar */}
-      <div className="relative z-50 h-12 px-6 flex items-center justify-between text-black dark:text-white">
+      {/* iOS Status Bar with Control Center indicator */}
+      <div 
+        className="relative z-50 h-12 px-6 flex items-center justify-between text-black dark:text-white cursor-pointer"
+        onClick={() => setShowControlCenter(true)}
+      >
         <div className="flex items-center space-x-1 text-sm font-medium">
           <span>{currentTime}</span>
         </div>
+        
+        {/* Control Center pull indicator */}
+        <div 
+          className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 rounded-full opacity-40"
+          style={{ background: 'linear-gradient(90deg, #C9A3DC, #B091C7)' }}
+        ></div>
+        
+        {/* Testing button for desktop - only visible on large screens */}
+        <div className="absolute top-2 right-20 hidden lg:block">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setShowControlCenter(true)
+            }}
+            className="text-xs px-2 py-1 rounded-md transition-colors"
+            style={{ 
+              backgroundColor: '#C9A3DC20',
+              color: '#C9A3DC'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#C9A3DC30'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#C9A3DC20'
+            }}
+            title="Abrir Panel de Control (Testing)"
+          >
+            Panel
+          </button>
+        </div>
+        
         <div className="flex items-center space-x-1">
           <Signal className="h-4 w-4" />
           <Wifi className="h-4 w-4" />
@@ -414,6 +534,12 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
           <AppleBooksWindow
             isOpen={showAppleBooks}
             onClose={() => setShowAppleBooks(false)}
+          />
+          
+          {/* Mobile Control Center */}
+          <MobileControlCenter
+            isOpen={showControlCenter}
+            onClose={() => setShowControlCenter(false)}
           />
         </>
       )}
