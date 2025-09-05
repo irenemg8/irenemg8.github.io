@@ -340,7 +340,7 @@ export function MobileWorkFolderWindow({ isOpen, onClose }: MobileWorkFolderWind
                   {work.skills.slice(0, 3).map((skill, index) => (
                     <span 
                       key={index}
-                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-md text-xs"
+                      className="px-2 py-1 bg-purple-400 dark:bg-purple-600/50 text-white dark:text-white rounded-md text-xs"
                     >
                       {skill}
                     </span>

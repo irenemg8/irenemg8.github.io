@@ -54,7 +54,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
     hobbies: {
       icon: <Heart className="w-5 h-5" />,
       title: "Hobbies & Curiosidades",
-      color: "from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20",
+      color: "from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20",
       content: [
         { emoji: "🧘‍♀️", text: "Practico yoga aéreo" },
         { emoji: "🌍", text: "Me encanta viajar" },
@@ -65,7 +65,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
     achievements: {
       icon: <Trophy className="w-5 h-5" />,
       title: "Logros",
-      color: "from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20",
+      color: "from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20",
       content: [
         { title: "🥇 Premios", description: "Finalista de varios Hackathones" },
         { title: "🌍 UPV en China", description: "Representé a la UPV en Guangzhou" },
@@ -167,7 +167,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
             onClick={() => handleCategoryClick(key)}
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
                 {data.icon}
               </div>
               <h4 className="font-semibold text-gray-800 dark:text-gray-200">
@@ -292,7 +292,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
         onClose={onClose}
         title="Sobre Mí"
         maxHeight="90vh"
-        customGradient="from-purple-50 via-pink-50 to-rose-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-pink-900/20"
+        customGradient="from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"
       >
         {mobileContent}
       </MobileWindow>

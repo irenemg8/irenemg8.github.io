@@ -159,7 +159,7 @@ export function MobileArtworksWindow({ isOpen, onClose }: MobileArtworksWindowPr
       {/* Header info */}
       <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <Palette className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+          <Palette className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Explora mis obras
           </h3>
