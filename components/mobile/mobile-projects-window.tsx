@@ -8,23 +8,7 @@ import { useLanguage } from '@/contexts/language-context'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { MobileWindow } from './mobile-window'
 import { StickyNote } from '../desktop/sticky-note'
-
-interface ProjectData {
-  id: number
-  title: string
-  description: string
-  image: string
-  date: string
-  tags: string[]
-  githubUrl: string
-  liveUrl: string
-  fullDescription: string
-  techStack: string[]
-  challenges: string
-  role: string
-  demoUrl: string
-  priority?: boolean
-}
+import { ProjectData, projectsData } from '@/lib/projects-data'
 
 interface MobileProjectsWindowProps {
   isOpen: boolean
@@ -36,57 +20,6 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
   const isMobile = useIsMobile()
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null)
   const [showStickyNote, setShowStickyNote] = useState(false)
-
-  // Datos de proyectos simplificados para móvil
-  const projectsData: ProjectData[] = [
-    {
-      id: 17,
-      title: "PromptGen",
-      description: "A lightweight prompt management tool that streamlines the creation, organization, and reuse of AI prompts for productivity and creative workflows.",
-      image: "/aidguide/promptgen.png",
-      date: "Jun 2025",
-      tags: ["AI", "Prompt Engineering", "Productivity", "Next.js"],
-      githubUrl: "https://github.com/irenemg8/promptgen",
-      liveUrl: "https://irenemg8.github.io/promptgen/",
-      fullDescription: "PromptGen is a web-based utility designed for developers, designers, and AI power users who work frequently with generative tools such as ChatGPT, Midjourney, and DALL·E. The app allows users to create, tag, organize, and retrieve custom AI prompts in a fast and structured way.",
-      techStack: ["Next.js", "Tailwind CSS", "TypeScript", "Firebase"],
-      challenges: "The biggest challenge was designing a user-friendly system for dynamically managing and categorizing prompts while ensuring real-time performance and responsiveness.",
-      role: "Full-Stack Developer & UI/UX Designer",
-      demoUrl: "https://irenemg8.github.io/promptgen/",
-      priority: true
-    },
-    {
-      id: 16,
-      title: "PyCatan",
-      description: "A fully playable digital adaptation of 'The Settlers of Catan' board game, built in Python with a modular architecture and turn-based mechanics.",
-      image: "/aidguide/catan.jpg",
-      date: "May 2025",
-      tags: ["Python", "Game Development", "Turn-Based", "OOP", "CLI"],
-      githubUrl: "https://github.com/vjrivmon/PyCatan",
-      liveUrl: "/under-construction",
-      fullDescription: "PyCatan is a terminal-based implementation of the iconic strategy board game 'The Settlers of Catan', built from scratch using Python. The project captures the core mechanics of the original game—resource collection, settlement building, trading, and strategic expansion.",
-      techStack: ["Python", "OOP", "Terminal UI"],
-      challenges: "The greatest challenge was designing a scalable and maintainable game logic system that could handle the complexity of Catan's ruleset without a graphical interface.",
-      role: "Developer & Game Logic Architect",
-      demoUrl: "/under-construction"
-    },
-    {
-      id: 15,
-      title: "Aura",
-      description: "An all-in-one assistant app for visually impaired users, integrating multiple accessibility tools into a single, seamless experience.",
-      image: "/aidguide/aura.png",
-      date: "Jun 2025",
-      tags: ["Accessibility", "Voice Control", "Computer Vision", "Assistive Tech", "Mobile App"],
-      githubUrl: "https://github.com/agonfer/auraFlutter",
-      liveUrl: "/under-construction",
-      fullDescription: "Aura is a comprehensive mobile app designed to empower visually impaired users by consolidating multiple accessibility tools into one intuitive platform. The app combines object recognition, voice control, text-to-speech capabilities, and real-time navigation assistance.",
-      techStack: ["Flutter", "Dart", "TensorFlow Lite", "Speech Recognition"],
-      challenges: "Developing accurate object recognition algorithms that work in real-time while maintaining battery efficiency was our primary challenge.",
-      role: "Mobile Developer & Accessibility Specialist",
-      demoUrl: "/under-construction",
-      priority: true
-    }
-  ]
 
   const handleProjectClick = (project: ProjectData) => {
     setSelectedProject(project)
