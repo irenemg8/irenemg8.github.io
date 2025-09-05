@@ -44,7 +44,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
       {/* Header info */}
       <div className="bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <FolderOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+          <FolderOpen className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Mis Proyectos
           </h3>
@@ -109,7 +109,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
                       className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors"
                       whileTap={{ scale: 0.9 }}
                     >
-                      <ExternalLink className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <ExternalLink className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                     </motion.button>
                   )}
                 </div>
@@ -132,7 +132,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
                 {project.techStack.slice(0, 3).map((tech, index) => (
                   <span 
                     key={index}
-                    className="px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-md text-xs flex items-center gap-1"
+                    className="px-2 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-md text-xs flex items-center gap-1"
                   >
                     <Code className="w-3 h-3" />
                     {tech}
@@ -149,8 +149,8 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
         ))}
       </div>
 
-      {/* Quick stats */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl p-4 mt-6">
+      {/* Quick stats 
+      <div className="bg-gradient-to-r from-purple-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 mt-6">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-lg font-bold text-green-600 dark:text-green-400">
@@ -159,7 +159,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
             <div className="text-xs text-gray-600 dark:text-gray-400">Proyectos</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+            <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
               {projectsData.filter(p => p.priority).length}
             </div>
             <div className="text-xs text-gray-600 dark:text-gray-400">Destacados</div>
@@ -171,7 +171,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
             <div className="text-xs text-gray-600 dark:text-gray-400">Tecnologías</div>
           </div>
         </div>
-      </div>
+      </div>*/}
     </div>
   )
 
@@ -182,7 +182,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
         onClose={onClose}
         title="Mis Proyectos"
         maxHeight="90vh"
-        customGradient="from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-green-900/20 dark:to-blue-900/20"
+        customGradient="from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"
       >
         {mobileContent}
       </MobileWindow>
@@ -237,7 +237,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
 
                     <div>
                       <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-2">
-                        <Code className="w-4 h-4 text-blue-600" />
+                        <Code className="w-4 h-4 text-purple-600" />
                         Tecnologías:
                       </h4>
                       <div className="flex flex-wrap gap-1 mb-3">
@@ -255,7 +255,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
                     {selectedProject.challenges && (
                       <div>
                         <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-2">
-                          <Lightbulb className="w-4 h-4 text-orange-600" />
+                          <Lightbulb className="w-4 h-4 text-purple-600" />
                           Desafíos:
                         </h4>
                         <p className="text-xs text-gray-600 mb-3">
@@ -281,7 +281,7 @@ export function MobileProjectsWindow({ isOpen, onClose }: MobileProjectsWindowPr
                           href={selectedProject.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                          className="text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1"
                         >
                           <ExternalLink className="w-3 h-3" />
                           Ver proyecto
