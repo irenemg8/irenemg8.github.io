@@ -19,7 +19,7 @@ export function CentralWelcome() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.6 }}
       >
-        welcome to my
+        {t('desktop.welcome')}
       </motion.h1>
       <motion.h1
         className="text-5xl md:text-7xl lg:text-7xl xl:text-8xl font-pecita text-gray-900 dark:text-gray-100 italic"
@@ -27,7 +27,7 @@ export function CentralWelcome() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.9, duration: 0.6 }}
       >
-        portfolio.
+        {t('desktop.portfolio')}
       </motion.h1>
     </motion.div>
   )

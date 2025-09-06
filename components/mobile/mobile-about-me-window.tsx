@@ -34,42 +34,42 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
   const aboutData = {
     education: {
       icon: <GraduationCap className="w-5 h-5" />,
-      title: "Educación",
+      title: t('mobile.about.education'),
       color: "from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20",
       content: [
         {
-          institution: "Universidad Politécnica de Valencia (UPV)",
-          program: "G. Tecnologías Interactivas",
-          period: "2022 - 2026",
+          institution: t('education.upv'),
+          program: t('education.program_upv'),
+          period: t('education.period_upv'),
           logo: "/UPV-Emblem.png"
         },
         {
-          institution: "Warsaw University of Technology (WUT)",
-          program: "Erasmus+ BIP",
-          period: "2025",
+          institution: t('education.wut'),
+          program: t('education.program_wut'),
+          period: t('education.period_wut'),
           logo: "/Warsaw_University_of_Technology.png"
         }
       ]
     },
     hobbies: {
       icon: <Heart className="w-5 h-5" />,
-      title: "Hobbies & Curiosidades",
+      title: t('mobile.about.hobbies'),
       color: "from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20",
       content: [
-        { emoji: "🧘‍♀️", text: "Practico yoga aéreo" },
-        { emoji: "🌍", text: "Me encanta viajar" },
-        { emoji: "🏖️", text: "La playa es mi rincón de paz" },
-        { emoji: "🏎️", text: "Fan de las carreras de coches" }
+        { emoji: "🧘‍♀️", text: t('hobbies.yoga') },
+        { emoji: "🌍", text: t('hobbies.travel') },
+        { emoji: "🏖️", text: t('hobbies.beach') },
+        { emoji: "🏎️", text: t('hobbies.cars') }
       ]
     },
     achievements: {
       icon: <Trophy className="w-5 h-5" />,
-      title: "Logros",
+      title: t('mobile.about.achievements'),
       color: "from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20",
       content: [
-        { title: "🥇 Premios", description: "Finalista de varios Hackathones" },
-        { title: "🌍 UPV en China", description: "Representé a la UPV en Guangzhou" },
-        { title: "🎯 Agenda 2030", description: "Candidatura de la ciudad de Gandía con el proyecto URBANVIVE" }
+        { title: t('achievements.awards'), description: t('achievements.hackathons') },
+        { title: t('achievements.china'), description: t('achievements.guangzhou') },
+        { title: t('achievements.agenda2030'), description: t('achievements.urbanvive') }
       ]
     }
   }
@@ -148,11 +148,11 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
         <div className="flex items-center gap-3 mb-2">
           <User className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            ¿Quién soy?
+            {t('mobile.about.who_am_i')}
           </h3>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Conoce más sobre mi formación, intereses y logros
+          {t('mobile.about.description')}
         </p>
       </div>
 
@@ -175,7 +175,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
               </h4>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Toca para ver detalles
+              {t('mobile.about.tap_for_details')}
             </p>
           </motion.div>
         ))}
@@ -184,7 +184,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
       {/* Photos Gallery */}
       <div className="mt-6">
         <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
-          📸 Galería Personal
+          {t('mobile.about.personal_gallery')}
         </h4>
         
         <div className="grid grid-cols-2 gap-3">
@@ -238,12 +238,12 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
                     <div className="flex flex-col items-center justify-center h-full bg-gray-200 text-gray-500 p-2">
                       <div className="text-4xl mb-2">🎥</div>
                       <div className="text-xs text-center">
-                        Video no disponible
+                        {t('mobile.about.video_not_available')}
                       </div>
                     </div>
                   </video>
                   <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 text-xs">
-                    Video
+                    {t('mobile.about.video')}
                   </div>
                 </div>
               )}
@@ -290,7 +290,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
       <MobileWindow
         isOpen={isOpen}
         onClose={onClose}
-        title="Sobre Mí"
+        title={t('mobile.about.title')}
         maxHeight="90vh"
         customGradient="from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20"
       >
@@ -430,7 +430,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
                     {/* Fallback */}
                     <div className="flex flex-col items-center justify-center h-full text-gray-400">
                       <div className="text-6xl mb-2">🎥</div>
-                      <div className="text-sm">Video no disponible</div>
+                      <div className="text-sm">{t('mobile.about.video_not_available')}</div>
                     </div>
                   </video>
                   
@@ -447,7 +447,7 @@ export function MobileAboutMeWindow({ isOpen, onClose }: MobileAboutMeWindowProp
                   onClick={handleClosePhoto}
                   className="mt-2 px-4 py-2 bg-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-300 transition-colors"
                 >
-                  Cerrar
+                  {t('mobile.about.close')}
                 </button>
               </div>
             </motion.div>

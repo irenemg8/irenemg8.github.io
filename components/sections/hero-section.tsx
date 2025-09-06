@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { ChevronDown, Sparkles, Zap, Heart, Coffee } from "lucide-react"
 import Lottie from "lottie-react"
+import { useLanguage } from '@/contexts/language-context'
 
 // Simulación de una animación Lottie (puedes reemplazar con archivo real)
 const floatingElementsAnimation = {
@@ -67,6 +68,7 @@ const GradientOrb: React.FC<{ size: string; position: string; color: string }> =
 )
 
 export function HeroSection() {
+  const { t } = useLanguage()
   const containerRef = useRef<HTMLDivElement>(null)
   const [currentTime, setCurrentTime] = useState("")
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -190,7 +192,7 @@ export function HeroSection() {
           className="mb-6"
         >
           <span className="text-sm font-mono text-muted-foreground bg-white/80 dark:bg-black/30 px-3 py-1 rounded-full border border-lavender-200 dark:border-lavender-800">
-            Madrid, España • {currentTime} • Disponible para proyectos ✨
+            {t('hero.greeting', { time: currentTime })}
           </span>
         </motion.div>
 
@@ -206,7 +208,7 @@ export function HeroSection() {
               variants={wordVariants}
               className="text-display-sm md:text-display-lg font-poppins font-bold bg-gradient-to-r from-lavender-600 via-lilac-500 to-lavender-700 bg-clip-text text-transparent mb-4"
             >
-              Diseñadora & Desarrolladora
+              {t('hero.title')}
             </motion.h1>
           </div>
           
@@ -215,23 +217,25 @@ export function HeroSection() {
               variants={wordVariants}
               className="text-4xl md:text-6xl font-poppins font-light text-foreground/90"
             >
-              que crea{" "}
-              <motion.span 
-                className="relative inline-block"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <span className="bg-gradient-to-r from-lavender-500 to-lilac-600 bg-clip-text text-transparent font-bold">
-                  experiencias
-                </span>
-                <motion.div
-                  className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-lavender-400 to-lilac-400 rounded-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ delay: 2, duration: 0.8 }}
-                />
-              </motion.span>
-              {" "}inolvidables
+              {t('hero.subtitle', {
+                experiences: (
+                  <motion.span 
+                    className="relative inline-block"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <span className="bg-gradient-to-r from-lavender-500 to-lilac-600 bg-clip-text text-transparent font-bold">
+                      {t('hero.experiences')}
+                    </span>
+                    <motion.div
+                      className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-lavender-400 to-lilac-400 rounded-full"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ delay: 2, duration: 0.8 }}
+                    />
+                  </motion.span>
+                )
+              })}
             </motion.h2>
           </div>
         </motion.div>
@@ -243,9 +247,10 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 1 }}
           className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed"
         >
-          Especializada en <strong className="text-lavender-600 dark:text-lavender-400">UX/UI Design</strong> y{" "}
-          <strong className="text-lilac-600 dark:text-lilac-400">Frontend Development</strong>.
-          Transformo ideas en productos digitales que conectan, emocionan e inspiran.
+          {t('hero.description', {
+            uxui: <strong className="text-lavender-600 dark:text-lavender-400">{t('hero.uxui')}</strong>,
+            frontend: <strong className="text-lilac-600 dark:text-lilac-400">{t('hero.frontend')}</strong>
+          })}
         </motion.p>
 
         {/* Botones de acción */}
@@ -264,7 +269,7 @@ export function HeroSection() {
               className="absolute inset-0 bg-gradient-to-r from-lilac-600 to-lavender-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             />
             <span className="relative z-10 flex items-center gap-2">
-              Ver mis proyectos
+              {t('hero.cta_projects')}
               <motion.div
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
@@ -279,7 +284,7 @@ export function HeroSection() {
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 border-2 border-lavender-300 dark:border-lavender-700 text-foreground rounded-xl font-medium text-lg hover:bg-lavender-50 dark:hover:bg-lavender-900/20 transition-colors"
           >
-            Hablemos
+            {t('hero.cta_contact')}
           </motion.button>
         </motion.div>
 
@@ -291,7 +296,7 @@ export function HeroSection() {
           className="flex flex-col items-center"
         >
           <span className="text-sm text-muted-foreground mb-2 font-mono">
-            Descubre más
+            {t('hero.scroll_discover')}
           </span>
           <motion.div
             animate={{ y: [0, 10, 0] }}

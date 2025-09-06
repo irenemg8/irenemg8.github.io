@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { useState } from "react"
 import { ExpandableBadges } from "./expandable-badges"
+import { useLanguage } from '@/contexts/language-context'
 
 interface Project {
   id: number
@@ -27,6 +28,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, onClick }: ProjectCardProps) {
+  const { t } = useLanguage()
   const [tagsExpanded, setTagsExpanded] = useState(false);
   const [techStackExpanded, setTechStackExpanded] = useState(false);
 
@@ -61,7 +63,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
             items={project.tags || []} 
             expanded={tagsExpanded} 
             setExpanded={setTagsExpanded} 
-            title="Tags"
+            title={t('projects.tags')}
           />
 
         </CardContent>
@@ -75,7 +77,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <Github className="h-5 w-5" />
-              <span className="sr-only">GitHub</span>
+              <span className="sr-only">{t('projects.github')}</span>
             </a>
           )}
           {project.liveUrl && (
@@ -87,7 +89,7 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <ExternalLink className="h-5 w-5" />
-              <span className="sr-only">Live Demo</span>
+              <span className="sr-only">{t('projects.live_demo')}</span>
             </a>
           )}
         </CardFooter>

@@ -20,6 +20,7 @@ import {
   Target,
   Star
 } from "lucide-react"
+import { useLanguage } from '@/contexts/language-context'
 
 interface TimelineItem {
   id: string
@@ -35,82 +36,7 @@ interface TimelineItem {
   skills?: string[]
 }
 
-const timelineData: TimelineItem[] = [
-  {
-    id: '2024',
-    year: '2024',
-    date: 'Presente',
-    title: 'Senior UX/UI Designer & Frontend Developer',
-    organization: 'Freelance',
-    location: 'Madrid, España',
-    description: 'Especializada en crear experiencias digitales inolvidables. Diseño interfaces modernas y desarrollo soluciones frontend de alto rendimiento.',
-    type: 'work',
-    icon: Briefcase,
-    color: 'from-lavender-500 to-lilac-600',
-    skills: ['React', 'Next.js', 'Figma', 'Framer Motion', 'Three.js']
-  },
-  {
-    id: '2023',
-    year: '2023',
-    date: 'Nov 2023',
-    title: 'UX/UI Design Certification',
-    organization: 'Google',
-    location: 'Online',
-    description: 'Certificación profesional en diseño UX/UI con enfoque en metodologías ágiles y design thinking.',
-    type: 'education',
-    icon: GraduationCap,
-    color: 'from-blue-500 to-indigo-600',
-    skills: ['Design Thinking', 'Prototyping', 'User Research', 'Figma']
-  },
-  {
-    id: '2022',
-    year: '2022',
-    date: 'Sep 2022',
-    title: 'Frontend Developer',
-    organization: 'TechCorp',
-    location: 'Barcelona, España',
-    description: 'Desarrollo de aplicaciones web modernas con React y TypeScript. Implementación de sistemas de diseño y optimización de rendimiento.',
-    type: 'work',
-    icon: Code,
-    color: 'from-green-500 to-emerald-600',
-    skills: ['React', 'TypeScript', 'SASS', 'Git', 'Agile']
-  },
-  {
-    id: '2021',
-    year: '2021',
-    date: 'Ene 2021',
-    title: 'Hackathon Winner',
-    organization: 'Innovation Challenge',
-    location: 'Madrid, España',
-    description: 'Primer lugar en hackathon de innovación social con una app para conectar voluntarios con ONGs locales.',
-    type: 'achievement',
-    icon: Award,
-    color: 'from-yellow-500 to-orange-600',
-    skills: ['Innovation', 'Team Leadership', 'MVP Development']
-  },
-  {
-    id: '2020',
-    year: '2020',
-    date: 'Jun 2020',
-    title: 'Grado en Ingeniería Informática',
-    organization: 'Universidad Politécnica de Valencia',
-    location: 'Valencia, España',
-    description: 'Graduada con matrícula de honor. Especialización en desarrollo web y experiencia de usuario.',
-    type: 'education',
-    icon: GraduationCap,
-    color: 'from-purple-500 to-pink-600',
-    skills: ['Computer Science', 'Web Development', 'Database Design']
-  }
-]
-
-const personalFacts = [
-  { icon: Coffee, text: "Consumo 4+ cafés al día", color: "text-amber-600" },
-  { icon: Music, text: "Toco el piano desde los 8 años", color: "text-purple-600" },
-  { icon: Camera, text: "Aficionada a la fotografía urbana", color: "text-blue-600" },
-  { icon: Plane, text: "He visitado 15 países", color: "text-green-600" },
-  { icon: BookOpen, text: "Leo 20+ libros al año", color: "text-orange-600" },
-  { icon: Heart, text: "Voluntaria en animal shelter", color: "text-red-500" }
-]
+// Timeline data will be generated dynamically using translations
 
 const skills = {
   design: [
@@ -137,6 +63,7 @@ const skills = {
 }
 
 export function AboutSection() {
+  const { t } = useLanguage()
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeTimelineItem, setActiveTimelineItem] = useState<string | null>(null)
   const isInView = useInView(containerRef, { once: true, margin: "-100px" })
@@ -145,6 +72,86 @@ export function AboutSection() {
     target: containerRef,
     offset: ["start end", "end start"]
   })
+
+  // Dynamic timeline data using translations
+  const timelineData: TimelineItem[] = [
+    {
+      id: '2024',
+      year: t('about.timeline.2024.year'),
+      date: t('about.timeline.2024.date'),
+      title: t('about.timeline.2024.title'),
+      organization: t('about.timeline.2024.organization'),
+      location: t('about.timeline.2024.location'),
+      description: t('about.timeline.2024.description'),
+      type: 'work',
+      icon: Briefcase,
+      color: 'from-lavender-500 to-lilac-600',
+      skills: ['React', 'Next.js', 'Figma', 'Framer Motion', 'Three.js']
+    },
+    {
+      id: '2023',
+      year: t('about.timeline.2023.year'),
+      date: t('about.timeline.2023.date'),
+      title: t('about.timeline.2023.title'),
+      organization: t('about.timeline.2023.organization'),
+      location: t('about.timeline.2023.location'),
+      description: t('about.timeline.2023.description'),
+      type: 'education',
+      icon: GraduationCap,
+      color: 'from-blue-500 to-indigo-600',
+      skills: ['Design Thinking', 'Prototyping', 'User Research', 'Figma']
+    },
+    {
+      id: '2022',
+      year: t('about.timeline.2022.year'),
+      date: t('about.timeline.2022.date'),
+      title: t('about.timeline.2022.title'),
+      organization: t('about.timeline.2022.organization'),
+      location: t('about.timeline.2022.location'),
+      description: t('about.timeline.2022.description'),
+      type: 'work',
+      icon: Code,
+      color: 'from-green-500 to-emerald-600',
+      skills: ['React', 'TypeScript', 'SASS', 'Git', 'Agile']
+    },
+    {
+      id: '2021',
+      year: t('about.timeline.2021.year'),
+      date: t('about.timeline.2021.date'),
+      title: t('about.timeline.2021.title'),
+      organization: t('about.timeline.2021.organization'),
+      location: t('about.timeline.2021.location'),
+      description: t('about.timeline.2021.description'),
+      type: 'achievement',
+      icon: Award,
+      color: 'from-yellow-500 to-orange-600',
+      skills: ['Innovation', 'Team Leadership', 'MVP Development']
+    },
+    {
+      id: '2020',
+      year: t('about.timeline.2020.year'),
+      date: t('about.timeline.2020.date'),
+      title: t('about.timeline.2020.title'),
+      organization: t('about.timeline.2020.organization'),
+      location: t('about.timeline.2020.location'),
+      description: t('about.timeline.2020.description'),
+      type: 'education',
+      icon: GraduationCap,
+      color: 'from-purple-500 to-pink-600',
+      skills: ['Computer Science', 'Web Development', 'Database Design']
+    }
+  ]
+
+  const personalFacts = t('about.facts', { returnObjects: true }) as string[]
+
+  const factsWithIcons = [
+    { icon: Coffee, text: personalFacts[0], color: "text-amber-600" },
+    { icon: Music, text: personalFacts[1], color: "text-purple-600" },
+    { icon: Camera, text: personalFacts[2], color: "text-blue-600" },
+    { icon: Plane, text: personalFacts[3], color: "text-green-600" },
+    { icon: BookOpen, text: personalFacts[4], color: "text-orange-600" },
+    { icon: Heart, text: personalFacts[5], color: "text-red-500" }
+  ]
 
   useEffect(() => {
     // Easter egg for achievements
@@ -221,13 +228,12 @@ export function AboutSection() {
 
           <h2 className="text-4xl md:text-5xl font-poppins font-bold mb-6">
             <span className="bg-gradient-to-r from-lavender-600 via-lilac-500 to-lavender-700 bg-clip-text text-transparent">
-              Sobre mí
+              {t('about.title')}
             </span>
           </h2>
           
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Soy una apasionada del diseño y la tecnología. Me encanta crear experiencias 
-            digitales que no solo funcionen perfectamente, sino que también emocionen e inspiren.
+            {t('about.description')}
           </p>
         </motion.div>
 
@@ -241,7 +247,7 @@ export function AboutSection() {
           >
             <h3 className="text-2xl font-poppins font-semibold mb-8 flex items-center gap-2">
               <Calendar className="text-lavender-600" size={24} />
-              Mi Trayectoria
+              {t('about.timeline_title')}
             </h3>
 
             <div className="relative">
@@ -338,7 +344,7 @@ export function AboutSection() {
             <div>
               <h3 className="text-2xl font-poppins font-semibold mb-8 flex items-center gap-2">
                 <Target className="text-lavender-600" size={24} />
-                Habilidades
+                {t('about.skills_title')}
               </h3>
 
               <div className="space-y-8">
@@ -350,7 +356,7 @@ export function AboutSection() {
                     transition={{ delay: 0.6 + categoryIndex * 0.1 }}
                   >
                     <h4 className="font-semibold text-foreground capitalize mb-4 text-lg">
-                      {category === 'design' ? 'Diseño' : category === 'development' ? 'Desarrollo' : 'Herramientas'}
+                      {t(`about.skills_categories.${category}`)}
                     </h4>
                     
                     <div className="space-y-3">
@@ -386,11 +392,11 @@ export function AboutSection() {
             <div>
               <h3 className="text-2xl font-poppins font-semibold mb-8 flex items-center gap-2">
                 <Star className="text-lavender-600" size={24} />
-                Datos Curiosos
+                {t('about.facts_title')}
               </h3>
 
               <div className="grid gap-4">
-                {personalFacts.map((fact, index) => (
+                {factsWithIcons.map((fact, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: 20 }}
@@ -416,7 +422,7 @@ export function AboutSection() {
           className="text-center mt-20"
         >
           <p className="text-lg text-muted-foreground mb-8">
-            ¿Te gusta lo que ves? ¡Hablemos de tu próximo proyecto!
+            {t('about.cta_description')}
           </p>
           
           <motion.button
@@ -424,7 +430,7 @@ export function AboutSection() {
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 bg-gradient-to-r from-lavender-500 to-lilac-600 text-white rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Contactar
+            {t('about.cta_button')}
           </motion.button>
         </motion.div>
       </div>

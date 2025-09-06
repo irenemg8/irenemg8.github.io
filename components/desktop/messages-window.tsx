@@ -688,7 +688,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
               aria-label="Maximizar"
             />
           </div>
-          <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300">Mensajes</h2>
+          <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('messages.title')}</h2>
           <div className="w-16" />
         </div>
 
@@ -699,17 +699,17 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
             {/* Barra de búsqueda */}
             <div className="p-3 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-blue-500 cursor-pointer hover:text-blue-600">Editar</span>
+                <span className="text-xs text-blue-500 cursor-pointer hover:text-blue-600">{t('messages.edit')}</span>
                 <button className="text-blue-500 hover:text-blue-600">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 20h9m-9 0a9 9 0 110-18 9 9 0 010 18zm0 0v-8m0 0l3 3m-3-3l-3 3" />
                   </svg>
                 </button>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Mensajes</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{t('messages.title')}</h1>
               <input
                 type="text"
-                placeholder="Buscar"
+                placeholder={t('messages.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -764,7 +764,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">{currentConversation.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">En línea</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t('messages.online')}</p>
                   </div>
                 </div>
                 <button className="text-blue-500 hover:text-blue-600">
@@ -834,7 +834,7 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="iMessage"
+                    placeholder={t('messages.type_message')}
                     className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
@@ -854,10 +854,10 @@ export function MessagesWindow({ onClose }: MessagesWindowProps) {
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Selecciona una conversación
+                  {t('messages.select_conversation')}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Elige un chat de la lista para empezar a conversar
+                  {t('messages.choose_chat')}
                 </p>
               </div>
             </div>

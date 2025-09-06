@@ -29,16 +29,16 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
 
   // Categories for sidebar
   const categories: SettingsCategory[] = [
-    { id: 'general', name: 'General', icon: Monitor, color: 'text-gray-600' },
-    { id: 'mouse', name: 'Ratón', icon: Mouse, color: 'text-blue-600' },
-    { id: 'keyboard', name: 'Teclado', icon: Keyboard, color: 'text-purple-600' },
-    { id: 'sound', name: 'Sonido', icon: Volume2, color: 'text-green-600' },
-    { id: 'network', name: 'Red', icon: Wifi, color: 'text-cyan-600' },
-    { id: 'bluetooth', name: 'Bluetooth', icon: Bluetooth, color: 'text-blue-500' },
-    { id: 'battery', name: 'Batería', icon: Battery, color: 'text-yellow-600' },
-    { id: 'notifications', name: 'Notificaciones', icon: Bell, color: 'text-red-600' },
-    { id: 'users', name: 'Usuarios', icon: User, color: 'text-indigo-600' },
-    { id: 'privacy', name: 'Privacidad', icon: Shield, color: 'text-gray-700' },
+    { id: 'general', name: t('settings.categories.general'), icon: Monitor, color: 'text-gray-600' },
+    { id: 'mouse', name: t('settings.categories.mouse'), icon: Mouse, color: 'text-blue-600' },
+    { id: 'keyboard', name: t('settings.categories.keyboard'), icon: Keyboard, color: 'text-purple-600' },
+    { id: 'sound', name: t('settings.categories.sound'), icon: Volume2, color: 'text-green-600' },
+    { id: 'network', name: t('settings.categories.network'), icon: Wifi, color: 'text-cyan-600' },
+    { id: 'bluetooth', name: t('settings.categories.bluetooth'), icon: Bluetooth, color: 'text-blue-500' },
+    { id: 'battery', name: t('settings.categories.battery'), icon: Battery, color: 'text-yellow-600' },
+    { id: 'notifications', name: t('settings.categories.notifications'), icon: Bell, color: 'text-red-600' },
+    { id: 'users', name: t('settings.categories.users'), icon: User, color: 'text-indigo-600' },
+    { id: 'privacy', name: t('settings.categories.privacy'), icon: Shield, color: 'text-gray-700' },
   ]
 
   // Drag handlers
@@ -83,8 +83,8 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
         return (
           <div className="space-y-8">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">General</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Configuración básica del sistema</p>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{t('settings.categories.general')}</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('settings.general.basic_config')}</p>
             </div>
 
             {/* Información del dispositivo */}
@@ -512,7 +512,7 @@ export function SettingsWindow({ isOpen, onClose }: SettingsWindowProps) {
 
             {/* Window Title */}
             <div className="flex-1 flex justify-center">
-              <h1 className="text-[13px] font-medium text-gray-700 dark:text-gray-300 tracking-tight">Preferencias del Sistema</h1>
+              <h1 className="text-[13px] font-medium text-gray-700 dark:text-gray-300 tracking-tight">{t('settings.title')}</h1>
             </div>
           </div>
 

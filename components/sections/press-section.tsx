@@ -2,13 +2,15 @@
 
 import { motion } from "framer-motion"
 import { PressCard } from "@/components/shared/press-card"
+import { useLanguage } from '@/contexts/language-context'
 
 interface PressSectionProps {
   openModal: (type: "press", content: any) => void
   title?: string
 }
 
-export function PressSection({ openModal, title = "Press" }: PressSectionProps) {
+export function PressSection({ openModal, title }: PressSectionProps) {
+  const { t } = useLanguage()
   const pressItems = [
     {
       id: 1,
@@ -179,9 +181,9 @@ export function PressSection({ openModal, title = "Press" }: PressSectionProps) 
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h2 className="text-3xl font-bold mb-4 font-pecita">{title}</h2>
+        <h2 className="text-3xl font-bold mb-4 font-pecita">{title || t('sections.press.title')}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Featured articles, interviews, and media coverage highlighting my work and expertise.
+          {t('sections.press.description')}
         </p>
       </motion.div>
 

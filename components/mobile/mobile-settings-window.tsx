@@ -82,11 +82,11 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
 
   const settingGroups = [
     {
-      title: 'Apariencia',
+      title: t('settings.categories.appearance'),
       icon: <Palette className="w-5 h-5" />,
       items: [
         {
-          label: 'Modo Oscuro',
+          label: t('settings.general.dark_mode'),
           icon: isDarkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />,
           control: (
             <Switch
@@ -96,7 +96,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
           )
         },
         {
-          label: 'Idioma',
+          label: t('settings.language'),
           icon: <Globe className="w-4 h-4" />,
           control: (
             <Button
@@ -259,9 +259,9 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
             className="w-16 h-16 rounded-full border-3 border-white/20"
           />
           <div>
-            <h3 className="text-lg font-semibold">Irene's Portfolio</h3>
-            <p className="text-blue-100">Diseño UX/UI &nbsp;·&nbsp; Frontend Dev</p>
-            <p className="text-sm text-blue-200 mt-1">Scrum Master</p>
+            <h3 className="text-lg font-semibold">{t('settings.profile_title')}</h3>
+            <p className="text-blue-100">{t('settings.profile_subtitle')}</p>
+            <p className="text-sm text-blue-200 mt-1">{t('settings.profile_role')}</p>
 
           </div>
         </div>
@@ -339,7 +339,7 @@ export function MobileSettingsWindow({ isOpen, onClose }: MobileSettingsWindowPr
     <MobileWindow
       isOpen={isOpen}
       onClose={onClose}
-      title="Ajustes"
+      title={t('settings.mobile_title')}
       maxHeight="90vh"
       customGradient="from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10"
     >

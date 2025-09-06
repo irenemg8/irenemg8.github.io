@@ -218,49 +218,49 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
   const allApps: MobileApp[] = [
     {
       id: 'projects',
-      name: 'Proyectos',
+      name: t('mobile.apps.projects'),
       image: '/folder.png',
       onTap: () => setShowProjects(true)
     },
     {
       id: 'work-experience',
-      name: 'Experiencia',
+      name: t('mobile.apps.work_experience'),
       image: '/folder.png',
       onTap: () => setShowWorkFolder(true)
     },
     {
       id: 'about-me',
-      name: 'Sobre Mí',
+      name: t('mobile.apps.about_me'),
       image: '/folder.png',
       onTap: () => setShowAboutMe(true)
     },
     {
       id: 'artworks',
-      name: 'Arte',
+      name: t('mobile.apps.artworks'),
       image: '/folder.png',
       onTap: () => setShowArtworks(true)
     },
     {
       id: 'ge',
-      name: 'GE',
+      name: t('mobile.apps.ge'),
       image: '/folder.png',
       onTap: () => setShowGEFolder(true)
     },
     {
       id: 'hackathons',
-      name: 'Hackathons',
+      name: t('mobile.apps.hackathons'),
       image: '/folder.png',
       onTap: () => setShowHackathons(true)
     },
     {
       id: 'press',
-      name: 'Prensa',
+      name: t('mobile.apps.press'),
       image: '/folder.png',
       onTap: () => setShowPress(true)
     },
     {
       id: 'world-map',
-      name: 'Mundo',
+      name: t('mobile.apps.world_map'),
       image: '/mundo.png',
       onTap: () => {
         const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
@@ -269,43 +269,43 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
     },
     {
       id: 'resume',
-      name: 'CV',
+      name: t('mobile.apps.resume'),
       image: '/document.png',
       onTap: () => window.open('/irene-medina-garcia-cv.pdf', '_blank')
     },
     {
       id: 'code',
-      name: 'VS Code',
+      name: t('mobile.apps.code'),
       image: '/Dock/vs.png',
       onTap: () => setShowCodeEditor(true)
     },
     {
       id: 'terminal',
-      name: 'Terminal',
+      name: t('mobile.apps.terminal'),
       image: '/Dock/terminal.png',
       onTap: () => setShowTerminal(true)
     },
     {
       id: 'calculator',
-      name: 'Calculadora',
+      name: t('mobile.apps.calculator'),
       image: '/Dock/calculadora.png',
       onTap: () => setShowCalculator(true)
     },
     {
       id: 'appstore',
-      name: 'App Store',
+      name: t('mobile.apps.appstore'),
       image: '/Dock/appstore.png',
       onTap: () => setShowAppStore(true)
     },
     {
       id: 'settings',
-      name: 'Ajustes',
+      name: t('mobile.apps.settings'),
       image: '/Dock/SystemPreferences.png',
       onTap: () => setShowSettings(true)
     },
     {
       id: 'maps',
-      name: 'Mapas',
+      name: t('mobile.apps.maps'),
       image: '/Dock/Maps.png',
       onTap: () => {
         const button = document.querySelector('[data-world-globe-trigger]') as HTMLButtonElement;
@@ -314,13 +314,13 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
     },
     {
       id: 'notes',
-      name: 'Notas',
+      name: t('mobile.apps.notes'),
       image: '/Dock/Notes.png',
       onTap: () => console.log('Notes app')
     },
     {
       id: 'calendar',
-      name: 'Calendario',
+      name: t('mobile.apps.calendar'),
       image: '/Dock/Calendar.png',
       onTap: () => {
         const trigger = document.querySelector('[data-calendar-trigger]') as HTMLElement
@@ -329,19 +329,19 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
     },
     {
       id: 'finder',
-      name: 'Finder',
+      name: t('mobile.apps.finder'),
       image: '/Dock/finder.png',
       onTap: () => console.log('Finder app')
     },
     {
       id: 'photos',
-      name: 'Fotos',
+      name: t('mobile.apps.photos'),
       image: '/Dock/Photos.png',
       onTap: () => setShowPhotosGallery(true)
     },
     {
       id: 'facetime',
-      name: 'FaceTime',
+      name: t('mobile.apps.facetime'),
       image: '/Dock/FaceTime.png',
       onTap: () => setShowFaceTime(true)
     }
@@ -389,7 +389,7 @@ export function MobileHomeScreen({ className }: MobileHomeScreenProps) {
             }}
             title="Abrir Panel de Control (Testing)"
           >
-            Panel
+            {t('mobile.status_bar.panel')}
           </button>
         </div>
         

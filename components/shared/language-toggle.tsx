@@ -6,7 +6,7 @@ import { Globe } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export function LanguageToggle() {
-  const { language, setLanguage } = useLanguage()
+  const { language, setLanguage, mounted } = useLanguage()
 
   return (
     <motion.div
@@ -18,10 +18,11 @@ export function LanguageToggle() {
         size="sm"
         onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
         className="relative overflow-hidden macos-button macos-glass macos-text-semibold"
+        disabled={!mounted}
       >
         <Globe className="h-4 w-4 mr-2" />
         <span>
-          {language.toUpperCase()}
+          {mounted ? language.toUpperCase() : 'ES'}
         </span>
       </Button>
     </motion.div>

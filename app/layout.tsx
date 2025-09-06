@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
 import { SpotifyProvider } from "@/contexts/spotify-context"
 import { SettingsProvider } from "@/contexts/settings-context"
+import { I18nProvider } from "@/components/i18n-provider"
 
 // Primary display font - Variable
 const inter = Inter({ 
@@ -106,13 +107,15 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} ${poppins.variable} ${spaceMono.variable} ${jetBrainsMono.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <SettingsProvider>
-            <LanguageProvider>
-              <SpotifyProvider>
-                {children}
-              </SpotifyProvider>
-            </LanguageProvider>
-          </SettingsProvider>
+          <I18nProvider>
+            <SettingsProvider>
+              <LanguageProvider>
+                <SpotifyProvider>
+                  {children}
+                </SpotifyProvider>
+              </LanguageProvider>
+            </SettingsProvider>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

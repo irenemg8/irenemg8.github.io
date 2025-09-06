@@ -1,0 +1,545 @@
+{
+  "common": {
+    "close": "Close",
+    "open": "Open",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "more": "More",
+    "less": "Less",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "portfolio": "Portfolio",
+    "contact": "Contact",
+    "resume": "Resume",
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills"
+  },
+  "hero": {
+    "greeting": "Madrid, Spain • {time} • Available for projects ✨",
+    "title": "Designer & Developer",
+    "subtitle": "who creates unforgettable {experiences}",
+    "experiences": "experiences",
+    "description": "Specialized in {uxui} and {frontend}. I transform ideas into digital products that connect, excite and inspire.",
+    "uxui": "UX/UI Design",
+    "frontend": "Frontend Development",
+    "cta_projects": "View my projects",
+    "cta_contact": "Let's talk",
+    "scroll_discover": "Discover more"
+  },
+  "about": {
+    "title": "About me",
+    "description": "I'm passionate about design and technology. I love creating digital experiences that not only work perfectly, but also excite and inspire.",
+    "timeline_title": "My Journey",
+    "skills_title": "Skills",
+    "facts_title": "Fun Facts",
+    "cta_description": "Like what you see? Let's talk about your next project!",
+    "cta_button": "Contact",
+    "education": "🎓 Education",
+    "hobbies": "🌟 Curiosities & Hobbies",
+    "achievements": "🏆 Achievements",
+    "upv": "Polytechnic University of Valencia (UPV)",
+    "upv_degree": "Interactive Technologies Degree",
+    "upv_years": "2022 - 2026",
+    "wut": "Warsaw University of Technology (WUT)",
+    "wut_program": "Erasmus+ BIP",
+    "wut_year": "2025",
+    "hobby_yoga": "I practice aerial yoga",
+    "hobby_travel": "I love traveling",
+    "hobby_beach": "The beach is my peaceful corner",
+    "hobby_racing": "Fan of car racing",
+    "achievement_awards": "🥇 Awards",
+    "achievement_awards_desc": "Finalist in several Hackathons",
+    "achievement_china": "🌍 UPV in China",
+    "achievement_china_desc": "Represented UPV in Guangzhou",
+    "achievement_agenda": "🎯 Agenda 2030",
+    "achievement_agenda_desc": "Gandía city candidacy with the URBANVIVE project",
+    "facts": [
+      "I consume 4+ coffees per day",
+      "I've been playing piano since I was 8",
+      "Urban photography enthusiast",
+      "I've visited 15 countries",
+      "I read 20+ books per year",
+      "Volunteer at animal shelter"
+    ],
+    "timeline": {
+      "2024": {
+        "year": "2024",
+        "date": "Present",
+        "title": "Senior UX/UI Designer & Frontend Developer",
+        "organization": "Freelance",
+        "location": "Madrid, Spain",
+        "description": "Specialized in creating unforgettable digital experiences. I design modern interfaces and develop high-performance frontend solutions."
+      },
+      "2023": {
+        "year": "2023",
+        "date": "Nov 2023",
+        "title": "UX/UI Design Certification",
+        "organization": "Google",
+        "location": "Online",
+        "description": "Professional certification in UX/UI design with focus on agile methodologies and design thinking."
+      },
+      "2022": {
+        "year": "2022",
+        "date": "Sep 2022",
+        "title": "Frontend Developer",
+        "organization": "TechCorp",
+        "location": "Barcelona, Spain",
+        "description": "Development of modern web applications with React and TypeScript. Implementation of design systems and performance optimization."
+      },
+      "2021": {
+        "year": "2021",
+        "date": "Jan 2021",
+        "title": "Hackathon Winner",
+        "organization": "Innovation Challenge",
+        "location": "Madrid, Spain",
+        "description": "First place in social innovation hackathon with an app to connect volunteers with local NGOs."
+      },
+      "2020": {
+        "year": "2020",
+        "date": "Jun 2020",
+        "title": "Computer Engineering Degree",
+        "organization": "Polytechnic University of Valencia",
+        "location": "Valencia, Spain",
+        "description": "Graduated with honors. Specialization in web development and user experience."
+      }
+    },
+    "skills_categories": {
+      "design": "Design",
+      "development": "Development",
+      "tools": "Tools"
+    }
+  },
+  "projects": {
+    "title": "My Projects",
+    "view_project": "View project",
+    "live_demo": "Live demo",
+    "github": "GitHub",
+    "tags": "Tags",
+    "tech_stack": "Tech Stack",
+    "date": "Date"
+  },
+  "settings": {
+    "title": "System Preferences",
+    "mobile_title": "Settings",
+    "profile_title": "Irene's Portfolio",
+    "profile_subtitle": "UX/UI Design · Frontend Dev",
+    "profile_role": "Scrum Master",
+    "categories": {
+      "general": "General",
+      "appearance": "Appearance",
+      "system": "System",
+      "connectivity": "Connectivity",
+      "privacy": "Privacy & Security",
+      "mouse": "Mouse",
+      "keyboard": "Keyboard",
+      "sound": "Sound",
+      "network": "Network",
+      "bluetooth": "Bluetooth",
+      "battery": "Battery",
+      "notifications": "Notifications",
+      "users": "Users"
+    },
+    "general": {
+      "device_model": "Irene's CherryBook Pro",
+      "model_full": "CherryBook Pro (15-inch, 2025)",
+      "processor": "Intel Core i9",
+      "memory": "1 TB",
+      "storage": "512 GB SSD",
+      "os": "Pu 8.6",
+      "serial": "PVCH1PU/02",
+      "dark_mode": "Dark Mode",
+      "dark_mode_desc": "Change system appearance",
+      "auto_login": "Automatic login",
+      "auto_login_desc": "Login without password on startup",
+      "basic_config": "Basic system configuration"
+    },
+    "mouse": {
+      "title": "Mouse",
+      "description": "Configure mouse and trackpad behavior",
+      "cursor_size": "Cursor size: {size}x",
+      "cursor_speed": "Pointer speed: {speed}",
+      "preview_title": "Cursor preview",
+      "size_small": "Small",
+      "size_large": "Large",
+      "speed_slow": "Slow",
+      "speed_normal": "Normal",
+      "speed_fast": "Fast"
+    },
+    "sound": {
+      "title": "Sound",
+      "description": "Control volume and audio devices",
+      "main_volume": "Main volume: {volume}%",
+      "silence": "Silence",
+      "maximum": "Maximum",
+      "output_devices": "Output devices",
+      "input_devices": "Input devices",
+      "internal_speakers": "Internal speakers",
+      "headphones": "Headphones",
+      "internal_mic": "Internal microphone",
+      "external_mic": "External microphone"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage how and when you receive notifications",
+      "allow": "Allow notifications",
+      "allow_desc": "Receive alerts and banners",
+      "lock_screen": "Show on lock screen",
+      "show_banners": "Show banners",
+      "play_sounds": "Play sounds"
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "description": "Your privacy is our priority",
+      "commitment_title": "Privacy Commitment",
+      "no_data_collection": "We don't collect personal data: This portfolio does not collect, store, or transmit any kind of personal information from users.",
+      "local_processing": "Camera and local processing: Even if you use camera functions, all images are processed locally on your device. No photos are saved, sent or stored on any server.",
+      "real_time_demos": "Real-time demonstrations: Object detection and image processing functions are mere technical demonstrations that work entirely in your browser.",
+      "no_tracking": "No tracking cookies: We don't use tracking cookies or analytics that compromise your privacy.",
+      "app_permissions": "App permissions",
+      "camera_permission": "Camera",
+      "camera_apps": "FaceTime, Facial recognition",
+      "camera_status": "Demo only",
+      "mic_permission": "Microphone",
+      "mic_apps": "Audio applications",
+      "mic_status": "Not recorded",
+      "storage_permission": "Local storage",
+      "storage_desc": "User settings only",
+      "storage_status": "Preferences only"
+    },
+    "connectivity": {
+      "wifi": "Wi-Fi",
+      "wifi_connected": "Home - Connected",
+      "wifi_disconnected": "Disconnected",
+      "bluetooth": "Bluetooth",
+      "bluetooth_connected": "AirPods - Connected",
+      "bluetooth_disconnected": "Disconnected"
+    },
+    "system_info": {
+      "battery": "Battery",
+      "battery_status": "{level}% - Charging",
+      "storage": "Storage",
+      "storage_available": "128 GB available",
+      "updates": "Updates",
+      "updates_auto": "Automatic",
+      "updates_manual": "Manual"
+    },
+    "brightness": "Brightness",
+    "volume": "Volume",
+    "language": "Language",
+    "coming_soon": "Coming soon",
+    "coming_soon_desc": "This section will be available soon"
+  },
+  "mobile": {
+    "dock": {
+      "projects": "Projects",
+      "about": "About",
+      "photos": "Photos",
+      "settings": "Settings"
+    },
+    "home": {
+      "welcome": "Welcome",
+      "time_greeting": "Good morning",
+      "recent_projects": "Recent projects"
+    }
+  },
+  "desktop": {
+    "welcome": "welcome to my",
+    "portfolio": "portfolio.",
+    "name": "Irene MG's Portfolio",
+    "reset": "Reset desktop",
+    "trash": "Trash",
+    "folders": {
+      "projects": "Projects",
+      "about": "About me",
+      "work": "Work",
+      "photos": "Photos",
+      "music": "Music"
+    }
+  },
+  "windows": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "close": "Close",
+    "code_editor": "Code Editor",
+    "terminal": "Terminal",
+    "calculator": "Calculator",
+    "messages": "Messages",
+    "facetime": "FaceTime",
+    "spotify": "Spotify",
+    "photos": "Photos",
+    "app_store": "App Store"
+  },
+  "footer": {
+    "made_with": "Made with",
+    "by": "by Irene MG",
+    "version": "Portfolio v2.1.0 - Built with Next.js and Tailwind CSS",
+    "copyright": "© 2024 Irene Medina García"
+  },
+  "contact": {
+    "title": "Let's talk",
+    "subtitle": "Have a project in mind?",
+    "lets_talk": "Let's chat"
+  },
+  "time": {
+    "available": "Available for projects",
+    "madrid": "Madrid, Spain"
+  },
+  "errors": {
+    "loading_video": "🎬 Loading car video...",
+    "github_pages_video": "If it doesn't play, GitHub Pages may have restrictions with video files.",
+    "image_load_error": "Error loading image"
+  },
+  "polaroids": {
+    "pierogi": "My first pierogi 🥟",
+    "warriors": "Xian Warriors 🏺",
+    "guangzhou": "Guangzhou 🏯",
+    "speed": "Full speed ahead 🏎️",
+    "beach": "Gandía Beach 🏖️"
+  },
+  "desktop": {
+    "welcome": "welcome to my",
+    "portfolio": "portfolio."
+  },
+  "messages": {
+    "title": "Messages",
+    "close": "Close",
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "edit": "Edit",
+    "search_placeholder": "Search",
+    "online": "Online",
+    "now": "now",
+    "yesterday": "yesterday",
+    "am": "a.m.",
+    "pm": "p.m.",
+    "type_message": "iMessage",
+    "select_conversation": "Select a conversation",
+    "choose_chat": "Choose a chat from the list to start chatting",
+    "conversations": {
+      "guillermo": {
+        "name": "Guillermo Castillo",
+        "messages": {
+          "1": "Hi! I heard you love cooking 🍝",
+          "2": "Yes, I love it! Especially Mediterranean cuisine",
+          "3": "What's your favorite dish?",
+          "4": "Definitely croquetas. It's simple but requires perfect technique",
+          "5": "Excellent choice! The secret is in the béchamel. The other day I made a meat pie, I'll send you photos",
+          "6": "Attachment: 3 photos",
+          "7": "What do you think?"
+        }
+      },
+      "yolanda": {
+        "name": "Yolanda",
+        "messages": {
+          "1": "Hey! Are you still practicing aerial yoga?",
+          "2": "Yes! It's my favorite activity, it helps me with flexibility and strength",
+          "3": "How long have you been practicing?",
+          "4": "I've been doing it for 5 years and I still love the feeling of floating in the air",
+          "5": "🌈😊 I love seeing you so motivated! Aerial yoga must be incredible"
+        }
+      },
+      "animation_team": {
+        "name": "Animation Team",
+        "messages": {
+          "christine_1": "Irene, have you been working with Blender lately?",
+          "me_1": "Yes! I'm modeling characters for a fish video game",
+          "chad_1": "I just finished rendering my characters for the Sushi Car. What do you think? 🍣🚗",
+          "me_2": "It looks incredible! I love the cartoon style you gave it",
+          "christine_2": "Want us to review all the renders together next time to decide the final style?"
+        }
+      }
+    },
+    "ai_responses": {
+      "cooking": [
+        "How interesting! Cooking is a wonderful art 🍳",
+        "I'd love to try your dishes someday",
+        "Have you tried any new recipes lately?",
+        "Fresh homemade pasta is the best, right?",
+        "Sounds delicious! What's your secret?"
+      ],
+      "yoga": [
+        "Aerial yoga must be a liberating experience 🧘‍♀️",
+        "What's your favorite pose?",
+        "The flexibility and strength that yoga gives is incredible",
+        "How did you start with aerial yoga?",
+        "Namaste 🙏 Balance is key in life"
+      ],
+      "3d": [
+        "Blender is a powerful tool! 🎨",
+        "What type of characters do you like to model?",
+        "3D modeling requires a lot of patience and creativity",
+        "Have you tried animation too?",
+        "The renders must look impressive"
+      ],
+      "figma": [
+        "Figma is great for collaborative design 🎯",
+        "What's been your favorite project in Figma?",
+        "Logo design requires a lot of creativity",
+        "Do you prefer minimalism or complex designs?",
+        "Visual identity is crucial for any brand"
+      ],
+      "travel": [
+        "Traveling is the best investment! ✈️",
+        "What place is on your wishlist?",
+        "Every trip is a new adventure",
+        "Do you prefer beach or mountains?",
+        "Travel changes our perspective on life"
+      ],
+      "food": [
+        "Food is life! 🍽️",
+        "What's your favorite restaurant?",
+        "Trying new flavors is an adventure",
+        "Do you cook at home or prefer going out?",
+        "Gastronomy unites cultures"
+      ],
+      "tech": [
+        "Technology advances so fast 💻",
+        "What framework do you prefer for your projects?",
+        "Web development is exciting",
+        "Have you tried any new technology lately?",
+        "Programming is pure creativity"
+      ],
+      "photography": [
+        "Photography captures unique moments 📸",
+        "Do you prefer natural or artificial light?",
+        "Every photo tells a story",
+        "What's your favorite place to photograph?",
+        "Composition is key in a good photo"
+      ],
+      "music": [
+        "Music is the universal language 🎵",
+        "What's your current favorite song?",
+        "Playing an instrument is very therapeutic",
+        "Have you been to any concerts lately?",
+        "Music connects us with our emotions"
+      ]
+    }
+  },
+  "terminal": {
+    "title": "Terminal",
+    "welcome": "Welcome to Terminal! Type \"help\" for available commands.",
+    "desktop_content": "📂 Current Desktop content:",
+    "last_login": "Last login:",
+    "help_title": "Available commands:",
+    "help_commands": {
+      "ls": "ls [path]      - List files and directories with icons",
+      "cd": "cd [path]      - Change directory and show content",
+      "pwd": "pwd            - Show current directory",
+      "cat": "cat [file]     - Show file content",
+      "echo": "echo [text]    - Display text",
+      "whoami": "whoami         - Show current user",
+      "date": "date           - Show date and time",
+      "history": "history        - Show command history",
+      "clear": "clear          - Clear terminal",
+      "exit": "exit           - Close terminal"
+    },
+    "help_tip": "🎯 Tip: Directories are shown with 📁 and files with specific icons",
+    "help_navigate": "📂 Navigate through projects, photos and documents with cd [folder]",
+    "directory_content": "📂 Content of {path}:",
+    "empty_directory": "📂 Empty directory: {path}",
+    "no_such_file": "No such file or directory",
+    "is_directory": "Is a directory",
+    "missing_operand": "missing operand",
+    "missing_file_operand": "missing file operand",
+    "command_not_found": "command not found. Type 'help' for available commands.",
+    "created_directory": "created directory",
+    "created_file": "created file",
+    "removed": "removed",
+    "portfolio_content": "My web portfolio - irenemg8.github.io\\nDeveloped with Next.js and React\\nThanks for visiting!",
+    "readme_content": "# Web Portfolio\\n\\nPersonal portfolio developed with Next.js, React and TypeScript\\n\\n## Features:\\n- macOS design\\n- Interactive terminal\\n- Code editor\\n- Spotify player",
+    "cv_content": "Curriculum Vitae - Irene Medina García\\nFull Stack Developer\\nAI and Machine Learning Specialist",
+    "notes_content": "Portfolio ideas:\\n- Add more animations\\n- Improve responsiveness\\n- Add dark/light mode\\n- Integrate more APIs"
+  },
+  "mobile": {
+    "dock": {
+      "messages": "Messages",
+      "safari": "Safari",
+      "spotify": "Spotify",
+      "mail": "Mail"
+    },
+    "apps": {
+      "projects": "Projects",
+      "work_experience": "Experience",
+      "about_me": "About Me",
+      "artworks": "Art",
+      "ge": "GE",
+      "hackathons": "Hackathons",
+      "press": "Press",
+      "world_map": "World",
+      "resume": "Resume",
+      "code": "VS Code",
+      "terminal": "Terminal",
+      "calculator": "Calculator",
+      "appstore": "App Store",
+      "settings": "Settings",
+      "maps": "Maps",
+      "notes": "Notes",
+      "calendar": "Calendar",
+      "finder": "Finder",
+      "photos": "Photos",
+      "facetime": "FaceTime"
+    },
+    "about": {
+      "title": "About Me",
+      "who_am_i": "Who am I?",
+      "description": "Learn more about my education, interests and achievements",
+      "tap_for_details": "Tap for details",
+      "personal_gallery": "📸 Personal Gallery",
+      "video": "Video",
+      "close": "Close",
+      "video_not_available": "Video not available",
+      "education": "Education",
+      "hobbies": "Hobbies & Fun Facts",
+      "achievements": "Achievements"
+    },
+    "status_bar": {
+      "panel": "Panel"
+    }
+  },
+  "education": {
+    "upv": "Universidad Politécnica de Valencia (UPV)",
+    "program_upv": "Interactive Technologies",
+    "period_upv": "2022 - 2026",
+    "wut": "Warsaw University of Technology (WUT)",
+    "program_wut": "Erasmus+ BIP",
+    "period_wut": "2025"
+  },
+  "hobbies": {
+    "yoga": "I practice aerial yoga",
+    "travel": "I love traveling",
+    "beach": "The beach is my peaceful corner",
+    "cars": "Racing car fan"
+  },
+  "achievements": {
+    "awards": "🥇 Awards",
+    "hackathons": "Hackathon finalist",
+    "china": "🌍 UPV in China",
+    "guangzhou": "Represented UPV in Guangzhou",
+    "agenda2030": "🎯 Agenda 2030",
+    "urbanvive": "Candidacy of Gandía city with URBANVIVE project"
+  },
+  "sections": {
+    "projects": {
+      "title": "Projects",
+      "description": "A collection of my recent work spanning web applications, 3D experiences, and design."
+    },
+    "artworks": {
+      "title": "Digital Art",
+      "description": "Explore my digital art collection. From 3D models to illustrations, each piece reflects my passion for design and digital creativity."
+    },
+    "press": {
+      "title": "Press",
+      "description": "Featured articles, interviews, and media coverage highlighting my work and expertise."
+    }
+  }
+}

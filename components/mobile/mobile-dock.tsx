@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { MobileApp } from './mobile-app'
+import { useLanguage } from '@/contexts/language-context'
 
 interface DockAppProps {
     onShowMessages: () => void
@@ -10,28 +11,30 @@ interface DockAppProps {
   }
 
 export function MobileDock({ onShowMessages, onShowGitHubBrowser, onShowSpotify }: DockAppProps) {
+  const { t } = useLanguage()
+  
   const dockApps = [
     {
       id: 'messages',
-      name: 'Mensajes',
+      name: t('mobile.dock.messages'),
       image: '/Dock/Messages.png',
       onTap: onShowMessages
     },
     {
       id: 'safari',
-      name: 'Safari',
+      name: t('mobile.dock.safari'),
       image: '/Dock/Safari.png',
       onTap: onShowGitHubBrowser
     },
     {
       id: 'spotify',
-      name: 'Spotify',
+      name: t('mobile.dock.spotify'),
       image: '/Dock/spotify.png',
       onTap: onShowSpotify
     },
     {
       id: 'mail',
-      name: 'Mail',
+      name: t('mobile.dock.mail'),
       image: '/Dock/Mail.png',
       onTap: () => {
         window.location.href = 'mailto:irenebati4@gmail.com'

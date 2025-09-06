@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { X, Minus, Square } from 'lucide-react'
+import { useLanguage } from '@/contexts/language-context'
 
 interface TerminalWindowProps {
   isOpen: boolean
@@ -18,10 +19,12 @@ interface FileSystemNode {
 }
 
 export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
+  const { t } = useLanguage()
+  
   const [history, setHistory] = useState<string[]>([
-    'Last login: ' + new Date().toLocaleString() + ' on console',
-    'Welcome to Terminal! Type "help" for available commands.',
-    '📂 Contenido actual del Desktop:',
+    t('terminal.last_login') + ' ' + new Date().toLocaleString() + ' on console',
+    t('terminal.welcome'),
+    t('terminal.desktop_content'),
     '📁 proyectos    📁 fotos    📁 documentos    📄 portfolio.txt',
     ''
   ])
@@ -52,7 +55,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
                   'portfolio.txt': {
                     name: 'portfolio.txt',
                     type: 'file',
-                    content: 'Mi portfolio web - irenemg8.github.io\nDesarrollado con Next.js y React\n¡Gracias por visitarlo!',
+                    content: t('terminal.portfolio_content'),
                     size: 89
                   },
                   'proyectos': {
@@ -66,7 +69,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
                           'README.md': {
                             name: 'README.md',
                             type: 'file',
-                            content: '# Portfolio Web\n\nPortfolio personal desarrollado con Next.js, React y TypeScript\n\n## Características:\n- Diseño macOS\n- Terminal interactiva\n- Editor de código\n- Reproductor Spotify',
+                            content: t('terminal.readme_content'),
                             size: 180
                           },
                           'package.json': {
@@ -119,13 +122,13 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
                       'cv-irene-medina.pdf': {
                         name: 'cv-irene-medina.pdf',
                         type: 'file',
-                        content: 'Curriculum Vitae - Irene Medina García\nDesarrolladora Full Stack\nEspecialista en IA y Machine Learning',
+                        content: t('terminal.cv_content'),
                         size: 1024
                       },
                       'notas.txt': {
                         name: 'notas.txt',
                         type: 'file',
-                        content: 'Ideas para el portfolio:\n- Agregar más animaciones\n- Mejorar la responsividad\n- Añadir modo oscuro/claro\n- Integrar más APIs',
+                        content: t('terminal.notes_content'),
                         size: 142
                       }
                     }
@@ -186,20 +189,20 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
 
     switch (cmd) {
       case 'help':
-        output = `Comandos disponibles:
-  ls [path]      - Listar archivos y directorios con iconos
-  cd [path]      - Cambiar directorio y mostrar contenido
-  pwd            - Mostrar directorio actual
-  cat [file]     - Mostrar contenido de archivo
-  echo [text]    - Mostrar texto
-  whoami         - Mostrar usuario actual
-  date           - Mostrar fecha y hora
-  history        - Mostrar historial de comandos
-  clear          - Limpiar terminal
-  exit           - Cerrar terminal
+        output = `${t('terminal.help_title')}
+  ${t('terminal.help_commands.ls')}
+  ${t('terminal.help_commands.cd')}
+  ${t('terminal.help_commands.pwd')}
+  ${t('terminal.help_commands.cat')}
+  ${t('terminal.help_commands.echo')}
+  ${t('terminal.help_commands.whoami')}
+  ${t('terminal.help_commands.date')}
+  ${t('terminal.help_commands.history')}
+  ${t('terminal.help_commands.clear')}
+  ${t('terminal.help_commands.exit')}
   
-🎯 Tip: Los directorios se muestran con 📁 y los archivos con iconos específicos
-📂 Navega por proyectos, fotos y documentos con cd [carpeta]`
+${t('terminal.help_tip')}
+${t('terminal.help_navigate')}`
         break
 
       case 'ls':
@@ -212,7 +215,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
           if (targetDir.children && targetDir.children[part]) {
             targetDir = targetDir.children[part]
           } else {
-            output = `ls: ${targetPath}: No such file or directory`
+            output = `ls: ${targetPath}: ${t('terminal.no_such_file')}`
             break
           }
         }
@@ -304,13 +307,13 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
             output = `📂 Directorio vacío: ${resolvedNewPath || '/'}`
           }
         } else {
-          output = `cd: ${newPath}: No such file or directory`
+            output = `cd: ${newPath}: ${t('terminal.no_such_file')}`
         }
         break
 
       case 'cat':
         if (params.length === 0) {
-          output = 'cat: missing file operand'
+          output = `cat: ${t('terminal.missing_file_operand')}`
         } else {
           const fileName = params[0]
           const currentDir = getCurrentDirectory()
@@ -319,10 +322,10 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
             if (file.type === 'file') {
               output = file.content || ''
             } else {
-              output = `cat: ${fileName}: Is a directory`
+              output = `cat: ${fileName}: ${t('terminal.is_directory')}`
             }
           } else {
-            output = `cat: ${fileName}: No such file or directory`
+            output = `cat: ${fileName}: ${t('terminal.no_such_file')}`
           }
         }
         break
@@ -384,7 +387,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
         return
 
       default:
-        output = `${cmd}: command not found. Type 'help' for available commands.`
+        output = `${cmd}: ${t('terminal.command_not_found')}`
     }
 
     // Añadir comando y output al historial
@@ -487,7 +490,7 @@ export function TerminalWindow({ isOpen, onClose }: TerminalWindowProps) {
               <div className="w-3 h-3 bg-yellow-400 hover:bg-yellow-500 rounded-full shadow-sm transition-colors" />
               <div className="w-3 h-3 bg-green-400 hover:bg-green-500 rounded-full shadow-sm transition-colors" />
             </div>
-            <span className="text-gray-300 text-sm font-medium">Terminal</span>
+            <span className="text-gray-300 text-sm font-medium">{t('terminal.title')}</span>
           </div>
         </div>
 

@@ -5,13 +5,15 @@ import { motion } from "framer-motion"
 import { ProjectCard } from "@/components/shared/project-card"
 import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
+import { useLanguage } from '@/contexts/language-context'
 
 interface ProjectsSectionProps {
   openModal: (type: "project", content: any) => void
   title?: string
 }
 
-export function ProjectsSection({ openModal, title = "Projects" }: ProjectsSectionProps) {
+export function ProjectsSection({ openModal, title }: ProjectsSectionProps) {
+  const { t } = useLanguage()
   const projectsData = [
     {
       id: 1,
@@ -406,9 +408,9 @@ demoUrl: "/under-construction"
         transition={{ duration: 0.5 }}
         className="mb-12 text-center"
       >
-        <h2 className="text-3xl font-bold mb-4 font-pecita">{title}</h2>
+        <h2 className="text-3xl font-bold mb-4 font-pecita">{title || t('sections.projects.title')}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          A collection of my recent work spanning web applications, 3D experiences, and design.
+          {t('sections.projects.description')}
         </p>
       </motion.div>
 

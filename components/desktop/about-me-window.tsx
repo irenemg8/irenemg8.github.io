@@ -3,6 +3,7 @@
 import { motion, PanInfo } from 'framer-motion'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
+import { useLanguage } from '@/contexts/language-context'
 
 interface AboutMeWindowProps {
   isOpen: boolean
@@ -429,9 +430,8 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
               <source src={src.replace('.mp4', '.webm')} type="video/webm" />
               <div className="flex items-center justify-center h-full">
                 <p className="text-gray-500 text-xs p-4 text-center">
-                  🎬 Cargando video de coches...<br/>
-                  Si no se reproduce, es posible que GitHub Pages<br/>
-                  tenga restricciones con archivos de video.
+                  {t('errors.loading_video')}<br/>
+                  {t('errors.github_pages_video')}
                 </p>
               </div>
             </video>
@@ -456,6 +456,7 @@ function AboutVideoPolaroidPhoto({ src, alt, title, initialPosition, onClose }: 
 }
 
 export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
+  const { t } = useLanguage()
   const [showStickyNotes, setShowStickyNotes] = useState(false)
   const [showPolaroids, setShowPolaroids] = useState(false)
   
@@ -504,7 +505,7 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
             {/* Educación Combinada */}
             {showEducationNote && (
               <AboutStickyNote
-                title="🎓 Educación"
+                title={t('about.education')}
                 initialPosition={{ x: 100, y: 100 }}
                 color="#FEF3C7"
                 onClose={() => setShowEducationNote(false)}
@@ -519,9 +520,9 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                       className="object-contain"
                     />
                     <div>
-                      <p className="font-semibold text-gray-800">Universidad Politécnica de Valencia (UPV)</p>
-                      <p className="text-gray-700">G. Tecnologías Interactivas</p>
-                      <p className="text-gray-600 text-xs">2022 - 2026</p>
+                      <p className="font-semibold text-gray-800">{t('about.upv')}</p>
+                      <p className="text-gray-700">{t('about.upv_degree')}</p>
+                      <p className="text-gray-600 text-xs">{t('about.upv_years')}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3 pt-2 border-t border-yellow-300/30">
@@ -533,9 +534,9 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                       className="object-contain"
                     />
                     <div>
-                      <p className="font-semibold text-gray-800">Warsaw University of Technology (WUT)</p>
-                      <p className="text-gray-700">Erasmus+ BIP</p>
-                      <p className="text-gray-600 text-xs">2025</p>
+                      <p className="font-semibold text-gray-800">{t('about.wut')}</p>
+                      <p className="text-gray-700">{t('about.wut_program')}</p>
+                      <p className="text-gray-600 text-xs">{t('about.wut_year')}</p>
                     </div>
                   </div>
                 </div>
@@ -546,7 +547,7 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
             {/* Curiosidades y Hobbies */}
             {showHobbiesNote && (
               <AboutStickyNote
-                title="🌟 Curiosidades & Hobbies"
+                title={t('about.hobbies')}
                 initialPosition={{ x: 200, y: 350 }}
                 color="#FEF3C7"
                 onClose={() => setShowHobbiesNote(false)}
@@ -554,19 +555,19 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <span>🧘‍♀️</span>
-                    <span className="text-gray-800">Practico yoga aéreo</span>
+                    <span className="text-gray-800">{t('about.hobby_yoga')}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span>🌍</span>
-                    <span className="text-gray-800">Me encanta viajar</span>
+                    <span className="text-gray-800">{t('about.hobby_travel')}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span>🏖️</span>
-                    <span className="text-gray-800">La playa es mi rincón de paz</span>
+                    <span className="text-gray-800">{t('about.hobby_beach')}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span>🏎️</span>
-                    <span className="text-gray-800">Fan de las carreras de coches</span>
+                    <span className="text-gray-800">{t('about.hobby_racing')}</span>
                   </div>
                 </div>
               }
@@ -576,23 +577,23 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
             {/* URBANVIVE logros */}
             {showAchievementsNote && (
               <AboutStickyNote
-                title="🏆 Logros"
+                title={t('about.achievements')}
                 initialPosition={{ x: 500, y: 300 }}
                 color="#FEF3C7"
                 onClose={() => setShowAchievementsNote(false)}
                 content={
                 <div className="space-y-2">
                   <div>
-                    <p className="font-semibold text-gray-800">🥇 Premios</p>
-                    <p className="text-gray-700">Finalista de varios Hackathones</p>
+                    <p className="font-semibold text-gray-800">{t('about.achievement_awards')}</p>
+                    <p className="text-gray-700">{t('about.achievement_awards_desc')}</p>
                   </div>
                   <div className="mt-3">
-                    <p className="font-semibold text-gray-800">🌍 UPV en China</p>
-                    <p className="text-gray-700">Representé a la UPV en Guangzhou</p>
+                    <p className="font-semibold text-gray-800">{t('about.achievement_china')}</p>
+                    <p className="text-gray-700">{t('about.achievement_china_desc')}</p>
                   </div>
                   <div className="mt-3">
-                    <p className="font-semibold text-gray-800">🎯 Agenda 2030</p>
-                    <p className="text-gray-700">Candidatura de la ciudad de Gandía con el proyecto URBANVIVE</p>
+                    <p className="font-semibold text-gray-800">{t('about.achievement_agenda')}</p>
+                    <p className="text-gray-700">{t('about.achievement_agenda_desc')}</p>
                   </div>
                 </div>
               }
@@ -607,35 +608,35 @@ export function AboutMeWindow({ isOpen, onClose }: AboutMeWindowProps) {
             <AboutPolaroidPhoto
               src="/pics/IMG_8457.jpg"
               alt="Mi primer pierogi en Varsovia"
-              title="Mi primer pierogi 🥟"
+              title={t('polaroids.pierogi')}
               initialPosition={{ x: 150, y: 200 }}
             />
 
             <AboutPolaroidPhoto
               src="/pics/IMG_4488.JPEG"
               alt="Guerreros de terracota"
-              title="Guerreros de Xian 🏺"
+              title={t('polaroids.warriors')}
               initialPosition={{ x: 450, y: 120 }}
             />
 
             <AboutPolaroidPhoto
               src="/pics/IMG_8294.jpg"
               alt="Templo chino en Guangzhou"
-              title="Guangzhou 🏯"
+              title={t('polaroids.guangzhou')}
               initialPosition={{ x: 350, y: 400 }}
             />
 
             <AboutVideoPolaroidPhoto
               src="/pics/coches.mp4"
               alt="Coches en movimiento"
-              title="Velocidad a tope 🏎️"
+              title={t('polaroids.speed')}
               initialPosition={{ x: 600, y: 250 }}
             />
 
             <AboutPolaroidPhoto
               src="/pics/IMG_7508.JPEG"
               alt="Playa de Gandía"
-              title="Playa de Gandía 🏖️"
+              title={t('polaroids.beach')}
               initialPosition={{ x: 750, y: 350 }}
             />
           </>

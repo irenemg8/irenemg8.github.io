@@ -2,13 +2,15 @@
 
 import { motion } from "framer-motion"
 import Masonry from "@/components/shared/Masonry"
+import { useLanguage } from '@/contexts/language-context'
 
 interface ArtworksSectionProps {
   openModal?: (type: "artwork", content: any) => void
   title?: string
 }
 
-export function ArtworksSection({ title = "Arte Digital" }: ArtworksSectionProps) {
+export function ArtworksSection({ title }: ArtworksSectionProps) {
+  const { t } = useLanguage()
   // Artworks items para masonry - proporciones naturales sin recorte
   const artworkItems = [
     {
@@ -83,11 +85,10 @@ export function ArtworksSection({ title = "Arte Digital" }: ArtworksSectionProps
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 font-pecita bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
-            {title}
+            {title || t('sections.artworks.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Explora mi colección de arte digital. Desde modelos 3D hasta ilustraciones, 
-            cada obra refleja mi pasión por el diseño y la creatividad digital.
+            {t('sections.artworks.description')}
           </p>
         </motion.div>
 
