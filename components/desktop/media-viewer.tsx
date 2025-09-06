@@ -174,8 +174,40 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
               controls 
               className="w-full h-full object-contain bg-black rounded-b-lg"
               src={file.url}
+              preload="metadata"
+              onError={(e) => {
+                console.error('Error cargando video:', file.url, e);
+                // Mostrar mensaje de error más específico
+                const video = e.target as HTMLVideoElement;
+                if (video) {
+                  video.style.display = 'none';
+                  const errorDiv = document.createElement('div');
+                  errorDiv.className = 'flex flex-col items-center justify-center h-full text-white bg-gray-800 rounded-b-lg p-4';
+                  errorDiv.innerHTML = `
+                    <div class="text-center">
+                      <p class="text-lg mb-2">⚠️ Error al cargar el video</p>
+                      <p class="text-sm text-gray-300 mb-4">El archivo puede ser demasiado grande o no estar disponible</p>
+                      <a href="${file.url}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">
+                        Intentar abrir en nueva pestaña
+                      </a>
+                    </div>
+                  `;
+                  video.parentNode?.appendChild(errorDiv);
+                }
+              }}
             >
-              Tu navegador no soporta el elemento de video.
+              <div className="flex flex-col items-center justify-center h-full text-white bg-gray-800 rounded-b-lg p-4">
+                <p className="text-lg mb-2">⚠️ Video no disponible</p>
+                <p className="text-sm text-gray-300 mb-4">Tu navegador no soporta este formato de video</p>
+                <a 
+                  href={file.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  Abrir video en nueva pestaña
+                </a>
+              </div>
             </video>
           </div>
         )

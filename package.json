@@ -10,7 +10,8 @@
     "translate:scan": "node scripts/translate-automation.js",
     "translate:update": "node scripts/update-components.js",
     "translate:setup": "node scripts/setup-translation.js",
-    "translate:all": "npm run translate:scan && npm run translate:update"
+    "translate:all": "npm run translate:scan && npm run translate:update",
+    "compress:video": "node scripts/compress-video.js"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
