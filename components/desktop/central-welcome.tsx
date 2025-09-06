@@ -4,7 +4,21 @@ import { motion } from 'framer-motion'
 import { useLanguage } from '@/contexts/language-context'
 
 export function CentralWelcome() {
-  const { t } = useLanguage()
+  const { t, mounted } = useLanguage()
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="text-center z-0 pointer-events-none">
+        <h1 className="text-4xl md:text-6xl lg:text-6xl xl:text-7xl font-pecita text-gray-800 dark:text-gray-200 mb-2 opacity-0">
+          {/* Placeholder to maintain layout */}
+        </h1>
+        <h1 className="text-5xl md:text-7xl lg:text-7xl xl:text-8xl font-pecita text-gray-900 dark:text-gray-100 italic opacity-0">
+          {/* Placeholder to maintain layout */}
+        </h1>
+      </div>
+    )
+  }
 
   return (
     <motion.div

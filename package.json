@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "translate:scan": "node scripts/translate-automation.js",
+    "translate:update": "node scripts/update-components.js",
+    "translate:setup": "node scripts/setup-translation.js",
+    "translate:all": "npm run translate:scan && npm run translate:update"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
