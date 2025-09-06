@@ -261,14 +261,15 @@ function SmartVideo({ file }: { file: MediaFile }) {
         sources.push('/hackathon/aura/Aura-Demo-compressed.mp4')
         sources.push('/hackathon/aura/Aura-Demo.mp4')
       }
-    } else if (originalUrl.includes('Aura-Demo')) {
+    }
+    {/* else if (originalUrl.includes('Aura-Demo')) {
       // Lógica original para archivos locales
       if (originalUrl.includes('compressed')) {
         sources.push(originalUrl.replace('-compressed', ''))
       } else {
         sources.unshift(originalUrl.replace('.mp4', '-compressed.mp4'))
       }
-    }
+    }*/}
     
     return sources
   }
@@ -316,7 +317,7 @@ function SmartVideo({ file }: { file: MediaFile }) {
                 rel="noopener noreferrer"
                 className="block text-blue-400 hover:text-blue-300 underline text-sm"
               >
-                Intentar versión {index + 1}
+                Abrir en Drive
               </a>
             ))}
           </div>
