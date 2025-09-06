@@ -168,49 +168,7 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
         )
       
       case 'video':
-        return (
-          <div className="w-full h-full">
-            <video 
-              controls 
-              className="w-full h-full object-contain bg-black rounded-b-lg"
-              src={file.url}
-              preload="metadata"
-              onError={(e) => {
-                console.error('Error cargando video:', file.url, e);
-                // Mostrar mensaje de error más específico
-                const video = e.target as HTMLVideoElement;
-                if (video) {
-                  video.style.display = 'none';
-                  const errorDiv = document.createElement('div');
-                  errorDiv.className = 'flex flex-col items-center justify-center h-full text-white bg-gray-800 rounded-b-lg p-4';
-                  errorDiv.innerHTML = `
-                    <div class="text-center">
-                      <p class="text-lg mb-2">⚠️ Error al cargar el video</p>
-                      <p class="text-sm text-gray-300 mb-4">El archivo puede ser demasiado grande o no estar disponible</p>
-                      <a href="${file.url}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">
-                        Intentar abrir en nueva pestaña
-                      </a>
-                    </div>
-                  `;
-                  video.parentNode?.appendChild(errorDiv);
-                }
-              }}
-            >
-              <div className="flex flex-col items-center justify-center h-full text-white bg-gray-800 rounded-b-lg p-4">
-                <p className="text-lg mb-2">⚠️ Video no disponible</p>
-                <p className="text-sm text-gray-300 mb-4">Tu navegador no soporta este formato de video</p>
-                <a 
-                  href={file.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline"
-                >
-                  Abrir video en nueva pestaña
-                </a>
-              </div>
-            </video>
-          </div>
-        )
+        return <SmartVideo file={file} />
       
       case 'audio':
         return <AudioPlayerComponent file={file} />
@@ -281,6 +239,109 @@ export function MediaViewer({ project, onClose }: MediaViewerProps) {
           </MediaItem>
         ))}
       </AnimatePresence>
+    </div>
+  )
+}
+
+// Componente de video inteligente con fallbacks
+function SmartVideo({ file }: { file: MediaFile }) {
+  const [currentSrc, setCurrentSrc] = useState(file.url)
+  const [hasError, setHasError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  
+  // Lista de posibles URLs para el video
+  const getVideoSources = (originalUrl: string) => {
+    const sources = [originalUrl]
+    
+    // Si es el video de Aura, agregar versiones alternativas
+    if (originalUrl.includes('Aura-Demo')) {
+      if (originalUrl.includes('compressed')) {
+        // Si ya es comprimido, probar también el original como fallback
+        sources.push(originalUrl.replace('-compressed', ''))
+      } else {
+        // Si es el original, probar primero el comprimido
+        sources.unshift(originalUrl.replace('.mp4', '-compressed.mp4'))
+      }
+    }
+    
+    return sources
+  }
+  
+  const videoSources = getVideoSources(file.url)
+  const [currentSourceIndex, setCurrentSourceIndex] = useState(0)
+  
+  const handleVideoError = () => {
+    console.error('Error cargando video:', currentSrc)
+    
+    // Intentar con la siguiente fuente
+    const nextIndex = currentSourceIndex + 1
+    if (nextIndex < videoSources.length) {
+      console.log(`Intentando fuente alternativa: ${videoSources[nextIndex]}`)
+      setCurrentSourceIndex(nextIndex)
+      setCurrentSrc(videoSources[nextIndex])
+      setIsLoading(true)
+    } else {
+      // No hay más fuentes, mostrar error
+      setHasError(true)
+      setIsLoading(false)
+    }
+  }
+  
+  const handleVideoLoad = () => {
+    console.log('✅ Video cargado exitosamente:', currentSrc)
+    setIsLoading(false)
+    setHasError(false)
+  }
+  
+  if (hasError) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center text-white bg-gray-800 rounded-b-lg p-4">
+        <div className="text-center">
+          <p className="text-lg mb-2">⚠️ Error al cargar el video</p>
+          <p className="text-sm text-gray-300 mb-4">
+            No se pudo cargar ninguna versión del video
+          </p>
+          <div className="space-y-2">
+            {videoSources.map((src, index) => (
+              <a 
+                key={index}
+                href={src} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block text-blue-400 hover:text-blue-300 underline text-sm"
+              >
+                Intentar versión {index + 1}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
+  return (
+    <div className="w-full h-full relative">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-800 rounded-b-lg">
+          <div className="text-white text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+            <p className="text-sm">Cargando video...</p>
+          </div>
+        </div>
+      )}
+      <video 
+        key={currentSrc} // Fuerza re-render cuando cambia la fuente
+        controls 
+        className="w-full h-full object-contain bg-black rounded-b-lg"
+        src={currentSrc}
+        preload="metadata"
+        onError={handleVideoError}
+        onLoadedData={handleVideoLoad}
+        onCanPlay={handleVideoLoad}
+        style={{ display: isLoading ? 'none' : 'block' }}
+      >
+        Tu navegador no soporta el elemento de video.
+      </video>
     </div>
   )
 }
