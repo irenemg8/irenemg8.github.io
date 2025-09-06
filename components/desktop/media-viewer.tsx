@@ -253,13 +253,19 @@ function SmartVideo({ file }: { file: MediaFile }) {
   const getVideoSources = (originalUrl: string) => {
     const sources = [originalUrl]
     
-    // Si es el video de Aura, agregar versiones alternativas
-    if (originalUrl.includes('Aura-Demo')) {
+    // Si es un enlace de Google Drive, agregar fallbacks locales
+    if (originalUrl.includes('drive.google.com')) {
+      // Agregar fallbacks locales si Google Drive falla
+      if (originalUrl.includes('1a1TOGqzutd1WTEzZEGuJ22j4M8m8hg9S')) {
+        // Este es el video de Aura, agregar fallbacks locales
+        sources.push('/hackathon/aura/Aura-Demo-compressed.mp4')
+        sources.push('/hackathon/aura/Aura-Demo.mp4')
+      }
+    } else if (originalUrl.includes('Aura-Demo')) {
+      // Lógica original para archivos locales
       if (originalUrl.includes('compressed')) {
-        // Si ya es comprimido, probar también el original como fallback
         sources.push(originalUrl.replace('-compressed', ''))
       } else {
-        // Si es el original, probar primero el comprimido
         sources.unshift(originalUrl.replace('.mp4', '-compressed.mp4'))
       }
     }
@@ -325,7 +331,16 @@ function SmartVideo({ file }: { file: MediaFile }) {
         <div className="absolute inset-0 flex items-center justify-center bg-gray-800 rounded-b-lg">
           <div className="text-white text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-            <p className="text-sm">Cargando video...</p>
+            <p className="text-sm">
+              {currentSrc.includes('drive.google.com') 
+                ? 'Cargando desde Google Drive...' 
+                : 'Cargando video...'}
+            </p>
+            {currentSrc.includes('drive.google.com') && (
+              <p className="text-xs text-gray-400 mt-1">
+                Esto puede tardar un momento
+              </p>
+            )}
           </div>
         </div>
       )}

@@ -188,12 +188,12 @@ export function HackathonsFolderWindow({ isOpen, onClose }: HackathonsFolderWind
       team: ['Irene Medina García (UX/UI & Frontend)', 'Vicente Rivas Monferrer (Backend)', 'Ada González (Frontend)', 'Raúl Fortea (Backend)'],
       challenges: 'Nuestro principal desafío fue lograr un reconocimiento de imágenes en tiempo real de alta precisión.',
              mediaFiles: [
-         {
-           id: 'aura-demo',
-           name: 'Demo de Aura',
-           type: 'video',
-           url: '/hackathon/aura/Aura-Demo-compressed.mp4'
-         },
+        {
+          id: 'aura-demo',
+          name: 'Demo de Aura',
+          type: 'video',
+          url: 'https://drive.google.com/uc?export=download&id=1a1TOGqzutd1WTEzZEGuJ22j4M8m8hg9S'
+        },
          {
            id: 'aura-pdf',
            name: 'Memoria Técnica Aura',

@@ -156,7 +156,7 @@ export function MobileHackathonsFolderWindow({ isOpen, onClose }: MobileHackatho
           id: 'aura-demo',
           name: 'Demo de Aura',
           type: 'video',
-          url: '/hackathon/aura/Aura-Demo-compressed.mp4'
+          url: 'https://drive.google.com/uc?export=download&id=1a1TOGqzutd1WTEzZEGuJ22j4M8m8hg9S'
         },
         {
           id: 'aura-pdf',
