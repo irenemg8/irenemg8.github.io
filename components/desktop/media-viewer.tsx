@@ -249,49 +249,13 @@ function SmartVideo({ file }: { file: MediaFile }) {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   
-  // Lista de posibles URLs para el video
-  const getVideoSources = (originalUrl: string) => {
-    const sources = [originalUrl]
-    
-    // Si es un enlace de Google Drive, agregar fallbacks locales
-    if (originalUrl.includes('drive.google.com')) {
-      // Agregar fallbacks locales si Google Drive falla
-      if (originalUrl.includes('1a1TOGqzutd1WTEzZEGuJ22j4M8m8hg9S')) {
-        // Este es el video de Aura, agregar fallbacks locales
-        sources.push('/hackathon/aura/Aura-Demo-compressed.mp4')
-        sources.push('/hackathon/aura/Aura-Demo.mp4')
-      }
-    }
-    {/* else if (originalUrl.includes('Aura-Demo')) {
-      // Lógica original para archivos locales
-      if (originalUrl.includes('compressed')) {
-        sources.push(originalUrl.replace('-compressed', ''))
-      } else {
-        sources.unshift(originalUrl.replace('.mp4', '-compressed.mp4'))
-      }
-    }*/}
-    
-    return sources
-  }
-  
-  const videoSources = getVideoSources(file.url)
-  const [currentSourceIndex, setCurrentSourceIndex] = useState(0)
+  // Solo usar la fuente original (Google Drive)
   
   const handleVideoError = () => {
-    console.error('Error cargando video:', currentSrc)
-    
-    // Intentar con la siguiente fuente
-    const nextIndex = currentSourceIndex + 1
-    if (nextIndex < videoSources.length) {
-      console.log(`Intentando fuente alternativa: ${videoSources[nextIndex]}`)
-      setCurrentSourceIndex(nextIndex)
-      setCurrentSrc(videoSources[nextIndex])
-      setIsLoading(true)
-    } else {
-      // No hay más fuentes, mostrar error
-      setHasError(true)
-      setIsLoading(false)
-    }
+    console.error('Error cargando video desde Google Drive:', currentSrc)
+    // Mostrar error directamente ya que solo tenemos una fuente
+    setHasError(true)
+    setIsLoading(false)
   }
   
   const handleVideoLoad = () => {
@@ -306,21 +270,20 @@ function SmartVideo({ file }: { file: MediaFile }) {
         <div className="text-center">
           <p className="text-lg mb-2">⚠️ Error al cargar el video</p>
           <p className="text-sm text-gray-300 mb-4">
-            No se pudo cargar ninguna versión del video
+            No se pudo cargar el video desde Google Drive
           </p>
-          <div className="space-y-2">
-            {videoSources.map((src, index) => (
-              <a 
-                key={index}
-                href={src} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="block text-blue-400 hover:text-blue-300 underline text-sm"
-              >
-                Abrir en Drive
-              </a>
-            ))}
-          </div>
+          <a 
+            href={file.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-1a1 1 0 10-2 0v1H5V7h1a1 1 0 000-2H5z"/>
+            </svg>
+            Abrir en Google Drive
+          </a>
         </div>
       </div>
     )
