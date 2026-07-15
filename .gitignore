@@ -1,27 +1,35 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# local archives of previous versions (kept on disk, NOT in the repo — they are
+# huge: antiguo/ is ~2GB incl. a 1.5GB video that GitHub would reject)
+/antiguo
+/antiguo2
 
 # dependencies
 /node_modules
+antiguo/node_modules
+antiguo2/node_modules
 
-# next.js
-/.next/
-/out/
+# build output
+/dist
+antiguo/.next
+antiguo/out
+antiguo2/dist
 
-# production
-/build
-
-# debug
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# env files
-.env*
+# editor / OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
 
-# vercel
-.vercel
+# env
+.env
+.env.*
+!.env.example
 
-# typescript
+# typescript build info (from old project)
 *.tsbuildinfo
-next-env.d.ts

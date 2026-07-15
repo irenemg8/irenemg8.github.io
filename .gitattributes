@@ -1,3 +1,7 @@
-*.mp4 filter=lfs diff=lfs merge=lfs -text
-*.mov filter=lfs diff=lfs merge=lfs -text
-public/hackathon/aura/*.mp4 filter=lfs diff=lfs merge=lfs -text
+# Old site kept large videos in Git LFS — preserve that for the antiguo/ archive.
+antiguo/**/*.mp4 filter=lfs diff=lfs merge=lfs -text
+antiguo/**/*.mov filter=lfs diff=lfs merge=lfs -text
+
+# New 3D assets (.glb) are a few MB each and stay as normal Git blobs so
+# GitHub Pages can serve them directly without an LFS pull step.
+*.glb -text

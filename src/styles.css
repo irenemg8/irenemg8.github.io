@@ -1,0 +1,212 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --ink: #f4f1ec;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #16141a;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+canvas {
+  touch-action: none;
+  display: block;
+}
+
+/* ---------------------------------------------------------------- Loading */
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  background: radial-gradient(circle at 50% 40%, #2a2530, #16141a 70%);
+}
+.loading__title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.loading__bar {
+  width: min(260px, 66vw);
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+.loading__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a27a, #e6cbb0);
+  transition: width 0.3s ease;
+}
+.loading__hint {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+/* -------------------------------------------------------------------- HUD */
+.hud {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.brand {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.4rem;
+}
+.brand__name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+.brand__tag {
+  font-size: 0.78rem;
+  opacity: 0.65;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.controls {
+  position: absolute;
+  bottom: 1.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.6rem;
+}
+.pill {
+  pointer-events: auto;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #16141a;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.6rem 1.3rem;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, background 0.15s ease;
+  backdrop-filter: blur(6px);
+}
+.pill:hover {
+  transform: translateY(-2px);
+}
+.pill--accent {
+  background: linear-gradient(135deg, #e6cbb0, #c9a27a);
+}
+
+/* Pokémon-style dialogue box (shown while peeking into a diorama box) */
+.dialogue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.6rem;
+  transform: translateX(-50%);
+  width: min(760px, 92vw);
+  padding: 1.15rem 1.5rem 1.7rem;
+  background: linear-gradient(#ffffff, #eef0fa);
+  color: #16141a;
+  border: 4px solid #2b2740;
+  border-radius: 18px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.42), inset 0 0 0 2px #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.5;
+  pointer-events: none;
+  z-index: 30;
+}
+.dialogue__text {
+  min-height: 3em;
+  white-space: pre-wrap;
+}
+.dialogue__hint {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9aa0b4;
+}
+.dialogue__arrow {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 0.7rem;
+  font-size: 1rem;
+  color: #6b5cff;
+  animation: dlgBounce 0.8s ease-in-out infinite;
+}
+@keyframes dlgBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50% { transform: translateY(4px); opacity: 0.4; }
+}
+
+/* Branching menu inside the dialogue box */
+.dialogue { pointer-events: auto; cursor: default; }
+.dialogue--menu { padding-bottom: 1.9rem; }
+.dialogue__prompt {
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+.dialogue__options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.1rem 1.4rem;
+}
+.dialogue__options li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 8px;
+  font-size: 1.02rem;
+  color: #3a3550;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.dialogue__options li.is-active {
+  background: #efe9ff;
+  color: #16141a;
+  font-weight: 600;
+}
+.dialogue__cursor {
+  width: 1em;
+  color: #6b5cff;
+  white-space: pre;
+}
