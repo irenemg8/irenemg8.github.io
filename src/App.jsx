@@ -722,7 +722,7 @@ function SettingsPanel() {
 
 export default function App() {
   const [mode, setMode] = useState('third') // 'third' | 'first'
-  const [showMarkers, setShowMarkers] = useState(true) // placement pins (hide later)
+  const [showMarkers, setShowMarkers] = useState(false) // placement pins (toggle hidden for now)
 
   // Start the looping background music on the first user interaction.
   useEffect(() => {
@@ -761,6 +761,7 @@ export default function App() {
         <SettingsPanel />
 
         <div className="controls">
+          {/* Hidden for now: First person / Top view / Markers toggles.
           <button
             className="pill"
             onClick={() => setMode((m) => (m === 'first' ? 'third' : 'first'))}
@@ -781,6 +782,7 @@ export default function App() {
               Click to look around
             </button>
           )}
+          */}
         </div>
       </div>
     </>
