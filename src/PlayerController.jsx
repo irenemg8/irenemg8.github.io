@@ -6,7 +6,10 @@ import * as THREE from 'three'
 import { recolor } from './utils/recolor.js'
 import { playerPos } from './playerState.js'
 import { boxStore } from './boxStore.js'
+import { talkStore } from './talkStore.js'
 import { peekView } from './Boxes.jsx'
+import { SPEAKERS } from './Props.jsx'
+import { playFootstep } from './audio.js'
 
 const EYE = 0.7
 const RADIUS = 0.35
@@ -17,6 +20,8 @@ const PROBE = [0.35, 1.0, 1.55]
 const CAM_DIST = 3.2
 const CAM_UP = 1.9
 const TOP_HEIGHT = 16 // top-down camera height (see the whole floor to place boxes)
+const STEP_DIST = 0.32 // walk: a footstep every this many world units travelled
+const STEP_DIST_RUN = 0.6 // run (Shift): stride length while sprinting
 
 export default function PlayerController({ collider, mode }) {
   const camera = useThree((s) => s.camera)
@@ -32,6 +37,7 @@ export default function PlayerController({ collider, mode }) {
   const move = useRef(new THREE.Vector3())
   const dir = useRef(new THREE.Vector3())
   const camPos = useRef(new THREE.Vector3())
+  const stepAcc = useRef(0) // distance travelled since the last footstep
 
   const { scene, animations } = useGLTF('/models/stickman.glb')
   const model = useMemo(() => {
@@ -109,6 +115,8 @@ export default function PlayerController({ collider, mode }) {
     const dt = Math.min(dtRaw, 0.05)
     const k = keys.current
     const peeking = boxStore.get().peek != null
+    const talking = talkStore.get().open != null
+    const frozen = peeking || talking // camera locked, movement paused
 
     // Basis: in 3rd person the camera orbit yaw drives it; in 1st person the
     // (pointer-lock) camera direction drives it.
@@ -127,7 +135,7 @@ export default function PlayerController({ collider, mode }) {
     }
 
     move.current.set(0, 0, 0)
-    if (!peeking) {
+    if (!frozen) {
       if (k.f) move.current.add(fwd.current)
       if (k.b) move.current.sub(fwd.current)
       if (k.r) move.current.add(right.current)
@@ -153,21 +161,44 @@ export default function PlayerController({ collider, mode }) {
       }
       const desired = k.run ? 'Run' : 'Walk'
       play(actions[desired] ? desired : 'Run') // stickman has no Walk clip
+
+      // Footsteps paced by distance travelled -> faster movement = closer steps.
+      // Running uses a longer stride (STEP_DIST_RUN) so you can tune it apart.
+      const stride = k.run ? STEP_DIST_RUN : STEP_DIST
+      stepAcc.current += (k.run ? RUN : WALK) * dt
+      while (stepAcc.current >= stride) {
+        playFootstep(k.run)
+        stepAcc.current -= stride
+      }
     } else {
       play('Idle')
+      stepAcc.current = STEP_DIST // so the next move steps immediately
     }
 
     // Avatar transform + visibility
     if (group.current) {
       group.current.position.copy(pos.current)
       group.current.rotation.y = heading.current
-      group.current.visible = (mode === 'third' || mode === 'top') && !peeking // hide avatar while peeking
+      group.current.visible = (mode === 'third' || mode === 'top') && !frozen // hide avatar while peeking/talking
     }
     playerPos.copy(pos.current) // share position with the world (box proximity)
 
     // Camera (dev: __freecam freezes it so we can inspect from outside)
     if (import.meta.env.DEV && window.__freecam) return
-    if (peeking) {
+    if (talking) {
+      // close-up on the prop we're talking to (framed from the player's side)
+      const sp = SPEAKERS[talkStore.get().open]
+      const p = sp.position
+      const h = sp.height
+      let dx = pos.current.x - p[0]
+      let dz = pos.current.z - p[2]
+      const len = Math.hypot(dx, dz) || 1
+      const dist = 0.8 + h * 0.9
+      // p[1] = the prop's base height (Nilo sits up on a shelf), so include it
+      camPos.current.set(p[0] + (dx / len) * dist, p[1] + h * 0.75 + 0.25, p[2] + (dz / len) * dist)
+      camera.position.lerp(camPos.current, Math.min(1, dt * 5))
+      camera.lookAt(p[0], p[1] + h * 0.55, p[2])
+    } else if (peeking) {
       // look inside the diorama box
       const v = peekView(boxStore.get().peek)
       camPos.current.set(v.pos[0], v.pos[1], v.pos[2])

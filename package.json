@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Irene Medina — a realistic apartment 3D portfolio built with React Three Fiber.",
+  "description": "Irene Medina García — a hilariously detailed gallery 3D portfolio built with React Three Fiber.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

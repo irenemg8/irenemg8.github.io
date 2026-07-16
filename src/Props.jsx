@@ -28,7 +28,19 @@ export const PROPS = [
     { url: '/models/carton_box.glb', position: [0, 0.3, 0.3], rotation: 0.8, heightM: 0.2 }, //ya
   { url: '/models/carton_closed.glb', position: [-2.5, 0, -6.5], rotation: -0.3, heightM: 0.55 },
   // Nilo, the pug — hangs out near his watermelon box
-  { url: '/models/pug.glb', position: [3.25, 0.65, -0.8], rotationY: 0, rotationX: 0.8, rotationZ: 0, heightM: 0.3 },
+  {
+    url: '/models/pug.glb',
+    position: [3.25, 0.65, -0.8],
+    rotationY: 0,
+    rotationX: 0.8,
+    rotationZ: 0,
+    heightM: 0.3,
+    sound: 'audio/pug_bark.mp3',
+    say: [
+      'My owner said if I hold still like a statue for five minutes, she’ll refill my green treat bowl. 🐶',
+      'I can already imagine how juicy that watermelon must be…',
+    ],
+  },
 
   { url: '/models/cardboard_staircase.glb', position: [3.4, 0, -0.2], rotation: -1.6, heightM: 1.1 },
   // Nilo's dog bowl
@@ -63,7 +75,18 @@ export const PROPS = [
 
   { url: '/models/pile_of_books.glb', position: [2.1, 1, 1.6], rotation: 2.2, heightM: 0.3 },
   // Animated llama playing its "lookaround" clip on loop
-  { url: '/models/llama.glb', position: [1.1, 0, 7.2], rotation: -2.3, heightM: 1.2, anim: 'lookaround' },
+  {
+    url: '/models/llama.glb',
+    position: [1.1, 0, 7.2],
+    rotation: -2.3,
+    heightM: 1.2,
+    anim: 'lookaround',
+    sound: 'audio/llama.mp3',
+    say: [
+      'Psst… I snuck in here when nobody was looking. 🦙',
+      "Now I'm playing statue — let's see how long it takes them to notice!",
+    ],
+  },
   { url: '/models/cardboard_cloud_b.glb', position: [1.5, 2, 7.5], rotation: 0, heightM: 0.5 },
     { url: '/models/cardboard_cloud_b.glb', position: [0.6, 1.8, 7.4], rotation: 0, heightM: 0.3 },
 
@@ -214,3 +237,12 @@ export default function Props() {
 }
 
 PROPS.forEach((p) => useGLTF.preload(p.url))
+
+// Props that can be talked to (approach + F): position + world height (for the
+// close-up camera) + dialogue lines.
+export const SPEAKERS = PROPS.filter((p) => p.say).map((p) => ({
+  position: p.position,
+  height: propHeight(p),
+  sound: p.sound ?? null,
+  lines: p.say,
+}))

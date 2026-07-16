@@ -5,16 +5,24 @@ import * as THREE from 'three'
 import Scene from './Scene.jsx'
 import { useBoxStore, boxStore } from './boxStore.js'
 import { useMetaStore, metaStore } from './metaStore.js'
+import { useTalkStore, talkStore } from './talkStore.js'
 import { BOXES } from './Boxes.jsx'
-import { useAudio, audio, playSfx, startMusicOnGesture } from './audio.js'
+import { SPEAKERS } from './Props.jsx'
+import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture } from './audio.js'
 
-// Camera-roll shots (from the old portfolio's "About me"). Each has a menu
-// label + the story shown as a dialogue once you pick it from the glasses.
+// Camera-roll entries. The LEFT lens shows the stylised (Animal-Crossing-ish)
+// version; the RIGHT lens shows the matching real photo (falls back to the
+// stylised one until the real one is added). `text` is the story dialogue.
 const META_PHOTOS = [
-  { label: 'Warsaw 🥟', src: 'photos/warsaw_pierogi.jpg', text: 'My very first pierogi, in Warsaw — sweet Erasmus memories.' },
-  { label: 'Xi’an 🏺', src: 'photos/terracotta.jpg', text: 'The Terracotta Army in Xi’an, China — thousands of soldiers, and every single face is different.' },
-  { label: 'Guangzhou 🏯', src: 'photos/guangzhou.jpg', text: 'A quiet temple in Guangzhou. China honestly left me speechless.' },
-  { label: 'Gandía 🏖️', src: 'photos/gandia_beach.jpg', text: 'Gandía beach — my happy place back home.' },
+  { label: 'Me 👋', styled: 'photos/styled/me.webp', real: null, text: 'That’s me — welcome to my little world!' },
+  { label: 'Chocolate bun 🍫', styled: 'photos/styled/pastry.webp', real: null, text: 'A warm chocolate-filled bun — the little joys count.' },
+  { label: 'Nilo 🐶', styled: 'photos/styled/nilo.webp', real: null, text: 'Nilo, my pug — the tiny king of the house.' },
+  { label: 'Warsaw 🌸', styled: 'photos/styled/warsaw.webp', real: null, text: 'Warsaw at sunset, during my Erasmus.' },
+  { label: 'China 🏯', styled: 'photos/styled/china.webp', real: null, text: 'A garden pavilion in China — it left me speechless.' },
+  { label: 'Paris 2024 🥐', styled: 'photos/styled/paris.webp', real: null, text: 'Paris during the 2024 Olympics.' },
+  { label: 'Fallas 🔥', styled: 'photos/styled/fallas.webp', real: null, text: 'The Fallas of Valencia — art, fire and fiesta.' },
+  { label: 'Polish feast 🥟', styled: 'photos/styled/polishfood.webp', real: null, text: 'A proper Polish feast — pierogi everywhere!' },
+  { label: 'Ayora 💙', styled: 'photos/styled/ayora.webp', real: null, text: '“Bésame en este rincón” — a corner of Ayora.' },
 ]
 const META_COLS = 2 // photo menu grid columns
 
@@ -178,17 +186,22 @@ function MetaVision() {
   }
 
   if (mode === 'on') {
-    // each lens shows the picked photo, or a glitchy colour-bar "broken" screen
-    const lens = (side) => (
-      <div className="meta__lens" key={side}>
-        {shown != null ? (
-          <img src={base + META_PHOTOS[shown].src} alt="" className="meta__photo is-on" />
-        ) : (
-          <div className="meta__broken" />
-        )}
-        <div className="meta__vignette" />
-      </div>
-    )
+    // left lens = stylised version, right lens = real photo (falls back to the
+    // stylised one). Nothing picked -> a glitchy colour-bar "broken" screen.
+    const lens = (side) => {
+      const p = shown != null ? META_PHOTOS[shown] : null
+      const img = p ? (side === 'l' ? p.styled : p.real ?? p.styled) : null
+      return (
+        <div className="meta__lens" key={side}>
+          {img ? (
+            <img src={base + img} alt="" className="meta__photo is-on" />
+          ) : (
+            <div className="meta__broken" />
+          )}
+          <div className="meta__vignette" />
+        </div>
+      )
+    }
     return (
       <div className="meta">
         <div className="meta__scrim" />
@@ -382,6 +395,85 @@ function DialogueBox() {
   )
 }
 
+// Talk to a nearby prop (llama, pug…): approach + F -> typewriter dialogue.
+// Takes priority over boxes so the two don't fire together (see Boxes.jsx).
+function PropTalk() {
+  const { near, open } = useTalkStore()
+  const lines = open != null ? SPEAKERS[open].lines : null
+  const [page, setPage] = useState(0)
+  const [n, setN] = useState(0)
+  const text = lines ? lines[page] ?? '' : ''
+  const full = n >= text.length
+
+  useEffect(() => {
+    setPage(0)
+    setN(0)
+  }, [open])
+  useEffect(() => {
+    setN(0)
+  }, [page])
+  useEffect(() => {
+    if (!lines || n >= text.length) return
+    const id = setTimeout(() => setN((c) => c + 1), 28)
+    return () => clearTimeout(id)
+  }, [lines, n, text])
+  useEffect(() => {
+    if (near == null && open != null) talkStore.set({ open: null }) // walked away
+  }, [near, open])
+
+  // preload each speaker's sound so it's ready the first time you chat
+  useEffect(() => {
+    SPEAKERS.forEach((s) => preloadClip(s.sound))
+  }, [])
+
+  // play the speaker's sound (bark/llama) each time a chat opens
+  useEffect(() => {
+    if (open != null) playClip(SPEAKERS[open].sound)
+  }, [open])
+
+  const advance = () => {
+    if (!lines) return
+    playSfx('blip')
+    if (!full) setN(text.length)
+    else if (page < lines.length - 1) setPage((p) => p + 1)
+    else talkStore.set({ open: null })
+  }
+
+  useEffect(() => {
+    const onKey = (e) => {
+      const s = talkStore.get()
+      if (e.code === 'KeyF') {
+        if (s.open != null) talkStore.set({ open: null })
+        else if (s.near != null) talkStore.set({ open: s.near })
+        return
+      }
+      if (e.code === 'Escape') {
+        if (s.open != null) talkStore.set({ open: null })
+        return
+      }
+      if (s.open == null || e.code === 'ShiftLeft' || e.code === 'ShiftRight') return
+      e.preventDefault()
+      advance()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [full, text, page, lines])
+
+  if (open != null && lines) {
+    return (
+      <div className="dialogue" onClick={advance}>
+        <div className="dialogue__text">{text.slice(0, n)}</div>
+        <div className="dialogue__hint">Any key to continue · F / Esc to leave</div>
+        {full && <div className="dialogue__arrow">▼</div>}
+      </div>
+    )
+  }
+  if (near != null) {
+    return <div className="meta-hint">Press F to chat 💬</div>
+  }
+  return null
+}
+
 function PeekHint() {
   const { near, peek } = useBoxStore()
   // while peeking the dialogue box takes over; only prompt when we're near one.
@@ -415,7 +507,7 @@ function Loader() {
   if (!active && progress >= 100) return null
   return (
     <div className="loading">
-      <div className="loading__title">Irene Medina</div>
+      <div className="loading__title">Irene Medina García</div>
       <div className="loading__bar">
         <div className="loading__fill" style={{ width: `${Math.min(100, progress)}%` }} />
       </div>
@@ -542,7 +634,7 @@ export default function App() {
 
       <div className="hud">
         <div className="brand">
-          <div className="brand__name">Irene Medina</div>
+          <div className="brand__name">Irene Medina García</div>
           <div className="brand__tag">
           </div>
         </div>
@@ -550,6 +642,7 @@ export default function App() {
         <div className="crosshair" style={{ display: mode === 'first' ? 'block' : 'none' }} />
         <PeekHint />
         <DialogueBox />
+        <PropTalk />
         <MetaVision />
         <SettingsPanel />
 
