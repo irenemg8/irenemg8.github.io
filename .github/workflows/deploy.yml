@@ -29,7 +29,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        # Work around npm's optional-dependency bug (npm/cli#4828): on Linux CI,
+        # `npm ci` can skip the platform-specific Rollup binary
+        # (@rollup/rollup-linux-x64-gnu), which breaks `vite build`. Dropping the
+        # lock and doing a fresh install resolves the correct binary for the runner.
+        run: |
+          rm -f package-lock.json
+          npm install --no-audit --no-fund
 
       - name: Build
         run: npm run build # Vite -> ./dist
