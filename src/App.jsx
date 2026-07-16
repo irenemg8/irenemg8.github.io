@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import Scene from './Scene.jsx'
 import { useBoxStore, boxStore } from './boxStore.js'
 import { BOXES } from './Boxes.jsx'
+import { useAudio, audio, playSfx, startMusicOnGesture } from './audio.js'
 
 // Pokémon-style dialogue. Types text letter by letter with a blinking arrow;
 // any key advances. A box may also carry a branching `menu` (pick a place →
@@ -62,6 +63,7 @@ function DialogueBox() {
   }, [view, n, text])
 
   const advanceText = () => {
+    playSfx('blip')
     if (!full) setN(text.length) // finish typing this page instantly
     else if (page < pages.length - 1) setPage((p) => p + 1)
     else if (menu) {
@@ -73,6 +75,7 @@ function DialogueBox() {
   const selectOption = (idx) => {
     const opt = options?.[idx]
     if (!opt) return
+    playSfx('select')
     if (opt.exit) {
       exitBox() // "That’s all for now" -> leave the box view
       return
@@ -94,15 +97,19 @@ function DialogueBox() {
         const COLS = 2 // matches the 2-column grid in CSS
         if (e.code === 'ArrowUp') {
           e.preventDefault()
+          playSfx('move')
           setMenuIndex((i) => (i - COLS >= 0 ? i - COLS : i))
         } else if (e.code === 'ArrowDown') {
           e.preventDefault()
+          playSfx('move')
           setMenuIndex((i) => (i + COLS < len ? i + COLS : i))
         } else if (e.code === 'ArrowLeft') {
           e.preventDefault()
+          playSfx('move')
           setMenuIndex((i) => (i > 0 ? i - 1 : i))
         } else if (e.code === 'ArrowRight') {
           e.preventDefault()
+          playSfx('move')
           setMenuIndex((i) => (i < len - 1 ? i + 1 : i))
         } else if (['Enter', 'NumpadEnter', 'Space'].includes(e.code)) {
           e.preventDefault()
@@ -195,9 +202,102 @@ function Loader() {
   )
 }
 
+const CONTROLS = [
+  { keys: ['W', 'A', 'S', 'D'], action: 'Move around' },
+  { keys: ['Shift'], action: 'Run' },
+  { keys: ['Mouse'], action: 'Look around (1st person)' },
+  { keys: ['F'], action: 'Look inside a box 📦' },
+  { keys: ['Any key'], action: 'Advance dialogue' },
+  { keys: ['↑', '↓', '←', '→'], action: 'Choose in a menu' },
+  { keys: ['Enter'], action: 'Select menu option' },
+]
+
+// Top-right settings: music / SFX volume + a controls cheatsheet.
+function SettingsPanel() {
+  const s = useAudio()
+  const [open, setOpen] = useState(false)
+  const [controls, setControls] = useState(false)
+
+  return (
+    <div className="settings">
+      <div className="settings__buttons">
+        <button
+          className={open ? 'iconbtn iconbtn--on' : 'iconbtn'}
+          title="Settings"
+          onClick={() => setOpen((v) => !v)}
+        >
+          ⚙️
+        </button>
+        <button
+          className={controls ? 'iconbtn iconbtn--on' : 'iconbtn'}
+          title="Controls"
+          onClick={() => setControls((v) => !v)}
+        >
+          🎮
+        </button>
+      </div>
+
+      {open && (
+        <div className="panel">
+          <div className="panel__row">
+            <button className="panel__toggle" onClick={() => audio.set({ musicOn: !s.musicOn })}>
+              {s.musicOn ? '🔊' : '🔇'} Music
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={s.musicVol}
+              onChange={(e) => audio.set({ musicVol: parseFloat(e.target.value) })}
+            />
+          </div>
+          <div className="panel__row">
+            <button className="panel__toggle" onClick={() => audio.set({ sfxOn: !s.sfxOn })}>
+              {s.sfxOn ? '🔊' : '🔇'} Effects
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={s.sfxVol}
+              onChange={(e) => audio.set({ sfxVol: parseFloat(e.target.value) })}
+            />
+          </div>
+          <div className="panel__hint">🎵 Lake — Piano cover</div>
+        </div>
+      )}
+
+      {controls && (
+        <div className="panel panel--controls">
+          <div className="panel__title">Controls</div>
+          {CONTROLS.map((c) => (
+            <div className="panel__ctrl" key={c.action}>
+              <span className="panel__keys">
+                {c.keys.map((k) => (
+                  <kbd className="key" key={k}>
+                    {k}
+                  </kbd>
+                ))}
+              </span>
+              <span className="panel__act">{c.action}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function App() {
   const [mode, setMode] = useState('third') // 'third' | 'first'
   const [showMarkers, setShowMarkers] = useState(true) // placement pins (hide later)
+
+  // Start the looping background music on the first user interaction.
+  useEffect(() => {
+    startMusicOnGesture()
+  }, [])
 
   return (
     <>
@@ -227,6 +327,7 @@ export default function App() {
         <div className="crosshair" style={{ display: mode === 'first' ? 'block' : 'none' }} />
         <PeekHint />
         <DialogueBox />
+        <SettingsPanel />
 
         <div className="controls">
           <button

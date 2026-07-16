@@ -210,3 +210,104 @@ canvas {
   color: #6b5cff;
   white-space: pre;
 }
+
+/* Top-right settings + controls */
+.settings {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  pointer-events: none;
+}
+.settings__buttons {
+  display: flex;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+.iconbtn {
+  width: 2.6rem;
+  height: 2.6rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.iconbtn:hover { transform: translateY(-2px); }
+.iconbtn--on { background: #efe9ff; box-shadow: 0 0 0 2px #6b5cff, 0 8px 24px rgba(0, 0, 0, 0.28); }
+.panel {
+  pointer-events: auto;
+  width: 15rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.32);
+  font-family: 'Inter', sans-serif;
+  color: #16141a;
+}
+.panel__row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.panel__toggle {
+  flex: 0 0 6.2rem;
+  text-align: left;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0;
+}
+.panel__row input[type='range'] { flex: 1; accent-color: #6b5cff; cursor: pointer; }
+.panel__hint {
+  font-size: 0.72rem;
+  color: #8a8fa3;
+  border-top: 1px solid #ececf3;
+  padding-top: 0.55rem;
+}
+.panel--controls { width: 16rem; }
+.panel__title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.panel__ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.16rem 0;
+  font-size: 0.86rem;
+}
+.panel__keys {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 6px;
+  background: #f3f1fb;
+  border: 1px solid #d9d4f0;
+  border-bottom-width: 2px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #4a3fbf;
+}
+.panel__act { color: #3a3550; text-align: right; }

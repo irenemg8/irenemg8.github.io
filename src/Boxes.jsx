@@ -103,8 +103,8 @@ export const BOXES = [
     position: [2.6, 0, -2],
     rotation: -Math.PI / 2,
     dialog: [
-      'Fun fact: I could happily eat watermelon all summer long.',
-      'I like keeping life colorful and playful — and my projects too.',
+      'Say hi to Nilo — my pug, and the tiny king of this house. 🐶',
+      'His one true love? Watermelon. He’d trade any toy for a juicy slice on a hot day.',
     ],
   },
   {
@@ -112,8 +112,10 @@ export const BOXES = [
     position: [-2.6, 0, -2],
     rotation: Math.PI / 2,
     dialog: [
-      'This one is home.',
-      'I fell in love with 3D and VR, turning the web into places you can actually walk into.',
+      'Step inside — this pixel house is a love letter to my childhood. 🏠',
+      'It’s styled after the cosy interiors of Pokémon Diamond on the Nintendo DS — one of my all-time favourite games.',
+      'I grew up on Nintendo: Wii Sports Resort (yes, the little airplane island flights!) and endless afternoons with Nintendogs.',
+      'Those worlds are a big reason I love making playful, explorable spaces like this one today.',
     ],
   },
   {
@@ -131,10 +133,71 @@ export const BOXES = [
     rotation: -Math.PI / 2,
     animated: true,
     dialog: [
-      'And this is where the magic happens — my study.',
-      'I build immersive experiences, from Meta Quest worlds to cozy 3D portfolios like this one.',
-      'Thanks for stopping by! Press F whenever you want to step back out.',
+      'Welcome to my study — the engine room of everything I do.',
+      'Grab a seat! What corner of my academic life do you want to peek into?',
     ],
+    // Branching menu about Irene's academic life (all grounded in real data).
+    // TODO: add the title of the 2nd paper once confirmed (heading to IEEE Access).
+    menu: {
+      prompt: 'Pick a chapter:',
+      again: 'Anything else from my academic life?',
+      options: [
+        {
+          label: 'Degree',
+          text: [
+            "I'm studying the Interactive Technologies degree at the Polytechnic University of Valencia (UPV), 2022–2026.",
+            'It’s the sweet spot where code, design, 3D and human–computer interaction all meet — basically my dream mix.',
+            'My bachelor’s thesis (written in English) built an Agentic-RAG Socratic tutor for Ohm’s law — and earned a perfect 10 with Honours (Matrícula de Honor)!',
+          ],
+        },
+        {
+          label: 'Master’s',
+          text: [
+            'In 2026 I’m starting the Master’s in Audiovisual Technologies at the UPV — and I’m part of its very first cohort (2026–2027)!',
+            'Being in the founding promotion means helping shape the programme as we go. Exciting and a little wild.',
+          ],
+        },
+        {
+          label: 'Erasmus',
+          text: [
+            'In 2025 I packed my bags for an Erasmus+ BIP at the Warsaw University of Technology.',
+            'Studying abroad stretched me in the best way — new methods, new friends and, yes, plenty of pierogi.',
+          ],
+        },
+        {
+          label: 'PhD',
+          text: [
+            'After the master’s, I’m set on a PhD at the UPV’s School of Telecommunications.',
+            'Research is where I want to plant my flag — turning ideas into real, tested knowledge.',
+          ],
+        },
+        {
+          label: 'Projects',
+          text: [
+            'I learn by building, so my project list is long! A few favourites:',
+            'Aura & AidGuide — accessibility tools for blind and visually impaired users.',
+            'NeuroSpot — playful ADHD screening on AWS. Plus VIMYP, EcoCity and even Talpa, a real tunnel-boring machine!',
+          ],
+        },
+        {
+          label: 'Awards',
+          text: [
+            'I earned the UPV’s High Academic Performance distinction (Mención ARA) — it’s even noted on my European Diploma Supplement.',
+            'At TAEE 2026, our team also won the Best Poster award.',
+            'And I love a good hackathon — projects like Aura, UrbanVive and OnKlub are some of the ones I’m proudest of.',
+          ],
+        },
+        {
+          label: 'Papers',
+          text: [
+            'Yes — my first research papers are already out in the world! 🎉',
+            'At TAEE 2026, our study on LLM-based Socratic tutors for understanding Ohm’s law won the Best Poster award.',
+            'The Spanish version is in the conference proceedings; the English one — “Agentic RAG for Pedagogically Safe Socratic Tutoring” — is headed to IEEE.',
+            'A second paper is also on its way to IEEE Access. Watch this space!',
+          ],
+        },
+      ],
+    },
   },
 ]
 

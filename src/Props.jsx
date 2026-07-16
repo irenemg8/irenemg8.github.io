@@ -14,6 +14,8 @@ export const PROPS = [
   { url: '/models/carton_box.glb', position: [-3.3, 0, -5.5], rotation: 0.8, heightM: 0.4 }, //ya
     { url: '/models/carton_box.glb', position: [0, 0.3, 0.3], rotation: 0.8, heightM: 0.2 }, //ya
   { url: '/models/carton_closed.glb', position: [-2.5, 0, -6.5], rotation: -0.3, heightM: 0.55 },
+  // Nilo, the pug — hangs out near his watermelon box
+  { url: '/models/pug.glb', position: [1.7, 0, -2.7], rotation: 2.2, heightM: 0.4 },
 ]
 
 // Box colliders (position-only, world space) so you can't walk through them.
