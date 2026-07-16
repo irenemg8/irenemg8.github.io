@@ -17,7 +17,9 @@ import Markers from './Markers.jsx'
 import Artworks, { ITEMS as ARTWORK_ITEMS, artworkColliderGeometries } from './Artworks.jsx'
 import { benchColliderGeometries } from './data/galleryLayout.js'
 import Boxes, { boxColliderGeometries, BOXES } from './Boxes.jsx'
-import Props, { propColliderGeometries, PROPS, SPEAKERS } from './Props.jsx'
+import Props, { propColliderGeometries, PROPS } from './Props.jsx'
+import Guides from './Guides.jsx'
+import { TALKERS } from './talkers.js'
 import PlayerController from './PlayerController.jsx'
 
 const CEILING = 5.5 // normalise the room so its height ≈ 4 metres (bigger gallery)
@@ -41,8 +43,8 @@ function TalkProximity() {
     if (talkStore.get().open != null) return // don't switch while chatting
     let near = null
     let best = TALK_R
-    for (let i = 0; i < SPEAKERS.length; i++) {
-      const p = SPEAKERS[i].position
+    for (let i = 0; i < TALKERS.length; i++) {
+      const p = TALKERS[i].position
       const d = Math.hypot(playerPos.x - p[0], playerPos.z - p[2])
       if (d < best) {
         best = d
@@ -134,6 +136,7 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
       <Artworks />
       <Boxes />
       <Props />
+      <Guides />
       <MetaProximity />
       <TalkProximity />
       <Markers show={showMarkers} />

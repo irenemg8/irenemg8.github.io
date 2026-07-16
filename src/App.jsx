@@ -7,7 +7,7 @@ import { useBoxStore, boxStore } from './boxStore.js'
 import { useMetaStore, metaStore } from './metaStore.js'
 import { useTalkStore, talkStore } from './talkStore.js'
 import { BOXES } from './Boxes.jsx'
-import { SPEAKERS } from './Props.jsx'
+import { TALKERS } from './talkers.js'
 import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture } from './audio.js'
 
 // Camera-roll entries. The LEFT lens shows the stylised (Animal-Crossing-ish)
@@ -395,83 +395,197 @@ function DialogueBox() {
   )
 }
 
-// Talk to a nearby prop (llama, pug…): approach + F -> typewriter dialogue.
+// Talk to a nearby talker (llama, pug, door guides…): approach + F. Supports a
+// plain line dialogue (lines) or an intro + branching menu (like the boxes).
 // Takes priority over boxes so the two don't fire together (see Boxes.jsx).
+const TALK_EXIT = { label: 'That’s all, thanks', exit: true }
+
 function PropTalk() {
   const { near, open } = useTalkStore()
-  const lines = open != null ? SPEAKERS[open].lines : null
+  const sp = open != null ? TALKERS[open] : null
+  const menu = sp?.menu ?? null
+  const options = menu ? [...menu.options, TALK_EXIT] : null
+
+  const [view, setView] = useState('text') // 'text' | 'menu'
+  const [pages, setPages] = useState([])
   const [page, setPage] = useState(0)
   const [n, setN] = useState(0)
-  const text = lines ? lines[page] ?? '' : ''
-  const full = n >= text.length
+  const [menuIndex, setMenuIndex] = useState(0)
+  const [heard, setHeard] = useState(0)
+  const [link, setLink] = useState(null) // clickable link for the current block
 
-  useEffect(() => {
+  const text = view === 'text' ? pages[page] ?? '' : ''
+  const full = n >= text.length
+  const showLink = link && page === pages.length - 1 && full
+
+  const start = (s) => {
+    setHeard(0)
+    setMenuIndex(0)
     setPage(0)
     setN(0)
+    setLink(null)
+    if (s?.intro?.length) {
+      setView('text')
+      setPages(s.intro)
+    } else if (s?.menu) {
+      setView('menu')
+      setPages([])
+    } else {
+      setView('text')
+      setPages(s?.lines ?? [])
+    }
+  }
+
+  useEffect(() => {
+    if (sp) start(sp)
   }, [open])
   useEffect(() => {
     setN(0)
-  }, [page])
+  }, [pages, page, view])
   useEffect(() => {
-    if (!lines || n >= text.length) return
+    if (view !== 'text' || n >= text.length) return
     const id = setTimeout(() => setN((c) => c + 1), 28)
     return () => clearTimeout(id)
-  }, [lines, n, text])
+  }, [view, n, text])
   useEffect(() => {
     if (near == null && open != null) talkStore.set({ open: null }) // walked away
   }, [near, open])
-
-  // preload each speaker's sound so it's ready the first time you chat
   useEffect(() => {
-    SPEAKERS.forEach((s) => preloadClip(s.sound))
+    TALKERS.forEach((s) => preloadClip(s.sound)) // warm each speaker's sound
   }, [])
-
-  // play the speaker's sound (bark/llama) each time a chat opens
   useEffect(() => {
-    if (open != null) playClip(SPEAKERS[open].sound)
+    if (open != null) playClip(TALKERS[open].sound, TALKERS[open].soundVol ?? 1) // bark / llama / guide
   }, [open])
 
-  const advance = () => {
-    if (!lines) return
+  const advanceText = () => {
     playSfx('blip')
     if (!full) setN(text.length)
-    else if (page < lines.length - 1) setPage((p) => p + 1)
-    else talkStore.set({ open: null })
+    else if (page < pages.length - 1) setPage((p) => p + 1)
+    else if (menu) {
+      setView('menu') // end of a text block -> back to the menu
+      setMenuIndex(0)
+    } else talkStore.set({ open: null }) // plain dialogue done -> leave
+  }
+  const selectOption = (idx) => {
+    const opt = options?.[idx]
+    if (!opt) return
+    playSfx('select')
+    if (opt.exit) {
+      talkStore.set({ open: null })
+      return
+    }
+    setHeard((h) => h + 1)
+    setLink(opt.link ?? null)
+    setPages(opt.text)
+    setPage(0)
+    setN(0)
+    setView('text')
   }
 
+  // F/Esc open & close the chat.
   useEffect(() => {
     const onKey = (e) => {
       const s = talkStore.get()
       if (e.code === 'KeyF') {
         if (s.open != null) talkStore.set({ open: null })
         else if (s.near != null) talkStore.set({ open: s.near })
-        return
+      } else if (e.code === 'Escape' && s.open != null) {
+        talkStore.set({ open: null })
       }
-      if (e.code === 'Escape') {
-        if (s.open != null) talkStore.set({ open: null })
-        return
-      }
-      if (s.open == null || e.code === 'ShiftLeft' || e.code === 'ShiftRight') return
-      e.preventDefault()
-      advance()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [full, text, page, lines])
+  }, [])
 
-  if (open != null && lines) {
+  // Drive the dialogue while it's open.
+  useEffect(() => {
+    if (open == null) return
+    const onKey = (e) => {
+      if (['KeyF', 'Escape', 'ShiftLeft', 'ShiftRight'].includes(e.code)) return
+      if (view === 'menu' && options) {
+        const len = options.length
+        const COLS = 2
+        if (e.code === 'ArrowUp') {
+          e.preventDefault()
+          playSfx('move')
+          setMenuIndex((i) => (i - COLS >= 0 ? i - COLS : i))
+        } else if (e.code === 'ArrowDown') {
+          e.preventDefault()
+          playSfx('move')
+          setMenuIndex((i) => (i + COLS < len ? i + COLS : i))
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault()
+          playSfx('move')
+          setMenuIndex((i) => (i > 0 ? i - 1 : i))
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault()
+          playSfx('move')
+          setMenuIndex((i) => (i < len - 1 ? i + 1 : i))
+        } else if (['Enter', 'NumpadEnter', 'Space'].includes(e.code)) {
+          e.preventDefault()
+          setMenuIndex((i) => {
+            selectOption(i)
+            return i
+          })
+        }
+        return
+      }
+      e.preventDefault()
+      advanceText()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, view, options, full, text, page, pages])
+
+  if (open == null || !sp) {
+    return near != null ? <div className="meta-hint">Press F to chat 💬</div> : null
+  }
+
+  if (view === 'menu' && options) {
     return (
-      <div className="dialogue" onClick={advance}>
-        <div className="dialogue__text">{text.slice(0, n)}</div>
-        <div className="dialogue__hint">Any key to continue · F / Esc to leave</div>
-        {full && <div className="dialogue__arrow">▼</div>}
+      <div className="dialogue dialogue--menu">
+        <div className="dialogue__prompt">{heard === 0 ? menu.prompt : menu.again}</div>
+        <ul className="dialogue__options">
+          {options.map((o, i) => (
+            <li
+              key={o.label}
+              className={i === menuIndex ? 'is-active' : ''}
+              onMouseEnter={() => setMenuIndex(i)}
+              onClick={() => selectOption(i)}
+            >
+              <span className="dialogue__cursor">{i === menuIndex ? '▶' : ' '}</span>
+              {o.label}
+            </li>
+          ))}
+        </ul>
+        <div className="dialogue__hint">↑︎↓︎←︎→︎ choose · Enter select · F / Esc to leave</div>
       </div>
     )
   }
-  if (near != null) {
-    return <div className="meta-hint">Press F to chat 💬</div>
-  }
-  return null
+
+  return (
+    <div className="dialogue" onClick={advanceText}>
+      <div className="dialogue__text">
+        {text.slice(0, n)}
+        {showLink && (
+          <>
+            {' '}
+            <a
+              className="dialogue__link"
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              just click here
+            </a>
+          </>
+        )}
+      </div>
+      <div className="dialogue__hint">Any key to continue · F / Esc to leave</div>
+      {full && <div className="dialogue__arrow">▼</div>}
+    </div>
+  )
 }
 
 function PeekHint() {

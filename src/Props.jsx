@@ -43,8 +43,9 @@ export const PROPS = [
   },
 
   { url: '/models/cardboard_staircase.glb', position: [3.4, 0, -0.2], rotation: -1.6, heightM: 1.1 },
-  // Nilo's dog bowl
-  { url: '/models/dog_bowl.glb', position: [2.1, 0, -1], rotation: 0, heightM: 0.07, color: '#3aa34a' },
+  // Nilo's dog bowl + bed
+  { url: '/models/dog_bowl.glb', position: [2.6, 0, -0.9], rotation: 0, heightM: 0.07, color: '#3aa34a' },
+  { url: '/models/dog_bed.glb', position: [2.9, 1, -2.3], rotation: 0.4, heightM: 0.18 },
   // Beach vibes near the beach box [2.2, 0, -6.8]
   { url: '/models/palm_tree.glb', position: [0.7, 0, -6.8], rotation: 0.4, heightM: 2.8 },
   { url: '/models/coconut.glb', position: [0.8, -0.03, -6.3], rotation: 0, heightM: 0.2 },

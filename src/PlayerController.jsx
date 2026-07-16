@@ -8,7 +8,7 @@ import { playerPos } from './playerState.js'
 import { boxStore } from './boxStore.js'
 import { talkStore } from './talkStore.js'
 import { peekView } from './Boxes.jsx'
-import { SPEAKERS } from './Props.jsx'
+import { TALKERS } from './talkers.js'
 import { playFootstep } from './audio.js'
 
 const EYE = 0.7
@@ -187,7 +187,7 @@ export default function PlayerController({ collider, mode }) {
     if (import.meta.env.DEV && window.__freecam) return
     if (talking) {
       // close-up on the prop we're talking to (framed from the player's side)
-      const sp = SPEAKERS[talkStore.get().open]
+      const sp = TALKERS[talkStore.get().open]
       const p = sp.position
       const h = sp.height
       let dx = pos.current.x - p[0]

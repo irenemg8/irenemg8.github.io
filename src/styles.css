@@ -484,3 +484,15 @@ canvas {
   66% { transform: translateX(-3%); opacity: 0.4; }
   100% { transform: translateX(0); opacity: 0.6; }
 }
+
+/* Clickable link inside a dialogue (e.g. "just click here" -> LinkedIn) */
+.dialogue__link {
+  color: #4a3fbf;
+  font-weight: 700;
+  text-decoration: underline;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.dialogue__link:hover {
+  color: #6b5cff;
+}
