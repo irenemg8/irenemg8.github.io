@@ -8,32 +8,63 @@ import { useMetaStore, metaStore } from './metaStore.js'
 import { BOXES } from './Boxes.jsx'
 import { useAudio, audio, playSfx, startMusicOnGesture } from './audio.js'
 
-// Camera-roll shots (from the old portfolio's "About me") shown through the
-// Meta glasses' passthrough view.
+// Camera-roll shots (from the old portfolio's "About me"). Each has a menu
+// label + the story shown as a dialogue once you pick it from the glasses.
 const META_PHOTOS = [
-  { src: 'photos/warsaw_pierogi.jpg', caption: 'My first pierogi · Warsaw' },
-  { src: 'photos/terracotta.jpg', caption: 'Terracotta Army · Xi’an' },
-  { src: 'photos/guangzhou.jpg', caption: 'A temple in Guangzhou' },
-  { src: 'photos/gandia_beach.jpg', caption: 'Gandía beach' },
+  { label: 'Warsaw 🥟', src: 'photos/warsaw_pierogi.jpg', text: 'My very first pierogi, in Warsaw — sweet Erasmus memories.' },
+  { label: 'Xi’an 🏺', src: 'photos/terracotta.jpg', text: 'The Terracotta Army in Xi’an, China — thousands of soldiers, and every single face is different.' },
+  { label: 'Guangzhou 🏯', src: 'photos/guangzhou.jpg', text: 'A quiet temple in Guangzhou. China honestly left me speechless.' },
+  { label: 'Gandía 🏖️', src: 'photos/gandia_beach.jpg', text: 'Gandía beach — my happy place back home.' },
 ]
+const META_COLS = 2 // photo menu grid columns
 
-// Near the Meta glasses: press F -> yes/no prompt -> a VR-style two-lens view
-// that cycles through Irene's camera roll. F again (or walking away) exits.
+// Near the Meta glasses: press F -> yes/no prompt -> VR two-lens view. You pick
+// a photo from a menu; its story types out as a dialogue and the shot shows in
+// the lenses. With nothing picked, the lenses show a glitchy colour-bar screen.
 function MetaVision() {
   const { near, mode } = useMetaStore()
-  const [i, setI] = useState(0) // current photo
   const [ask, setAsk] = useState(0) // 0 = Yes, 1 = No
+  const [view, setView] = useState('menu') // 'menu' | 'text'
+  const [pick, setPick] = useState(0) // menu cursor
+  const [shown, setShown] = useState(null) // photo index currently displayed
+  const [n, setN] = useState(0) // typewriter progress
+
+  const options = [...META_PHOTOS.map((p) => p.label), 'Take the glasses off']
+  const caption = shown != null ? META_PHOTOS[shown].text : ''
+  const full = n >= caption.length
 
   const confirm = (yes) => {
     playSfx('select')
     metaStore.set({ mode: yes ? 'on' : 'off' })
   }
+  const selectOption = (idx) => {
+    playSfx('select')
+    if (idx >= META_PHOTOS.length) {
+      metaStore.set({ mode: 'off' }) // "Take the glasses off"
+      return
+    }
+    setShown(idx)
+    setN(0)
+    setView('text')
+  }
+  const advance = () => {
+    playSfx('blip')
+    if (!full) setN(caption.length)
+    else {
+      setView('menu') // done reading -> back to the photo menu
+      setShown(null)
+    }
+  }
 
-  // F: open the prompt when near; take the glasses off when they're on.
+  // F opens the prompt when near / takes the glasses off; Esc always exits.
   useEffect(() => {
     const onKey = (e) => {
-      if (e.code !== 'KeyF') return
       const s = metaStore.get()
+      if (e.code === 'Escape') {
+        if (s.mode !== 'off') metaStore.set({ mode: 'off' })
+        return
+      }
+      if (e.code !== 'KeyF') return
       if (s.mode === 'on') metaStore.set({ mode: 'off' })
       else if (s.mode === 'off' && s.near) metaStore.set({ mode: 'ask' })
     }
@@ -41,17 +72,29 @@ function MetaVision() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // Walking away always resets.
   useEffect(() => {
-    if (!near) metaStore.set({ mode: 'off' })
+    if (!near) metaStore.set({ mode: 'off' }) // walking away resets
   }, [near])
 
-  // Default the prompt to "Yes" each time it opens.
+  // Reset sub-state each time the prompt / view opens.
   useEffect(() => {
     if (mode === 'ask') setAsk(0)
+    if (mode === 'on') {
+      setView('menu')
+      setPick(0)
+      setShown(null)
+      setN(0)
+    }
   }, [mode])
 
-  // Yes/No keyboard: ← → choose, Enter to confirm.
+  // Typewriter for the picked photo's story.
+  useEffect(() => {
+    if (mode !== 'on' || view !== 'text' || n >= caption.length) return
+    const id = setTimeout(() => setN((c) => c + 1), 28)
+    return () => clearTimeout(id)
+  }, [mode, view, n, caption])
+
+  // Yes/No keyboard.
   useEffect(() => {
     if (mode !== 'ask') return
     const onKey = (e) => {
@@ -68,13 +111,41 @@ function MetaVision() {
     return () => window.removeEventListener('keydown', onKey)
   }, [mode, ask])
 
-  // Cycle photos while the view is on.
+  // Photo-menu / story keyboard.
   useEffect(() => {
     if (mode !== 'on') return
-    setI(0)
-    const id = setInterval(() => setI((v) => (v + 1) % META_PHOTOS.length), 3800)
-    return () => clearInterval(id)
-  }, [mode])
+    const onKey = (e) => {
+      if (e.code === 'KeyF' || e.code === 'Escape') return // F / Esc exit (handled above)
+      if (view === 'menu') {
+        const len = options.length
+        if (e.code === 'ArrowUp') {
+          e.preventDefault()
+          playSfx('move')
+          setPick((v) => (v - META_COLS >= 0 ? v - META_COLS : v))
+        } else if (e.code === 'ArrowDown') {
+          e.preventDefault()
+          playSfx('move')
+          setPick((v) => (v + META_COLS < len ? v + META_COLS : v))
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault()
+          playSfx('move')
+          setPick((v) => (v > 0 ? v - 1 : v))
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault()
+          playSfx('move')
+          setPick((v) => (v < len - 1 ? v + 1 : v))
+        } else if (['Enter', 'NumpadEnter', 'Space'].includes(e.code)) {
+          e.preventDefault()
+          selectOption(pick)
+        }
+      } else {
+        e.preventDefault()
+        advance()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mode, view, pick, shown, n])
 
   const base = import.meta.env.BASE_URL
 
@@ -107,16 +178,14 @@ function MetaVision() {
   }
 
   if (mode === 'on') {
+    // each lens shows the picked photo, or a glitchy colour-bar "broken" screen
     const lens = (side) => (
       <div className="meta__lens" key={side}>
-        {META_PHOTOS.map((p, idx) => (
-          <img
-            key={p.src}
-            src={base + p.src}
-            alt=""
-            className={idx === i ? 'meta__photo is-on' : 'meta__photo'}
-          />
-        ))}
+        {shown != null ? (
+          <img src={base + META_PHOTOS[shown].src} alt="" className="meta__photo is-on" />
+        ) : (
+          <div className="meta__broken" />
+        )}
         <div className="meta__vignette" />
       </div>
     )
@@ -127,15 +196,32 @@ function MetaVision() {
           {lens('l')}
           {lens('r')}
         </div>
-        <div className="meta__dots">
-          {META_PHOTOS.map((_, idx) => (
-            <span key={idx} className={idx === i ? 'on' : ''} />
-          ))}
-        </div>
-        <div className="meta__hud">
-          <span className="meta__tag">● VR · F TO EXIT</span>
-          <span className="meta__caption">{META_PHOTOS[i].caption}</span>
-        </div>
+
+        {view === 'menu' ? (
+          <div className="dialogue dialogue--menu">
+            <div className="dialogue__prompt">What do you want to see?</div>
+            <ul className="dialogue__options">
+              {options.map((label, idx) => (
+                <li
+                  key={label}
+                  className={idx === pick ? 'is-active' : ''}
+                  onMouseEnter={() => setPick(idx)}
+                  onClick={() => selectOption(idx)}
+                >
+                  <span className="dialogue__cursor">{idx === pick ? '▶' : ' '}</span>
+                  {label}
+                </li>
+              ))}
+            </ul>
+            <div className="dialogue__hint">↑︎↓︎←︎→︎ choose · Enter select · F / Esc to take off</div>
+          </div>
+        ) : (
+          <div className="dialogue" onClick={advance}>
+            <div className="dialogue__text">{caption.slice(0, n)}</div>
+            <div className="dialogue__hint">Any key to continue · F / Esc to take off</div>
+            {full && <div className="dialogue__arrow">▼</div>}
+          </div>
+        )}
       </div>
     )
   }

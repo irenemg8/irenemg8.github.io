@@ -439,3 +439,48 @@ canvas {
   justify-content: center;
   gap: 0.2rem 2.4rem;
 }
+
+/* Glitchy "broken screen" shown in the lenses when no photo is picked */
+.meta__broken {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.18) 0 2px,
+      transparent 2px 4px
+    ),
+    linear-gradient(
+      90deg,
+      #c0c0c0 0 14.28%,
+      #c0c000 0 28.57%,
+      #00c0c0 0 42.85%,
+      #00c000 0 57.14%,
+      #c000c0 0 71.42%,
+      #c00000 0 85.71%,
+      #2038c0 0 100%
+    );
+  background-size: 100% 100%, 100% 100%;
+  animation: metaGlitch 0.9s steps(2, end) infinite;
+}
+.meta__broken::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 0, 80, 0.28), rgba(0, 200, 255, 0.28));
+  mix-blend-mode: screen;
+  animation: metaGlitch2 0.55s steps(3, end) infinite;
+}
+@keyframes metaGlitch {
+  0% { transform: translate(0, 0); filter: hue-rotate(0deg); }
+  25% { transform: translate(-2%, 1px) skewX(-1.5deg); }
+  50% { transform: translate(1.5%, -1px); filter: hue-rotate(20deg); }
+  75% { transform: translate(-1%, 2px) skewX(1deg); }
+  100% { transform: translate(0, 0); filter: hue-rotate(0deg); }
+}
+@keyframes metaGlitch2 {
+  0% { transform: translateX(0); opacity: 0.5; }
+  33% { transform: translateX(4%); opacity: 0.8; }
+  66% { transform: translateX(-3%); opacity: 0.4; }
+  100% { transform: translateX(0); opacity: 0.6; }
+}
