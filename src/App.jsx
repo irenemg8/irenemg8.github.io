@@ -4,8 +4,144 @@ import { useProgress } from '@react-three/drei'
 import * as THREE from 'three'
 import Scene from './Scene.jsx'
 import { useBoxStore, boxStore } from './boxStore.js'
+import { useMetaStore, metaStore } from './metaStore.js'
 import { BOXES } from './Boxes.jsx'
 import { useAudio, audio, playSfx, startMusicOnGesture } from './audio.js'
+
+// Camera-roll shots (from the old portfolio's "About me") shown through the
+// Meta glasses' passthrough view.
+const META_PHOTOS = [
+  { src: 'photos/warsaw_pierogi.jpg', caption: 'My first pierogi · Warsaw' },
+  { src: 'photos/terracotta.jpg', caption: 'Terracotta Army · Xi’an' },
+  { src: 'photos/guangzhou.jpg', caption: 'A temple in Guangzhou' },
+  { src: 'photos/gandia_beach.jpg', caption: 'Gandía beach' },
+]
+
+// Near the Meta glasses: press F -> yes/no prompt -> a VR-style two-lens view
+// that cycles through Irene's camera roll. F again (or walking away) exits.
+function MetaVision() {
+  const { near, mode } = useMetaStore()
+  const [i, setI] = useState(0) // current photo
+  const [ask, setAsk] = useState(0) // 0 = Yes, 1 = No
+
+  const confirm = (yes) => {
+    playSfx('select')
+    metaStore.set({ mode: yes ? 'on' : 'off' })
+  }
+
+  // F: open the prompt when near; take the glasses off when they're on.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.code !== 'KeyF') return
+      const s = metaStore.get()
+      if (s.mode === 'on') metaStore.set({ mode: 'off' })
+      else if (s.mode === 'off' && s.near) metaStore.set({ mode: 'ask' })
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  // Walking away always resets.
+  useEffect(() => {
+    if (!near) metaStore.set({ mode: 'off' })
+  }, [near])
+
+  // Default the prompt to "Yes" each time it opens.
+  useEffect(() => {
+    if (mode === 'ask') setAsk(0)
+  }, [mode])
+
+  // Yes/No keyboard: ← → choose, Enter to confirm.
+  useEffect(() => {
+    if (mode !== 'ask') return
+    const onKey = (e) => {
+      if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+        e.preventDefault()
+        playSfx('move')
+        setAsk((v) => (v === 0 ? 1 : 0))
+      } else if (['Enter', 'NumpadEnter', 'Space'].includes(e.code)) {
+        e.preventDefault()
+        confirm(ask === 0)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mode, ask])
+
+  // Cycle photos while the view is on.
+  useEffect(() => {
+    if (mode !== 'on') return
+    setI(0)
+    const id = setInterval(() => setI((v) => (v + 1) % META_PHOTOS.length), 3800)
+    return () => clearInterval(id)
+  }, [mode])
+
+  const base = import.meta.env.BASE_URL
+
+  if (near && mode === 'off') {
+    return <div className="meta-hint">Press F to try Irene’s Meta glasses 🥽</div>
+  }
+
+  if (mode === 'ask') {
+    return (
+      <div className="dialogue dialogue--menu">
+        <div className="dialogue__prompt">
+          You’re about to browse Irene’s camera roll. Want a look?
+        </div>
+        <ul className="dialogue__options meta-ask">
+          {['Yes', 'No'].map((label, idx) => (
+            <li
+              key={label}
+              className={idx === ask ? 'is-active' : ''}
+              onMouseEnter={() => setAsk(idx)}
+              onClick={() => confirm(idx === 0)}
+            >
+              <span className="dialogue__cursor">{idx === ask ? '▶' : ' '}</span>
+              {label}
+            </li>
+          ))}
+        </ul>
+        <div className="dialogue__hint">←︎ →︎ choose · Enter to select</div>
+      </div>
+    )
+  }
+
+  if (mode === 'on') {
+    const lens = (side) => (
+      <div className="meta__lens" key={side}>
+        {META_PHOTOS.map((p, idx) => (
+          <img
+            key={p.src}
+            src={base + p.src}
+            alt=""
+            className={idx === i ? 'meta__photo is-on' : 'meta__photo'}
+          />
+        ))}
+        <div className="meta__vignette" />
+      </div>
+    )
+    return (
+      <div className="meta">
+        <div className="meta__scrim" />
+        <div className="meta__lenses">
+          {lens('l')}
+          {lens('r')}
+        </div>
+        <div className="meta__dots">
+          {META_PHOTOS.map((_, idx) => (
+            <span key={idx} className={idx === i ? 'on' : ''} />
+          ))}
+        </div>
+        <div className="meta__hud">
+          <span className="meta__tag">● VR · F TO EXIT</span>
+          <span className="meta__caption">{META_PHOTOS[i].caption}</span>
+        </div>
+      </div>
+    )
+  }
+
+  return null
+}
 
 // Pokémon-style dialogue. Types text letter by letter with a blinking arrow;
 // any key advances. A box may also carry a branching `menu` (pick a place →
@@ -197,7 +333,7 @@ function Loader() {
       <div className="loading__bar">
         <div className="loading__fill" style={{ width: `${Math.min(100, progress)}%` }} />
       </div>
-      <div className="loading__hint">Furnishing the apartment… {Math.floor(progress)}%</div>
+      <div className="loading__hint">Furnishing the gallery… {Math.floor(progress)}%</div>
     </div>
   )
 }
@@ -239,7 +375,8 @@ function SettingsPanel() {
       </div>
 
       {open && (
-        <div className="panel">
+        <div className="panel panel--controls">
+          <div className="panel__title">Sound</div>
           <div className="panel__row">
             <button className="panel__toggle" onClick={() => audio.set({ musicOn: !s.musicOn })}>
               {s.musicOn ? '🔊' : '🔇'} Music
@@ -321,13 +458,13 @@ export default function App() {
         <div className="brand">
           <div className="brand__name">Irene Medina</div>
           <div className="brand__tag">
-            WASD to move{mode === 'first' ? ' · click to look' : ''}
           </div>
         </div>
 
         <div className="crosshair" style={{ display: mode === 'first' ? 'block' : 'none' }} />
         <PeekHint />
         <DialogueBox />
+        <MetaVision />
         <SettingsPanel />
 
         <div className="controls">

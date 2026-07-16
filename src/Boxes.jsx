@@ -23,7 +23,7 @@ export const BOXES = [
     rotation: Math.PI / 2,
     dialog: [
       "Hi there! I'm Irene Medina García — welcome to my little 3D world.",
-      "If there's one thing that makes my eyes light up, it's traveling.",
+      "If there's one thing that makes my eyes light up, it's travelling.",
       'Every place I visit leaves a little mark on me. Want to hear about one?',
     ],
     // Branching menu (Pokémon-style). Pick a place → read its story → choose
@@ -42,7 +42,7 @@ export const BOXES = [
         {
           label: 'Broadstairs',
           text: [
-            'Broadstairs is my little English secret: a tiny seaside town in Kent with pastel houses and a cosy bay.',
+            'Broadstairs is my little English secret: a tiny seaside town in Kent with pastel houses and a cozy bay.',
             "It's where I polished my English and fell for the British coast.",
           ],
         },
@@ -113,8 +113,8 @@ export const BOXES = [
     rotation: Math.PI / 2,
     dialog: [
       'Step inside — this pixel house is a love letter to my childhood. 🏠',
-      'It’s styled after the cosy interiors of Pokémon Diamond on the Nintendo DS — one of my all-time favourite games.',
-      'I grew up on Nintendo: Wii Sports Resort (yes, the little airplane island flights!) and endless afternoons with Nintendogs.',
+      'It’s styled after the cozy interiors of Pokémon Diamond on the Nintendo DS — one of my all-time favourite games.',
+      'I grew up on Nintendo: Wii Sports Resort (yes, the little aeroplane island flights!) and endless afternoons with Nintendogs.',
       'Those worlds are a big reason I love making playful, explorable spaces like this one today.',
     ],
   },
@@ -145,7 +145,7 @@ export const BOXES = [
         {
           label: 'Degree',
           text: [
-            "I'm studying the Interactive Technologies degree at the Polytechnic University of Valencia (UPV), 2022–2026.",
+            "I studied the Interactive Technologies degree at the Polytechnic University of Valencia (UPV), from 2022 to 2026.",
             'It’s the sweet spot where code, design, 3D and human–computer interaction all meet — basically my dream mix.',
             'My bachelor’s thesis (written in English) built an Agentic-RAG Socratic tutor for Ohm’s law — and earned a perfect 10 with Honours (Matrícula de Honor)!',
           ],

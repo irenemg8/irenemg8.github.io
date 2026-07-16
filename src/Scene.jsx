@@ -1,8 +1,11 @@
 import { useMemo } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { useGLTF, PointerLockControls } from '@react-three/drei'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import * as THREE from 'three'
 import './bvh.js' // side-effect: patch BVH onto three
+import { playerPos } from './playerState.js'
+import { metaStore } from './metaStore.js'
 import Apartment from './Apartment.jsx'
 import GradientBackground from './GradientBackground.jsx'
 import City from './City.jsx'
@@ -17,6 +20,18 @@ import Props, { propColliderGeometries, PROPS } from './Props.jsx'
 import PlayerController from './PlayerController.jsx'
 
 const CEILING = 5.5 // normalise the room so its height ≈ 4 metres (bigger gallery)
+
+// Trigger the Meta "passthrough" overlay when the player gets near the glasses.
+const META_ITEM = ARTWORK_ITEMS.find((i) => i.key === 'metaQuest3')
+const META_XZ = META_ITEM ? [META_ITEM.position[0], META_ITEM.position[2]] : [0, 0]
+const META_R = 2.4
+function MetaProximity() {
+  useFrame(() => {
+    const d = Math.hypot(playerPos.x - META_XZ[0], playerPos.z - META_XZ[1])
+    metaStore.set({ near: d < META_R })
+  })
+  return null
+}
 
 export default function Scene({ mode = 'third', showMarkers = false }) {
   const { scene } = useGLTF('/models/gallery4k.glb')
@@ -98,6 +113,7 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
       <Artworks />
       <Boxes />
       <Props />
+      <MetaProximity />
       <Markers show={showMarkers} />
 
       {/* Lighting (no HDRI): bright but not blown out, so colours read */}
