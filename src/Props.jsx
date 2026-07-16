@@ -24,9 +24,8 @@ const propYaw = (p) => (p.rotation ?? 0) + (p.rotationY ?? 0)
 export const PROPS = [
   { url: '/models/box_set.glb', position: [-2.8, 0, 7], rotation: 2.4, heightM: 1.8 }, //ya
   { url: '/models/psx_boxes.glb', position: [2.4, 1, -7], rotation: -0.5, heightM: 0.7 }, //ya
-  { url: '/models/carton_box.glb', position: [-3.3, 0, -5.5], rotation: 0.8, heightM: 0.4 }, //ya
     { url: '/models/carton_box.glb', position: [0, 0.3, 0.3], rotation: 0.8, heightM: 0.2 }, //ya
-  { url: '/models/carton_closed.glb', position: [-2.5, 0, -6.5], rotation: -0.3, heightM: 0.55 },
+  { url: '/models/carton_closed.glb', position: [-1.8, 0, -6.5], rotation: -0.3, heightM: 0.55 },
   // Nilo, the pug — hangs out near his watermelon box
   {
     url: '/models/pug.glb',

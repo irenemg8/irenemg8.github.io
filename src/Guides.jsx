@@ -8,13 +8,13 @@ import { recolor } from './utils/recolor.js'
 // you and answer a few questions (approach + F). Both share the same dialogue.
 const YELLOW = '#f4c518'
 const CAP_H = 0.2 // cap height in local units (before the 0.85 group scale)
-const HEAD_UP = 0.4 // raise the cap above the head bone (bigger = higher)
+const HEAD_UP = 0.38 // raise the cap above the head bone (bigger = higher)
 const HEAD_FWD = 0.05 // push the cap forward so the visor sticks out (± to flip)
 
 // Door positions live in galleryLayout.js: [3.5,0,4.7] and [-3.5,0,-4.6].
 const GUIDES = [
-  { position: [3.0, 0, 4.3], rotation: -2.5 }, // by the +X door, facing the room
-  { position: [-3.0, 0, -4.2], rotation: 0.6 }, // by the -X door, facing the room
+  { position: [3.2, 0, 5.3], rotation: -2.5 }, // by the +X door, facing the room
+  { position: [-3.2, 0, -5.3], rotation: 0.6 }, // by the -X door, facing the room
 ]
 
 const GUIDE_INTRO = [

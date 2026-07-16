@@ -13,7 +13,7 @@ import { fitToHeight } from './utils/fit.js'
 //  color      : optional solid colour (for untextured models)
 //  boxCollider: use a cheap box collider instead of the real (heavy) geometry
 export const ITEMS = [
-    { key: 'metaQuest3', url: '/models/meta_quest_3.glb', position: [-2.5, 0.6, -6.5], rotation: 0.9 ,     height: 0.5,    pedestal: 0},
+    { key: 'metaQuest3', url: '/models/meta_quest_3.glb', position: [-1.8, 0.6, -6.5], rotation: 0.9 ,     height: 0.5,    pedestal: 0},
   /*{
     key: 'moai',
     url: '/models/moai.glb',

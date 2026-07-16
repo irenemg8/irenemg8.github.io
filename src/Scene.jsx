@@ -31,7 +31,10 @@ const META_R = 2.4
 function MetaProximity() {
   useFrame(() => {
     const d = Math.hypot(playerPos.x - META_XZ[0], playerPos.z - META_XZ[1])
-    metaStore.set({ near: d < META_R })
+    // a nearby / active talker (a door guide) wins, so prompts don't overlap
+    const t = talkStore.get()
+    const talkBusy = t.near != null || t.open != null
+    metaStore.set({ near: d < META_R && !talkBusy })
   })
   return null
 }

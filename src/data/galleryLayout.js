@@ -17,7 +17,7 @@ export const ARTWORKS = [
   { position: [-2.6, 0, -2]}, //ya
   { position: [2.2, 0, -6.8] },
   { position: [2.6, 0, 2] },
-  { position: [-2.5, 0, -6.5] }, //ya  
+  { position: [-1.8, 0, -6.5] }, //ya  
   { position: [1.1, 0, 7.20]  }, //ya
 
 ]
