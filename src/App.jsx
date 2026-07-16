@@ -577,7 +577,7 @@ function PropTalk() {
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
             >
-              just click here
+              Irene Medina García
             </a>
           </>
         )}

@@ -19,6 +19,7 @@ import { benchColliderGeometries } from './data/galleryLayout.js'
 import Boxes, { boxColliderGeometries, BOXES } from './Boxes.jsx'
 import Props, { propColliderGeometries, PROPS } from './Props.jsx'
 import Guides from './Guides.jsx'
+import Villagers from './Villagers.jsx'
 import { TALKERS } from './talkers.js'
 import PlayerController from './PlayerController.jsx'
 
@@ -140,6 +141,7 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
       <Boxes />
       <Props />
       <Guides />
+      <Villagers />
       <MetaProximity />
       <TalkProximity />
       <Markers show={showMarkers} />
