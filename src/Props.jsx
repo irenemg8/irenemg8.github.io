@@ -63,7 +63,7 @@ export const PROPS = [
 
   { url: '/models/pile_of_books.glb', position: [2.1, 1, 1.6], rotation: 2.2, heightM: 0.3 },
   // Animated llama playing its "lookaround" clip on loop
-  { url: '/models/llama.glb', position: [1.5, 0, 7.5], rotation: 2.3, heightM: 1.2, anim: 'lookaround' },
+  { url: '/models/llama.glb', position: [1.1, 0, 7.2], rotation: -2.3, heightM: 1.2, anim: 'lookaround' },
   { url: '/models/cardboard_cloud_b.glb', position: [1.5, 2, 7.5], rotation: 0, heightM: 0.5 },
     { url: '/models/cardboard_cloud_b.glb', position: [0.6, 1.8, 7.4], rotation: 0, heightM: 0.3 },
 
@@ -177,16 +177,18 @@ function AnimatedProp(p) {
     const fit = fitToHeight(c, propHeight({ height, heightM }))
     return { model: c, fitScale: fit.scale, yOffset: fit.yOffset }
   }, [scene, height, heightM])
-  const { actions, names } = useAnimations(animations, group)
+  const { actions } = useAnimations(animations, group)
   useEffect(() => {
-    const wanted = anim
-      ? names.find((n) => n.toLowerCase().includes(anim.toLowerCase()))
-      : names[0]
-    const a = wanted && actions[wanted]
-    if (!a) return
+    const list = Object.values(actions).filter(Boolean)
+    if (!list.length) return
+    // pick the clip whose name contains `anim`; fall back to the first one
+    const want = (anim || '').toLowerCase()
+    const a =
+      (want && list.find((ac) => ac.getClip().name.toLowerCase().includes(want))) || list[0]
     a.reset().setLoop(THREE.LoopRepeat, Infinity).play()
+    if (import.meta.env.DEV) window.__llama = a
     return () => a.stop()
-  }, [actions, names, anim])
+  }, [actions, anim])
   const midY = propHeight(p) / 2
   return (
     <group position={position} rotation={[0, propYaw(p), 0]}>
