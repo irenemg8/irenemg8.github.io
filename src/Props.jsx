@@ -1,5 +1,7 @@
-import { useMemo } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useGLTF, useAnimations } from '@react-three/drei'
+import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js'
 import * as THREE from 'three'
 import { fitToHeight } from './utils/fit.js'
 
@@ -36,7 +38,7 @@ export const PROPS = [
   { url: '/models/coconut.glb', position: [0.8, -0.03, -6.3], rotation: 0, heightM: 0.2 },
   { url: '/models/beer_bottle.glb', position: [2.3, -0.17, -5.4], rotationZ: 1.6, heightM: 0.4 },
   // More cardboard decor + a little frog
-  { url: '/models/cardboard_guitar.glb', position: [-3, 0, -3.3], rotation: 2.3, heightM: 0.9 },
+  { url: '/models/cardboard_guitar.glb', position: [-3, 0, -3.4], rotation: 2.3, heightM: 0.9 },
   { url: '/models/cardboard_decorations.glb', position: [-2.8, 0, -0.15], rotation: 0, heightM: 2 },
   { url: '/models/frog.glb', position: [-2.5, 1, 2], rotation: -1.6, heightM: 0.8 },
 
@@ -45,6 +47,30 @@ export const PROPS = [
 
           { url: '/models/cardboard_cloud.glb', position: [1.8, 3.7, 0], rotation: -0.2, heightM: 0.3 },
         { url: '/models/cardboard_cloud.glb', position: [-1.7, 3.2, -4.5], rotation: -0.3, heightM: 0.35 },
+
+  { url: '/models/lemonade.glb', position: [-1.9, 0.925, -2.55],rotation: -1.6, heightM: 0.35 },
+  // on the +X wall behind the study box [2.6, 0, 2]
+  { url: '/models/sticky_note.glb', position: [3.35, 0.7, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.035 },
+    { url: '/models/sticky_note.glb', position: [3.5, 0.7, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.03 },
+        { url: '/models/sticky_note.glb', position: [3.7, 0.5, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
+                { url: '/models/sticky_note.glb', position: [3.15, 0.4, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.025 },
+                        { url: '/models/sticky_note.glb', position: [3.5, 0.3, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
+                                                { url: '/models/sticky_note.glb', position: [4, 0.2, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.025 },
+                                                                        { url: '/models/sticky_note.glb', position: [3.85, 0.8, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
+                                                                        { url: '/models/sticky_note.glb', position: [4, 0.6, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
+  { url: '/models/cardboard_cactus.glb', position: [2.5, 0, 7], rotation: -2.7, heightM: 1.5 },
+    { url: '/models/cardboard_cactus.glb', position: [0, 0, 7.25], rotation: 2.8, heightM: 1.25 },
+
+  { url: '/models/pile_of_books.glb', position: [2.1, 1, 1.6], rotation: 2.2, heightM: 0.3 },
+  // Animated llama playing its "lookaround" clip on loop
+  { url: '/models/llama.glb', position: [1.5, 0, 7.5], rotation: 2.3, heightM: 1.2, anim: 'lookaround' },
+  { url: '/models/cardboard_cloud_b.glb', position: [1.5, 2, 7.5], rotation: 0, heightM: 0.5 },
+    { url: '/models/cardboard_cloud_b.glb', position: [0.6, 1.8, 7.4], rotation: 0, heightM: 0.3 },
+
+
+
+
+
 
 
 ]
@@ -84,6 +110,16 @@ export function propColliderGeometries(gltfs) {
 
 function Prop(p) {
   const { url, position, height, heightM, color } = p
+  const outer = useRef()
+  const floats = p.float ?? url.includes('cloud') // clouds bob gently
+  // deterministic per-prop phase so they drift out of sync (no randomness)
+  const phase = position[0] * 1.7 + position[2] * 0.9
+  useFrame((state) => {
+    if (!floats || !outer.current) return
+    const t = state.clock.elapsedTime
+    outer.current.position.y = position[1] + Math.sin(t * 0.8 + phase) * 0.12
+    outer.current.rotation.y = propYaw(p) + Math.sin(t * 0.5 + phase) * 0.05
+  })
   const { scene } = useGLTF(url)
   const { model, fitScale, yOffset } = useMemo(() => {
     const c = scene.clone(true)
@@ -109,8 +145,8 @@ function Prop(p) {
   }, [scene, height, heightM, color])
   const midY = propHeight(p) / 2 // tilt pivots around the model's own centre
   return (
-    // 1) yaw around the floor position
-    <group position={position} rotation={[0, propYaw(p), 0]}>
+    // 1) yaw around the floor position (ref lets floating props bob in useFrame)
+    <group ref={outer} position={position} rotation={[0, propYaw(p), 0]}>
       {/* 2) pitch/roll about the model centre (tips in place, no fly-off) */}
       <group position={[0, midY, 0]} rotation={[p.rotationX ?? 0, 0, p.rotationZ ?? 0]}>
         <group position={[0, -midY, 0]}>
@@ -123,12 +159,54 @@ function Prop(p) {
   )
 }
 
+// A prop with a skinned animation: plays (on loop) the clip whose name contains
+// `anim` (case-insensitive), e.g. anim: 'lookaround'.
+function AnimatedProp(p) {
+  const { url, position, height, heightM, anim } = p
+  const group = useRef()
+  const { scene, animations } = useGLTF(url)
+  const { model, fitScale, yOffset } = useMemo(() => {
+    const c = cloneSkeleton(scene) // proper skeleton clone for skinned meshes
+    c.traverse((o) => {
+      if (o.isMesh || o.isSkinnedMesh) {
+        o.castShadow = true
+        o.receiveShadow = true
+      }
+      if (o.isSkinnedMesh) o.frustumCulled = false
+    })
+    const fit = fitToHeight(c, propHeight({ height, heightM }))
+    return { model: c, fitScale: fit.scale, yOffset: fit.yOffset }
+  }, [scene, height, heightM])
+  const { actions, names } = useAnimations(animations, group)
+  useEffect(() => {
+    const wanted = anim
+      ? names.find((n) => n.toLowerCase().includes(anim.toLowerCase()))
+      : names[0]
+    const a = wanted && actions[wanted]
+    if (!a) return
+    a.reset().setLoop(THREE.LoopRepeat, Infinity).play()
+    return () => a.stop()
+  }, [actions, names, anim])
+  const midY = propHeight(p) / 2
+  return (
+    <group position={position} rotation={[0, propYaw(p), 0]}>
+      <group position={[0, midY, 0]} rotation={[p.rotationX ?? 0, 0, p.rotationZ ?? 0]}>
+        <group position={[0, -midY, 0]}>
+          <group ref={group} scale={fitScale} position={[0, yOffset, 0]}>
+            <primitive object={model} />
+          </group>
+        </group>
+      </group>
+    </group>
+  )
+}
+
 export default function Props() {
   return (
     <group>
-      {PROPS.map((p, i) => (
-        <Prop key={i} {...p} />
-      ))}
+      {PROPS.map((p, i) =>
+        p.anim ? <AnimatedProp key={i} {...p} /> : <Prop key={i} {...p} />,
+      )}
     </group>
   )
 }
