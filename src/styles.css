@@ -242,7 +242,7 @@ canvas {
 .iconbtn--on { background: #efe9ff; box-shadow: 0 0 0 2px #6b5cff, 0 8px 24px rgba(0, 0, 0, 0.28); }
 .panel {
   pointer-events: auto;
-  width: 15rem;
+  width: 16rem;
   padding: 0.9rem 1rem;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 14px;

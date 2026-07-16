@@ -146,7 +146,7 @@ function DialogueBox() {
             </li>
           ))}
         </ul>
-        <div className="dialogue__hint">↑↓←→ choose · Enter to select</div>
+        <div className="dialogue__hint">↑︎↓︎←︎→︎ choose · Enter to select</div>
       </div>
     )
   }
@@ -208,7 +208,8 @@ const CONTROLS = [
   { keys: ['Mouse'], action: 'Look around (1st person)' },
   { keys: ['F'], action: 'Look inside a box 📦' },
   { keys: ['Any key'], action: 'Advance dialogue' },
-  { keys: ['↑', '↓', '←', '→'], action: 'Choose in a menu' },
+  // ︎ forces text (non-emoji) rendering so all four arrows match in style.
+  { keys: ['↑︎', '↓︎', '←︎', '→︎'], action: 'Move in a menu' },
   { keys: ['Enter'], action: 'Select menu option' },
 ]
 
