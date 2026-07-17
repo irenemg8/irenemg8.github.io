@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { useProgress } from '@react-three/drei'
 import * as THREE from 'three'
@@ -743,16 +743,26 @@ function PeekHint() {
   )
 }
 
-function Loader() {
-  const { progress, active } = useProgress()
-  if (!active && progress >= 100) return null
+// Stays up until the room reports it's actually drawn a frame — `progress` only
+// tracks downloads, and there's a long quiet stretch after those finish while
+// the collider is built. Hiding on progress alone shows a black screen.
+function Loader({ done }) {
+  const { progress } = useProgress()
+  const peak = useRef(0)
+  if (done) return null
+  // Progress is re-reported as each new batch of assets queues up, so it can
+  // jump backwards. Never let the bar retreat — it just looks broken.
+  peak.current = Math.max(peak.current, Math.min(100, progress))
+  const pct = peak.current
   return (
     <div className="loading">
       <div className="loading__title">Irene Medina García</div>
       <div className="loading__bar">
-        <div className="loading__fill" style={{ width: `${Math.min(100, progress)}%` }} />
+        <div className="loading__fill" style={{ width: `${pct}%` }} />
       </div>
-      <div className="loading__hint">Furnishing the gallery… {Math.floor(progress)}%</div>
+      <div className="loading__hint">
+        {pct >= 100 ? 'Almost there — arranging the furniture…' : `Furnishing the gallery… ${Math.floor(pct)}%`}
+      </div>
     </div>
   )
 }
@@ -851,6 +861,7 @@ function SettingsPanel() {
 export default function App() {
   const [mode, setMode] = useState('third') // 'third' | 'first'
   const [showMarkers, setShowMarkers] = useState(false) // placement pins (toggle hidden for now)
+  const [ready, setReady] = useState(false) // the room has drawn its first frame
 
   // Start the looping background music on the first user interaction.
   useEffect(() => {
@@ -868,11 +879,11 @@ export default function App() {
         }}
       >
         <Suspense fallback={null}>
-          <Scene mode={mode} showMarkers={showMarkers} />
+          <Scene mode={mode} showMarkers={showMarkers} onReady={() => setReady(true)} />
         </Suspense>
       </Canvas>
 
-      <Loader />
+      <Loader done={ready} />
 
       <div className="hud">
         <div className="brand">

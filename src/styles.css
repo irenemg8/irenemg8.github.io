@@ -287,7 +287,9 @@ canvas {
   margin-bottom: 0.6rem;
 }
 .panel__toggle {
-  flex: 0 0 6.2rem;
+  /* Just wide enough for the longest label ("Effects" ≈ 5rem), so the sliders
+     sit close to the text. Fixed rather than auto, so they still line up. */
+  flex: 0 0 5.2rem;
   text-align: left;
   border: none;
   background: transparent;

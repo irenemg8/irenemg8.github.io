@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, PointerLockControls } from '@react-three/drei'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
@@ -73,7 +73,19 @@ function TalkProximity() {
   return null
 }
 
-export default function Scene({ mode = 'third', showMarkers = false }) {
+// Tells the HUD the room is actually on screen. The loading bar tracks
+// downloads, which finish well before the collider is built and the first frame
+// is drawn — hiding it then just leaves you staring at a black screen.
+function ReadySignal({ onReady }) {
+  const frames = useRef(0)
+  useFrame(() => {
+    if (frames.current > 1) return
+    if (++frames.current > 1) onReady?.()
+  })
+  return null
+}
+
+export default function Scene({ mode = 'third', showMarkers = false, onReady }) {
   const { scene } = useGLTF('/models/gallery4k.glb')
   const artGltf = useGLTF(ARTWORK_ITEMS.map((i) => i.url))
   const boxGltfs = useGLTF(BOXES.map((b) => b.url))
@@ -83,7 +95,26 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
   // never mutate the cached scene (StrictMode-safe), then bake the same
   // transform into a merged BVH collider.
   const { transform, collider } = useMemo(() => {
-    const raw = new THREE.Box3().setFromObject(scene)
+    // Measure the room in ITS OWN space, never in world space. `scene` is the
+    // shared cached object that <Apartment /> mounts inside the scaled group
+    // below, so its matrixWorld already carries that scale — measuring it would
+    // fold the scale back into itself and the room would grow every time this
+    // re-ran. Cancelling the room's own world matrix makes this idempotent.
+    scene.updateMatrixWorld(true)
+    const toRoom = new THREE.Matrix4().copy(scene.matrixWorld).invert()
+    const local = new THREE.Matrix4()
+
+    const raw = new THREE.Box3()
+    const parts = []
+    scene.traverse((o) => {
+      if (!o.isMesh) return
+      const g = o.geometry.clone()
+      g.applyMatrix4(local.multiplyMatrices(toRoom, o.matrixWorld)) // -> room space
+      g.computeBoundingBox()
+      raw.union(g.boundingBox)
+      parts.push(g)
+    })
+
     const size = raw.getSize(new THREE.Vector3())
     const S = CEILING / (size.y || 1)
     const offset = new THREE.Vector3(
@@ -99,17 +130,13 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
 
     // Build a position-only merged geometry for collision.
     const geoms = []
-    scene.updateMatrixWorld(true)
-    scene.traverse((o) => {
-      if (!o.isMesh) return
-      const g = o.geometry.clone()
-      g.applyMatrix4(o.matrixWorld) // scene-local -> scene world
-      g.applyMatrix4(world) // -> normalised world
+    for (const g of parts) {
+      g.applyMatrix4(world) // room space -> normalised world
       const clean = new THREE.BufferGeometry()
       clean.setAttribute('position', g.attributes.position.clone())
       if (g.index) clean.setIndex(g.index.clone())
       geoms.push(clean)
-    })
+    }
     // bench box colliders (can't walk through them)
     geoms.push(...benchColliderGeometries())
     // artworks: bake their real geometry in so you can't walk through them
@@ -177,6 +204,7 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
       </group>
 
       <PlayerController collider={collider} mode={mode} />
+      <ReadySignal onReady={onReady} />
       {mode === 'first' && <PointerLockControls makeDefault selector="#lookbtn" />}
     </>
   )
