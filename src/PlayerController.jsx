@@ -7,6 +7,8 @@ import { recolor } from './utils/recolor.js'
 import { playerPos } from './playerState.js'
 import { boxStore } from './boxStore.js'
 import { talkStore } from './talkStore.js'
+import { metaStore } from './metaStore.js'
+import { chat, chatStore, chatPair } from './npcChat.js'
 import { peekView } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { playFootstep } from './audio.js'
@@ -22,6 +24,12 @@ const CAM_UP = 1.9
 const TOP_HEIGHT = 16 // top-down camera height (see the whole floor to place boxes)
 const STEP_DIST = 0.32 // walk: a footstep every this many world units travelled
 const STEP_DIST_RUN = 0.6 // run (Shift): stride length while sprinting
+// Eavesdropping two-shot. A stickman stands about 0.9 units tall (its head-top
+// bone sits at ~0.89), so the camera is roughly at their head height, looking
+// slightly down at chest level — that puts both of them above the dialogue box.
+const CHAT_CAM_MIN = 1.7
+const CHAT_CAM_Y = 0.95
+const CHAT_LOOK_Y = 0.6
 
 export default function PlayerController({ collider, mode }) {
   const camera = useThree((s) => s.camera)
@@ -96,8 +104,20 @@ export default function PlayerController({ collider, mode }) {
     if (import.meta.env.DEV) {
       window.__cam = camera
       window.__pg = group.current
+      window.__tp = (x, z) => pos.current.set(x, 0, z) // dev: jump the player about
     }
   }, [camera])
+
+  // Distance to the nearest wall along (dx, dz), or Infinity if it's all clear.
+  const gapTo = (x, y, z, dx, dz, far) => {
+    if (!collider) return Infinity
+    dir.current.set(dx, 0, dz).normalize()
+    ray.current.far = far
+    ray.current.near = 0
+    ray.current.set(new THREE.Vector3(x, y, z), dir.current)
+    const hits = ray.current.intersectObject(collider)
+    return hits.length ? hits[0].distance : Infinity
+  }
 
   const clear = (x, z, dx, dz, dist) => {
     if (!collider) return true
@@ -116,7 +136,11 @@ export default function PlayerController({ collider, mode }) {
     const k = keys.current
     const peeking = boxStore.get().peek != null
     const talking = talkStore.get().open != null
-    const frozen = peeking || talking // camera locked, movement paused
+    const listening = chatStore.get().open // eavesdropping on two visitors
+    const frozen = peeking || talking || listening // camera locked, avatar hidden
+    // Wearing the glasses: the arrows drive the menu, so stand still — but stay
+    // visible, since you can still see the room through the lenses.
+    const held = frozen || metaStore.get().mode !== 'off' // movement paused
 
     // Basis: in 3rd person the camera orbit yaw drives it; in 1st person the
     // (pointer-lock) camera direction drives it.
@@ -135,7 +159,7 @@ export default function PlayerController({ collider, mode }) {
     }
 
     move.current.set(0, 0, 0)
-    if (!frozen) {
+    if (!held) {
       if (k.f) move.current.add(fwd.current)
       if (k.b) move.current.sub(fwd.current)
       if (k.r) move.current.add(right.current)
@@ -185,7 +209,32 @@ export default function PlayerController({ collider, mode }) {
 
     // Camera (dev: __freecam freezes it so we can inspect from outside)
     if (import.meta.env.DEV && window.__freecam) return
-    if (talking) {
+    const pair = listening ? chatPair() : null
+    if (pair) {
+      // Two-shot: sit square-on to the pair so one reads on the left of frame
+      // and the other on the right (chat.side picks the player's side, and
+      // chat.left records who ended up where, for the name tag).
+      const A = pair.a.pos
+      const B = pair.b.pos
+      const mx = (A.x + B.x) / 2
+      const mz = (A.z + B.z) / 2
+      let ux = B.x - A.x
+      let uz = B.z - A.z
+      const gap = Math.hypot(ux, uz) || 1
+      ux /= gap
+      uz /= gap
+      // chat.side stays put (it's what decided who's on the left), so if the
+      // pair are nattering against a wall we pull the camera in rather than
+      // swing it round and swap them over.
+      const nx = -uz * chat.side
+      const nz = ux * chat.side
+      const want = Math.max(CHAT_CAM_MIN, 1.2 + gap * 0.6)
+      const room = gapTo(mx, CHAT_CAM_Y, mz, nx, nz, want + 0.4)
+      const back = Math.max(0.9, Math.min(want, room - 0.3))
+      camPos.current.set(mx + nx * back, CHAT_CAM_Y, mz + nz * back)
+      camera.position.lerp(camPos.current, Math.min(1, dt * 5))
+      camera.lookAt(mx, CHAT_LOOK_Y, mz)
+    } else if (talking) {
       // close-up on the prop we're talking to (framed from the player's side)
       const sp = TALKERS[talkStore.get().open]
       const p = sp.position

@@ -24,10 +24,16 @@ export const ARTWORKS = [
 
 // Rectangular benches: [w, h, d] size, y rotation. Also used as colliders and
 // as sitting spots (two seats each, along local X).
+//
+// The bench in the gallery model measures 1.49 long x 0.39 deep and only 0.3
+// tall — below every collision probe — so it needs this box to be solid at all.
+// Depth matches the real thing, or you'd bump into thin air well before the
+// bench. Width is deliberately a bit under its real 1.49: it feels right as-is,
+// and the model's own geometry backs it up at the ends.
 export const BENCHES = [
-  { position: [-0.1, 0, 0], size: [1, 0, 1], rotation: 1.6 },
-  { position: [-0.1, 0, -4.05], size: [1, 0, 1], rotation: 1.6 },
-  { position: [-0.1, 0, 4.05], size: [1, 0, 1], rotation: 1.6 },
+  { position: [-0.1, 0, 0], size: [1, 0, 0.4], rotation: 1.6 },
+  { position: [-0.1, 0, -4.05], size: [1, 0, 0.4], rotation: 1.6 },
+  { position: [-0.1, 0, 4.05], size: [1, 0, 0.4], rotation: 1.6 },
 ]
 
 // Where gallery NPCs first appear (near the door).

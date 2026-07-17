@@ -7,6 +7,7 @@ import { fitToHeight } from './utils/fit.js'
 import { playerPos } from './playerState.js'
 import { boxStore } from './boxStore.js'
 import { talkStore } from './talkStore.js'
+import { chatStore } from './npcChat.js'
 
 // Diorama boxes — each loads its own model, fit to a uniform display size.
 //  url      : the box/content model
@@ -23,7 +24,6 @@ export const BOXES = [
     position: [-2.6, 0, 2],
     rotation: Math.PI / 2,
     dialog: [
-      "Hi there! I'm Irene Medina García — welcome to my little 3D world.",
       "If there's one thing that makes my eyes light up, it's travelling.",
       'Every place I visit leaves a little mark on me. Want to hear about one?',
     ],
@@ -202,7 +202,7 @@ export const BOXES = [
   },
 ]
 
-const NEAR_R = 2 // how close you must be to peek
+const NEAR_R = 1.6 // how close you must be to peek
 const UP = new THREE.Vector3(0, 1, 0)
 // Straight-on front view, level with the box centre. Tweak to frame content.
 const PEEK_OFFSET = new THREE.Vector3(0, 0.6, 2.0)
@@ -329,6 +329,7 @@ export default function Boxes() {
     const onKey = (e) => {
       if (e.code !== 'KeyF') return
       if (talkStore.get().near != null) return // a prop (llama/pug) has priority
+      if (chatStore.get().near) return // …and so does a conversation to eavesdrop on
       const s = boxStore.get()
       // F only opens a box; leaving happens when the dialogue finishes.
       if (s.peek == null && s.near != null) boxStore.set({ peek: s.near })
@@ -349,8 +350,9 @@ export default function Boxes() {
         near = i
       }
     }
-    // a nearby talkable prop (llama/pug) wins, so their prompts don't overlap
-    if (talkStore.get().near != null) near = null
+    // a nearby talkable prop (llama/pug) or an overheard conversation wins, so
+    // their prompts don't overlap
+    if (talkStore.get().near != null || chatStore.get().near) near = null
     boxStore.set({ near })
   })
 

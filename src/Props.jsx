@@ -13,6 +13,11 @@ import { fitToHeight } from './utils/fit.js'
 //  rotationX  : pitch / tilt — nose up-down (radians, optional)
 //  rotationZ  : roll — lean sideways (radians, optional)
 //  heightM    : real height in metres (or `height` in world units)
+//  say        : dialogue lines — makes the prop talkable (approach + F)
+//  sound      : clip played when the chat opens (optional)
+//  cue        : wording of its F prompt (optional; defaults to "Press F to chat")
+//  radius     : how close you must get before its F prompt shows, in world
+//               units (optional; defaults to TALK_R in Scene.jsx)
 //
 // Yaw (Y) is applied FIRST, then pitch/roll around the model's OWN centre, so
 // the three axes stay decoupled: set the facing with `rotation`, then tilt with
@@ -37,7 +42,7 @@ export const PROPS = [
     sound: 'audio/pug_bark.mp3',
     say: [
       'My owner said if I hold still like a statue for five minutes, she’ll refill my green treat bowl. 🐶',
-      'I can already imagine how juicy that watermelon must be…',
+      'I can already imagine how juicy that watermelon must be… 💦',
     ],
   },
 
@@ -50,7 +55,23 @@ export const PROPS = [
   { url: '/models/coconut.glb', position: [0.8, -0.03, -6.3], rotation: 0, heightM: 0.2 },
   { url: '/models/beer_bottle.glb', position: [2.3, -0.17, -5.4], rotationZ: 1.6, heightM: 0.4 },
   // More cardboard decor + a little frog
-  { url: '/models/cardboard_guitar.glb', position: [-3, 0, -3.4], rotation: 2.3, heightM: 0.9 },
+  // The guitar only pipes up if you come right up to it (radius), so it doesn't
+  // butt in while you're passing by.
+  {
+    url: '/models/cardboard_guitar.glb',
+    position: [-3, 0, -3.4],
+    rotation: 2.3,
+    heightM: 0.9,
+    radius: 0.8,
+    cue: 'Press F to play 🎵',
+    sound: 'audio/guitar.mp3',
+    say: [
+      'That tune drifting round the gallery? It’s “Lake”. 🎵',
+      'Irene grew up with it. She says it still sounds like being nine years old on the sofa with a Nintendo DS.',
+      'By the way — did you know she plays the clarinet and the piano?',
+      'Go on, then: guess her favourite composer. I’ll never tell. 🎹',
+    ],
+  },
   { url: '/models/cardboard_decorations.glb', position: [-2.8, 0, -0.15], rotation: 0, heightM: 2 },
   { url: '/models/frog.glb', position: [-2.5, 1, 2], rotation: -1.6, heightM: 0.8 },
 
@@ -59,6 +80,12 @@ export const PROPS = [
 
           { url: '/models/cardboard_cloud.glb', position: [1.8, 3.7, 0], rotation: -0.2, heightM: 0.3 },
         { url: '/models/cardboard_cloud.glb', position: [-1.7, 3.2, -4.5], rotation: -0.3, heightM: 0.35 },
+
+
+    { url: '/models/cardboard_cloud.glb', position: [-3.1, 0.65, 2.3], rotation: 1.9, heightM: 0.09 },
+    { url: '/models/cardboard_cloud.glb', position: [-2.4, 0.6, 1.7], rotation: -1.9, heightM: 0.1 },
+
+
 
   { url: '/models/lemonade.glb', position: [-1.9, 0.925, -2.55],rotation: -1.6, heightM: 0.35 },
   // on the +X wall behind the study box [2.6, 0, 2]
@@ -244,5 +271,7 @@ export const SPEAKERS = PROPS.filter((p) => p.say).map((p) => ({
   position: p.position,
   height: propHeight(p),
   sound: p.sound ?? null,
+  radius: p.radius ?? null, // null = use the default range
+  cue: p.cue ?? null, // null = the default "Press F to chat" wording
   lines: p.say,
 }))

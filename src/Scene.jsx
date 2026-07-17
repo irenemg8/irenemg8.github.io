@@ -7,6 +7,7 @@ import './bvh.js' // side-effect: patch BVH onto three
 import { playerPos } from './playerState.js'
 import { metaStore } from './metaStore.js'
 import { talkStore } from './talkStore.js'
+import { chatStore } from './npcChat.js'
 import Apartment from './Apartment.jsx'
 import GradientBackground from './GradientBackground.jsx'
 import City from './City.jsx'
@@ -28,29 +29,41 @@ const CEILING = 5.5 // normalise the room so its height ≈ 4 metres (bigger gal
 // Trigger the Meta "passthrough" overlay when the player gets near the glasses.
 const META_ITEM = ARTWORK_ITEMS.find((i) => i.key === 'metaQuest3')
 const META_XZ = META_ITEM ? [META_ITEM.position[0], META_ITEM.position[2]] : [0, 0]
-const META_R = 2.4
+const META_R = 1.8
 function MetaProximity() {
   useFrame(() => {
     const d = Math.hypot(playerPos.x - META_XZ[0], playerPos.z - META_XZ[1])
     // a nearby / active talker (a door guide) wins, so prompts don't overlap
     const t = talkStore.get()
-    const talkBusy = t.near != null || t.open != null
-    metaStore.set({ near: d < META_R && !talkBusy })
+    const c = chatStore.get()
+    const busy = t.near != null || t.open != null || c.near || c.open
+    metaStore.set({ near: d < META_R && !busy })
   })
   return null
 }
 
 // Nearest talkable prop (e.g. the sneaky llama) within range -> talkStore.near.
-const TALK_R = 1.6
+// Tune this to change how close you must get to the llama, Nilo, the door
+// guides and the villagers before their F prompt appears.
+const TALK_R = 1.2
 function TalkProximity() {
   useFrame(() => {
     if (talkStore.get().open != null) return // don't switch while chatting
+    // Two visitors nattering nearby win: their conversation is over in seconds,
+    // whereas the llama will happily wait for you.
+    const c = chatStore.get()
+    if (c.near || c.open) {
+      talkStore.set({ near: null })
+      return
+    }
+    // Nearest talker that's inside ITS OWN range — a speaker can set `radius`
+    // to keep quiet until you're right on top of it (see the guitar).
     let near = null
-    let best = TALK_R
+    let best = Infinity
     for (let i = 0; i < TALKERS.length; i++) {
       const p = TALKERS[i].position
       const d = Math.hypot(playerPos.x - p[0], playerPos.z - p[2])
-      if (d < best) {
+      if (d < (TALKERS[i].radius ?? TALK_R) && d < best) {
         best = d
         near = i
       }
@@ -112,6 +125,8 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
 
     if (import.meta.env.DEV && typeof window !== 'undefined') {
       window.__tris = (merged.index ? merged.index.count : merged.attributes.position.count) / 3
+      window.__gal = { scene, world } // dev: measure the room's own geometry
+      window.__col = colliderMesh // dev: probe what actually blocks you
     }
 
     return {
@@ -138,12 +153,16 @@ export default function Scene({ mode = 'third', showMarkers = false }) {
           live in the gallery model, so they collide via the BVH) */}
       <GalleryNPCs collider={collider} />
       <Artworks />
+      {/* Order matters: useFrame runs in mount order, and each of these reads
+          what the one above it wrote. GalleryNPCs (a conversation) beats the
+          talkers, which beat the boxes, which all beat the Meta glasses — so
+          the F prompts never pile up on top of each other. */}
+      <TalkProximity />
       <Boxes />
+      <MetaProximity />
       <Props />
       <Guides />
       <Villagers />
-      <MetaProximity />
-      <TalkProximity />
       <Markers show={showMarkers} />
 
       {/* Lighting (no HDRI): bright but not blown out, so colours read */}

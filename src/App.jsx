@@ -6,25 +6,14 @@ import Scene from './Scene.jsx'
 import { useBoxStore, boxStore } from './boxStore.js'
 import { useMetaStore, metaStore } from './metaStore.js'
 import { useTalkStore, talkStore } from './talkStore.js'
+import { useChatStore, chatStore, chat, openChat, closeChat, endChat } from './npcChat.js'
+import { AGENTS } from './npcState.js'
 import { BOXES } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
+import { META_SECTIONS } from './metaContent.js'
 import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture } from './audio.js'
 
-// Camera-roll entries. The LEFT lens shows the stylised (Animal-Crossing-ish)
-// version; the RIGHT lens shows the matching real photo (falls back to the
-// stylised one until the real one is added). `text` is the story dialogue.
-const META_PHOTOS = [
-  { label: 'Me 👋', styled: 'photos/styled/me.webp', real: null, text: 'That’s me — welcome to my little world!' },
-  { label: 'Chocolate bun 🍫', styled: 'photos/styled/pastry.webp', real: null, text: 'A warm chocolate-filled bun — the little joys count.' },
-  { label: 'Nilo 🐶', styled: 'photos/styled/nilo.webp', real: null, text: 'Nilo, my pug — the tiny king of the house.' },
-  { label: 'Warsaw 🌸', styled: 'photos/styled/warsaw.webp', real: null, text: 'Warsaw at sunset, during my Erasmus.' },
-  { label: 'China 🏯', styled: 'photos/styled/china.webp', real: null, text: 'A garden pavilion in China — it left me speechless.' },
-  { label: 'Paris 2024 🥐', styled: 'photos/styled/paris.webp', real: null, text: 'Paris during the 2024 Olympics.' },
-  { label: 'Fallas 🔥', styled: 'photos/styled/fallas.webp', real: null, text: 'The Fallas of Valencia — art, fire and fiesta.' },
-  { label: 'Polish feast 🥟', styled: 'photos/styled/polishfood.webp', real: null, text: 'A proper Polish feast — pierogi everywhere!' },
-  { label: 'Ayora 💙', styled: 'photos/styled/ayora.webp', real: null, text: '“Bésame en este rincón” — a corner of Ayora.' },
-]
-const META_COLS = 2 // photo menu grid columns
+const META_COLS = 2 // menu grid columns
 
 // Near the Meta glasses: press F -> yes/no prompt -> VR two-lens view. You pick
 // a photo from a menu; its story types out as a dialogue and the shot shows in
@@ -32,35 +21,64 @@ const META_COLS = 2 // photo menu grid columns
 function MetaVision() {
   const { near, mode } = useMetaStore()
   const [ask, setAsk] = useState(0) // 0 = Yes, 1 = No
-  const [view, setView] = useState('menu') // 'menu' | 'text'
-  const [pick, setPick] = useState(0) // menu cursor
-  const [shown, setShown] = useState(null) // photo index currently displayed
+  const [section, setSection] = useState(null) // META_SECTIONS index, or null (root)
+  const [item, setItem] = useState(null) // section item index, or null (section menu)
+  const [page, setPage] = useState(0)
   const [n, setN] = useState(0) // typewriter progress
+  const [cursor, setCursor] = useState(0) // menu cursor
 
-  const options = [...META_PHOTOS.map((p) => p.label), 'Take the glasses off']
-  const caption = shown != null ? META_PHOTOS[shown].text : ''
-  const full = n >= caption.length
+  const sec = section != null ? META_SECTIONS[section] : null
+  const inView = sec != null && item != null
+  const it = inView ? sec.items[item] : null
+  const pages = it?.text ?? []
+  const text = inView ? pages[page] ?? '' : ''
+  const full = n >= text.length
+
+  // options for the current menu level (root sections, or a section's items)
+  let menuOptions = null
+  let menuPrompt = ''
+  if (mode === 'on' && !inView) {
+    if (sec == null) {
+      menuOptions = [...META_SECTIONS.map((s) => s.label), 'Take the glasses off']
+      menuPrompt = 'What do you want to see?'
+    } else {
+      menuOptions = [...sec.items.map((i) => i.label), '← Back']
+      menuPrompt = sec.prompt
+    }
+  }
 
   const confirm = (yes) => {
     playSfx('select')
     metaStore.set({ mode: yes ? 'on' : 'off' })
   }
-  const selectOption = (idx) => {
+  const selectMenu = (idx) => {
     playSfx('select')
-    if (idx >= META_PHOTOS.length) {
-      metaStore.set({ mode: 'off' }) // "Take the glasses off"
-      return
+    if (sec == null) {
+      if (idx >= META_SECTIONS.length) return metaStore.set({ mode: 'off' }) // exit
+      setSection(idx)
+      setItem(null)
+      setCursor(0)
+    } else {
+      if (idx >= sec.items.length) {
+        setSection(null) // "← Back"
+        setItem(null)
+        setCursor(0)
+        return
+      }
+      setItem(idx)
+      setPage(0)
+      setN(0)
     }
-    setShown(idx)
-    setN(0)
-    setView('text')
   }
-  const advance = () => {
+  const advanceView = () => {
     playSfx('blip')
-    if (!full) setN(caption.length)
-    else {
-      setView('menu') // done reading -> back to the photo menu
-      setShown(null)
+    if (!full) setN(text.length)
+    else if (page < pages.length - 1) {
+      setPage((p) => p + 1)
+      setN(0)
+    } else {
+      setItem(null) // done reading -> back to the section menu
+      setCursor(0)
     }
   }
 
@@ -84,23 +102,24 @@ function MetaVision() {
     if (!near) metaStore.set({ mode: 'off' }) // walking away resets
   }, [near])
 
-  // Reset sub-state each time the prompt / view opens.
+  // Reset to the root hub each time the prompt / view opens.
   useEffect(() => {
     if (mode === 'ask') setAsk(0)
     if (mode === 'on') {
-      setView('menu')
-      setPick(0)
-      setShown(null)
+      setSection(null)
+      setItem(null)
+      setCursor(0)
+      setPage(0)
       setN(0)
     }
   }, [mode])
 
-  // Typewriter for the picked photo's story.
+  // Typewriter for the current item's text.
   useEffect(() => {
-    if (mode !== 'on' || view !== 'text' || n >= caption.length) return
+    if (mode !== 'on' || !inView || n >= text.length) return
     const id = setTimeout(() => setN((c) => c + 1), 28)
     return () => clearTimeout(id)
-  }, [mode, view, n, caption])
+  }, [mode, inView, n, text])
 
   // Yes/No keyboard.
   useEffect(() => {
@@ -119,53 +138,60 @@ function MetaVision() {
     return () => window.removeEventListener('keydown', onKey)
   }, [mode, ask])
 
-  // Photo-menu / story keyboard.
+  // Menu / view keyboard.
   useEffect(() => {
     if (mode !== 'on') return
     const onKey = (e) => {
       if (e.code === 'KeyF' || e.code === 'Escape') return // F / Esc exit (handled above)
-      if (view === 'menu') {
-        const len = options.length
+      if (!inView && menuOptions) {
+        const len = menuOptions.length
         if (e.code === 'ArrowUp') {
           e.preventDefault()
           playSfx('move')
-          setPick((v) => (v - META_COLS >= 0 ? v - META_COLS : v))
+          setCursor((v) => (v - META_COLS >= 0 ? v - META_COLS : v))
         } else if (e.code === 'ArrowDown') {
           e.preventDefault()
           playSfx('move')
-          setPick((v) => (v + META_COLS < len ? v + META_COLS : v))
+          setCursor((v) => (v + META_COLS < len ? v + META_COLS : v))
         } else if (e.code === 'ArrowLeft') {
           e.preventDefault()
           playSfx('move')
-          setPick((v) => (v > 0 ? v - 1 : v))
+          setCursor((v) => (v > 0 ? v - 1 : v))
         } else if (e.code === 'ArrowRight') {
           e.preventDefault()
           playSfx('move')
-          setPick((v) => (v < len - 1 ? v + 1 : v))
+          setCursor((v) => (v < len - 1 ? v + 1 : v))
         } else if (['Enter', 'NumpadEnter', 'Space'].includes(e.code)) {
           e.preventDefault()
-          selectOption(pick)
+          setCursor((v) => {
+            selectMenu(v)
+            return v
+          })
         }
       } else {
         e.preventDefault()
-        advance()
+        advanceView()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [mode, view, pick, shown, n])
+  }, [mode, inView, menuOptions, cursor, section, item, n, text, page, pages])
 
   const base = import.meta.env.BASE_URL
 
   if (near && mode === 'off') {
-    return <div className="meta-hint">Press F to try Irene’s Meta glasses 🥽</div>
+    return (
+      <button className="cue" onClick={() => metaStore.set({ mode: 'ask' })}>
+        Press F to try Irene’s Meta glasses 🥽
+      </button>
+    )
   }
 
   if (mode === 'ask') {
     return (
       <div className="dialogue dialogue--menu">
         <div className="dialogue__prompt">
-          You’re about to browse Irene’s camera roll. Want a look?
+          Ready to peek into Irene’s world?
         </div>
         <ul className="dialogue__options meta-ask">
           {['Yes', 'No'].map((label, idx) => (
@@ -186,11 +212,15 @@ function MetaVision() {
   }
 
   if (mode === 'on') {
-    // left lens = stylised version, right lens = real photo (falls back to the
-    // stylised one). Nothing picked -> a glitchy colour-bar "broken" screen.
+    // photos use left/right (stylised/real); projects & press use one image in
+    // both lenses. In a menu (nothing picked) -> glitchy colour-bar screen.
+    const imgFor = (side) => {
+      if (!it) return null
+      if (it.left || it.right) return side === 'l' ? it.left ?? it.right : it.right ?? it.left
+      return it.image
+    }
     const lens = (side) => {
-      const p = shown != null ? META_PHOTOS[shown] : null
-      const img = p ? (side === 'l' ? p.styled : p.real ?? p.styled) : null
+      const img = imgFor(side)
       return (
         <div className="meta__lens" key={side}>
           {img ? (
@@ -210,18 +240,18 @@ function MetaVision() {
           {lens('r')}
         </div>
 
-        {view === 'menu' ? (
+        {!inView ? (
           <div className="dialogue dialogue--menu">
-            <div className="dialogue__prompt">What do you want to see?</div>
+            <div className="dialogue__prompt">{menuPrompt}</div>
             <ul className="dialogue__options">
-              {options.map((label, idx) => (
+              {menuOptions.map((label, idx) => (
                 <li
                   key={label}
-                  className={idx === pick ? 'is-active' : ''}
-                  onMouseEnter={() => setPick(idx)}
-                  onClick={() => selectOption(idx)}
+                  className={idx === cursor ? 'is-active' : ''}
+                  onMouseEnter={() => setCursor(idx)}
+                  onClick={() => selectMenu(idx)}
                 >
-                  <span className="dialogue__cursor">{idx === pick ? '▶' : ' '}</span>
+                  <span className="dialogue__cursor">{idx === cursor ? '▶' : ' '}</span>
                   {label}
                 </li>
               ))}
@@ -229,8 +259,26 @@ function MetaVision() {
             <div className="dialogue__hint">↑︎↓︎←︎→︎ choose · Enter select · F / Esc to take off</div>
           </div>
         ) : (
-          <div className="dialogue" onClick={advance}>
-            <div className="dialogue__text">{caption.slice(0, n)}</div>
+          <div className="dialogue" onClick={advanceView}>
+            <div className="dialogue__text">
+              {text.slice(0, n)}
+              {full && page === pages.length - 1 && it.links && (
+                <span className="meta__links">
+                  {it.links.map((l) => (
+                    <a
+                      key={l.url}
+                      className="dialogue__link"
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
+                </span>
+              )}
+            </div>
             <div className="dialogue__hint">Any key to continue · F / Esc to take off</div>
             {full && <div className="dialogue__arrow">▼</div>}
           </div>
@@ -538,7 +586,11 @@ function PropTalk() {
   }, [open, view, options, full, text, page, pages])
 
   if (open == null || !sp) {
-    return near != null ? <div className="meta-hint">Press F to chat 💬</div> : null
+    return near != null ? (
+      <button className="cue" onClick={() => talkStore.set({ open: talkStore.get().near })}>
+        Press F to chat 💬
+      </button>
+    ) : null
   }
 
   if (view === 'menu' && options) {
@@ -588,31 +640,106 @@ function PropTalk() {
   )
 }
 
+// Two visitors having a natter. You can't join in — you sidle up, press F and
+// eavesdrop line by line. Once they've said their piece the chat is over and
+// they wander off, so this only ever shows while a pair are actually talking.
+const CHAT_SOUND = 'audio/npc_random.mp3'
+
+function NpcChat() {
+  const { near, open, id } = useChatStore()
+  const [i, setI] = useState(0)
+  const [n, setN] = useState(0)
+
+  const lines = open ? chat.lines : []
+  const text = lines[i] ?? ''
+  const full = n >= text.length
+  // Scripts strictly alternate, so even lines are the first speaker (agent `a`).
+  const first = i % 2 === 0
+  const who = AGENTS[first ? chat.a : chat.b]
+  // chat.left is 0 when agent `a` is the one on screen-left, so the name tag
+  // lands on the same side as the visitor you can see saying it.
+  const onLeft = first === (chat.left === 0)
+
+  useEffect(() => {
+    setI(0)
+    setN(0)
+  }, [open, id])
+  useEffect(() => {
+    setN(0)
+  }, [i])
+  useEffect(() => {
+    if (!open || n >= text.length) return
+    const t = setTimeout(() => setN((c) => c + 1), 28)
+    return () => clearTimeout(t)
+  }, [open, n, text])
+  useEffect(() => {
+    preloadClip(CHAT_SOUND)
+  }, [])
+  useEffect(() => {
+    if (open) playClip(CHAT_SOUND, 1.4) // the murmur of a conversation
+  }, [open, id])
+
+  const advance = () => {
+    playSfx('blip')
+    if (!full) setN(text.length)
+    else if (i < lines.length - 1) setI((v) => v + 1)
+    else endChat() // that's the lot — off they go, each their own way
+  }
+
+  // F listens in; F / Esc slips away and leaves them to it.
+  useEffect(() => {
+    const onKey = (e) => {
+      const s = chatStore.get()
+      if (e.code === 'KeyF') {
+        if (s.open) closeChat()
+        else if (s.near) openChat()
+      } else if (e.code === 'Escape' && s.open) closeChat()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (['KeyF', 'Escape', 'ShiftLeft', 'ShiftRight'].includes(e.code)) return
+      e.preventDefault()
+      advance()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, i, n, full, text, lines])
+
+  if (!open) {
+    return near ? (
+      <button className="cue" onClick={openChat}>
+        Press F to listen in 👂
+      </button>
+    ) : null
+  }
+  if (!who) return null
+
+  return (
+    <div className="dialogue dialogue--chat" onClick={advance}>
+      <div className={`dialogue__who${onLeft ? '' : ' dialogue__who--right'}`}>
+        <span className="dialogue__dot" style={{ background: who.color }} />
+        {who.name}
+      </div>
+      <div className="dialogue__text">{text.slice(0, n)}</div>
+      <div className="dialogue__hint">Any key to continue · F / Esc to slip away</div>
+      {full && <div className="dialogue__arrow">▼</div>}
+    </div>
+  )
+}
+
 function PeekHint() {
   const { near, peek } = useBoxStore()
-  // while peeking the dialogue box takes over; only prompt when we're near one.
-  const text = peek != null ? null : near != null ? 'Press F to look inside 📦' : null
-  if (!text) return null
+  // while peeking the dialogue box takes over; only cue when we're near one.
+  if (peek != null || near == null) return null
   return (
-    <div
-      style={{
-        position: 'absolute',
-        bottom: '5.5rem',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        background: 'rgba(255,255,255,0.92)',
-        color: '#16141a',
-        padding: '0.55rem 1.2rem',
-        borderRadius: 999,
-        fontFamily: "'Inter', sans-serif",
-        fontWeight: 600,
-        fontSize: '0.9rem',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
-        pointerEvents: 'none',
-      }}
-    >
-      {text}
-    </div>
+    <button className="cue" onClick={() => boxStore.set({ peek: boxStore.get().near })}>
+      Press F to look inside 📦
+    </button>
   )
 }
 
@@ -633,8 +760,9 @@ function Loader() {
 const CONTROLS = [
   { keys: ['W', 'A', 'S', 'D'], action: 'Move around' },
   { keys: ['Shift'], action: 'Run' },
-  { keys: ['Mouse'], action: 'Look around (1st person)' },
+ // { keys: ['Mouse'], action: 'Look around (1st person)' },
   { keys: ['F'], action: 'Look inside a box 📦' },
+  { keys: ['F'], action: 'Eavesdrop on a chat 👂' },
   { keys: ['Any key'], action: 'Advance dialogue' },
   // ︎ forces text (non-emoji) rendering so all four arrows match in style.
   { keys: ['↑︎', '↓︎', '←︎', '→︎'], action: 'Move in a menu' },
@@ -757,6 +885,7 @@ export default function App() {
         <PeekHint />
         <DialogueBox />
         <PropTalk />
+        <NpcChat />
         <MetaVision />
         <SettingsPanel />
 
