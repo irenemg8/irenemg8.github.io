@@ -18,6 +18,9 @@ import { fitToHeight } from './utils/fit.js'
 //  cue        : wording of its F prompt (optional; defaults to "Press F to chat")
 //  radius     : how close you must get before its F prompt shows, in world
 //               units (optional; defaults to TALK_R in Scene.jsx)
+//  camDist    : close-up camera distance while chatting (optional; small = a
+//               tight shot for little things like Nilo's notes)
+//  camY/aimY  : camera height / look-at height above the prop base (optional)
 //
 // Yaw (Y) is applied FIRST, then pitch/roll around the model's OWN centre, so
 // the three axes stay decoupled: set the facing with `rotation`, then tilt with
@@ -95,7 +98,29 @@ export const PROPS = [
                 { url: '/models/sticky_note.glb', position: [3.15, 0.4, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.025 },
                         { url: '/models/sticky_note.glb', position: [3.5, 0.3, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
                                                 { url: '/models/sticky_note.glb', position: [4, 0.2, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.025 },
-                                                                        { url: '/models/sticky_note.glb', position: [3.85, 0.8, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
+  // Nilo's easter-egg notes — tiny scraps the pug has left about, each with a
+  // little croquette-flavoured wisdom. Come right up (small radius) and press F
+  // for a close-up read. Copy this block for each note; just change position +
+  // the `say` line.
+  {
+    url: '/models/nota_nilo.glb',
+    position: [2.5, 0.7, 7.05],
+    rotation: 0.5,
+    heightM: 0.2,
+    radius: 0.7,
+    cue: 'Press F to find out 🐾',
+    sound: 'audio/nota_sorpresa.mp3',
+    say: [
+      'Wait— WHAT?! What is this?! 😲',
+      'Oh! Nilo the pug left this note here... 🐶',
+      '_“When life gives you kibble, don’t sit there wishing it were lemons — crunch it like it’s the best thing that ever happened to you. Because it is.” 🐾_',
+    ],
+    camDist: 0.42,
+    camY: 0.12,
+    aimY: 0.1,
+    camAngle: 0.757, // fixed camera side (measured from the note's face normal)
+  },
+                                                            { url: '/models/sticky_note.glb', position: [3.85, 0.8, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
                                                                         { url: '/models/sticky_note.glb', position: [4, 0.6, 2.88], rotationX: -1.6, rotationX: 1.6, heightM: 0.02 },
   { url: '/models/cardboard_cactus.glb', position: [2.5, 0, 7], rotation: -2.7, heightM: 1.5 },
     { url: '/models/cardboard_cactus.glb', position: [0, 0, 7.25], rotation: 2.8, heightM: 1.25 },
@@ -273,5 +298,9 @@ export const SPEAKERS = PROPS.filter((p) => p.say).map((p) => ({
   sound: p.sound ?? null,
   radius: p.radius ?? null, // null = use the default range
   cue: p.cue ?? null, // null = the default "Press F to chat" wording
+  camDist: p.camDist ?? null, // close-up camera framing overrides (null = auto)
+  camY: p.camY ?? null,
+  aimY: p.aimY ?? null,
+  camAngle: p.camAngle ?? null, // fixed viewing side (null = from the player's side)
   lines: p.say,
 }))

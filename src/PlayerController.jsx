@@ -9,6 +9,7 @@ import { boxStore } from './boxStore.js'
 import { talkStore } from './talkStore.js'
 import { metaStore } from './metaStore.js'
 import { chat, chatStore, chatPair } from './npcChat.js'
+import { ui } from './uiState.js'
 import { peekView } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { playFootstep } from './audio.js'
@@ -17,7 +18,11 @@ const EYE = 0.7
 const RADIUS = 0.35
 const WALK = 1.2
 const RUN = 2.4
-const SPAWN = new THREE.Vector3(0, 0, 0)
+// Where you start on first load, and which way you face. Kept clear of the
+// doorways (where the visitors spawn) and looking down the room so the gallery
+// reveals on load.
+const SPAWN = new THREE.Vector3(0.7, 0, 4)
+const SPAWN_HEADING = Math.PI // face -Z, straight across the gallery
 const PROBE = [0.35, 1.0, 1.55]
 const CAM_DIST = 3.2
 const CAM_UP = 1.9
@@ -35,8 +40,8 @@ export default function PlayerController({ collider, mode }) {
   const camera = useThree((s) => s.camera)
   const group = useRef()
   const pos = useRef(SPAWN.clone())
-  const heading = useRef(Math.PI)
-  const camYaw = useRef(Math.PI)
+  const heading = useRef(SPAWN_HEADING)
+  const camYaw = useRef(SPAWN_HEADING)
   const keys = useRef({ f: false, b: false, l: false, r: false, run: false })
 
   const ray = useRef(new THREE.Raycaster())
@@ -105,6 +110,7 @@ export default function PlayerController({ collider, mode }) {
       window.__cam = camera
       window.__pg = group.current
       window.__tp = (x, z) => pos.current.set(x, 0, z) // dev: jump the player about
+      window.__ui = ui // dev: read the real flag instance the loop uses
     }
   }, [camera])
 
@@ -139,8 +145,9 @@ export default function PlayerController({ collider, mode }) {
     const listening = chatStore.get().open // eavesdropping on two visitors
     const frozen = peeking || talking || listening // camera locked, avatar hidden
     // Wearing the glasses: the arrows drive the menu, so stand still — but stay
-    // visible, since you can still see the room through the lenses.
-    const held = frozen || metaStore.get().mode !== 'off' // movement paused
+    // visible, since you can still see the room through the lenses. Same while
+    // the welcome dialogue is up.
+    const held = frozen || metaStore.get().mode !== 'off' || ui.welcomeOpen // movement paused
 
     // Basis: in 3rd person the camera orbit yaw drives it; in 1st person the
     // (pointer-lock) camera direction drives it.
@@ -242,11 +249,23 @@ export default function PlayerController({ collider, mode }) {
       let dx = pos.current.x - p[0]
       let dz = pos.current.z - p[2]
       const len = Math.hypot(dx, dz) || 1
-      const dist = 0.8 + h * 0.9
-      // p[1] = the prop's base height (Nilo sits up on a shelf), so include it
-      camPos.current.set(p[0] + (dx / len) * dist, p[1] + h * 0.75 + 0.25, p[2] + (dz / len) * dist)
+      let vx = dx / len
+      let vz = dz / len
+      // A one-sided note only reads from the front, so it pins the camera to a
+      // FIXED side (camAngle) rather than following the player round — otherwise
+      // you'd approach from behind and stare at a blank back.
+      if (sp.camAngle != null) {
+        vx = Math.sin(sp.camAngle)
+        vz = Math.cos(sp.camAngle)
+      }
+      // A speaker can override the framing for a tighter shot — a tiny note
+      // wants the camera right up close, level with it, not a metre back.
+      const dist = sp.camDist ?? 0.8 + h * 0.9
+      const camY = p[1] + (sp.camY ?? h * 0.75 + 0.25)
+      const aimY = p[1] + (sp.aimY ?? h * 0.55)
+      camPos.current.set(p[0] + vx * dist, camY, p[2] + vz * dist)
       camera.position.lerp(camPos.current, Math.min(1, dt * 5))
-      camera.lookAt(p[0], p[1] + h * 0.55, p[2])
+      camera.lookAt(p[0], aimY, p[2])
     } else if (peeking) {
       // look inside the diorama box
       const v = peekView(boxStore.get().peek)

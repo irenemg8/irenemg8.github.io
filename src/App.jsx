@@ -12,6 +12,7 @@ import { BOXES } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { META_SECTIONS } from './metaContent.js'
 import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture } from './audio.js'
+import { ui } from './uiState.js'
 
 const META_COLS = 2 // menu grid columns
 
@@ -462,7 +463,11 @@ function PropTalk() {
   const [heard, setHeard] = useState(0)
   const [link, setLink] = useState(null) // clickable link for the current block
 
-  const text = view === 'text' ? pages[page] ?? '' : ''
+  // A page wrapped in _underscores_ renders in italics (e.g. Nilo's quoted
+  // words of wisdom). Strip the markers; type out the plain text.
+  const rawPage = view === 'text' ? pages[page] ?? '' : ''
+  const italic = rawPage.length > 2 && rawPage.startsWith('_') && rawPage.endsWith('_')
+  const text = italic ? rawPage.slice(1, -1) : rawPage
   const full = n >= text.length
   const showLink = link && page === pages.length - 1 && full
 
@@ -586,9 +591,10 @@ function PropTalk() {
   }, [open, view, options, full, text, page, pages])
 
   if (open == null || !sp) {
+    // A speaker can word its own prompt (the guitar plays, Nilo's notes intrigue).
     return near != null ? (
       <button className="cue" onClick={() => talkStore.set({ open: talkStore.get().near })}>
-        Press F to chat 💬
+        {TALKERS[near].cue ?? 'Press F to chat 💬'}
       </button>
     ) : null
   }
@@ -617,7 +623,7 @@ function PropTalk() {
 
   return (
     <div className="dialogue" onClick={advanceText}>
-      <div className="dialogue__text">
+      <div className={`dialogue__text${italic ? ' dialogue__text--italic' : ''}`}>
         {text.slice(0, n)}
         {showLink && (
           <>
@@ -727,6 +733,78 @@ function NpcChat() {
       </div>
       <div className="dialogue__text">{text.slice(0, n)}</div>
       <div className="dialogue__hint">Any key to continue · F / Esc to slip away</div>
+      {full && <div className="dialogue__arrow">▼</div>}
+    </div>
+  )
+}
+
+// A one-time welcome, shown as a Pokémon-style dialogue once the room has
+// actually drawn (ready). Types out, advances on any key / click, and frees you
+// to roam when it ends. Movement is held until then (ui.welcomeOpen).
+const WELCOME_PAGES = [
+  'Welcome to Irene’s little world — a gallery you can explore at your own pace. 🌸',
+  'Wander wherever you like with the W A S D keys or the arrows, and hold Shift to run.',
+  'Press F to peek inside boxes, read notes, chat with the locals and try the Meta glasses. Enjoy the visit! 🐾',
+]
+
+function Welcome({ ready }) {
+  const [open, setOpen] = useState(false)
+  const [page, setPage] = useState(0)
+  const [n, setN] = useState(0)
+  const text = WELCOME_PAGES[page] ?? ''
+  const full = n >= text.length
+
+  // Gate movement imperatively (not via an effect) so there's no cleanup-order
+  // race over the shared flag — set it the instant open flips.
+  const show = (v) => {
+    ui.welcomeOpen = v
+    setOpen(v)
+  }
+  useEffect(() => {
+    if (ready) {
+      show(true)
+      setPage(0)
+      setN(0)
+    }
+  }, [ready])
+  useEffect(() => () => { ui.welcomeOpen = false }, []) // belt-and-braces on unmount
+  useEffect(() => {
+    WELCOME_PAGES.forEach((_, i) => preloadClip(`audio/intro${i + 1}.mp3`)) // warm them
+  }, [])
+  useEffect(() => {
+    setN(0)
+    if (open) playClip(`audio/intro${page + 1}.mp3`) // one voice line per message
+  }, [open, page])
+  useEffect(() => {
+    if (!open || n >= text.length) return
+    const t = setTimeout(() => setN((c) => c + 1), 28)
+    return () => clearTimeout(t)
+  }, [open, n, text])
+
+  const advance = () => {
+    playSfx('blip')
+    if (!full) setN(text.length)
+    else if (page < WELCOME_PAGES.length - 1) setPage((p) => p + 1)
+    else show(false) // last page done -> off you go
+  }
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      // let modifier-only presses through, so Shift/Ctrl don't skip a page
+      if (['ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'AltLeft', 'AltRight'].includes(e.code)) return
+      e.preventDefault()
+      advance()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, page, n, text, full])
+
+  if (!open) return null
+  return (
+    <div className="dialogue" onClick={advance}>
+      <div className="dialogue__text">{text.slice(0, n)}</div>
+      <div className="dialogue__hint">Any key to continue</div>
       {full && <div className="dialogue__arrow">▼</div>}
     </div>
   )
@@ -884,6 +962,7 @@ export default function App() {
       </Canvas>
 
       <Loader done={ready} />
+      <Welcome ready={ready} />
 
       <div className="hud">
         <div className="brand">
