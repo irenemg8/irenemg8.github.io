@@ -13,6 +13,7 @@ import { TALKERS } from './talkers.js'
 import { META_SECTIONS } from './metaContent.js'
 import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture, unlockAudio } from './audio.js'
 import { ui } from './uiState.js'
+import TouchControls from './TouchControls.jsx'
 
 const META_COLS = 2 // menu grid columns
 
@@ -849,7 +850,10 @@ function Loader({ ready, onEnter }) {
   return (
     <div
       className={`loading${ready ? ' loading--ready' : ''}`}
-      style={{ backgroundImage: `url(${base}ui/fondo.webp)` }}
+      style={{
+        '--fondo': `url(${base}ui/fondo.webp)`,
+        '--fondo-portrait': `url(${base}ui/fondo_portrait.webp)`,
+      }}
       onClick={ready ? onEnter : undefined}
     >
       <div className="loading__title">Irene Medina García</div>
@@ -1005,6 +1009,7 @@ export default function App() {
 
       {!entered && <Loader ready={ready} onEnter={enter} />}
       <Welcome ready={entered} />
+      {entered && <TouchControls />}
 
       <div className="hud">
         <div className="brand">

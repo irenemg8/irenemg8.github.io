@@ -10,6 +10,7 @@ import { talkStore } from './talkStore.js'
 import { metaStore } from './metaStore.js'
 import { chat, chatStore, chatPair } from './npcChat.js'
 import { ui } from './uiState.js'
+import { touch } from './touchState.js'
 import { peekView } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { playFootstep } from './audio.js'
@@ -171,11 +172,21 @@ export default function PlayerController({ collider, mode }) {
       if (k.b) move.current.sub(fwd.current)
       if (k.r) move.current.add(right.current)
       if (k.l) move.current.sub(right.current)
+      // On-screen joystick (touch): screen-up = forward, screen-down = back.
+      if (touch.active) {
+        move.current.addScaledVector(fwd.current, -touch.y)
+        move.current.addScaledVector(right.current, touch.x)
+      }
     }
 
-    const moving = move.current.lengthSq() > 0
+    const len = move.current.length()
+    const moving = len > 0.001
     if (moving) {
-      move.current.normalize().multiplyScalar((k.run ? RUN : WALK) * dt)
+      // Keys are full-speed; the joystick is analog, so a gentle push walks
+      // slowly and a full push walks flat out. `len` is the joystick magnitude
+      // (already 0..1) when touch drives it, or ≥1 when keys do.
+      const analog = touch.active && !(k.f || k.b || k.l || k.r) ? Math.min(1, len) : 1
+      move.current.multiplyScalar(((k.run ? RUN : WALK) * analog * dt) / len)
       const p = pos.current
       if (move.current.x !== 0 && clear(p.x, p.z, Math.sign(move.current.x), 0, Math.abs(move.current.x))) p.x += move.current.x
       if (move.current.z !== 0 && clear(p.x, p.z, 0, Math.sign(move.current.z), Math.abs(move.current.z))) p.z += move.current.z
