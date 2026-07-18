@@ -14,6 +14,7 @@ import { META_SECTIONS } from './metaContent.js'
 import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture, unlockAudio } from './audio.js'
 import { ui } from './uiState.js'
 import TouchControls from './TouchControls.jsx'
+import { useTouch, phrase } from './useTouch.js'
 
 const META_COLS = 2 // menu grid columns
 
@@ -28,6 +29,7 @@ function MetaVision() {
   const [page, setPage] = useState(0)
   const [n, setN] = useState(0) // typewriter progress
   const [cursor, setCursor] = useState(0) // menu cursor
+  const touch = useTouch()
 
   const sec = section != null ? META_SECTIONS[section] : null
   const inView = sec != null && item != null
@@ -184,7 +186,7 @@ function MetaVision() {
   if (near && mode === 'off') {
     return (
       <button className="cue" onClick={() => metaStore.set({ mode: 'ask' })}>
-        Press F to try Irene’s Meta glasses 🥽
+        {phrase('Press F to try Irene’s Meta glasses 🥽', touch)}
       </button>
     )
   }
@@ -463,6 +465,7 @@ function PropTalk() {
   const [menuIndex, setMenuIndex] = useState(0)
   const [heard, setHeard] = useState(0)
   const [link, setLink] = useState(null) // clickable link for the current block
+  const touch = useTouch()
 
   // A page wrapped in _underscores_ renders in italics (e.g. Nilo's quoted
   // words of wisdom). Strip the markers; type out the plain text.
@@ -595,7 +598,7 @@ function PropTalk() {
     // A speaker can word its own prompt (the guitar plays, Nilo's notes intrigue).
     return near != null ? (
       <button className="cue" onClick={() => talkStore.set({ open: talkStore.get().near })}>
-        {TALKERS[near].cue ?? 'Press F to chat 💬'}
+        {phrase(TALKERS[near].cue ?? 'Press F to chat 💬', touch)}
       </button>
     ) : null
   }
@@ -656,6 +659,7 @@ function NpcChat() {
   const { near, open, id } = useChatStore()
   const [i, setI] = useState(0)
   const [n, setN] = useState(0)
+  const touch = useTouch()
 
   const lines = open ? chat.lines : []
   const text = lines[i] ?? ''
@@ -720,7 +724,7 @@ function NpcChat() {
   if (!open) {
     return near ? (
       <button className="cue" onClick={openChat}>
-        Press F to listen in 👂
+        {phrase('Press F to listen in 👂', touch)}
       </button>
     ) : null
   }
@@ -747,12 +751,20 @@ const WELCOME_PAGES = [
   'Wander wherever you like with the W A S D keys or the arrows, and hold Shift to run.',
   'Press F to peek inside boxes, read notes, chat with the locals and try the Meta glasses. Enjoy the visit! 🐾',
 ]
+// Same three beats, worded for a touchscreen.
+const WELCOME_PAGES_TOUCH = [
+  'Welcome to Irene’s little world — a gallery you can explore at your own pace. 🌸',
+  'Drag anywhere on the screen to wander about — like a little joystick under your thumb.',
+  'Tap the prompts to peek inside boxes, read notes, chat with the locals and try the Meta glasses. Enjoy the visit! 🐾',
+]
 
 function Welcome({ ready }) {
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(0)
   const [n, setN] = useState(0)
-  const text = WELCOME_PAGES[page] ?? ''
+  const touch = useTouch()
+  const pages = touch ? WELCOME_PAGES_TOUCH : WELCOME_PAGES
+  const text = pages[page] ?? ''
   const full = n >= text.length
 
   // Gate movement imperatively (not via an effect) so there's no cleanup-order
@@ -785,7 +797,7 @@ function Welcome({ ready }) {
   const advance = () => {
     playSfx('blip')
     if (!full) setN(text.length)
-    else if (page < WELCOME_PAGES.length - 1) setPage((p) => p + 1)
+    else if (page < pages.length - 1) setPage((p) => p + 1)
     else show(false) // last page done -> off you go
   }
 
@@ -813,11 +825,12 @@ function Welcome({ ready }) {
 
 function PeekHint() {
   const { near, peek } = useBoxStore()
+  const touch = useTouch()
   // while peeking the dialogue box takes over; only cue when we're near one.
   if (peek != null || near == null) return null
   return (
     <button className="cue" onClick={() => boxStore.set({ peek: boxStore.get().near })}>
-      Press F to look inside 📦
+      {phrase('Press F to look inside 📦', touch)}
     </button>
   )
 }
