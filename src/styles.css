@@ -43,7 +43,7 @@ canvas {
   background-repeat: no-repeat;
 }
 .loading__title {
-  font-family: 'Yuyu Short', 'Fraunces', serif;
+  font-family: 'Schoolbell', 'Fraunces', serif;
   font-size: clamp(2.2rem, 6vw, 3.2rem);
   font-weight: 400;
   letter-spacing: 0;
@@ -100,7 +100,7 @@ canvas {
   left: 1.4rem;
 }
 .brand__name {
-  font-family: 'Yuyu Short', 'Fraunces', serif;
+  font-family: 'Schoolbell', 'Fraunces', serif;
   font-size: 1.5rem;
   font-weight: 400;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
