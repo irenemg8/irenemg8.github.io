@@ -43,10 +43,10 @@ canvas {
   background-repeat: no-repeat;
 }
 .loading__title {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(1.8rem, 5vw, 2.6rem);
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-family: 'Yuyu Short', 'Fraunces', serif;
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: 0;
   color: #40301f;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
@@ -100,9 +100,9 @@ canvas {
   left: 1.4rem;
 }
 .brand__name {
-  font-family: 'Fraunces', serif;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-family: 'Yuyu Short', 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 }
 .brand__tag {
