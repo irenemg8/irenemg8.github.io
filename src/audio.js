@@ -64,6 +64,18 @@ export function startMusicOnGesture() {
 
 // --- sound effects (Web Audio blips, no asset files needed) ---
 let actx = null
+
+// Call from a real user gesture (e.g. the "Enter" click) to unlock audio, so
+// the very next sound — the welcome's voice line — plays on cue rather than
+// waiting for some later interaction.
+export function unlockAudio() {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)()
+    if (actx.state !== 'running') actx.resume()
+  } catch {
+    /* ignore */
+  }
+}
 function blip(freq, dur = 0.06, type = 'square') {
   if (!state.sfxOn) return
   try {
@@ -151,25 +163,41 @@ export function preloadClip(url) {
     /* ignore */
   }
 }
+let clipToken = 0
 export function playClip(url, vol = 1) {
   if (!state.sfxOn || !url) return
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)()
-    if (actx.state === 'suspended') actx.resume()
     const full = `${import.meta.env.BASE_URL}${url}`
     const buf = clipCache[full]
     if (buf === undefined) {
-      fetchClip(full) // warm the cache; plays next time
+      fetchClip(full) // warm the cache; nothing to play yet
       return
     }
-    if (!buf) return // pending or missing
-    const g = actx.createGain()
-    g.gain.value = state.sfxVol * vol
-    g.connect(actx.destination)
-    const src = actx.createBufferSource()
-    src.buffer = buf
-    src.connect(g)
-    src.start()
+    if (!buf) return // pending decode or missing file
+    const fire = () => {
+      const g = actx.createGain()
+      g.gain.value = state.sfxVol * vol
+      g.connect(actx.destination)
+      const src = actx.createBufferSource()
+      src.buffer = buf
+      src.connect(g)
+      src.start()
+      if (import.meta.env.DEV) (window.__clipLog ||= []).push({ url, t: Math.round(performance.now()) })
+    }
+    // NEVER start a source on a suspended context: it sits on a frozen clock and
+    // then fires together with every other queued clip the instant audio
+    // unlocks (that's the "they all play at once, late" bug). Play now if the
+    // context is running; otherwise play once it resumes — and only the most
+    // recent such request, so a burst can't bunch up.
+    if (actx.state === 'running') {
+      fire()
+      return
+    }
+    const mine = ++clipToken
+    actx.resume().then(() => {
+      if (mine === clipToken) fire()
+    }).catch(() => {})
   } catch {
     /* ignore */
   }

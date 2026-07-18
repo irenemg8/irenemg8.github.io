@@ -11,7 +11,7 @@ import { AGENTS } from './npcState.js'
 import { BOXES } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { META_SECTIONS } from './metaContent.js'
-import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture } from './audio.js'
+import { useAudio, audio, playSfx, playClip, preloadClip, startMusicOnGesture, unlockAudio } from './audio.js'
 import { ui } from './uiState.js'
 
 const META_COLS = 2 // menu grid columns
@@ -821,26 +821,58 @@ function PeekHint() {
   )
 }
 
-// Stays up until the room reports it's actually drawn a frame — `progress` only
-// tracks downloads, and there's a long quiet stretch after those finish while
-// the collider is built. Hiding on progress alone shows a black screen.
-function Loader({ done }) {
+// Shows the progress bar until the room reports it's actually drawn a frame
+// (`ready`) — `progress` only tracks downloads, and there's a long quiet stretch
+// after those finish while the collider is built, so hiding on progress alone
+// shows a black screen. Once ready, it waits on an "Enter" gesture: that first
+// click/key is what unlocks audio, so the welcome's voice starts on cue.
+function Loader({ ready, onEnter }) {
   const { progress } = useProgress()
   const peak = useRef(0)
-  if (done) return null
   // Progress is re-reported as each new batch of assets queues up, so it can
   // jump backwards. Never let the bar retreat — it just looks broken.
   peak.current = Math.max(peak.current, Math.min(100, progress))
   const pct = peak.current
+
+  useEffect(() => {
+    if (!ready) return
+    const enter = () => onEnter()
+    window.addEventListener('keydown', enter)
+    window.addEventListener('pointerdown', enter)
+    return () => {
+      window.removeEventListener('keydown', enter)
+      window.removeEventListener('pointerdown', enter)
+    }
+  }, [ready, onEnter])
+
+  const base = import.meta.env.BASE_URL
   return (
-    <div className="loading">
+    <div
+      className={`loading${ready ? ' loading--ready' : ''}`}
+      style={{ backgroundImage: `url(${base}ui/fondo.webp)` }}
+      onClick={ready ? onEnter : undefined}
+    >
       <div className="loading__title">Irene Medina García</div>
-      <div className="loading__bar">
-        <div className="loading__fill" style={{ width: `${pct}%` }} />
-      </div>
-      <div className="loading__hint">
-        {pct >= 100 ? 'Almost there — arranging the furniture…' : `Furnishing the gallery… ${Math.floor(pct)}%`}
-      </div>
+      {ready ? (
+        <>
+          <img
+            className="loading__start"
+            src={`${base}ui/start.webp`}
+            alt="Start"
+            onClick={onEnter}
+          />
+          <div className="loading__hint">Click, or press any key</div>
+        </>
+      ) : (
+        <>
+          <div className="loading__bar">
+            <div className="loading__fill" style={{ width: `${pct}%` }} />
+          </div>
+          <div className="loading__hint">
+            {pct >= 100 ? 'Almost there — arranging the furniture…' : `Furnishing the gallery… ${Math.floor(pct)}%`}
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -940,11 +972,21 @@ export default function App() {
   const [mode, setMode] = useState('third') // 'third' | 'first'
   const [showMarkers, setShowMarkers] = useState(false) // placement pins (toggle hidden for now)
   const [ready, setReady] = useState(false) // the room has drawn its first frame
+  const [entered, setEntered] = useState(false) // clicked "Enter" (unlocks audio)
 
-  // Start the looping background music on the first user interaction.
+  // Start the looping background music on the first user interaction, and warm
+  // the sounds that fire early (welcome voice lines) so they're decoded and
+  // ready by the time the room finishes loading.
   useEffect(() => {
     startMusicOnGesture()
+    WELCOME_PAGES.forEach((_, i) => preloadClip(`audio/intro${i + 1}.mp3`))
   }, [])
+
+  // The "Enter" gesture unlocks audio, then the welcome (and its voice) begins.
+  const enter = () => {
+    unlockAudio()
+    setEntered(true)
+  }
 
   return (
     <>
@@ -961,8 +1003,8 @@ export default function App() {
         </Suspense>
       </Canvas>
 
-      <Loader done={ready} />
-      <Welcome ready={ready} />
+      {!entered && <Loader ready={ready} onEnter={enter} />}
+      <Welcome ready={entered} />
 
       <div className="hud">
         <div className="brand">
