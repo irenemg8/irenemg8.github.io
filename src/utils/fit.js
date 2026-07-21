@@ -29,5 +29,11 @@ export function fitToHeight(object, targetHeight) {
   box.getSize(size)
   const scale = targetHeight / (size.y || 1)
   const yOffset = -box.min.y * scale
-  return { scale, yOffset }
+  // Horizontal centre of the model (in fitted units) — used to spin a prop about
+  // its own vertical axis instead of orbiting around an off-centre origin.
+  const center = new THREE.Vector3()
+  box.getCenter(center)
+  const cx = center.x * scale
+  const cz = center.z * scale
+  return { scale, yOffset, cx, cz }
 }

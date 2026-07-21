@@ -4,6 +4,29 @@ import { useGLTF, useAnimations } from '@react-three/drei'
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js'
 import * as THREE from 'three'
 import { fitToHeight } from './utils/fit.js'
+import { playerPos } from './playerState.js'
+import { grut as grutState } from './grutState.js'
+
+// Shared raycaster for grut's wall-aware following (whisker steering).
+const _ray = new THREE.Raycaster()
+_ray.firstHitOnly = true
+const _o = new THREE.Vector3()
+const _d = new THREE.Vector3()
+const FOLLOW_R = 0.45 // grut's body clearance off walls
+const WHISKERS = [-0.6, 0, 0.6] // feeler angles: left, ahead, right
+
+// Distance to the nearest wall from (x,z) along (dx,dz), or Infinity if clear.
+function wallDist(collider, x, z, dx, dz, far) {
+  if (!collider) return Infinity
+  const l = Math.hypot(dx, dz)
+  if (l < 1e-6) return Infinity
+  _d.set(dx / l, 0, dz / l)
+  _ray.far = far
+  _ray.near = 0
+  _ray.set(_o.set(x, 0.3, z), _d)
+  const hits = _ray.intersectObject(collider)
+  return hits.length ? hits[0].distance : Infinity
+}
 
 // Decorative props (cardboard boxes, etc.). Each:
 //  url        : model
@@ -31,7 +54,7 @@ const propYaw = (p) => (p.rotation ?? 0) + (p.rotationY ?? 0)
 
 export const PROPS = [
   { url: '/models/box_set.glb', position: [-2.8, 0, 7], rotation: 2.4, heightM: 1.8 }, //ya
-  { url: '/models/psx_boxes.glb', position: [2.4, 1, -7], rotation: -0.5, heightM: 0.7 }, //ya
+  { url: '/models/psx_boxes.glb', position: [2.4, 0.96, -7], rotation: -0.5, heightM: 0.7 }, //ya
     { url: '/models/carton_box.glb', position: [0, 0.3, 0.3], rotation: 0.8, heightM: 0.2 }, //ya
   { url: '/models/carton_closed.glb', position: [-1.8, 0, -6.5], rotation: -0.3, heightM: 0.55 },
   // Nilo, the pug — hangs out near his watermelon box
@@ -142,6 +165,33 @@ export const PROPS = [
   { url: '/models/cardboard_cloud_b.glb', position: [1.5, 2, 7.5], rotation: 0, heightM: 0.5 },
     { url: '/models/cardboard_cloud_b.glb', position: [0.6, 1.8, 7.4], rotation: 0, heightM: 0.3 },
 
+  // Newly added — rough placements; adjust position/rotation/heightM to taste.
+  // Baby-groot toddling about on the floor: wanders within a patch, running as
+  // it moves and idling / looking sad when it stops. scaleMul 0.01 undoes its
+  // FBX import scale so it sizes correctly. (Reposition / grow the radius freely.)
+  {
+    url: '/models/grut_stickman.glb',
+    position: [-1.2, 0, -0.6],
+    rotation: 0.4,
+    heightM: 0.3,
+    scaleMul: 0.01,
+    anim: 'Idle',
+    wander: { radius: 1.5, speed: 0.4, walk: 'Run', idles: ['Idle', 'Idle_Sad'] },
+    radius: 0.5, // very small — you have to be right next to him
+    cue: 'Press F to say hi 🌱',
+    sound: 'audio/i_am_groot.mp3',
+    intro: ['I am Groot 🌱'],
+    follow: true, // dialogue offers to come along / stop (see PropTalk)
+  },
+  { url: '/models/trainer_red.glb', position: [-2.4, 0.29, -2.44], rotation: 0, heightM: 0.15, spin: { every: 2.5, deg: -90 } },
+  // black_tie is now worn by the door guides (see Guides.jsx), not a floor prop.
+  // Toy figures — rough placements, adjust position / rotation / heightM to taste.
+  { url: '/models/rex.glb', position: [-3, 1, -2.4], rotation: 0.6, heightM: 0.4 },
+  { url: '/models/alien.glb', position: [-2.7, 0.92, -2], rotation: 0.8, rotationX:-1.3, heightM: 0.25 },
+  { url: '/models/guido.glb', position: [-2.1, 1, -1.5], rotation: 0.6, heightM: 0.4 },
+  { url: '/models/hamm.glb', position: [-3.1, 1, -1.6], rotation: 1.6, heightM: 0.35 },
+
+
 
 
 
@@ -187,16 +237,23 @@ function Prop(p) {
   const { url, position, height, heightM, color } = p
   const outer = useRef()
   const floats = p.float ?? url.includes('cloud') // clouds bob gently
+  // Stepped spin: snap `deg` degrees every `every` seconds (e.g. trainer_red).
+  const spin = p.spin // { every: seconds, deg: degrees per step }
   // deterministic per-prop phase so they drift out of sync (no randomness)
   const phase = position[0] * 1.7 + position[2] * 0.9
   useFrame((state) => {
-    if (!floats || !outer.current) return
+    if (!outer.current) return
     const t = state.clock.elapsedTime
-    outer.current.position.y = position[1] + Math.sin(t * 0.8 + phase) * 0.12
-    outer.current.rotation.y = propYaw(p) + Math.sin(t * 0.5 + phase) * 0.05
+    if (floats) {
+      outer.current.position.y = position[1] + Math.sin(t * 0.8 + phase) * 0.12
+      outer.current.rotation.y = propYaw(p) + Math.sin(t * 0.5 + phase) * 0.05
+    } else if (spin) {
+      const steps = Math.floor(t / spin.every) // whole snaps so far
+      outer.current.rotation.y = propYaw(p) + steps * (spin.deg * Math.PI) / 180
+    }
   })
   const { scene } = useGLTF(url)
-  const { model, fitScale, yOffset } = useMemo(() => {
+  const { model, fitScale, yOffset, cx: modelCx, cz: modelCz } = useMemo(() => {
     const c = scene.clone(true)
     c.traverse((o) => {
       if (o.isMesh) {
@@ -216,12 +273,18 @@ function Prop(p) {
       }
     })
     const fit = fitToHeight(c, propHeight({ height, heightM }))
-    return { model: c, fitScale: fit.scale, yOffset: fit.yOffset }
+    return { model: c, fitScale: fit.scale, yOffset: fit.yOffset, cx: fit.cx, cz: fit.cz }
   }, [scene, height, heightM, color])
   const midY = propHeight(p) / 2 // tilt pivots around the model's own centre
+  // A spinning prop turns about its OWN vertical axis: recentre it horizontally
+  // so it rotates in place instead of orbiting around an off-centre origin.
+  const cx = spin ? p.cx ?? modelCx : 0
+  const cz = spin ? p.cz ?? modelCz : 0
   return (
     // 1) yaw around the floor position (ref lets floating props bob in useFrame)
     <group ref={outer} position={position} rotation={[0, propYaw(p), 0]}>
+      {/* recentre (only for spinning props) so the spin axis is the model's own */}
+      <group position={[-cx, 0, -cz]}>
       {/* 2) pitch/roll about the model centre (tips in place, no fly-off) */}
       <group position={[0, midY, 0]} rotation={[p.rotationX ?? 0, 0, p.rotationZ ?? 0]}>
         <group position={[0, -midY, 0]}>
@@ -230,15 +293,23 @@ function Prop(p) {
           </group>
         </group>
       </group>
+      </group>
     </group>
   )
 }
 
-// A prop with a skinned animation: plays (on loop) the clip whose name contains
-// `anim` (case-insensitive), e.g. anim: 'lookaround'.
+// A prop with a skinned animation. By default plays (on loop) the clip whose
+// name contains `anim`. Two extra modes:
+//  animRandom: [names]        — cycle random clips every 1.5–4s (crossfaded)
+//  wander: { radius, speed,   — potter about within `radius` of the spawn,
+//            walk, idles }       playing `walk` while moving and a random
+//                                `idles` clip while paused (e.g. grut).
 function AnimatedProp(p) {
   const { url, position, height, heightM, anim } = p
-  const group = useRef()
+  const group = useRef() // inner (animated) group
+  const outer = useRef() // outermost group — moved around for wandering
+  const play = useRef(() => {}) // set once actions are ready; called from useFrame
+  const st = useRef(null) // wander state
   const { scene, animations } = useGLTF(url)
   const { model, fitScale, yOffset } = useMemo(() => {
     const c = cloneSkeleton(scene) // proper skeleton clone for skinned meshes
@@ -256,20 +327,204 @@ function AnimatedProp(p) {
   useEffect(() => {
     const list = Object.values(actions).filter(Boolean)
     if (!list.length) return
-    // pick the clip whose name contains `anim`; fall back to the first one
-    const want = (anim || '').toLowerCase()
-    const a =
-      (want && list.find((ac) => ac.getClip().name.toLowerCase().includes(want))) || list[0]
-    a.reset().setLoop(THREE.LoopRepeat, Infinity).play()
-    if (import.meta.env.DEV) window.__llama = a
-    return () => a.stop()
-  }, [actions, anim])
+    const find = (name) =>
+      name && list.find((ac) => ac.getClip().name.toLowerCase().includes(name.toLowerCase()))
+
+    // Crossfade to a named clip (used by wander + animRandom). Remembers the
+    // current action so it only switches when the clip actually changes.
+    let current = null
+    play.current = (name) => {
+      const next = find(name) || list[0]
+      if (next === current) return
+      next.reset().setLoop(THREE.LoopRepeat, Infinity).fadeIn(0.25).play()
+      current?.fadeOut(0.25)
+      current = next
+    }
+
+    // wander: a tiny roam-in-a-circle state machine, driven in useFrame below.
+    if (p.wander) {
+      st.current = {
+        mode: 'pause',
+        timer: 0.4,
+        x: 0,
+        z: 0,
+        tx: 0,
+        tz: 0,
+        heading: propYaw(p),
+        spawn: [position[0], position[1], position[2]], // wander is relative to this
+        wx: position[0], // live world position
+        wz: position[2],
+        turn: 1, // preferred swerve side when avoiding walls
+        stuck: 0,
+      }
+      play.current(p.wander.idles?.[0] || 'Idle')
+      return () => list.forEach((ac) => ac.stop())
+    }
+
+    // animRandom: cycle through a set of clips at random.
+    if (p.animRandom?.length) {
+      let timer = null
+      const tick = () => {
+        play.current(p.animRandom[(Math.random() * p.animRandom.length) | 0])
+        timer = setTimeout(tick, 1500 + Math.random() * 2500)
+      }
+      tick()
+      return () => {
+        clearTimeout(timer)
+        list.forEach((ac) => ac.stop())
+      }
+    }
+
+    // otherwise: a single clip named by `anim` (fall back to the first one)
+    play.current(anim)
+    if (import.meta.env.DEV) window.__llama = current
+    return () => list.forEach((ac) => ac.stop())
+  }, [actions, anim, p.animRandom, p.wander])
+
+  // grut's movement, driven every frame. Two modes:
+  //  • following the player (grut.following): trail them, steering round walls
+  //    with three feelers so it doesn't get stuck — stops a step short.
+  //  • wandering: roam within `radius` of the spawn, running while moving and
+  //    idling / looking sad when paused. Freezes to face you when you come to
+  //    chat. grut.wx/wz track its live world position (published to the speaker).
+  useFrame((_, dtRaw) => {
+    const w = p.wander
+    const s = st.current
+    if (!w || !s || !outer.current) return
+    const dt = Math.min(dtRaw, 0.05)
+    const idles = w.idles ?? ['Idle', 'Idle_Sad']
+    const walk = w.walk ?? 'Run'
+
+    if (grutState.following) {
+      // --- follow the player, avoiding walls ---
+      const speed = (w.followSpeed ?? 0.9)
+      let dx = playerPos.x - s.wx
+      let dz = playerPos.z - s.wz
+      const gap = Math.hypot(dx, dz)
+      if (gap > 0.85) {
+        dx /= gap
+        dz /= gap
+        let sx = dx
+        let sz = dz
+        // wall feelers: steer along anything close ahead
+        const col = grutState.collider
+        const look = Math.min(1.0, gap)
+        for (const a of WHISKERS) {
+          const ca = Math.cos(a)
+          const sa = Math.sin(a)
+          const fx = dx * ca - dz * sa
+          const fz = dx * sa + dz * ca
+          const hit = wallDist(col, s.wx, s.wz, fx, fz, look)
+          if (hit >= look) continue
+          const wgt = (1 - hit / look) * 1.6
+          sx += -fz * wgt * s.turn - fx * wgt * 0.5
+          sz += fx * wgt * s.turn - fz * wgt * 0.5
+        }
+        const l = Math.hypot(sx, sz) || 1
+        const nx = sx / l
+        const nz = sz / l
+        const step = speed * dt
+        const px = s.wx
+        const pz = s.wz
+        if (wallDist(col, px, pz, nx, nz, step + FOLLOW_R) > step + FOLLOW_R) {
+          s.wx += nx * step
+          s.wz += nz * step
+        } else {
+          // blocked head-on: slide along whichever axis is open
+          if (wallDist(col, px, pz, nx, 0, Math.abs(nx) * step + FOLLOW_R) > Math.abs(nx) * step + FOLLOW_R) s.wx += nx * step
+          if (wallDist(col, s.wx, pz, 0, nz, Math.abs(nz) * step + FOLLOW_R) > Math.abs(nz) * step + FOLLOW_R) s.wz += nz * step
+        }
+        const moved = Math.hypot(s.wx - px, s.wz - pz)
+        if (moved > 1e-4) s.heading = Math.atan2(nx, nz)
+        // stuck? flip the preferred swerve side so it rounds the other way
+        s.stuck = moved < step * 0.3 ? s.stuck + dt : 0
+        if (s.stuck > 0.6) {
+          s.turn = -s.turn
+          s.stuck = 0
+        }
+        play.current(walk)
+      } else {
+        // close enough — stand and face the player
+        play.current(idles[0])
+        const hx = playerPos.x - s.wx
+        const hz = playerPos.z - s.wz
+        if (Math.hypot(hx, hz) > 0.01) {
+          let d = Math.atan2(hx, hz) - s.heading
+          d = Math.atan2(Math.sin(d), Math.cos(d))
+          s.heading += d * Math.min(1, dt * 8)
+        }
+      }
+      // keep the wander offset in sync with where grut ended up, so it resumes
+      // wandering from here (relative to a spawn re-anchored at its current spot)
+      s.spawn[0] = s.wx
+      s.spawn[2] = s.wz
+      s.x = 0
+      s.z = 0
+      s.mode = 'pause'
+      s.timer = 0.3
+    } else {
+      // --- wander within radius of spawn ---
+      const radius = w.radius ?? 0.8
+      const speed = w.speed ?? 0.35
+      s.wx = s.spawn[0] + s.x
+      s.wz = s.spawn[2] + s.z
+      const nearPlayer = Math.hypot(playerPos.x - s.wx, playerPos.z - s.wz) < (p.radius ?? 0.6) + 0.4
+      if (nearPlayer) {
+        play.current(idles[0])
+        const hx = playerPos.x - s.wx
+        const hz = playerPos.z - s.wz
+        if (Math.hypot(hx, hz) > 0.01) {
+          let d = Math.atan2(hx, hz) - s.heading
+          d = Math.atan2(Math.sin(d), Math.cos(d))
+          s.heading += d * Math.min(1, dt * 8)
+        }
+      } else if (s.mode === 'walk') {
+        const dx = s.tx - s.x
+        const dz = s.tz - s.z
+        const d = Math.hypot(dx, dz)
+        if (d < 0.03) {
+          s.mode = 'pause'
+          s.timer = 1.2 + Math.random() * 2.5
+          play.current(idles[(Math.random() * idles.length) | 0])
+        } else {
+          const step = Math.min(speed * dt, d)
+          s.x += (dx / d) * step
+          s.z += (dz / d) * step
+          s.heading = Math.atan2(dx, dz)
+          play.current(walk)
+        }
+      } else {
+        s.timer -= dt
+        if (s.timer <= 0) {
+          const ang = Math.random() * Math.PI * 2
+          const r = Math.sqrt(Math.random()) * radius
+          s.tx = Math.cos(ang) * r
+          s.tz = Math.sin(ang) * r
+          s.mode = 'walk'
+        }
+      }
+    }
+
+    outer.current.position.set(s.wx, s.spawn[1], s.wz)
+    outer.current.rotation.y = s.heading
+    // Publish grut's live position so talk proximity / close-up follow it
+    // (SPEAKERS maps `position: p.position`, the same array reference).
+    position[0] = s.wx
+    position[2] = s.wz
+  })
+
   const midY = propHeight(p) / 2
+  // scaleMul corrects rigs whose FBX import scale (e.g. 0.01) makes fitToHeight
+  // and the skinned render disagree — grut needs 0.01. Feet stay grounded since
+  // yOffset scales with it.
+  const sm = p.scaleMul ?? 1
+  const scale = fitScale * sm
+  const yOff = yOffset * sm
   return (
-    <group position={position} rotation={[0, propYaw(p), 0]}>
+    <group ref={outer} position={position} rotation={[0, propYaw(p), 0]}>
       <group position={[0, midY, 0]} rotation={[p.rotationX ?? 0, 0, p.rotationZ ?? 0]}>
         <group position={[0, -midY, 0]}>
-          <group ref={group} scale={fitScale} position={[0, yOffset, 0]}>
+          <group ref={group} scale={scale} position={[0, yOff, 0]}>
             <primitive object={model} />
           </group>
         </group>
@@ -291,8 +546,8 @@ export default function Props() {
 PROPS.forEach((p) => useGLTF.preload(p.url))
 
 // Props that can be talked to (approach + F): position + world height (for the
-// close-up camera) + dialogue lines.
-export const SPEAKERS = PROPS.filter((p) => p.say).map((p) => ({
+// close-up camera) + dialogue (plain lines, or an intro/menu, or a follow flag).
+export const SPEAKERS = PROPS.filter((p) => p.say || p.follow).map((p) => ({
   position: p.position,
   height: propHeight(p),
   sound: p.sound ?? null,
@@ -303,4 +558,6 @@ export const SPEAKERS = PROPS.filter((p) => p.say).map((p) => ({
   aimY: p.aimY ?? null,
   camAngle: p.camAngle ?? null, // fixed viewing side (null = from the player's side)
   lines: p.say,
+  intro: p.intro ?? null,
+  follow: p.follow ?? false, // grut: dialogue offers to follow / stop following
 }))

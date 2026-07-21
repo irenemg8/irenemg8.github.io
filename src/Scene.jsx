@@ -8,6 +8,7 @@ import { playerPos } from './playerState.js'
 import { metaStore } from './metaStore.js'
 import { talkStore } from './talkStore.js'
 import { chatStore } from './npcChat.js'
+import { grut } from './grutState.js'
 import Apartment from './Apartment.jsx'
 import GradientBackground from './GradientBackground.jsx'
 import City from './City.jsx'
@@ -149,6 +150,7 @@ export default function Scene({ mode = 'third', showMarkers = false, onReady }) 
     merged.computeBoundsTree()
     const colliderMesh = new THREE.Mesh(merged)
     colliderMesh.updateMatrixWorld()
+    grut.collider = colliderMesh // so grut can follow the player without clipping walls
 
     if (import.meta.env.DEV && typeof window !== 'undefined') {
       window.__tris = (merged.index ? merged.index.count : merged.attributes.position.count) / 3

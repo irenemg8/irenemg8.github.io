@@ -50,6 +50,24 @@ export const CHAT_SCRIPTS = [
     'Then she’s not finished with this place yet.',
     'Good. I like a gallery that keeps growing.',
   ],
+  [
+    'Wait — is that a baby Groot toddling about the floor?',
+    'I think he wandered off the film set and never went back.',
+    'Now he just runs laps around the boxes. Nobody’s the wiser.',
+    'Honestly? Let him stay. He’s having the time of his life.',
+  ],
+  [
+    'Have you seen the little groot down there?',
+    'The tiny wooden one? He’s an absolute sweetheart.',
+    'He looked sad for a second and my heart nearly broke.',
+    'Same. I’d protect him with my entire season pass.',
+  ],
+  [
+    'I am Groot.',
+    'No! I AM Groot.',
+    'I insist, I am Groot.',
+    'Fine, fine — we’re BOTH Groot. Happy now?',
+  ],
 ]
 
 // Live conversation, mutable (read every frame by the AI and the camera).

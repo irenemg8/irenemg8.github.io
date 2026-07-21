@@ -8,6 +8,7 @@ import { useMetaStore, metaStore } from './metaStore.js'
 import { useTalkStore, talkStore } from './talkStore.js'
 import { useChatStore, chatStore, chat, openChat, closeChat, endChat } from './npcChat.js'
 import { AGENTS } from './npcState.js'
+import { grut } from './grutState.js'
 import { BOXES } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { META_SECTIONS } from './metaContent.js'
@@ -29,6 +30,8 @@ function MetaVision() {
   const [page, setPage] = useState(0)
   const [n, setN] = useState(0) // typewriter progress
   const [cursor, setCursor] = useState(0) // menu cursor
+  const [embed, setEmbed] = useState(false) // live-site frame open?
+  const [demoPick, setDemoPick] = useState(0) // 0 = Yes, 1 = No (demo prompt)
   const touch = useTouch()
 
   const sec = section != null ? META_SECTIONS[section] : null
@@ -37,6 +40,8 @@ function MetaVision() {
   const pages = it?.text ?? []
   const text = inView ? pages[page] ?? '' : ''
   const full = n >= text.length
+  // Finished reading a project that has a live site -> offer a Yes/No demo.
+  const askDemo = inView && !!it?.embed && page === pages.length - 1 && full && !embed
 
   // options for the current menu level (root sections, or a section's items)
   let menuOptions = null
@@ -118,6 +123,27 @@ function MetaVision() {
     }
   }, [mode])
 
+  // Close the live frame / reset the demo prompt when you move to another item.
+  useEffect(() => {
+    setEmbed(false)
+    setDemoPick(0)
+  }, [item, section])
+
+  // While the live frame is open, Esc / F closes IT (not the glasses); grab the
+  // key in the capture phase so the menu handlers below don't also fire.
+  useEffect(() => {
+    if (!embed) return
+    const onKey = (e) => {
+      if (e.code === 'Escape' || e.code === 'KeyF') {
+        e.preventDefault()
+        e.stopPropagation()
+        setEmbed(false)
+      }
+    }
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
+  }, [embed])
+
   // Typewriter for the current item's text.
   useEffect(() => {
     if (mode !== 'on' || !inView || n >= text.length) return
@@ -146,7 +172,22 @@ function MetaVision() {
   useEffect(() => {
     if (mode !== 'on') return
     const onKey = (e) => {
+      if (embed) return // the live frame has focus
       if (e.code === 'KeyF' || e.code === 'Escape') return // F / Esc exit (handled above)
+      if (askDemo) {
+        // Yes/No demo prompt: arrows pick, Enter confirms.
+        if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+          e.preventDefault()
+          playSfx('move')
+          setDemoPick((v) => (v === 0 ? 1 : 0))
+        } else if (['Enter', 'NumpadEnter', 'Space'].includes(e.code)) {
+          e.preventDefault()
+          playSfx('select')
+          if (demoPick === 0) setEmbed(true)
+          else advanceView() // "No" -> back to the project list
+        }
+        return
+      }
       if (!inView && menuOptions) {
         const len = menuOptions.length
         if (e.code === 'ArrowUp') {
@@ -179,7 +220,7 @@ function MetaVision() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [mode, inView, menuOptions, cursor, section, item, n, text, page, pages])
+  }, [mode, inView, menuOptions, cursor, section, item, n, text, page, pages, embed, askDemo, demoPick])
 
   const base = import.meta.env.BASE_URL
 
@@ -263,7 +304,7 @@ function MetaVision() {
             <div className="dialogue__hint">↑︎↓︎←︎→︎ choose · Enter select · F / Esc to take off</div>
           </div>
         ) : (
-          <div className="dialogue" onClick={advanceView}>
+          <div className="dialogue" onClick={askDemo ? undefined : advanceView}>
             <div className="dialogue__text">
               {text.slice(0, n)}
               {full && page === pages.length - 1 && it.links && (
@@ -283,8 +324,64 @@ function MetaVision() {
                 </span>
               )}
             </div>
-            <div className="dialogue__hint">Any key to continue · F / Esc to take off</div>
-            {full && <div className="dialogue__arrow">▼</div>}
+            {askDemo ? (
+              <div className="meta__demo">
+                <span className="meta__demo-q">Fancy trying it live right here?</span>
+                <ul className="dialogue__options meta-ask">
+                  {['Yes', 'No'].map((label, idx) => (
+                    <li
+                      key={label}
+                      className={idx === demoPick ? 'is-active' : ''}
+                      onMouseEnter={() => setDemoPick(idx)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        playSfx('select')
+                        if (idx === 0) setEmbed(true)
+                        else advanceView()
+                      }}
+                    >
+                      <span className="dialogue__cursor">{idx === demoPick ? '▶' : ' '}</span>
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+                <div className="dialogue__hint">←︎ →︎ choose · Enter · F / Esc to take off</div>
+              </div>
+            ) : (
+              <>
+                <div className="dialogue__hint">Any key to continue · F / Esc to take off</div>
+                {full && <div className="dialogue__arrow">▼</div>}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Live site running inside the glasses — a real, interactive frame */}
+        {embed && it?.embed && (
+          <div className="meta__embed" onClick={(e) => e.stopPropagation()}>
+            <div className="meta__embed-bar">
+              <span className="meta__embed-title">{it.label}</span>
+              <span className="meta__embed-actions">
+                <a
+                  className="meta__embed-link"
+                  href={it.embed}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open in a new tab ↗
+                </a>
+                <button className="meta__embed-close" onClick={() => setEmbed(false)}>
+                  ✕
+                </button>
+              </span>
+            </div>
+            <iframe
+              className="meta__embed-frame"
+              src={it.embed}
+              title={it.label}
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+              referrerPolicy="no-referrer"
+            />
           </div>
         )}
       </div>
@@ -452,13 +549,46 @@ function DialogueBox() {
 // Takes priority over boxes so the two don't fire together (see Boxes.jsx).
 const TALK_EXIT = { label: 'That’s all, thanks', exit: true }
 
+// grut's dialogue: offers to come along, or (once he's tagging along) to keep
+// following or stay put. Picking an option flips grut.following.
+const grutMenu = () =>
+  grut.following
+    ? {
+        prompt: 'He’s happily tagging along. Keep him with you?',
+        again: 'He’s happily tagging along. Keep him with you?',
+        options: [
+          { label: 'Stay with me!', text: ['I am Groot! 🌱', '(He beams — not going anywhere.)'], close: true },
+          {
+            label: 'You can wander off',
+            text: ['…I am Groot. 🌱', '(He gives a little wave and toddles off on his own.)'],
+            act: () => (grut.following = false),
+            close: true,
+          },
+        ],
+      }
+    : {
+        prompt: 'He tilts his head at you…',
+        again: 'He tilts his head at you…',
+        options: [
+          {
+            label: 'Come explore with me!',
+            text: ['I am Groot! 🌱', '(He lights up and trots over to your side.)'],
+            act: () => (grut.following = true),
+            close: true,
+          },
+        ],
+      }
+
 function PropTalk() {
   const { near, open } = useTalkStore()
   const sp = open != null ? TALKERS[open] : null
-  const menu = sp?.menu ?? null
-  const options = menu ? [...menu.options, TALK_EXIT] : null
+  const menu = sp?.follow ? grutMenu() : sp?.menu ?? null
+  // grut's options end the chat themselves (no "That's all" needed); other
+  // menus get the usual exit row.
+  const options = menu ? (sp?.follow ? menu.options : [...menu.options, TALK_EXIT]) : null
 
   const [view, setView] = useState('text') // 'text' | 'menu'
+  const [endsChat, setEndsChat] = useState(false) // current option closes on finish
   const [pages, setPages] = useState([])
   const [page, setPage] = useState(0)
   const [n, setN] = useState(0)
@@ -481,6 +611,7 @@ function PropTalk() {
     setPage(0)
     setN(0)
     setLink(null)
+    setEndsChat(false)
     if (s?.intro?.length) {
       setView('text')
       setPages(s.intro)
@@ -518,6 +649,7 @@ function PropTalk() {
     playSfx('blip')
     if (!full) setN(text.length)
     else if (page < pages.length - 1) setPage((p) => p + 1)
+    else if (endsChat) talkStore.set({ open: null }) // this option closes the chat
     else if (menu) {
       setView('menu') // end of a text block -> back to the menu
       setMenuIndex(0)
@@ -531,6 +663,8 @@ function PropTalk() {
       talkStore.set({ open: null })
       return
     }
+    opt.act?.() // grut: start / stop following
+    setEndsChat(!!opt.close) // grut's replies close the chat instead of looping
     setHeard((h) => h + 1)
     setLink(opt.link ?? null)
     setPages(opt.text)

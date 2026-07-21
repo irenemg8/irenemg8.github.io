@@ -24,6 +24,8 @@ export const META_SECTIONS = [
       {
         label: 'Socratic Tutor · TFG',
         image: 'meta/projects/tfg.webp',
+        // `embed` opens the live site in an interactive frame inside the glasses.
+        embed: 'https://tutor-virtual.dsic.upv.es/v2/',
         text: [
           'My bachelor’s thesis: a Socratic virtual tutor for Ohm’s law, built on an Agentic-RAG pipeline.',
           'LLMs · RAG · knowledge graph · deployed on UPV infrastructure',
@@ -34,8 +36,41 @@ export const META_SECTIONS = [
         ],
       },
       {
+        label: 'Centromat',
+        image: 'meta/projects/portfolio.webp', // TODO: real screenshot → centromat.webp
+        // no `embed`: centromat.info sends X-Frame-Options: DENY, so it can't be
+        // shown in an iframe — only opened in a new tab.
+        text: ['Centromat — live at centromat.info.'], // TODO: a proper one-liner
+        links: [{ label: 'Open live ↗', url: 'https://centromat.info/' }],
+      },
+      {
+        label: 'Othello AI',
+        image: 'meta/projects/othello.webp',
+        embed: 'https://irenemg8.github.io/othello_game/',
+        text: ['A competitive Othello AI — Minimax with alpha-beta pruning.', 'Unity · C#'],
+        links: [
+          { label: 'GitHub ↗', url: 'https://github.com/irenemg8/othello_game' },
+          { label: 'Play it ↗', url: 'https://irenemg8.github.io/othello_game/' },
+        ],
+      },
+      {
+        label: 'Yummy Fish',
+        image: 'meta/projects/yummyfish.webp',
+        // Playable Unity WebGL build hosted on GitHub Pages — keyboard only.
+        embed: 'https://irenemg8.github.io/YummyFish/',
+        text: [
+          'Yummy Fish — an underwater arcade game: gobble up smaller fish to grow, dodge the bigger ones. 🐟',
+          'A university project, made in Unity · C#. Play it with the arrow keys!',
+        ],
+        links: [
+          { label: 'GitHub ↗', url: 'https://github.com/irenemg8/YummyFish' },
+          { label: 'Play it ↗', url: 'https://irenemg8.github.io/YummyFish/' },
+        ],
+      },
+      {
         label: 'PromptGen',
         image: 'meta/projects/promptgen.webp',
+        embed: 'https://irenemg8.github.io/promptgen/',
         text: ['PromptGen — create, tag and reuse AI prompts, fast.', 'Next.js · Tailwind · TypeScript · Firebase'],
         links: [
           { label: 'GitHub ↗', url: 'https://github.com/irenemg8/promptgen' },
@@ -49,30 +84,12 @@ export const META_SECTIONS = [
         links: [{ label: 'GitHub ↗', url: 'https://github.com/agonfer/auraFlutter' }],
       },
       {
-        label: 'Othello AI',
-        image: 'meta/projects/othello.webp',
-        text: ['A competitive Othello AI — Minimax with alpha-beta pruning.', 'Unity · C#'],
-        links: [
-          { label: 'GitHub ↗', url: 'https://github.com/irenemg8/othello_game' },
-          { label: 'Play it ↗', url: 'https://irenemg8.github.io/othello_game/' },
-        ],
-      },
-      {
         label: '3D Portfolio',
         image: 'meta/projects/portfolio.webp',
         text: ['A 3D portfolio blending real-time graphics with clean UX.', 'Three.js · React · Blender'],
         links: [
           { label: 'GitHub ↗', url: 'https://github.com/irenemg8/Portfolio' },
           { label: 'Open live ↗', url: 'https://irene.divdev.es/' },
-        ],
-      },
-      {
-        label: 'Geospatial Repo',
-        image: 'meta/projects/carto.webp',
-        text: ['A web platform to explore thematic cartographic studies.', 'QGIS · Python'],
-        links: [
-          { label: 'GitHub ↗', url: 'https://github.com/irenemg8/Repo-Cartografia' },
-          { label: 'Open live ↗', url: 'https://cartografia.divdev.es/' },
         ],
       },
       {
