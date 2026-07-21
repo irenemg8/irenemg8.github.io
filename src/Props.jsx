@@ -66,6 +66,8 @@ export const PROPS = [
     rotationZ: 0,
     heightM: 0.3,
     sound: 'audio/pug_bark.mp3',
+    cue: 'Press F to pet Nilo 🐶',
+    pet: true, // petting him pops little hearts (see PropTalk + Hearts)
     say: [
       'My owner said if I hold still like a statue for five minutes, she’ll refill my green treat bowl. 🐶',
       'I can already imagine how juicy that watermelon must be… 💦',
@@ -560,4 +562,5 @@ export const SPEAKERS = PROPS.filter((p) => p.say || p.follow).map((p) => ({
   lines: p.say,
   intro: p.intro ?? null,
   follow: p.follow ?? false, // grut: dialogue offers to follow / stop following
+  pet: p.pet ?? false, // nilo: petting pops hearts
 }))

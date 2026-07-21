@@ -9,6 +9,7 @@ import { metaStore } from './metaStore.js'
 import { talkStore } from './talkStore.js'
 import { chatStore } from './npcChat.js'
 import { grut } from './grutState.js'
+import Hearts from './Hearts.jsx'
 import Apartment from './Apartment.jsx'
 import GradientBackground from './GradientBackground.jsx'
 import City from './City.jsx'
@@ -192,6 +193,7 @@ export default function Scene({ mode = 'third', showMarkers = false, onReady }) 
       <Props />
       <Guides />
       <Villagers />
+      <Hearts />
       <Markers show={showMarkers} />
 
       {/* Lighting (no HDRI): bright but not blown out, so colours read */}

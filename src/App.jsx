@@ -9,6 +9,7 @@ import { useTalkStore, talkStore } from './talkStore.js'
 import { useChatStore, chatStore, chat, openChat, closeChat, endChat } from './npcChat.js'
 import { AGENTS } from './npcState.js'
 import { grut } from './grutState.js'
+import { hearts } from './hearts.js'
 import { BOXES } from './Boxes.jsx'
 import { TALKERS } from './talkers.js'
 import { META_SECTIONS } from './metaContent.js'
@@ -642,7 +643,10 @@ function PropTalk() {
     TALKERS.forEach((s) => preloadClip(s.sound)) // warm each speaker's sound
   }, [])
   useEffect(() => {
-    if (open != null) playClip(TALKERS[open].sound, TALKERS[open].soundVol ?? 1) // bark / llama / guide
+    if (open == null) return
+    const s = TALKERS[open]
+    playClip(s.sound, s.soundVol ?? 1) // bark / llama / guide
+    if (s.pet) hearts.burst(s.position[0], s.position[1] + s.height * 0.9, s.position[2]) // 🐶💕
   }, [open])
 
   const advanceText = () => {
