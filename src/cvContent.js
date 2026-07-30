@@ -122,7 +122,6 @@ export const CV_PAGES = [
     blocks: [
       {
         kind: 'timeline',
-        caption: 'Eight roles, mostly overlapping',
         from: 2022,
         to: 2027,
         now: 2026.6,
