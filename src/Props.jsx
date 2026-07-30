@@ -13,7 +13,8 @@ const _ray = new THREE.Raycaster()
 _ray.firstHitOnly = true
 const _o = new THREE.Vector3()
 const _d = new THREE.Vector3()
-const FOLLOW_R = 0.45 // grut's body clearance off walls
+const FOLLOW_R = 0.45 // grut's body clearance off walls while trailing the player
+const WANDER_R = 0.18 // …and while pottering about, where he can get much closer
 const WHISKERS = [-0.6, 0, 0.6] // feeler angles: left, ahead, right
 
 // Distance to the nearest wall from (x,z) along (dx,dz), or Infinity if clear.
@@ -226,11 +227,14 @@ export const PROPS = [
 ]
 
 // Box colliders (position-only, world space) so you can't walk through them.
+// Wandering props are skipped: their collider would be baked at the spawn point
+// and stay there, leaving an invisible wall wherever they started — and, since
+// they steer by raycasting this very collider, walling themselves in.
 export function propColliderGeometries(gltfs) {
   const out = []
   PROPS.forEach((p, i) => {
     const g0 = gltfs[i]
-    if (!g0) return
+    if (!g0 || p.wander) return
     const c = g0.scene.clone(true)
     c.updateMatrixWorld(true)
     const fit = fitToHeight(c, propHeight(p))
@@ -445,6 +449,7 @@ function AnimatedProp(p) {
         stuck: 0,
       }
       play.current(p.wander.idles?.[0] || 'Idle')
+      if (import.meta.env.DEV) window.__wander = st.current // dev: watch where it roams
       return () => list.forEach((ac) => ac.stop())
     }
 
@@ -583,10 +588,24 @@ function AnimatedProp(p) {
           play.current(idles[(Math.random() * idles.length) | 0])
         } else {
           const step = Math.min(speed * dt, d)
-          s.x += (dx / d) * step
-          s.z += (dz / d) * step
-          s.heading = Math.atan2(dx, dz)
-          play.current(walk)
+          const nx = dx / d
+          const nz = dz / d
+          // Wandering used to ignore the world entirely, so he strolled straight
+          // through the benches. Same collider the follow mode already steers
+          // around — but he's tiny, so he gets a much smaller berth than the
+          // whiskers use, or he'd be repelled from half his own patch.
+          const reach = step + WANDER_R
+          if (wallDist(grutState.collider, s.wx, s.wz, nx, nz, reach) > reach) {
+            s.x += nx * step
+            s.z += nz * step
+            s.heading = Math.atan2(dx, dz)
+            play.current(walk)
+          } else {
+            // something in the way — give up on this spot and pick another
+            s.mode = 'pause'
+            s.timer = 0.4 + Math.random() * 0.8
+            play.current(idles[(Math.random() * idles.length) | 0])
+          }
         }
       } else {
         s.timer -= dt
