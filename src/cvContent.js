@@ -55,7 +55,7 @@ export const CV_PAGES = [
         kind: 'stats',
         items: [
           { value: 'Highest Honours', label: 'BSc Thesis, 10/10' },
-          { value: '2', label: 'Papers (TAEE · IEEE)' },
+          { value: '2', label: 'Papers published in TAEE · IEEE' },
           { value: '6', label: 'Awards & distinctions' },
         ],
       },
@@ -119,22 +119,7 @@ export const CV_PAGES = [
   {
     title: 'Career',
     blocks: [
-      {
-        kind: 'timeline',
-        from: 2022,
-        to: 2027,
-        now: 2026.6,
-        items: [
-          { label: 'Centromat — web', from: M(2023, 2), to: M(2023, 6) },
-          { label: 'Talpa Tunneling UPV', from: M(2025, 4), to: M(2026, 6) },
-          { label: 'GOMARCO — Scrum Master', from: M(2025, 4), to: M(2025, 7) },
-          { label: 'Beetrics — UX & branding', from: M(2025, 7), to: M(2025, 9) },
-          { label: 'Zyndra — co-founder', from: M(2025, 9), to: M(2026, 6) },
-          { label: 'Hyperloop UPV — H11', from: M(2025, 9), to: M(2025, 12) },
-          { label: 'UPV — Learning Assistant', from: M(2025, 9), to: M(2026, 5) },
-          { label: 'strambótica — UX & AR', from: M(2025, 10), to: M(2026, 1) },
-        ],
-      },
+    
       {
         kind: 'cards',
         items: [
@@ -208,7 +193,7 @@ export const CV_PAGES = [
       },
       {
         kind: 'columns',
-        ratio: 0.52,
+        ratio: 0.57,
         left: [
           {
             kind: 'cards',
@@ -355,7 +340,7 @@ export const CV_PAGES = [
             kind: 'row',
             label: 'Certifications',
             value:
-              'Agentic AI — RAG with LangGraph & Ollama (Udemy, 2026) · Three.js Journey (2025) · AutoCAD 2D for Engineering (UPV, 2026) · Advanced UX and UX for games (LinkedIn Learning) · 17 in total, listed on LinkedIn.',
+              'Agentic AI — RAG with LangGraph & Ollama (Udemy, 2026) · Three.js Journey (2025) · AutoCAD 2D (UPV, 2026) · 17 in total, on LinkedIn.',
           },
         ],
         right: [
@@ -366,10 +351,9 @@ export const CV_PAGES = [
               { label: 'AI & research', items: ['LangGraph', 'Ollama', 'RAG', 'Knowledge graphs', 'PEFT/LoRA', 'OpenCV'] },
               { label: 'Code', items: ['C++', 'C#', 'Java', 'Python', 'JavaScript', 'TypeScript', 'HTML/CSS'] },
               { label: 'Design & 3D', items: ['Figma', 'Axure', 'Blender', '3ds Max', 'Substance 3D', 'Photoshop'] },
-              { label: 'AR/VR & robotics', items: ['Unity', 'Meta Quest', 'Vuforia', 'Three.js', 'ROS2', 'Gazebo'] },
               {
-                label: 'Prototyping & ways of working',
-                items: ['AutoCAD', 'Fritzing', 'Arduino', 'ESP-IDF', 'CDIO', 'Scrum', 'Git/GitHub'],
+                label: 'AR/VR, robotics & prototyping',
+                items: ['Unity', 'Meta Quest', 'Vuforia', 'ROS2', 'Gazebo', 'AutoCAD', 'Fritzing', 'Arduino', 'ESP-IDF'],
               },
             ],
           },

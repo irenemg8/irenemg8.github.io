@@ -136,7 +136,7 @@ const measureLines = (ctx, text, maxW, t) => {
 // one stopped — without this every caption would sit on the previous block's
 // last line.
 function caption(ctx, text, x, y, w) {
-  const cy = y + S.lg
+  const cy = y + S.xl
   if ('letterSpacing' in ctx) ctx.letterSpacing = '2.5px'
   ctx.font = font(T.cap)
   ctx.fillStyle = ACCENT
@@ -367,7 +367,7 @@ function drawLead(ctx, b, y, x, w) {
 }
 
 function drawNote(ctx, b, y, x, w) {
-  const start = y + S.lg // its own clearance, same as a caption's
+  const start = y + S.xl // its own clearance, same as a caption's
   const end = paragraph(ctx, b.text, x + S.lg, start, w - S.lg, { t: T.small, colour: DIM, lh: 1.4 })
   glow(ctx, GLOW, 10)
   ctx.strokeStyle = ACCENT
@@ -381,7 +381,7 @@ function drawNote(ctx, b, y, x, w) {
 }
 
 function drawRow(ctx, b, y0, x, w) {
-  const y = y0 + S.lg // its own clearance, same as a caption's
+  const y = y0 + S.xl // its own clearance, same as a caption's
   ctx.font = font([600, 20])
   ctx.fillStyle = ACCENT
   ctx.fillText(b.label, x, y)
@@ -783,7 +783,7 @@ function drawChips(ctx, b, y, x, w) {
       ctx.font = font([600, 18])
       ctx.fillStyle = ACCENT
       ctx.fillText(group.label, x, cy + 14)
-      cy += 26
+      cy += 30
     }
     let cx = x
     const h = 28
@@ -806,7 +806,7 @@ function drawChips(ctx, b, y, x, w) {
       ctx.fillText(name, cx + 12, cy + 19)
       cx += cwid + 6
     }
-    cy += h + S.md
+    cy += h + S.lg
   }
   return cy
 }
