@@ -183,7 +183,7 @@ export const BOXES = [
         {
           label: 'Awards',
           text: [
-            'I earned the UPV’s High Academic Performance distinction (Mención ARA) — it’s even noted on my European Diploma Supplement.',
+            'I earned the UPV High Academic Performance distinction (Mención ARA) — it’s even noted on my European Diploma Supplement.',
             'At TAEE 2026, our team also won the Best Poster award.',
             'And I love a good hackathon — projects like Aura, UrbanVive and OnKlub are some of the ones I’m proudest of.',
           ],
