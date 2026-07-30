@@ -200,6 +200,32 @@ export const PROPS = [
     rotation: CV_SPOT.rotation,
     heightM: CV_SPOT.projectorH,
   },
+  // The TAEE 2026 poster, pinned to the +X wall (measured at x = 3.535) beside
+  // the CV hologram, so the research corner reads as one thing.
+  {
+    url: '/models/taee_poster.glb',
+    position: [3.5, 1.0, -3.2],
+    rotation: -Math.PI / 2,
+    heightM: 1.1,
+    wall: true, // flush with the wall — no collider needed
+    pin: true, // drawing pin through the top
+    radius: 1.5,
+    cue: 'Press F to read the poster 🏆',
+    say: [
+      'That one came home with the Best Poster award from TAEE 2026. 🏆',
+      '“Benchmarking LLM-based Socratic tutors for conceptual understanding of Ohm’s Law” — the first paper out of my bachelor’s thesis.',
+      'It pits three ways of building a Socratic tutor against each other — plain prompting, fine-tuning with LoRA, and retrieval with few-shot examples — over 810 student–tutor exchanges.',
+      'Retrieval won: the best pedagogical quality, and an answer back in about half a second. Fine-tuning fell apart on so small a dataset.',
+      'And the next step on there is exactly what I went on to build for the thesis: knowledge graphs and Agentic RAG. 🌱',
+    ],
+    hideMeshes: ['Tape'],
+    // Backed off far enough that the whole sheet clears the dialogue box, and
+    // level rather than tilted, so the text stays square to the camera.
+    camDist: 1.85,
+    camY: 0.42,
+    aimY: 0.42,
+    camAngle: -Math.PI / 2, // read it head-on, from the room side
+  },
   // An articulated arm working away on a shelf. Its rig keeps the FBX unit
   // scale, which defeats fitToHeight (the arm came out 100x too small), so
   // `poseFit` re-measures it from what's actually drawn — see refitToPose below.
@@ -234,7 +260,7 @@ export function propColliderGeometries(gltfs) {
   const out = []
   PROPS.forEach((p, i) => {
     const g0 = gltfs[i]
-    if (!g0 || p.wander) return
+    if (!g0 || p.wander || p.wall) return
     const c = g0.scene.clone(true)
     c.updateMatrixWorld(true)
     const fit = fitToHeight(c, propHeight(p))
@@ -263,7 +289,7 @@ export function propColliderGeometries(gltfs) {
 }
 
 function Prop(p) {
-  const { url, position, height, heightM, color } = p
+  const { url, position, height, heightM, color, hideMeshes } = p
   const outer = useRef()
   const floats = p.float ?? url.includes('cloud') // clouds bob gently
   // Stepped spin: snap `deg` degrees every `every` seconds (e.g. trainer_red).
@@ -286,6 +312,12 @@ function Prop(p) {
     const c = scene.clone(true)
     c.traverse((o) => {
       if (o.isMesh) {
+        // `hideMeshes` drops parts of a model by name (the poster ships with
+        // tape at the corners, which a drawing pin makes redundant)
+        if (hideMeshes?.some((n) => o.name.toLowerCase().includes(n.toLowerCase()))) {
+          o.visible = false
+          return
+        }
         o.castShadow = true
         o.receiveShadow = true
         if (color) {
@@ -303,15 +335,30 @@ function Prop(p) {
     })
     const fit = fitToHeight(c, propHeight({ height, heightM }))
     return { model: c, fitScale: fit.scale, yOffset: fit.yOffset, cx: fit.cx, cz: fit.cz }
-  }, [scene, height, heightM, color])
+  }, [scene, height, heightM, color, hideMeshes])
   const midY = propHeight(p) / 2 // tilt pivots around the model's own centre
   // A spinning prop turns about its OWN vertical axis: recentre it horizontally
   // so it rotates in place instead of orbiting around an off-centre origin.
   const cx = spin ? p.cx ?? modelCx : 0
   const cz = spin ? p.cz ?? modelCz : 0
+  const h = propHeight(p)
   return (
     // 1) yaw around the floor position (ref lets floating props bob in useFrame)
     <group ref={outer} position={position} rotation={[0, propYaw(p), 0]}>
+      {/* A drawing pin through the top. The group is already yawed, so local +Z
+          is whichever way the prop faces — the pin just pushes out along it. */}
+      {p.pin && (
+        <group position={[0, h * 0.955, 0.012]} rotation={[Math.PI / 2, 0, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.019, 0.019, 0.016, 14]} />
+            <meshStandardMaterial color="#f0b23c" roughness={0.35} metalness={0.35} />
+          </mesh>
+          <mesh position={[0, 0.013, 0]}>
+            <sphereGeometry args={[0.013, 12, 8]} />
+            <meshStandardMaterial color="#ffd377" roughness={0.3} metalness={0.3} />
+          </mesh>
+        </group>
+      )}
       {/* recentre (only for spinning props) so the spin axis is the model's own */}
       <group position={[-cx, 0, -cz]}>
       {/* 2) pitch/roll about the model centre (tips in place, no fly-off) */}
