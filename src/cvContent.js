@@ -22,7 +22,7 @@
 // CV stays short and scannable — it's the formal artefact, not the story.
 
 export const CV_NAME = 'Irene Medina García'
-export const CV_ROLE = 'Researcher in AI for Education · Interactive Technologies'
+export const CV_ROLE = 'Aspiring PhD in Telecommunications · Researcher in AI for Education'
 export const CV_SITE = 'irenemg8.github.io'
 export const CV_PHOTO = 'photos/irene_cv.webp'
 
@@ -34,17 +34,15 @@ export const CV_PAGES = [
     title: 'Profile',
     cover: true,
     contact: [
-      ['Based in', 'Yecla, Murcia · open to Valencia'],
-      ['Email', 'irenebati4@gmail.com'],
-      ['LinkedIn', 'in/irene-medina-garcia'],
-      ['GitHub', 'github.com/irenemg8'],
-      ['Portfolio', 'irenemg8.github.io'],
+      ['Based in', 'Valencia'],
+      ['GitHub', 'https://github.com/irenemg8'],
+      ['LinkedIn', 'https://www.linkedin.com/in/irene-medina-garcia/'],
     ],
     blocks: [
       {
         kind: 'lead',
         text:
-          'Researcher in artificial intelligence applied to interactive systems — Large Language Models, agentic architectures, and the empirical evaluation of technology-enhanced learning. Starting the Master’s in Audiovisual Technologies (MUTAV) at ETSIT-UPV, heading for doctoral research in the UPV Telecommunications PhD programme.',
+          'Researcher in AI for education, interactive systems, agentic architectures, and the empirical evaluation of technology-enhanced learning. Starting the Master’s in Audiovisual Technologies (MUTAV) at ETSIT-UPV, heading for doctoral research in the UPV Telecommunications PhD programme.',
       },
       {
         kind: 'stats',
