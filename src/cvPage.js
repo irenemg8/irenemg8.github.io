@@ -380,7 +380,8 @@ function drawNote(ctx, b, y, x, w) {
   return end + S.md
 }
 
-function drawRow(ctx, b, y, x, w) {
+function drawRow(ctx, b, y0, x, w) {
+  const y = y0 + S.lg // its own clearance, same as a caption's
   ctx.font = font([600, 20])
   ctx.fillStyle = ACCENT
   ctx.fillText(b.label, x, y)
@@ -427,13 +428,32 @@ function drawEntry(ctx, b, y, x, w) {
 
 // A grid of compact cards — the workhorse. Cards in a row share the tallest
 // height so the grid stays on a baseline instead of ragging.
+// The date sits on its own line above the title rather than beside it: in a
+// half-width card a right-aligned date squeezes the title into three ragged
+// lines, and — worse — the height measured here disagreed with the width the
+// title was actually wrapped to, so long cards overflowed their own panel.
+// Both now measure and draw against the same `inner`.
+const CARD_TOP = S.sm + 16 // top padding to the first baseline
+const CARD_BOT = 14
+const CARD_TITLE = 27
+const CARD_ORG_LH = 1.32
+const CARD_TEXT = [400, 18]
+const CARD_TEXT_LH = 1.33
+
+// Width the title actually gets, once the date has taken its corner.
+function cardTitleWidth(ctx, it, inner) {
+  if (!it.meta) return inner
+  ctx.font = font([500, 16])
+  return Math.max(inner * 0.5, inner - (ctx.measureText(it.meta).width + 20))
+}
+
 function cardHeight(ctx, it, w) {
   const inner = w - S.lg * 2
-  let h = S.md
-  h += measureLines(ctx, it.title, inner, T.h) * 27
-  if (it.org) h += measureLines(ctx, it.org, inner, T.org) * 25
-  if (it.text) h += S.xs + measureLines(ctx, it.text, inner, [400, 18]) * 24
-  return h + S.md + S.xs
+  let h = CARD_TOP
+  h += measureLines(ctx, it.title, cardTitleWidth(ctx, it, inner), T.h) * CARD_TITLE
+  if (it.org) h += measureLines(ctx, it.org, inner, T.org) * sizeOf(T.org) * CARD_ORG_LH
+  if (it.text) h += S.sm + measureLines(ctx, it.text, inner, CARD_TEXT) * sizeOf(CARD_TEXT) * CARD_TEXT_LH
+  return h + CARD_BOT
 }
 
 function drawCard(ctx, it, y, x, w, h) {
@@ -456,24 +476,24 @@ function drawCard(ctx, it, y, x, w, h) {
 
   const ix = x + S.lg
   const inner = w - S.lg * 2
-  let cy = y + S.md + 18
+  let cy = y + CARD_TOP
 
   if (it.meta) {
     ctx.textAlign = 'right'
     ctx.font = font([500, 16])
     ctx.fillStyle = DIM
-    ctx.fillText(it.meta, x + w - S.md, y + S.md + 14)
+    ctx.fillText(it.meta, x + w - S.md, cy - 2)
     ctx.textAlign = 'left'
   }
+  const titleW = cardTitleWidth(ctx, it, inner)
   ctx.font = font(T.h)
   ctx.fillStyle = INK
-  const titleW = it.meta ? inner - (ctx.measureText(it.meta).width + 30) : inner
   for (const l of wrap(ctx, it.title, titleW)) {
     ctx.fillText(l, ix, cy)
-    cy += 27
+    cy += CARD_TITLE
   }
-  if (it.org) cy = paragraph(ctx, it.org, ix, cy, inner, { t: T.org, colour: ACCENT, lh: 1.32 })
-  if (it.text) cy = paragraph(ctx, it.text, ix, cy + S.xs, inner, { t: [400, 18], colour: DIM, lh: 1.33 })
+  if (it.org) cy = paragraph(ctx, it.org, ix, cy, inner, { t: T.org, colour: ACCENT, lh: CARD_ORG_LH })
+  if (it.text) paragraph(ctx, it.text, ix, cy + S.sm, inner, { t: CARD_TEXT, colour: DIM, lh: CARD_TEXT_LH })
 }
 
 function drawCards(ctx, b, y, x, w) {
@@ -714,7 +734,7 @@ function drawMeters(ctx, b, y, x, w) {
   const labelW = Math.min(w * 0.5, Math.max(...b.items.map((i) => ctx.measureText(i.label).width)) + S.md)
   const x0 = x + labelW
   const bw = w - labelW
-  const rowH = 33
+  const rowH = 31
 
   for (const it of b.items) {
     ctx.font = font([500, 19])
@@ -753,7 +773,7 @@ function drawChips(ctx, b, y, x, w) {
       cy += 26
     }
     let cx = x
-    const h = 30
+    const h = 28
     for (const item of group.items) {
       const name = typeof item === 'string' ? item : item.name
       const core = typeof item === 'object' && item.core
@@ -761,7 +781,7 @@ function drawChips(ctx, b, y, x, w) {
       const cwid = ctx.measureText(name).width + S.lg
       if (cx + cwid > x + w) {
         cx = x
-        cy += h + 7
+        cy += h + 6
       }
       roundRect(ctx, cx, cy, cwid, h, 15)
       ctx.fillStyle = core ? 'rgba(95, 230, 255, 0.22)' : 'rgba(95, 230, 255, 0.07)'
@@ -770,8 +790,8 @@ function drawChips(ctx, b, y, x, w) {
       ctx.lineWidth = 1
       ctx.stroke()
       ctx.fillStyle = core ? INK : DIM
-      ctx.fillText(name, cx + 12, cy + 20)
-      cx += cwid + 7
+      ctx.fillText(name, cx + 12, cy + 19)
+      cx += cwid + 6
     }
     cy += h + S.md
   }
