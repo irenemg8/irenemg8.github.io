@@ -716,6 +716,134 @@ canvas {
   50% { transform: translateX(-50%) scale(1.05); }
 }
 
+/* ------------------------------------------- CV hologram (the reader chrome) */
+/* The page itself is real geometry floating over the projector — everything
+   here is the frame around it: a title bar, the page dots, and the two arrows
+   in the bottom corners. Cyan glass so it reads as part of the projection
+   rather than part of the (white, papery) rest of the HUD. */
+.holo {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  font-family: 'Inter', sans-serif;
+  color: #dff8ff;
+  animation: holoIn 0.35s ease;
+}
+@keyframes holoIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.holo__bar {
+  position: absolute;
+  top: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.45rem 1.4rem 0.55rem;
+  white-space: nowrap;
+  border-radius: 14px;
+  border: 1px solid rgba(120, 235, 255, 0.4);
+  background: rgba(4, 26, 38, 0.55);
+  box-shadow: 0 0 22px rgba(95, 230, 255, 0.22), inset 0 0 20px rgba(95, 230, 255, 0.1);
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 12px rgba(95, 230, 255, 0.6);
+}
+.holo__tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6fe4ff;
+}
+.holo__title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Page turners, one in each bottom corner */
+.holo__arrow {
+  position: absolute;
+  bottom: 1.6rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 50%;
+  border: 1px solid rgba(120, 235, 255, 0.45);
+  background: rgba(4, 26, 38, 0.55);
+  color: #bff2ff;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 22px rgba(95, 230, 255, 0.25), inset 0 0 18px rgba(95, 230, 255, 0.12);
+  text-shadow: 0 0 10px rgba(95, 230, 255, 0.7);
+  transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+}
+.holo__arrow--left { left: 1.6rem; }
+.holo__arrow--right { right: 1.6rem; }
+.holo__arrow:hover:not(:disabled) {
+  transform: scale(1.08);
+  background: rgba(19, 71, 94, 0.72);
+  box-shadow: 0 0 32px rgba(95, 230, 255, 0.45), inset 0 0 22px rgba(95, 230, 255, 0.2);
+}
+.holo__arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.holo__foot {
+  position: absolute;
+  bottom: 1.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  /* never let the hint slide underneath the two corner arrows */
+  max-width: calc(100vw - 11rem);
+  text-align: center;
+}
+.holo__dots {
+  display: flex;
+  gap: 0.42rem;
+}
+.holo__dot {
+  width: 0.66rem;
+  height: 0.66rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(120, 235, 255, 0.5);
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+}
+.holo__dot:hover { transform: scale(1.3); }
+.holo__dot.is-on {
+  background: #6fe4ff;
+  box-shadow: 0 0 12px rgba(95, 230, 255, 0.9);
+}
+.holo__close {
+  pointer-events: auto;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8fd8ea;
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(95, 230, 255, 0.45);
+}
+.holo__close:hover { color: #dff8ff; }
+
 /* ------------------------------------------------------ Small screens */
 /* Phones / narrow viewports: shrink the HUD, widen dialogues to fit, keep tap
    targets comfortable, and stack the VR lenses if they'd be too cramped. */
@@ -748,6 +876,16 @@ canvas {
   .meta__lens { width: min(46vw, 300px); height: min(40vh, 320px); }
 
   .welcome__card { padding: 1.5rem 1.4rem 1.2rem; }
+
+  /* CV hologram: drop the title bar below the brand / settings row, and pull the
+     page turners into the corners where a thumb already rests. */
+  .holo__bar { top: 3.6rem; padding: 0.35rem 1rem 0.45rem; max-width: 92vw; }
+  .holo__title { font-size: 0.9rem; white-space: normal; text-align: center; }
+  .holo__arrow { width: 3.2rem; height: 3.2rem; bottom: 1.1rem; }
+  .holo__arrow--left { left: 0.9rem; }
+  .holo__arrow--right { right: 0.9rem; }
+  .holo__foot { bottom: 1.5rem; gap: 0.45rem; }
+  .holo__close { font-size: 0.72rem; padding: 0.2rem 0.4rem; }
 }
 
 /* Portrait phones: the lenses read better stacked one above the other */

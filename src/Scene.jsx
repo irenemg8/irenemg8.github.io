@@ -6,6 +6,8 @@ import * as THREE from 'three'
 import './bvh.js' // side-effect: patch BVH onto three
 import { playerPos } from './playerState.js'
 import { metaStore } from './metaStore.js'
+import { cvStore } from './cvStore.js'
+import { boxStore } from './boxStore.js'
 import { talkStore } from './talkStore.js'
 import { chatStore } from './npcChat.js'
 import { grut } from './grutState.js'
@@ -21,6 +23,7 @@ import Artworks, { ITEMS as ARTWORK_ITEMS, artworkColliderGeometries } from './A
 import { benchColliderGeometries } from './data/galleryLayout.js'
 import Boxes, { boxColliderGeometries, BOXES } from './Boxes.jsx'
 import Props, { propColliderGeometries, PROPS } from './Props.jsx'
+import Hologram, { CV_SPOT } from './Hologram.jsx'
 import Guides from './Guides.jsx'
 import Villagers from './Villagers.jsx'
 import { TALKERS } from './talkers.js'
@@ -40,6 +43,23 @@ function MetaProximity() {
     const c = chatStore.get()
     const busy = t.near != null || t.open != null || c.near || c.open
     metaStore.set({ near: d < META_R && !busy })
+  })
+  return null
+}
+
+// Walk up to the projector and the CV hologram offers itself for a read.
+const CV_R = 1.7
+function CvProximity() {
+  useFrame(() => {
+    if (cvStore.get().open) return // reading — don't let it slip out from under you
+    const d = Math.hypot(playerPos.x - CV_SPOT.position[0], playerPos.z - CV_SPOT.position[2])
+    // everything else gets first refusal, so two F prompts never stack up
+    const t = talkStore.get()
+    const c = chatStore.get()
+    const b = boxStore.get()
+    const busy =
+      t.near != null || t.open != null || c.near || c.open || b.near != null || b.peek != null || metaStore.get().near
+    cvStore.set({ near: d < CV_R && !busy })
   })
   return null
 }
@@ -190,7 +210,9 @@ export default function Scene({ mode = 'third', showMarkers = false, onReady }) 
       <TalkProximity />
       <Boxes />
       <MetaProximity />
+      <CvProximity />
       <Props />
+      <Hologram />
       <Guides />
       <Villagers />
       <Hearts />

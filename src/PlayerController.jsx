@@ -8,6 +8,8 @@ import { playerPos } from './playerState.js'
 import { boxStore } from './boxStore.js'
 import { talkStore } from './talkStore.js'
 import { metaStore } from './metaStore.js'
+import { cvStore } from './cvStore.js'
+import { cvView } from './Hologram.jsx'
 import { chat, chatStore, chatPair } from './npcChat.js'
 import { ui } from './uiState.js'
 import { touch } from './touchState.js'
@@ -144,7 +146,8 @@ export default function PlayerController({ collider, mode }) {
     const peeking = boxStore.get().peek != null
     const talking = talkStore.get().open != null
     const listening = chatStore.get().open // eavesdropping on two visitors
-    const frozen = peeking || talking || listening // camera locked, avatar hidden
+    const reading = cvStore.get().open // nose-deep in the CV hologram
+    const frozen = peeking || talking || listening || reading // camera locked, avatar hidden
     // Wearing the glasses: the arrows drive the menu, so stand still — but stay
     // visible, since you can still see the room through the lenses. Same while
     // the welcome dialogue is up.
@@ -277,6 +280,13 @@ export default function PlayerController({ collider, mode }) {
       camPos.current.set(p[0] + vx * dist, camY, p[2] + vz * dist)
       camera.position.lerp(camPos.current, Math.min(1, dt * 5))
       camera.lookAt(p[0], aimY, p[2])
+    } else if (reading) {
+      // square-on to the hologram, backed off just far enough that the whole
+      // page fits the viewport (recomputed each frame, so rotating a phone works)
+      const v = cvView(camera)
+      camPos.current.set(v.pos[0], v.pos[1], v.pos[2])
+      camera.position.lerp(camPos.current, Math.min(1, dt * 5))
+      camera.lookAt(v.target[0], v.target[1], v.target[2])
     } else if (peeking) {
       // look inside the diorama box
       const v = peekView(boxStore.get().peek)

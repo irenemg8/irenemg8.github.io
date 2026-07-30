@@ -5,6 +5,8 @@ import * as THREE from 'three'
 import Scene from './Scene.jsx'
 import { useBoxStore, boxStore } from './boxStore.js'
 import { useMetaStore, metaStore } from './metaStore.js'
+import { useCvStore, cvStore } from './cvStore.js'
+import { CV_PAGES } from './cvContent.js'
 import { useTalkStore, talkStore } from './talkStore.js'
 import { useChatStore, chatStore, chat, openChat, closeChat, endChat } from './npcChat.js'
 import { AGENTS } from './npcState.js'
@@ -881,6 +883,121 @@ function NpcChat() {
   )
 }
 
+// The CV hologram. Walk up to the projector, press F (tap on a phone) and the
+// camera slides in until the sheet of light fills the screen. The page itself is
+// real geometry — this is only the chrome around it: a title bar, the page dots,
+// and the two arrows in the bottom corners that turn the page.
+function CvReader() {
+  const { near, open, page } = useCvStore()
+  const touch = useTouch()
+  const total = CV_PAGES.length
+
+  const turn = (step) => {
+    const now = cvStore.get().page
+    const next = Math.min(total - 1, Math.max(0, now + step))
+    if (next === now) return
+    playSfx('move')
+    cvStore.set({ page: next })
+  }
+  const goTo = (i) => {
+    if (i === cvStore.get().page) return
+    playSfx('move')
+    cvStore.set({ page: i })
+  }
+  const openReader = () => {
+    playSfx('select')
+    cvStore.set({ open: true })
+  }
+
+  // F opens the CV / puts it back down; Esc always steps back.
+  useEffect(() => {
+    const onKey = (e) => {
+      const s = cvStore.get()
+      if (e.code === 'Escape') {
+        if (s.open) cvStore.set({ open: false })
+        return
+      }
+      if (e.code !== 'KeyF') return
+      if (s.open) cvStore.set({ open: false })
+      else if (s.near) openReader()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  // Walking away puts it down and rewinds to the first page.
+  useEffect(() => {
+    if (!near) cvStore.set({ open: false, page: 0 })
+  }, [near])
+
+  // Left / right turn the page while you're reading.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.code === 'ArrowLeft') {
+        e.preventDefault()
+        turn(-1)
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault()
+        turn(1)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
+  if (!open) {
+    return near ? (
+      <button className="cue" onClick={openReader}>
+        {phrase('Press F to read Irene’s CV 📄', touch)}
+      </button>
+    ) : null
+  }
+
+  return (
+    <div className="holo">
+      <div className="holo__bar">
+        <span className="holo__tag">Curriculum vitae</span>
+        <span className="holo__title">{CV_PAGES[page].title}</span>
+      </div>
+
+      <button
+        className="holo__arrow holo__arrow--left"
+        onClick={() => turn(-1)}
+        disabled={page === 0}
+        aria-label="Previous page"
+      >
+        ◀
+      </button>
+      <button
+        className="holo__arrow holo__arrow--right"
+        onClick={() => turn(1)}
+        disabled={page === total - 1}
+        aria-label="Next page"
+      >
+        ▶
+      </button>
+
+      <div className="holo__foot">
+        <div className="holo__dots">
+          {CV_PAGES.map((p, i) => (
+            <button
+              key={p.title}
+              className={i === page ? 'holo__dot is-on' : 'holo__dot'}
+              onClick={() => goTo(i)}
+              title={p.title}
+              aria-label={p.title}
+            />
+          ))}
+        </div>
+        <button className="holo__close" onClick={() => cvStore.set({ open: false })}>
+          {touch ? 'Done ✕' : '←︎ →︎ turn the page · F / Esc to step back'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // A one-time welcome, shown as a Pokémon-style dialogue once the room has
 // actually drawn (ready). Types out, advances on any key / click, and frees you
 // to roam when it ends. Movement is held until then (ui.welcomeOpen).
@@ -1038,6 +1155,8 @@ const CONTROLS = [
  // { keys: ['Mouse'], action: 'Look around (1st person)' },
   { keys: ['F'], action: 'Look inside a box 📦' },
   { keys: ['F'], action: 'Eavesdrop on a chat 👂' },
+  { keys: ['F'], action: 'Read the CV hologram 📄' },
+  { keys: ['←︎', '→︎'], action: 'Turn a CV page' },
   { keys: ['Any key'], action: 'Advance dialogue' },
   // ︎ forces text (non-emoji) rendering so all four arrows match in style.
   { keys: ['↑︎', '↓︎', '←︎', '→︎'], action: 'Move in a menu' },
@@ -1175,6 +1294,7 @@ export default function App() {
         <PropTalk />
         <NpcChat />
         <MetaVision />
+        <CvReader />
         <SettingsPanel />
 
         <div className="controls">

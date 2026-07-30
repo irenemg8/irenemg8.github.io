@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { fitToHeight } from './utils/fit.js'
 import { playerPos } from './playerState.js'
 import { grut as grutState } from './grutState.js'
+import { CV_SPOT } from './Hologram.jsx'
 
 // Shared raycaster for grut's wall-aware following (whisker steering).
 const _ray = new THREE.Raycaster()
@@ -188,6 +189,28 @@ export const PROPS = [
   { url: '/models/trainer_red.glb', position: [-2.4, 0.29, -2.44], rotation: 0, heightM: 0.15, spin: { every: 2.5, deg: -90 } },
   // black_tie is now worn by the door guides (see Guides.jsx), not a floor prop.
   // Toy figures — rough placements, adjust position / rotation / heightM to taste.
+  // The CV hologram's tech corner (+X wall, between the pug and beach boxes).
+  // The projector is a plain prop so it gets a collider and placement for free;
+  // the sheet of light it beams out lives in Hologram.jsx and reads the same
+  // CV_SPOT, so moving the corner is a one-line change over there.
+  {
+    url: '/models/hologram_projector.glb',
+    position: CV_SPOT.position,
+    rotation: CV_SPOT.rotation,
+    heightM: CV_SPOT.projectorH,
+  },
+  // An articulated arm working away on a shelf. Its rig keeps the FBX unit
+  // scale, which defeats fitToHeight (the arm came out 100x too small), so
+  // `poseFit` re-measures it from what's actually drawn — see refitToPose below.
+  {
+    url: '/models/robot_arm.glb',
+    position: [2.9, 1, 2.5],
+    rotation: -1.6,
+    heightM: 0.7,
+    poseFit: true,
+    anim: 'ArmAction',
+    pingPong: true, // reach out, then rewind back — no snap at the end of the clip
+  },
   { url: '/models/rex.glb', position: [-3, 1, -2.4], rotation: 0.6, heightM: 0.4 },
   { url: '/models/alien.glb', position: [-2.7, 0.92, -2], rotation: 0.8, rotationX:-1.3, heightM: 0.25 },
   { url: '/models/guido.glb', position: [-2.1, 1, -1.5], rotation: 0.6, heightM: 0.4 },
@@ -301,17 +324,78 @@ function Prop(p) {
 }
 
 // A prop with a skinned animation. By default plays (on loop) the clip whose
-// name contains `anim`. Two extra modes:
+// name contains `anim`. Extra options:
+//  pingPong: true             — on reaching the end, play the clip BACKWARDS
+//                               instead of snapping to the start (the robot arm
+//                               — its routine ends mid-reach, so a plain loop
+//                               jumps). Alternates forever.
 //  animRandom: [names]        — cycle random clips every 1.5–4s (crossfaded)
 //  wander: { radius, speed,   — potter about within `radius` of the spawn,
 //            walk, idles }       playing `walk` while moving and a random
 //                                `idles` clip while paused (e.g. grut).
+// Corrective fit for rigs whose bind pose carries an import scale (the robot
+// arm): fitToHeight measures their raw geometry instead of the posed skeleton,
+// so the model lands at the wrong size AND off the floor. `poseFit` ignores that
+// measurement and sizes the prop from what's really being drawn — which means
+// changing `heightM` keeps working instead of needing a new magic number.
+//
+// It can't be done in one frame: a freshly cloned skeleton reads as a box tens
+// of thousands of units across until the bones are posed. So we let it settle,
+// sample the animation for a few frames, and fit to the tallest pose we saw —
+// one correction, no per-frame pulsing. Only for props with no rotationX /
+// rotationZ, since the tilt pivots would skew the grounding.
+const _fitBox = new THREE.Box3()
+const _fitTmp = new THREE.Box3()
+const REFIT_SKIP = 8 // frames to let the rig settle before believing it
+const REFIT_SAMPLES = 12 // frames of animation sampled before committing
+
+function measurePose(group) {
+  _fitBox.makeEmpty()
+  let any = false
+  group.traverse((o) => {
+    if (!o.isSkinnedMesh) return
+    o.skeleton?.update?.()
+    o.computeBoundingBox()
+    if (o.boundingBox) {
+      _fitBox.union(_fitTmp.copy(o.boundingBox).applyMatrix4(o.matrixWorld))
+      any = true
+    }
+  })
+  if (!any || _fitBox.isEmpty()) return null
+  return Number.isFinite(_fitBox.min.y) && Number.isFinite(_fitBox.max.y) ? _fitBox : null
+}
+
+// Returns true once it's done with the prop (fitted, or given up on it).
+function refitToPose(st, group, targetH, floorY) {
+  st.n += 1
+  if (st.n <= REFIT_SKIP) return false
+  const box = measurePose(group)
+  if (box) {
+    st.minY = Math.min(st.minY, box.min.y)
+    st.maxY = Math.max(st.maxY, box.max.y)
+  }
+  if (st.n < REFIT_SKIP + REFIT_SAMPLES) return false
+
+  const h = st.maxY - st.minY
+  if (!(h > 1e-6) || !Number.isFinite(h)) return true // unmeasurable — leave it be
+  const k = targetH / h
+  // Children scale about the group's own origin, so that's where the base lands
+  // once k is applied; lift the group by whatever's left to reach the floor.
+  const originY = group.matrixWorld.elements[13]
+  const baseAfter = (st.minY - originY) * k + originY
+  group.scale.multiplyScalar(k)
+  group.position.y += floorY - baseAfter
+  return true
+}
+
 function AnimatedProp(p) {
   const { url, position, height, heightM, anim } = p
   const group = useRef() // inner (animated) group
   const outer = useRef() // outermost group — moved around for wandering
   const play = useRef(() => {}) // set once actions are ready; called from useFrame
   const st = useRef(null) // wander state
+  // poseFit props re-measure themselves over the first few frames (see above)
+  const refit = useRef({ done: !p.poseFit, n: 0, minY: Infinity, maxY: -Infinity })
   const { scene, animations } = useGLTF(url)
   const { model, fitScale, yOffset } = useMemo(() => {
     const c = cloneSkeleton(scene) // proper skeleton clone for skinned meshes
@@ -335,10 +419,11 @@ function AnimatedProp(p) {
     // Crossfade to a named clip (used by wander + animRandom). Remembers the
     // current action so it only switches when the clip actually changes.
     let current = null
+    const loop = p.pingPong ? THREE.LoopPingPong : THREE.LoopRepeat
     play.current = (name) => {
       const next = find(name) || list[0]
       if (next === current) return
-      next.reset().setLoop(THREE.LoopRepeat, Infinity).fadeIn(0.25).play()
+      next.reset().setLoop(loop, Infinity).fadeIn(0.25).play()
       current?.fadeOut(0.25)
       current = next
     }
@@ -390,6 +475,14 @@ function AnimatedProp(p) {
   //    idling / looking sad when paused. Freezes to face you when you come to
   //    chat. grut.wx/wz track its live world position (published to the speaker).
   useFrame((_, dtRaw) => {
+    // Size a poseFit rig from its real pose, keeping it hidden until it's right
+    // (it spends those frames at a nonsense scale).
+    const rf = refit.current
+    if (!rf.done && group.current) {
+      rf.done = refitToPose(rf, group.current, propHeight(p), position[1])
+      group.current.visible = rf.done
+    }
+
     const w = p.wander
     const s = st.current
     if (!w || !s || !outer.current) return
