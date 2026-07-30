@@ -11,7 +11,7 @@ import { cvStore, useCvStore } from './cvStore.js'
 // gets its collider and placement for free — this file only draws the projected
 // part. Both read CV_SPOT, so moving the hologram means editing one place.
 export const CV_SPOT = {
-  position: [2.9, 0, -4.4], // where the projector stands on the floor
+  position: [2.9, 0, -4.2], // where the projector stands on the floor
   rotation: -Math.PI / 2, // which way the sheet faces (here: toward the room, -X)
   // The projector is a wide, flat ring, so fitting it by height (as every prop
   // is) blows its footprint up — 0.2 m tall works out at a ~0.9-unit-wide pad.
