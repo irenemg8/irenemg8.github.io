@@ -204,12 +204,12 @@ export const PROPS = [
   // the CV hologram, so the research corner reads as one thing.
   {
     url: '/models/taee_poster.glb',
-    position: [3.5, 1.0, -3.2],
+    position: [3.52, 0.5, 3.4],
     rotation: -Math.PI / 2,
-    heightM: 1.1,
+    heightM: 0.5,
     wall: true, // flush with the wall — no collider needed
     pin: true, // drawing pin through the top
-    radius: 1.5,
+    radius: 1,
     cue: 'Press F to read the poster 🏆',
     say: [
       'That one came home with the Best Poster award from TAEE 2026. 🏆',
@@ -219,11 +219,11 @@ export const PROPS = [
       'And the next step on there is exactly what I went on to build for the thesis: knowledge graphs and Agentic RAG. 🌱',
     ],
     hideMeshes: ['Tape'],
-    // Backed off far enough that the whole sheet clears the dialogue box, and
-    // level rather than tilted, so the text stays square to the camera.
-    camDist: 1.85,
-    camY: 0.42,
-    aimY: 0.42,
+    // Fill 70% of the viewport height — the rest is headroom and the dialogue
+    // box. Worked out from the fov each frame, so resizing the poster keeps
+    // the framing right instead of needing a new camDist.
+    fitH: 0.7,
+    aspect: 0.673, // measured off the rendered sheet — width ÷ height
     camAngle: -Math.PI / 2, // read it head-on, from the room side
   },
   // An articulated arm working away on a shelf. Its rig keeps the FBX unit
@@ -718,6 +718,8 @@ export const SPEAKERS = PROPS.filter((p) => p.say || p.follow).map((p) => ({
   camY: p.camY ?? null,
   aimY: p.aimY ?? null,
   camAngle: p.camAngle ?? null, // fixed viewing side (null = from the player's side)
+  fitH: p.fitH ?? null, // flat props: fraction of the viewport height to fill
+  aspect: p.aspect ?? null, // …and its width ÷ height, so narrow screens back off
   lines: p.say,
   intro: p.intro ?? null,
   follow: p.follow ?? false, // grut: dialogue offers to follow / stop following

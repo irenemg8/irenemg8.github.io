@@ -274,9 +274,28 @@ export default function PlayerController({ collider, mode }) {
       }
       // A speaker can override the framing for a tighter shot — a tiny note
       // wants the camera right up close, level with it, not a metre back.
-      const dist = sp.camDist ?? 0.8 + h * 0.9
-      const camY = p[1] + (sp.camY ?? h * 0.75 + 0.25)
-      const aimY = p[1] + (sp.aimY ?? h * 0.55)
+      //
+      // `fitH` goes further: a flat thing pinned to a wall wants to FILL the
+      // frame rather than sit in the middle of it, so the distance is worked
+      // out from the fov to make it that fraction of the viewport height, and
+      // the aim lifted so the sheet clears the dialogue box. It's recomputed
+      // every frame, so resizing the prop — or turning a phone — just works.
+      let dist, camY, aimY
+      if (sp.fitH) {
+        const frame = h / sp.fitH
+        const half = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)
+        // Fit the height, but back off further if the width would spill — a
+        // portrait sheet on a portrait phone is limited by its sides, not its
+        // top and bottom.
+        const wide = (h * (sp.aspect ?? 1)) / sp.fitH / (half * (camera.aspect || 1))
+        dist = Math.max(frame / half, wide)
+        aimY = p[1] + h / 2 - frame * 0.1
+        camY = aimY
+      } else {
+        dist = sp.camDist ?? 0.8 + h * 0.9
+        camY = p[1] + (sp.camY ?? h * 0.75 + 0.25)
+        aimY = p[1] + (sp.aimY ?? h * 0.55)
+      }
       camPos.current.set(p[0] + vx * dist, camY, p[2] + vz * dist)
       camera.position.lerp(camPos.current, Math.min(1, dt * 5))
       camera.lookAt(p[0], aimY, p[2])
