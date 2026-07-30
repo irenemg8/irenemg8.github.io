@@ -421,9 +421,9 @@ function drawEntry(ctx, b, y, x, w) {
     ctx.font = font([500, 20])
     ctx.fillStyle = ACCENT
     ctx.fillText('▸', x + 2, y + S.xs)
-    y = paragraph(ctx, t, x + 26, y + S.xs, w - 26, { t: [400, 20], lh: 1.38 })
+    y = paragraph(ctx, t, x + 26, y + S.xs, w - 26, { t: [400, 20], lh: 1.32 })
   }
-  return y + S.md
+  return y + S.sm
 }
 
 // A grid of compact cards — the workhorse. Cards in a row share the tallest
@@ -433,9 +433,9 @@ function drawEntry(ctx, b, y, x, w) {
 // lines, and — worse — the height measured here disagreed with the width the
 // title was actually wrapped to, so long cards overflowed their own panel.
 // Both now measure and draw against the same `inner`.
-const CARD_TOP = S.sm + 16 // top padding to the first baseline
-const CARD_BOT = 14
-const CARD_TITLE = 27
+const CARD_TOP = S.md + 18 // top padding to the first baseline
+const CARD_BOT = S.sm // less than the top: a last line's descender already fills some
+const CARD_TITLE = 26
 const CARD_ORG_LH = 1.32
 const CARD_TEXT = [400, 18]
 const CARD_TEXT_LH = 1.33
@@ -505,7 +505,7 @@ function drawCards(ctx, b, y, x, w) {
     const row = b.items.slice(i, i + cols)
     const h = Math.max(...row.map((it) => cardHeight(ctx, it, cw)))
     row.forEach((it, j) => drawCard(ctx, it, cy, x + j * (cw + COL_GAP), cw, h))
-    cy += h + S.sm + S.xs
+    cy += h + S.sm
   }
   return cy + S.xs
 }
@@ -515,26 +515,39 @@ function drawCards(ctx, b, y, x, w) {
 function drawStats(ctx, b, y, x, w) {
   const items = b.items
   const cw = (w - S.md * (items.length - 1)) / items.length
+
+  // One size for the whole row: the biggest step at which EVERY value still
+  // fits its tile. Sizing each tile to its own value would leave a word-length
+  // value smaller than the numbers beside it, which reads as a mistake rather
+  // than a hierarchy.
+  let valueSize = sizeOf(T.stat)
+  while (valueSize > 22) {
+    ctx.font = font([T.stat[0], valueSize])
+    if (items.every((it) => ctx.measureText(it.value).width <= cw)) break
+    valueSize -= 2
+  }
+  const valueBaseline = 12 + valueSize
+
   let labelLines = 1
   items.forEach((it, i) => {
     const cx = x + i * (cw + S.md)
     hairline(ctx, cx, y - 2, cx + cw, y - 2, 'rgba(95, 230, 255, 0.35)', 2)
     glow(ctx, GLOW, 14)
-    ctx.font = font(T.stat)
+    ctx.font = font([T.stat[0], valueSize])
     ctx.fillStyle = INK
-    ctx.fillText(it.value, cx, y + 50)
+    ctx.fillText(it.value, cx, y + valueBaseline)
     noGlow(ctx)
     ctx.font = font([500, 16])
     ctx.fillStyle = DIM
     const lines = wrap(ctx, it.label, cw)
     labelLines = Math.max(labelLines, lines.length)
-    let ly = y + 76
+    let ly = y + valueBaseline + 26
     for (const l of lines) {
       ctx.fillText(l, cx, ly)
       ly += 20
     }
   })
-  return y + 76 + labelLines * 20 + S.lg
+  return y + valueBaseline + 26 + labelLines * 20 + S.lg
 }
 
 // Horizontal bars, one hue, value at the tip — no value axis needed.

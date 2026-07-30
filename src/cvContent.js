@@ -49,15 +49,14 @@ export const CV_PAGES = [
       {
         kind: 'lead',
         text:
-          'Researcher in AI for education, interactive systems, agentic architectures, and the empirical evaluation of technology-enhanced learning. Starting the Master’s in Audiovisual Technologies (MUTAV) at ETSIT-UPV, heading for doctoral research in the UPV Telecommunications PhD programme.',
+          'Researcher in AI for education, interactive systems, agentic architectures, and the empirical evaluation of technology-enhanced learning. Currently starting the Master’s in Audiovisual Technologies (MUTAV) at ETSIT-UPV, heading for doctoral research in the UPV Telecommunications PhD programme.',
       },
       {
         kind: 'stats',
         items: [
-          { value: '10/10', label: 'BSc Thesis, Highest Honours' },
+          { value: 'Highest Honours', label: 'BSc Thesis, 10/10' },
           { value: '2', label: 'Papers (TAEE · IEEE)' },
           { value: '6', label: 'Awards & distinctions' },
-          { value: '8', label: 'Roles since 2023' },
         ],
       },
       {
@@ -65,7 +64,7 @@ export const CV_PAGES = [
         caption: 'Areas I work in',
         note: 'Of the 8 roles and 8 projects on this CV, how many involved each area.',
         items: [
-          { label: 'UX / UI design', value: 11 },
+          { label: 'UX / UI design', value: 9 },
           { label: 'AI · LLMs · vision', value: 6 },
           { label: 'Web & frontend', value: 6 },
           { label: '3D · AR / VR', value: 4 },
@@ -109,10 +108,10 @@ export const CV_PAGES = [
           },
         ],
       },
-      {
+     {/* {
         kind: 'note',
         text: 'Open to research and product roles in Valencia — on-site, hybrid or remote.',
-      },
+      },*/}
     ],
   },
 
@@ -121,55 +120,71 @@ export const CV_PAGES = [
     title: 'Career',
     blocks: [
       {
+        kind: 'timeline',
+        from: 2022,
+        to: 2027,
+        now: 2026.6,
+        items: [
+          { label: 'Centromat — web', from: M(2023, 2), to: M(2023, 6) },
+          { label: 'Talpa Tunneling UPV', from: M(2025, 4), to: M(2026, 6) },
+          { label: 'GOMARCO — Scrum Master', from: M(2025, 4), to: M(2025, 7) },
+          { label: 'Beetrics — UX & branding', from: M(2025, 7), to: M(2025, 9) },
+          { label: 'Zyndra — co-founder', from: M(2025, 9), to: M(2026, 6) },
+          { label: 'Hyperloop UPV — H11', from: M(2025, 9), to: M(2025, 12) },
+          { label: 'UPV — Learning Assistant', from: M(2025, 9), to: M(2026, 5) },
+          { label: 'strambótica — UX & AR', from: M(2025, 10), to: M(2026, 1) },
+        ],
+      },
+      {
         kind: 'cards',
         items: [
           {
             title: 'Learning Assistant',
             meta: '2025 – 26',
-            org: 'UPV — internship contract',
-            text: 'An LLM tutor deployed as course material for Basic Electronics. Designed the Agentic RAG that guides by questioning rather than answering, built its knowledge base and retrieval pipeline, and ran the evaluation with engineering students — measuring conceptual gain rather than satisfaction.',
+            org: 'UPV — internship',
+            text: 'Built an LLM tutor for Basic Electronics: Agentic RAG, its knowledge base and retrieval pipeline, and an evaluation measuring conceptual gain rather than satisfaction.',
           },
           {
             title: 'Co-founder & Coordinator',
             meta: '2025 – 26',
             org: 'Zyndra — Generación Espontánea UPV',
-            text: 'Co-founded a student research group building an AI robotic guide dog for blind users: autonomous navigation, computer vision and safe decision-making on the street. Coordinated 20 students across engineering, design and communication, and led the human–robot interaction model from requirements gathered with real users.',
+            text: 'An AI robotic guide dog for blind users. Coordinated 20 students across engineering, design and communication, and led the human–robot interaction model.',
           },
           {
             title: 'Automation Specialist',
             meta: '2025 – 26',
-            org: 'Talpa Tunneling UPV · Not-A-Boring Competition',
-            text: 'Built the operator dashboard that drives a micro-tunnel boring machine and reads its telemetry live, from prototype through to production code — designed around the operator’s decisions under time and safety pressure. Also the team’s website, end to end.',
+            org: 'Talpa Tunneling UPV · Not-A-Boring',
+            text: 'The operator dashboard that drives a micro-tunnel boring machine and reads its telemetry live — prototype through to production, plus the team’s website.',
           },
           {
-            title: 'UX Designer & AR Developer',
+            title: 'UX Designer & AR Dev',
             meta: '2025 – 26',
             org: 'strambótica — freelance',
-            text: 'End-to-end design and frontend of an e-commerce platform, plus a marker-based AR app that lets buyers view products interactively at trade fairs — built to improve engagement on the stand.',
+            text: 'Design and frontend of an e-commerce platform, and a marker-based AR app for viewing products at trade fairs.',
           },
           {
             title: 'UX Designer',
             meta: '2025',
             org: 'Hyperloop UPV — H11',
-            text: 'Audited the team’s existing site and redesigned its interfaces — user flows, layout and visual hierarchy — grounded in benchmarking against other competition teams, then handed the designs over for implementation.',
+            text: 'Audited and redesigned the team’s site — user flows, layout and hierarchy — and handed the designs over for build.',
           },
           {
             title: 'Scrum Master & Developer',
             meta: '2025',
-            org: 'GOMARCO — internship contract',
-            text: 'Ran planning, review and retrospective ceremonies for the IT department and coordinated its workload with Scrum and Trello. Automated internal processes and built desktop applications for internal use.',
+            org: 'GOMARCO — internship',
+            text: 'Ran the IT department’s sprint ceremonies, and automated internal processes with desktop tooling.',
           },
           {
-            title: 'UX/UI & Branding Designer',
+            title: 'UX/UI & Branding',
             meta: '2025',
             org: 'Beetrics — freelance',
-            text: 'Brand visual identity from scratch, web prototyping, and an internal dashboard for managing staff.',
+            text: 'Visual identity, web prototyping and an internal dashboard for staff management.',
           },
           {
             title: 'Web Designer & Developer',
             meta: '2023',
             org: 'Centromat — freelance',
-            text: 'Corporate website with a full product and services catalogue, plus a task board that assigns each job to the right worker by availability and speciality. Result: +3,500 platform visits, calls and sales within six months.',
+            text: 'Corporate site and an automated task board. +3,500 visits, calls and sales in six months.',
           },
         ],
       },
@@ -209,7 +224,8 @@ export const CV_PAGES = [
               {
                 title: 'Second manuscript',
                 meta: 'In progress',
-                org: 'IEEE Access — building on the thesis',
+                org: 'IEEE Access',
+                text: 'Building on the contributions of the thesis.',
               },
             ],
           },
@@ -231,8 +247,7 @@ export const CV_PAGES = [
               {
                 title: 'Erasmus+ BIP — Green Campus 2.0',
                 meta: '2025',
-                org: 'Warsaw University of Technology',
-                text: '21 students, 8 universities, 7 countries.',
+                org: 'Warsaw University of Technology · 21 students, 7 countries',
               },
             ],
           },
@@ -242,12 +257,12 @@ export const CV_PAGES = [
             kind: 'spine',
             caption: 'Awards & distinctions',
             items: [
-              { title: 'Highest Honours — thesis, 10/10', meta: 'Jul 2026', org: 'UPV' },
-              { title: 'Best Poster Award', meta: 'Jun 2026', org: 'TAEE 2026' },
-              { title: 'Mención ARA', meta: '2022 – 26', org: 'High Academic Performance, UPV' },
-              { title: '1st prize — Campus Salud Gandía', meta: 'May 2025', org: 'With URBANVIVE · Guangzhou 2025 · Innpulso VII' },
+              { title: 'Highest Honours — BSc thesis', meta: 'Jul 2026', org: 'UPV' },
+              { title: 'Best Poster Award', meta: 'Jul 2026', org: 'TAEE 2026' },
+              { title: 'Mención ARA - UPV', meta: 'Jul 2026', org: 'High Academic Performance Mention' },
               { title: '2nd prize — Smart City Challenge', meta: 'Jun 2025', org: 'VRAIN · Cátedra ENIA · Telefónica' },
-              { title: 'Semifinalist — eMobility Hackathon', meta: 'Sept 2023', org: 'Las Naves, Valencia' },
+              { title: '1st prize — Campus Salud Gandía', meta: 'May 2025', org: '2025 Urban Innovation and Entrepreneurship Competition' },
+              { title: 'Semifinalist — eMobility Hackathon', meta: 'Sept 2023', org: 'OnKlub, Valencia' },
             ],
           },
           {
@@ -313,7 +328,7 @@ export const CV_PAGES = [
             title: 'NeuroSpot · VIMYP · EcoCity',
             meta: '2023 – 24',
             org: 'Next.js · AWS · React · ESP-IDF',
-            text: 'ADHD pre-screening by gamification; air-quality keyrings and smart streetlights with printed housings.',
+            text: 'ADHD pre-screening by gamification; air-quality keyrings and smart streetlights.',
           },
         ],
       },
@@ -340,7 +355,7 @@ export const CV_PAGES = [
             kind: 'row',
             label: 'Certifications',
             value:
-              'Agentic AI — RAG with LangGraph & Ollama (Udemy, 2026) · Three.js Journey (2025) · AutoCAD 2D (UPV, 2026) · 17 in total, on LinkedIn.',
+              'Agentic AI — RAG with LangGraph & Ollama (Udemy, 2026) · Three.js Journey (2025) · AutoCAD 2D for Engineering (UPV, 2026) · Advanced UX and UX for games (LinkedIn Learning) · 17 in total, listed on LinkedIn.',
           },
         ],
         right: [
@@ -354,7 +369,7 @@ export const CV_PAGES = [
               { label: 'AR/VR & robotics', items: ['Unity', 'Meta Quest', 'Vuforia', 'Three.js', 'ROS2', 'Gazebo'] },
               {
                 label: 'Prototyping & ways of working',
-                items: ['AutoCAD', 'Fritzing', 'Arduino', 'Scrum', 'Git'],
+                items: ['AutoCAD', 'Fritzing', 'Arduino', 'ESP-IDF', 'CDIO', 'Scrum', 'Git/GitHub'],
               },
             ],
           },
