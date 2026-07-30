@@ -193,7 +193,7 @@ export const BOXES = [
           text: [
             'Yes — my first research papers are already out in the world! 🎉',
             'At TAEE 2026, our study on LLM-based Socratic tutors for understanding Ohm’s law won the Best Poster award.',
-            'The Spanish version is in the conference proceedings; the English one — “Agentic RAG for Pedagogically Safe Socratic Tutoring” — is headed to IEEE.',
+            'The Spanish version is in the conference proceedings; the English one — “Agentic RAG for Pedagogically Safe Socratic Tutoring” — is headed to IEEE Access.',
             'A second paper is also on its way to IEEE Access. Watch this space!',
           ],
         },
